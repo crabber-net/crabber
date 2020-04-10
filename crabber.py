@@ -377,7 +377,8 @@ def common_molt_actions():
                         location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                         img.save(location)
                         img_attachment = "img/user_uploads/" + filename
-            target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
+            reply = target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
+            return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
     elif action == "remolt_molt" and molt_id is not None:
         target_molt = Molt.query.filter_by(id=molt_id).first()
         target_molt.remolt(get_current_user())
@@ -451,9 +452,13 @@ def notifications():
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = Molt.query.filter_by(deleted=False, is_reply=False) \
-            .filter(Molt.raw_mentions.contains((get_current_user().username + "\n"))) \
-            .order_by(Molt.timestamp.desc())
+        # molts = Molt.query.filter_by(deleted=False, is_reply=False) \
+        #     .filter(Molt.raw_mentions.contains((get_current_user().username + "\n"))) \
+        #     .order_by(Molt.timestamp.desc())
+        molts = Molt.query.filter_by(is_reply=True, deleted=False).all()
+        molts = [molt for molt in molts if molt.original_molt.author == get_current_user()
+                 and not molt.original_molt.deleted]
+
         return render_template('notifications.html', current_page="notifications",
                                molts=molts, current_user=get_current_user())
     else:

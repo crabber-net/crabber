@@ -6,6 +6,12 @@
     {% if molt.deleted %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This molt has been deleted</div>
     {% else %}
+        {% if molt.is_reply %}
+            {% with molt=molt.original_molt %}
+                {% include "molt.html" %}
+            {% endwith %}
+        {% endif %}
+
         {% include "large_molt.html" %}
 
         <!-- All molts live here! -->
