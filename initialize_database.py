@@ -11,8 +11,8 @@ jake = Crab.create_new(username="jake",
                        verified=True,
                        bio="I made this site.")
 
-test_user = Crab.create_new(username="jake",
-                            email="jaik.exe@gmail.com",
-                            password="***REMOVED***",
-                            display_name="Test User",
-                            bio="test user, please ignore")
+crabber = Crab.create_new(username="crabber",
+                          email="jaik.exe@gmail.com",
+                          password="***REMOVED***",
+                          display_name="Crabber",
+                          bio="Official account for website news and updates.")
