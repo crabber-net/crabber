@@ -77,7 +77,7 @@
             <form method="POST">
                 <input type="hidden" name="user_action" value="delete_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action trash zindex-front" onClick="SubForm(this.parentNode);$(this).parents('div.mini-molt').remove()">
+                <div class="mini-molt-action trash zindex-front" onClick="javascript:this.parentNode.submit();">
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="trash"></span>
                 </div>
             </form>
@@ -87,7 +87,7 @@
             <form method="POST">
                 <input type="hidden" name="user_action" value="delete_molt">
                 <input type="hidden" name="molt_id" value="{{remolt_shell.id}}">
-                <div class="mini-molt-action trash zindex-front" onClick="javascript:this.parentNode.submit();$(this).parents('div.mini-molt').remove()">
+                <div class="mini-molt-action trash zindex-front" onClick="javascript:this.parentNode.submit();">
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="trash"></span>
                 </div>
             </form>
