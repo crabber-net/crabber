@@ -333,6 +333,9 @@ div.mini-molt:hover {
 .mention, .crabtag {
     color: var(--primary);
 }
+.text-muted .mention, .crabtag {
+    color: var(--primary-faded-less);
+}
 
 .cool-input input {
     background: var(--dark-less-more) !important;
@@ -470,4 +473,43 @@ div.mini-molt:hover {
 
 body, .master-container {
     overflow: hidden;
+}
+
+.tiny-rounded {
+    border-radius: 10px;
+}
+
+/* Notifications */
+.notif-icon {
+  position: absolute;
+}
+.notif-icon-row {
+  position: relative;
+}
+.notif-icon {
+  left: -36px;
+}
+.notif-other, .notif-reply, .notif-follow {
+    fill: var(--reply);
+}
+.notif-like, .notif-mention {
+    fill: var(--like);
+}
+.notif-remolt {
+    fill: var(--remolt);
+}
+.notif-unfollow {
+    fill: var(--light-faded);
+}
+
+.tiny-reply-context {
+    opacity: 0.7;
+}
+
+.tiny-reply-context .mini-molt-content {
+    font-size: 11px;
+}
+
+.reply-indicator {
+    height: 17px;
 }

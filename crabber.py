@@ -79,11 +79,13 @@ class Crab(db.Model):
     def follow(self, crab):
         if crab not in self.following:
             self.following.append(crab)
+            crab.notify(sender=self, type="follow")
             db.session.commit()
 
     def unfollow(self, crab):
         if crab in self.following:
             self.following.remove(crab)
+            crab.notify(sender=self, type="unfollow")
             db.session.commit()
 
     def verify_password(self, password):
@@ -92,6 +94,8 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         new_molt = Molt(author=self, content=content[:140], **kwargs)
         db.session.add(new_molt)
+        for user in new_molt.mentions:
+            user.notify(sender=self, type="mention", molt=new_molt)
         db.session.commit()
         return new_molt
 
@@ -107,6 +111,12 @@ class Crab(db.Model):
 
     def has_remolted(self, molt):
         return bool(Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).all())
+
+    def notify(self, **kwargs):
+        new_notif = Notification(recipient=self, **kwargs)
+        db.session.add(new_notif)
+        db.session.commit()
+        return new_notif
 
     @staticmethod
     def create_new(**kwargs):
@@ -162,7 +172,7 @@ class Molt(db.Model):
         for user in mention_pattern.findall(self.content):
             if self.raw_mentions is None:
                 self.raw_mentions = ""
-            self.raw_mentions += user[1:] + "\n"
+            self.raw_mentions += user + "\n"
 
     def __repr__(self):
         return f"<Molt by '{self.author.username}'>"
@@ -180,7 +190,7 @@ class Molt(db.Model):
 
     @property
     def mentions(self):
-        return [Crab.query.filter(Crab.username == user).first() for user in self.raw_mentions.splitlines()]
+        return Crab.query.filter(Crab.username.in_(self.raw_mentions.splitlines())).all()
 
     @property
     def pretty_date(self):
@@ -215,15 +225,20 @@ class Molt(db.Model):
             return self.timestamp.strftime("%b %e, %Y")
 
     def remolt(self, crab, comment="", **kwargs):
-        return crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
+        new_remolt = crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
+        self.author.notify(sender=crab, type="remolt", molt=new_remolt)
+        return new_remolt
 
     def reply(self, crab, comment, **kwargs):
-        return crab.molt(comment, is_reply=True, original_molt=self, **kwargs)
+        new_reply = crab.molt(comment, is_reply=True, original_molt=self, **kwargs)
+        self.author.notify(sender=crab, type="reply", molt=new_reply)
+        return new_reply
 
     def like(self, crab):
         if not Like.query.filter_by(crab=crab, molt=self).all():
             new_like = Like(crab=crab, molt=self)
             db.session.add(new_like)
+            self.author.notify(sender=crab, type="like", molt=self)
             db.session.commit()
             return new_like
 
@@ -276,6 +291,40 @@ class Like(db.Model):
 
     def __repr__(self):
         return f"<Like from '{self.crab.username}'>"
+
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # Crab receiving notif
+    recipient_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
+                             nullable=False)
+    recipient = db.relationship('Crab', backref=db.backref('notifications', order_by='Notification.timestamp.desc()'),
+                                foreign_keys=[recipient_id])
+    # Crab responsible for notif
+    sender_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
+                          nullable=True)
+    sender = db.relationship('Crab', foreign_keys=[sender_id])
+
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.datetime.utcnow)
+
+    read = db.Column(db.BOOLEAN, nullable=False, default=False)
+
+    # can be: mention, reply, follow, like, remolt, other
+    type = db.Column(db.String(32), nullable=False)
+
+    # Molt (optional) (for replies, mentions, likes, etc)
+    molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'),
+                        nullable=True)
+    molt = db.relationship('Molt', foreign_keys=[molt_id])
+
+    # If type is 'other'
+    content = db.Column(db.String(140), nullable=True)
+    link = db.Column(db.String(140), nullable=True)
+
+    def mark_read(self, is_read=True):
+        self.read = is_read
+        db.session.commit()
 
 
 # HELPER FUNCS #########################################################################################################
@@ -452,15 +501,21 @@ def notifications():
 
     # Display page
     elif session.get('current_user') is not None:
+        # Mentions
         # molts = Molt.query.filter_by(deleted=False, is_reply=False) \
         #     .filter(Molt.raw_mentions.contains((get_current_user().username + "\n"))) \
         #     .order_by(Molt.timestamp.desc())
-        molts = Molt.query.filter_by(is_reply=True, deleted=False).all()
-        molts = [molt for molt in molts if molt.original_molt.author == get_current_user()
-                 and not molt.original_molt.deleted]
+        # Replies
+        # molts = Molt.query.filter_by(is_reply=True, deleted=False).all()
+        # molts = [molt for molt in molts if molt.original_molt.author == get_current_user()
+        #          and not molt.original_molt.deleted]
+        # likes = Like.query.filter()
+
+        # return render_template('notifications.html', current_page="notifications",
+        #                        molts=molts, likes=likes, current_user=get_current_user())
 
         return render_template('notifications.html', current_page="notifications",
-                               molts=molts, current_user=get_current_user())
+                               notifications=get_current_user().notifications, current_user=get_current_user())
     else:
         return redirect("/login")
 
@@ -629,7 +684,7 @@ def error_404(_error_msg):
 
 
 @app.errorhandler(413)
-def file_to_big(e):
+def file_to_big(_e):
     return redirect(request.path + "?error=Image must be smaller than 5 megabytes")
 
 
