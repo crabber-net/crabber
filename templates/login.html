@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %} Log in {% endblock %}
+{% block heading %} Log in {% endblock %}
+
+{% block body %}
+    {% if login_failed %}
+        <div class="alert alert-danger p-1" role="alert">Email or password is incorrect.</div>
+    {% endif %}
+    <form class="w-75 m-4" method="POST">
+        <h1>Welcome back to Crabber!</h1>
+        <p class="text-muted mb-5">First time? <a href="/signup">Create an account.</a></p>
+        
+        <div class="form-group cool-input">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required aria-required>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else. Human or otherwise.</small>
+        </div>
+        <div class="form-group cool-input">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword1" required aria-required>
+        </div>
+        <div class="form-group form-check" title="Both people AND robots are allowed!">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">I am a robot</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Let me in!</button>
+    </form>
+{% endblock %}

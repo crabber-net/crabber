@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %} Timeline {% endblock %}
+{% block heading %} Latest Molts {% endblock %}
+
+{% block body %}
+    <!-- The compose box lives here! -->
+    {% include "mini_compose.html" %}
+
+    <!-- All molts live here! -->
+    {% for molt in molts %}
+        {% include "molt.html" %}
+    {% endfor %}
+    <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">Follow more people to see their Molts here! 🦀</div>
+{% endblock %}

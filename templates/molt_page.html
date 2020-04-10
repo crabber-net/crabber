@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %} Molt Thread {% endblock %}
+{% block heading %} Thread {% endblock %}
+
+{% block body %}
+    <!-- The compose box lives here! -->
+    {% include "large_molt.html" %}
+
+    <!-- All molts live here! -->
+    {% for molt in replies %}
+        {% include "molt.html" %}
+    {% else %}
+        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This molt has no replies</div>
+    {% endfor %}
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+{% endblock %}

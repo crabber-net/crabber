@@ -1,0 +1,53 @@
+Twitter clone. Name: Crabber.
+
+Users are called Crabs. Tweets are called molts. We are sticking to the original length of 140 characters rather than
+the revised 240. Hashtags are called Crabtags and use the % sign (for no reason). They must be less than or equal to 16
+characters. Because people may want to use the percent sign normally, you can escape the tag using a backslash, e.g. \%
+to cancel it out. We'll still use @ for mentions because it makes sense.
+
+Emoji policy: pro
+
+------ Database Layout ------
+
+%Crab:
+    username ✔
+    email ✔
+    password hash ✔
+    display name ✔
+    bio ✔
+    avatar url ✔
+    banner url ✔
+    sign-up date ✔
+    followers ✔
+    following ✔
+    likes ✔
+    deleted ✔
+    verified ;) ✔
+
+%Molt:
+    author ✔
+    content ✔
+    mentions ✔
+    tags ✔
+    timestamp ✔
+    image attachment ✔
+    likes ✔
+    is remolt ✔
+    is reply ✔
+    original molt id ✔
+    remolts ✔
+    replies ✔
+    deleted ✔
+
+%Like:
+    molt id ✔
+    crab id ✔
+
+------ Things to remember upon site design ------
+
+  * For every count, search, and display you do, verify that nothing you're dealing with pertains to a Crab or Molt that
+    has since been deleted. This information will be confusing, strange, and otherwise misleading to the user. In some
+    situations, it is okay to display "This {object} has been deleted." as an alternative to just omitting it.
+
+------ TODO: ------
+  * Make dates and ages display local time somehow

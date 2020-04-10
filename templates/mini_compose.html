@@ -1,0 +1,52 @@
+<div class="mini-compose-box border-bottom border-dark p-2 d-flex flex-row">
+    <div class="mini-molt-profile-box">
+        <a href="/user/{{current_user.username}}">
+            <img class="rounded-circle" src="{{ url_for('static', filename=current_user.avatar) }}"
+                alt="Profile picture" width="43">
+        </a>
+    </div>
+    <div class="mini-molt-text-box w-100 h-100 px-2">
+        <form method="POST">
+            <div class="mini-compose-textarea">
+                <textarea name="molt_content" maxlength="140" rows="3" class="my-2 w-100"
+                    placeholder="How are you feeling?" onfocus="$(this).parents('.mini-compose-box').addClass('focused')"></textarea>
+            </div>
+            <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
+                
+                <!-- Image picker -->
+                <div class="file-input input-group mb-3">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
+                            aria-describedby="inputGroupFileAddon01">
+                        <label class="custom-file-label" for="inputGroupFile02">
+                            <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                <input type="hidden" name="user_action" value="submit_molt">
+                <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
+            </div>
+        </form>
+    </div>
+    <!-- Character limit counter script -->
+    <script>
+        var counter = $("#mini-character-counter");
+        var textarea = $(".mini-compose-textarea textarea");
+        function updateCounter() {
+            counter.text(140 - textarea.val().length);
+        }
+
+        // Counter is hidden by default so if Javascript breaks or is blocked the user doesn't see it in a broken state
+        counter.removeClass("d-none");
+
+        // Bind change event to function
+        textarea.bind("input propertychange", function () {
+            updateCounter();
+        });
+
+        // Run on init (in case of text being previously filled)
+        updateCounter();
+    </script>
+</div>

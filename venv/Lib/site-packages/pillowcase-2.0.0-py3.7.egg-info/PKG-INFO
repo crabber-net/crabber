@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pillowcase
+Version: 2.0.0
+Summary: Smooths out installation issues due to the PIL/Pillow fork.
+Home-page: http://github.com/mikeboers/PillowCase
+Author: Mike Boers
+Author-email: pillowcase@mikeboers.com
+License: BSD-3
+Description: UNKNOWN
+Platform: UNKNOWN

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %} Log in {% endblock %}
+{% block heading %} Log in {% endblock %}
+
+{% block body %}
+    <div class="m-4">
+        <h1>You're all signed up.</h1>
+        <p class="mb-5 text-muted">Thanks for joining, <strong>{{current_user.display_name}}</strong>! Here's some recommended users to follow:</p>
+        <div class="recommended_users border-top border-dark mb-4">
+            {% for crab in recommended_users %}
+                {% include "mini_bio.html" %}
+            {% endfor %}
+        </div>
+        <div class="w-100 youtube-embed">
+            <iframe class="w-100 h-100" width="560" src="https://www.youtube.com/embed/qUZcEY2k0ow" frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+    </div>
+{% endblock %}

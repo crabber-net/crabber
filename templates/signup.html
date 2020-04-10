@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %} Create an account {% endblock %}
+{% block heading %} Create an account {% endblock %}
+
+{% block body %}
+    {% if signup_failed %}
+        <div class="alert alert-danger p-1" role="alert">{{error_msg if error_msg else "There was a problem creating your account. Please try again."}}</div>
+    {% endif %}
+
+    <form name="sign-up-form" class="w-75 m-4" method="POST">
+        <h1>Just a few minor details.</h1>
+        <p class="text-muted mb-5">Already have an account? <a href="/login">Log in</a></p>
+        
+        <!-- Email address -->
+        <div class="form-group cool-input">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required aria-required>
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else. Human or otherwise.</small>
+        </div>
+
+        <!-- Pass -->
+        <div class="form-group cool-input">
+            <label for="exampleInputPassword1">Password</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword1" required aria-required>
+        </div>
+
+        <!-- Confirm pass -->
+        <div class="form-group cool-input">
+            <label for="exampleInputPassword1">Confirm password</label>
+            <input type="password" name="confirm-password" class="form-control" id="exampleInputPassword1" required aria-required>
+        </div>
+
+        <!-- Username -->
+        <div class="form-group cool-input mt-5">
+            <label for="inlineFormInputGroup">Username</label>
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">@</div>
+                </div>
+                <input name="username" type="text" class="form-control" id="inlineFormInputGroup" placeholder="crablover2000">
+            </div>
+        </div>
+
+        <!-- Display name -->
+        <div class="form-group cool-input">
+            <label for="displayName">Display name</label>
+            <input type="text" name="display-name" class="form-control" id="displayName" placeholder="Crab H. Lover"
+            required aria-required>
+        </div>
+
+        <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
+            <label class="form-check-label" for="exampleCheck1">I have read and agree to the
+                <a href="{{ url_for('static', filename='legal/tos.txt') }}" target="_blank">terms of service</a></label><br>
+            <i><small class="text-muted">Seriously, this is really important. It's short, I promise.</small></i>
+        </div>
+        <button type="submit" class="btn btn-primary">Let me in!</button>
+    </form>
+{% endblock %}

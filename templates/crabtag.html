@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %} Exploring %{{crabtag}} {% endblock %}
+{% block heading %} Exploring <a href="/crabtag/{{crabtag}}" class="crabtag">%{{crabtag}}</a> molts{% endblock %}
+
+{% block body %}
+    <!-- All molts live here! -->
+    {% for molt in molts %}
+        {% include "molt.html" %}
+    {% endfor %}
+{% endblock %}

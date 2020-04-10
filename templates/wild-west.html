@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %} Wild West 🤠 {% endblock %}
+{% block heading %}ALL latest Molts. Like, from EVERYONE.{% endblock %}
+
+{% block body %}
+    <!-- The compose box lives here! -->
+    {% include "mini_compose.html" %}
+
+    <!-- All molts live here! -->
+    {% for molt in molts %}
+        {% include "molt.html" %}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,301 @@
+{% macro expand_img() %}
+    style="cursor: pointer;" data-toggle="modal" data-target="#image_modal" onclick="$('#image_modal img').attr('src', $(this).find('img').attr('src'))"
+{% endmacro %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %}</title>
+    
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}">
+
+    <!-- Custom scripts -->
+    <script>
+        // AJAX Form Submit
+        function SubForm(form, url=null) {
+            if (url == null) {
+                url = document.location.pathname;
+            }
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: $(form).serialize(),
+                error: function () {
+                    console.warn("Failed to submit form to server;");
+                },
+            });
+        }
+
+        function toggleLike(e) {
+            let empty_heart = $(e).children(".jam")[0];
+            let filled_heart = $(e).children(".jam")[1];
+            let counter = $(e).children("span")[0]
+
+            // was liked, needs to be unliked
+            if (empty_heart.classList.contains("d-none")) {
+                $(empty_heart).removeClass("d-none");
+                $(filled_heart).addClass("d-none");
+                $(counter).removeClass("text-primary");
+                counter.textContent = parseInt(counter.textContent) - 1
+            }
+            // was unliked, needs to be liked
+            else {
+                $(filled_heart).removeClass("d-none");
+                $(empty_heart).addClass("d-none");
+                $(counter).addClass("text-primary");
+                counter.textContent = parseInt(counter.textContent) + 1
+            }
+        }
+
+        function toggleFollow() {
+            if ($('[name=\'user_action\']').val() == "unfollow") {
+                $('[name=\'user_action\']').val('follow');
+                $('#follow-btn strong').text('Follow');
+            } else {
+                $('[name=\'user_action\']').val('unfollow');
+                $('#follow-btn strong').text('Unfollow');
+            }
+        }
+
+        function clearModal() {
+            // Clear text
+            $("#compose_modal textarea").val("")
+            // Hide modal
+            $("#compose_modal").modal("hide")
+        }
+
+        function prepareReply(molt_id, author_username, author_name) {
+            // Update "replying to" link
+            $("#reply-to").text(author_name)
+            $("#reply-to").attr("href", "/user/" + author_username)
+            // Update form reply-to ID
+            $("#reply-molt-id").val(molt_id)
+        }
+    </script>
+    {% endblock %}
+</head>
+<body class="bg-dark text-light">
+    <div class="container-fluid vh-100 master-container">
+        <div class="row h-100 justify-content-{{ "center" if hide_sidebar else "start" }}">
+            {% if not hide_sidebar %}
+            <!-- Nav Panel -->
+            <div class="col-2 col-lg-2 offset-lg-1 offset-xl-2 p-1" id="nav-panel">
+                <!-- Logo -->
+                <img class="mt-2 d-block mx-auto d-lg-inline mx-lg-0 logo" src="{{ url_for('static', filename='img/crabber_logo.svg') }}"
+                alt="Crabber Logo" width="43">
+                
+                <!-- Nav Buttons -->
+                <form action="/">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2"
+                    {% if current_page == "home" %}
+                    id="nav-active"
+                    {% endif %}
+                    >
+                        <span class="btn-icon" data-width="28" data-height="28" data-jam="home{{"-f" if current_page == "home" else ""}}"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Home</strong>
+                    </button>
+                </form>
+
+                <form action="/wild">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2" {% if current_page == "wild-west" %} id="nav-active"
+                        {% endif %}>
+                        <span class="btn-icon" data-width="28" data-height="28"
+                            data-jam="cactus{{"-f" if current_page == "wild-west" else ""}}"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
+                    </button>
+                </form>
+                
+                {% if current_user %}
+                <form action="/notifications">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2"
+                    {% if current_page == "notifications" %}
+                    id="nav-active"
+                    {% endif %}
+                    >
+                        <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
+                    </button>
+                </form>
+
+                <form action="/user/{{current_user.username}}">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2"
+                    {% if current_page == "own-profile" %}
+                    id="nav-active"
+                    {% endif %}
+                    >
+                        <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" alt="Your profile picture">
+                        <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
+                    </button>
+                </form>
+
+                <!-- Molt button -->
+                <button type="button" class="btn btn-primary rounded-pill w-md-75 mt-4" id="molt-btn" data-toggle="modal" data-target="#compose_modal">
+                    <span class="btn-icon d-lg-none" data-width="28" data-height="28" data-jam="write"></span>
+                    <strong class="d-none d-lg-inline-block">Molt</strong>
+                </button>
+
+                <form action="/logout">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 text-muted">
+                        <span class="btn-icon" data-width="28" data-height="28" data-jam="log-out"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if current_user %}
+            <!-- Molt popup -->
+            <div class="modal fade" id="compose_modal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header py-2 border-dark">
+                            <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="mini-molt-profile-box col-1 mr-2">
+                                <a href="/user/{{current_user.username}}">
+                                    <img class="rounded-circle" src="{{ url_for('static', filename=current_user.avatar) }}" alt="Profile picture"
+                                        width="43">
+                                </a>
+                            </div>
+                            <div class="mini-molt-text-box w-100 h-100 px-2 col">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="mini-compose-textarea">
+                                        <textarea name="molt_content" maxlength="140" rows="3" class="my-2 w-100"
+                                            placeholder="How are you feeling?"></textarea required>
+                                    </div>
+                                    <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
+                                        <!-- Image picker -->
+                                        <div class="file-input input-group mb-3">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="inputGroupFile01" name="molt-media" aria-describedby="inputGroupFileAddon01">
+                                                <label class="custom-file-label" for="inputGroupFile01">
+                                                    <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                                        <input type="hidden" name="user_action" value="submit_molt">
+                                        {% if current_page in ("home", "own-profile", "molt-page") %}
+                                            <!-- Reload in place -->
+                                            <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
+                                        {% else %}
+                                            <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
+                                        {% endif %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if current_user %}
+            <!-- Molt reply popup -->
+            <div class="modal fade" id="compose_reply_modal" tabindex="-1" role="dialog" aria-labelledby="composeReplyModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header py-2 border-dark">
+                            <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Replying to <a class="text-light" id="reply-to" href="">someone</a></strong>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="mini-molt-profile-box col-1 mr-2">
+                                <a href="/user/{{current_user.username}}">
+                                    <img class="rounded-circle" src="{{ url_for('static', filename=current_user.avatar) }}"
+                                        alt="Profile picture" width="43">
+                                </a>
+                            </div>
+                            <div class="mini-molt-text-box w-100 h-100 px-2 col">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="mini-compose-reply-textarea">
+                                        <textarea name="molt_content" maxlength="140" rows="3" class="my-2 w-100"
+                                            placeholder="Remember to be kind"></textarea required>
+                                                </div>
+                                                <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
+                                                    
+                                                    <!-- Image picker -->
+                                                    <div class="file-input input-group mb-3">
+                                                        <div class="custom-file">
+                                                            <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
+                                                                aria-describedby="inputGroupFileAddon01">
+                                                            <label class="custom-file-label" for="inputGroupFile02">
+                                                                <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                                                    <input type="hidden" name="user_action" value="submit_reply_molt">
+                                                    <input type="hidden" id="reply-molt-id" name="molt_id" value="">
+                                                    {% if current_page in ("home", "own-profile", "molt-page") %}
+                                                        <!-- Reload in place -->
+                                                        <button type="submit" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
+                                                    {% else %}
+                                                        <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
+                                                    {% endif %}
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            {% endif %}
+
+            <!-- Image expand modal -->
+            <div class="modal fade" id="image_modal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
+                <div class="modal-dialog image-modal-body absolute-center" role="document">
+                    <img class="absolute-center" src="" alt="Expanded image">
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <!-- TODO: Make scrollbar appear on the outside edge -->
+            <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
+                <div class="border-dark border-bottom p-2" id="content-heading">
+                    <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
+                </div>
+                <div id="content-body" class="h-100">
+                    {% block body %} {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <!-- Jam Icons (https://jam-icons.com). Thanks so much! -->
+    <script src="https://unpkg.com/jam-icons/js/jam.min.js"></script>
+</body>
+</html>

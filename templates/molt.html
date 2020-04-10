@@ -1,0 +1,93 @@
+{% set is_remolt = molt.is_remolt %}
+{% if is_remolt %}
+    {% set remolt_shell = molt %}
+    {% set molt = molt.original_molt %}
+{% endif %}
+<div class="mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container">
+    <div class="mini-molt-profile-box {{"mt-4" if is_remolt else ""}}">
+        <a href="/user/{{molt.author.username}}" class="zindex-front">
+            <img class="rounded-circle" src="{{url_for('static', filename=molt.author.avatar)}}" alt="Profile picture" width="43">
+        </a>
+    </div>
+    <div class="mini-molt-text-box w-100 h-100 px-2">
+        {% if is_remolt %}
+        <!-- Remolt indicator -->
+        <small class="mini-molt-remolt text-muted zindex-front">
+            <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="refresh"></span>
+            <a href="/user/{{remolt_shell.author.username}}">{{remolt_shell.author.display_name}}</a> Remolted</small>
+        {% endif %}
+        <div class="mini-molt-credentials zindex-front {{"mt-1" if is_remolt else ""}}"><a href="/user/{{molt.author.username}}"
+                class="mini-molt-display-name">{{molt.author.display_name}}</a>
+            {% if molt.author.verified %}
+            <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
+            {% endif %}
+            <span class="mini-molt-username">@{{molt.author.username}}</span>
+            <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
+                    title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+        </div>
+        <div class="mini-molt-content">
+            <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
+            <!-- End-users won't have any idea what this comment is referring to :) -->
+            <p class="mb-2">{{molt.rich_content|safe}}</p>
+
+            {% if molt.image %}
+            <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                <img class="w-100" src="{{url_for('static', filename=molt.image)}}" alt="Attached image">
+            </div>
+            {% endif %}
+        </div>
+        <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
+            <input type="hidden" name="user_action" value="reply_molt">
+            <input type="hidden" name="molt_id" value="{{molt.id}}">
+            <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
+                onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="message"></span>
+                <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="user_action" value="remolt_molt">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if current_user.has_remolted(molt) else ""}}"
+                    {% if molt.author.id != current_user.id %}
+                        onClick="javascript:this.parentNode.submit();"
+                    {% else %}
+                        onClick="alert('Don\'t remolt your own stuff!');"
+                    {% endif %}>
+                    <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="refresh"></span>
+                    <span class="mini-molt-action-counter ml-1">{{molt.true_remolts|length}}</span>
+                </div>
+            </form>
+            <form method="POST">
+                <input type="hidden" name="user_action" value="like_molt">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                <div class="mini-molt-action like zindex-front" onClick="SubForm(this.parentNode);toggleLike(this);">
+                <span class="mini-molt-action-icon {{"d-none" if current_user.has_liked(molt) else ""}}" data-width="16" data-height="16" data-jam="heart"></span>
+                    <span class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" data-width="16" data-height="16" data-jam="heart-f"></span>
+                    <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.likes|length}}</span>
+                </div>
+            </form>
+            {% if molt.author.id == current_user.id %}
+            <!-- Delete molt -->
+            <form method="POST">
+                <input type="hidden" name="user_action" value="delete_molt">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                <div class="mini-molt-action trash zindex-front" onClick="SubForm(this.parentNode);$(this).parents('div.mini-molt').remove()">
+                    <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="trash"></span>
+                </div>
+            </form>
+            {% endif %}
+            {% if is_remolt and remolt_shell.author.id == current_user.id %}
+            <!-- Delete remolt -->
+            <form method="POST">
+                <input type="hidden" name="user_action" value="delete_molt">
+                <input type="hidden" name="molt_id" value="{{remolt_shell.id}}">
+                <div class="mini-molt-action trash zindex-front" onClick="javascript:this.parentNode.submit();$(this).parents('div.mini-molt').remove()">
+                    <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="trash"></span>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Tweet page link -->
+    <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill"></a>
+</div>

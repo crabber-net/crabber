@@ -1,0 +1,83 @@
+/* Bootstrap color overrides */
+:root {
+    --primary: rgb(230, 57, 70);
+    --primary-faded: rgba(230, 57, 71, 0.1);
+    --primary-faded-less: rgba(230, 57, 71, 0.3);
+    --primary-dark: rgb(167, 25, 37);
+    --primary-darker: rgb(110, 17, 25);
+    --light: rgb(217, 217, 217);
+    --light-darker: rgb(151, 151, 151);
+    --light-faded: rgb(74, 82, 85);
+    --dark: rgb(10, 12, 15);
+    --dark-less: rgb(16, 19, 24);
+    --dark-less-more: rgb(12, 15, 18);
+    --secondary: #399de6;
+    --tertiary: #39e683;
+    --quad: #1D3557;
+
+    --reply: rgb(36, 168, 250);
+    --reply-trans: rgba(36, 168, 250, 0.05);
+    --remolt: rgb(115, 223, 52);
+    --remolt-trans: rgba(115, 223, 52, 0.05);
+    --like: rgb(230, 57, 70);
+    --like-trans: rgba(230, 57, 70, 0.05);
+    --trash: rgb(224, 110, 44);
+    --trash-trans: rgba(224, 110, 44, 0.05);
+}
+
+/* Primaries */
+.btn-primary, .bg-primary {
+    background-color: var(--primary);
+}
+.btn-primary {
+    border-color: var(--primary-dark);
+}
+.btn-primary:not(:disabled):not(.disabled):hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-darker);
+}
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled):focus {
+    background-color: var(--primary-darker);
+    border-color: var(--like-trans);
+    box-shadow: 0 0 0 .2rem var(--primary-faded) !important;
+}
+.text-primary {
+    color: var(--primary) !important;
+    fill: var(--primary) !important
+}
+
+.btn {
+    color: var(--light);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled):focus {
+    box-shadow: none;
+    color: var(--light-darker);
+    background-color: var(--primary-faded-less) !important;
+}
+
+/* Lights */
+.bg-light {
+    background-color: var(--light);
+}
+.text-light {
+    color: var(--light);
+    fill: var(--light);
+}
+
+/* Darks */
+.bg-dark {
+    background-color: var(--dark) !important;
+}
+.text-dark {
+    color: var(--dark);
+}
+
+.text-muted {
+    color: var(--light-faded);
+    fill: var(--light-faded);
+}
+
+.text-inherit, .text-inherit:hover, .text-inherit:focus {
+    color: inherit;
+}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %} Notifications {% endblock %}
+{% block heading %} Molts that mention you {% endblock %}
+
+{% block body %}
+    <!-- All molts live here! -->
+    {% for molt in molts %}
+        {% include "molt.html" %}
+    {% endfor %}
+    <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">Molts that mention you will appear here</div>
+{% endblock %}

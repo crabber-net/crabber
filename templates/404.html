@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %} 404 {% endblock %}
+{% block heading %} Page not found {% endblock %}
+
+{% block body %}
+    <div class="m-2">
+        <h1 class="display-1">404</h1>
+        <p>You're not supposed to be here...</p>
+        <img src="{{ url_for('static', filename='/img/404.jpg') }}" alt="crab's having sex">
+    </div>
+{% endblock %}

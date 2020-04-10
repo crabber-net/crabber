@@ -1,0 +1,449 @@
+/* Medium devices and smaller */
+@media (max-width: 992px) {
+    /* Nav collapse */
+    #nav-panel {
+        max-width: 60px;
+    }
+}
+/* Large devices and larger */
+@media (min-width: 992px) {
+    #nav-panel button {
+        width: 80%;
+        
+        /* Slide it to match logo indentation */
+        position: relative;
+        left: -0.25em;
+    }
+}
+
+/* CENTERING HELPERS ////////////////////////////////*/
+.absolute-top {
+    position: absolute;
+    top: 0;
+}
+.absolute-right {
+    position: absolute;
+    right: 0;
+}
+.absolute-bottom {
+    position: absolute;
+    bottom: 0;
+}
+.absolute-left {
+    position: absolute;
+    left: 0;
+}
+.absolute-center {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
+.absolute-container {
+    /* Contains absolute fill */
+    position: relative;
+}
+.absolute-fill {
+    /* Fills container */
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+/*///////////////////////////////////////////////////*/
+
+.zindex-front {
+    position: relative;
+    z-index: 10;
+}
+
+.logo {
+    fill: var(--light);
+}
+
+.content {
+    /* Outer content container */
+    color: var(--light) !important;
+    max-width: 600px;
+}
+
+#content-body {
+    /* Content scroll-box */
+    overflow: scroll;
+}
+
+#main-panel {
+    height: 100vh;
+    overflow: hidden;
+}
+
+#nav-panel strong {
+    /* Nav button labels */
+    height: 28px;
+    /* display: inline-block !important; */
+    vertical-align: bottom;
+}
+
+#nav-panel button {
+    /* Collapsible buttons in left sidebar */
+    display: block;
+}
+
+#nav-panel button:not(#molt-btn) {
+    /* All buttons except the molt one */
+    background: none;
+    border: none;
+    text-align: left;
+}
+
+#nav-panel button:not(#molt-btn):hover {
+    background: var(--primary-faded);
+}
+
+.btn-icon {
+    fill: var(--light);
+}
+
+/* Active page */
+#nav-panel button#nav-active {
+    color: var(--primary);
+}
+#nav-panel #nav-active .btn-icon {
+    fill: var(--primary);
+}
+
+/* Twitter-like rounding of media edges */
+.rounded-media {
+    border-radius: 14px;
+}
+
+/* Timeline molts */
+div.mini-molt {
+    /* position: relative; */
+    font-size: 13px;
+    cursor: pointer;
+}
+div.mini-molt:hover {
+    background-color: var(--dark-less);
+}
+.mini-molt-remolt {
+    font-size: 11px;
+    position: relative;
+}
+.mini-molt-remolt .remolt-icon {
+    position: absolute;
+    left: -1.75em;
+    bottom: .1em;
+}
+.mini-molt-remolt a {
+    color: inherit;
+}
+.mini-molt .mini-molt-display-name {
+    font-weight: 700;
+    color: var(--light);
+}
+.mini-molt-username, .mini-molt-timestamp {
+    color: var(--light-faded);
+}
+.mini-molt-timestamp a {
+    color: inherit;
+}
+.mini-molt-action {
+    cursor: pointer;
+    color: var(--light-faded);
+    fill: var(--light-faded);
+    padding: 10px;
+    margin: -10px;
+    border-radius: 100%;
+}
+.mini-molt-action.reply:hover {
+    color: var(--reply);
+    fill: var(--reply);
+    background-color: var(--reply-trans);
+}
+.mini-molt-action.remolt:hover {
+    color: var(--remolt);
+    fill: var(--remolt);
+    background-color: var(--remolt-trans);
+}
+.mini-molt-action.like:hover {
+    color: var(--like);
+    fill: var(--like);
+    background-color: var(--like-trans);
+}
+.mini-molt-action.trash:hover {
+    color: var(--trash);
+    fill: var(--trash);
+    background-color: var(--trash-trans);
+}
+.mini-molt-action-icon {
+    fill: inherit;
+}
+.mini-molt-action-counter {
+    font-size: 11px;
+}
+.mini-molt-media-container {
+    /* Constant aspect ratio hack */
+    height: 0px;
+    padding-top: 56%;
+    overflow: hidden;
+    position: relative;
+}
+.mini-molt-media-container img {
+    position: absolute;
+    top: 0;
+}
+
+.mini-compose-box {
+    border-width: 7px !important;
+    max-height: 5em;
+    overflow: hidden;
+}
+.mini-compose-box.focused {
+    max-height: none;
+}
+.mini-compose-box textarea {
+    background: none;
+    color: inherit;
+    border: none;
+    resize: none;;
+}
+
+.box-shadow {
+    -webkit-box-shadow: 0px 0px 0px 2px var(--primary);
+    -moz-box-shadow: 0px 0px 0px 2px var(--primary);
+    box-shadow: 0px 0px 0px 2px var(--primary);
+}
+
+.profile-box, .text-molt {
+    font-size: 13px;
+}
+.profile-box-banner {
+    /* Constant aspect ratio hack */
+    height: 0px;
+    padding-top: 33.333%;
+    overflow: hidden;
+    position: relative;
+}
+.profile-box-banner img {
+    position: absolute;
+    top: 0;
+}
+.profile-box-bio {
+    position: relative;
+}
+.profile-box-avatar {
+    position: absolute;
+    margin-top: -18%;
+    z-index: 1;
+}
+.profile-box-avatar img {
+    -webkit-box-shadow: 0px 0px 0px 5px var(--dark);
+    -moz-box-shadow: 0px 0px 0px 5px var(--dark);
+    box-shadow: 0px 0px 0px 5px var(--dark);
+}
+.profile-box-display-name {
+    font-size: 16px;
+    font-weight: 800;
+}
+.profile-box-description {
+    /* margin-top: -0.5em; */
+    overflow: hidden;
+}
+[contentEditable]:focus, [contentEditable]:hover {
+    border: 1px solid var(--primary-faded-less);
+    outline: none;
+}
+.profile-box-category.active {
+    transition-duration: 200ms;
+    border-bottom: 2px solid var(--primary);
+}
+.profile-box-category:hover {
+    background-color: var(--primary-faded);
+    cursor: pointer;
+}
+.profile-box-follow-row {
+    min-height: 38px;;
+}
+
+.modal.fade {
+    background: #cfe6ff21;
+}
+.modal-dialog {
+    max-width: 600px;
+}
+.modal-content {
+	border-radius: 15px;
+}
+.modal .close {
+    margin: -1rem auto -1rem -1rem;
+    opacity: 1;
+}
+.modal .close span{
+    text-shadow: none;
+}
+.modal textarea {
+    background: none;
+    color: inherit;
+    border: none;
+    resize: none;;
+}
+
+.verified {
+    fill: var(--light);
+    vertical-align: text-top;
+}
+
+.edit-icon {
+    fill: var(--light);
+    vertical-align: text-top;
+}
+
+.mention, .crabtag {
+    color: var(--primary);
+}
+
+.cool-input input {
+    background: var(--dark-less-more) !important;
+    border: none;
+    border-bottom: 2px solid var(--light);
+    color: var(--light) !important;
+}
+.cool-input input:hover {
+    background: var(--dark-less) !important;
+}
+.cool-input input:focus {
+    background: var(--dark-less) !important;
+    border-bottom: 2px solid var(--secondary);
+}
+.cool-input:focus-within .input-group-prepend .input-group-text {
+    background-color: var(--secondary) !important;
+    color: var(--light);
+}
+
+.active-remolt {
+    fill: var(--remolt);
+    color: var(--remolt);
+}
+
+.mini-follow button {
+    position: absolute;
+    right: 0;
+    margin-right: 2em;
+}
+
+.mini-follow button, .mini-btn {
+    font-size: 13px;
+    line-height: 1;
+}
+
+.heading-back-arrow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.banner-edit-button, .avatar-edit-button {
+    position: absolute;
+    border-radius: 100%;
+    opacity: 0;
+    transition-duration: 100ms;
+}
+.banner-edit-button {
+    border-radius: 0;
+    z-index: 1;
+}
+.banner-edit-button:hover, .avatar-edit-button:hover {
+    opacity: 1;
+    background-color: #0000005e;
+}
+.banner-edit-button svg, .avatar-edit-button svg {
+    /* Center in div */
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+}
+
+.mini-bio {
+    position: relative;
+}
+
+.youtube-embed {
+    /* Constant aspect ratio hack */
+    height: 0px;
+    padding-top: 56%;
+    overflow: hidden;
+    position: relative;
+}
+.youtube-embed iframe {
+    position: absolute;
+    top: 0;
+}
+
+.file-input {
+    max-width: 100%;
+}
+
+.image-modal-body {
+    width: 100%;
+    height: 100%;
+    max-width: 80%;
+    max-height: 80%;
+}
+.image-modal-body img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.large-molt-text {
+    font-size: 20px;
+    line-height: 1.3125;
+    font-weight: 400;
+}
+.large-molt-media-container {
+    max-height: none;
+}
+
+.compose-button-row {
+    max-height: 38px;
+}
+
+.custom-file {
+    width: 0.5em;
+}
+.custom-file-input {
+    width: 0;
+}
+.custom-file-label {
+    background: none;
+    border: none;
+    left: auto;
+    fill: var(--primary);
+}
+.custom-file-label:hover {
+    fill: var(--primary-dark);
+    cursor: pointer;
+}
+.custom-file-label::after {
+    content: none !important;
+    display: none;
+}
+
+body, .master-container {
+    overflow: hidden;
+}

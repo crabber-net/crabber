@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block title %} {{this_user.display_name}} (@{{this_user.username}}) {% endblock %}
+{% block heading %} {{this_user.display_name}} {% endblock %}
+
+{% block body %}
+
+{% if error %}
+    <div class="alert alert-danger p-1" role="alert">{{error}}</div>
+{% endif %}
+
+<!-- Profile bio box -->
+<div class="profile-box border-bottom border-dark">
+    <div class="profile-box-banner" {{expand_img() if current_page != "own-profile" else ""}}>
+        {% if current_page == "own-profile" %}
+            <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
+                <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
+            </div>
+        {% endif %}
+        <img class="w-100" src="{{url_for('static', filename=this_user.banner)}}" alt="Profile banner" >
+    </div>
+    <div class="profile-box-bio px-2 pt-2">
+        <div class="profile-box-avatar d-block w-25" {{expand_img() if current_page != "own-profile" else ""}}>
+            {% if current_page == "own-profile" %}
+            <div class="avatar-edit-button clickable w-100 h-100" data-toggle="modal" data-target="#avatar_modal">
+                <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
+            </div>
+            {% endif %}
+            <img class="w-100 rounded-circle" src="{{url_for('static', filename=this_user.avatar)}}" alt="{{this_user.display_name}}'s avatar'">
+        </div>
+        <div class="profile-box-follow-row d-flex flex-row justify-content-end">
+            <!-- Display correct follow button if page is not current user -->
+            {% if this_user != current_user %}
+                <form method="POST">
+                    <input type="hidden" name="target_user" value="{{this_user.id}}">
+                    {% if not current_user in this_user.followers %}
+                        <button name="user_action" value="follow" type="submit" class="btn btn-primary rounded-pill"><strong>Follow</strong></button>
+                    {% else %}
+                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill"><strong>Unfollow</strong></button>
+                    {% endif %}
+                </form>
+            {% else %}
+            <form method="POST" onsubmit="saveBio();">
+                <!-- Fixed values -->
+                <input type="hidden" name="user_action" value="update_bio">
+                <input type="hidden" name="user_id" value="{{this_user.id}}">
+                <!-- Dynamic values -->
+                <input type="hidden" name="display_name" value="">
+                <input type="hidden" name="description" value="">
+                <button type="submit" id="save-button" class="btn btn-primary rounded-pill d-none"><strong>Save changes</strong></button>
+            </form>
+            {% endif %}
+        </div>
+        <div class="profile-box-names mt-2">
+            <strong class="profile-box-display-name" 
+                {% if current_page == "own-profile" %}
+                    onkeypress="return (this.innerText.length <= 32)" contentEditable
+                {% endif %}>
+                {{this_user.display_name}}</strong>
+            {% if this_user.verified %}
+            <a title="Verified user"><span class="verified" data-width="18" data-height="18" data-jam="shield-check-f"></span></a>
+            {% endif %}
+            {% if current_page == "own-profile" %}
+            <span class="edit-icon ml-1" data-width="16" data-height="18" data-jam="pencil-f"></span>
+            {% endif %}
+            <p class="text-muted mb-1">@{{this_user.username}}</p>
+        </div>
+        <div class="profile-box-description w-100"
+            {% if current_page == "own-profile" %}
+                onkeypress="return (this.innerText.length <= 140)" contentEditable
+            {% endif %}>
+            {{this_user.bio}}
+        </div>
+        <div class="profile-box-join-date text-muted mt-1">
+            <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="birthday-cake"></span>
+            Joined {{this_user.register_time.strftime('%B %Y')}}
+        </div>
+        <div class="profile-box-following mt-1">
+            <a class="text-inherit" href="/user/{{this_user.username}}/following">
+            <div class="d-inline mr-2"><strong>{{this_user.following|length}}</strong> 
+                <span class="text-muted">Following</span></div></a>
+            <a class="text-inherit" href="/user/{{this_user.username}}/followers">
+            <div class="d-inline mr-2"><strong>{{this_user.followers|length}}</strong>
+                <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
+        </div>
+        <div class="row mx-0">
+            <div id="molts-btn" class="profile-box-category mt-2 text-primary col active" onclick="switchTo('molts');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
+            </div>
+            <div id="likes-btn" class="profile-box-category mt-2 text-primary col" onclick="switchTo('likes');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Likes</strong></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All molts live here! -->
+<div id="molts">
+    {% for molt in molts %}
+        {% include "molt.html" %}
+    {% else %}
+        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user does not have any molts 🤔</div>
+    {% endfor %}
+</div>
+
+<!-- All likes live here! -->
+<div id="likes" class="d-none">
+    {% for molt in this_user.true_likes %}
+        {% include "molt.html" %}
+    {% else %}
+        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not liked any molts... 💔</div>
+    {% endfor %}
+</div>
+
+<!-- Avatar change popup -->
+<div class="modal fade" id="avatar_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Upload new avatar</strong>
+            </div>
+            <div class="modal-body">
+                <!-- Avatar upload form -->
+                <form method="POST" enctype="multipart/form-data" class="d-flex flex-row justify-content-between">
+                    <input type="hidden" name="user_action" value="change_avatar">
+                    <div class="d-inline-block">
+                        <input name="file" class="text-muted file-input" type="file" required>
+                    </div>
+                    <div class="d-inline-block">
+                        <button type="submit" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner change popup -->
+<div class="modal fade" id="banner_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Upload new banner</strong>
+            </div>
+            <div class="modal-body">
+                <!-- Banner upload form -->
+                <form method="POST" enctype="multipart/form-data" class="d-flex flex-row justify-content-between">
+                    <input type="hidden" name="user_action" value="change_banner">
+                    <div class="d-inline-block">
+                        <input name="file" class="text-muted file-input" type="file" required>
+                    </div>
+                    <div class="d-inline-block">
+                        <button type="submit"
+                            class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Molt/Like tab controller
+    function switchTo(tab) {
+        if (tab == "molts") {
+            // Switch active button
+            $("#molts-btn").addClass("active");
+            $("#likes-btn").removeClass("active");
+            // Switch tab
+            $("#molts").removeClass("d-none");
+            $("#likes").addClass("d-none");
+        }
+        else if (tab == "likes") {
+            // Switch active button
+            $("#likes-btn").addClass("active");
+            $("#molts-btn").removeClass("active");
+            // Switch tab
+            $("#likes").removeClass("d-none");
+            $("#molts").addClass("d-none");
+        }
+    }
+
+    // Display save button when a change is made
+    $("[contentEditable]").one("input", function() {
+        $("#save-button").removeClass("d-none");
+    })
+
+    function saveBio() {
+        let displayName = $('.profile-box-display-name')[0].innerText.trim();
+        let description = $('.profile-box-description')[0].innerText.trim();
+
+        // Verify lengths
+        if (displayName.length < 1) {
+            alert("Display name cannot be empty.")
+            $('.profile-box-display-name')[0].innerText = "change me";
+            return false;
+        }
+        if (description.length < 1) {
+            alert("User description cannot be empty.")
+            $('.profile-box-description')[0].innerText = "change me";
+            return false;
+        }
+
+        // Commit values to hidden inputs
+        $('[name="display_name"]').val(displayName)
+        $('[name="description"]').val(description)
+
+        // Submit form
+        return true;
+    }
+</script>
+
+{% endblock %}
