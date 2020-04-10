@@ -58,6 +58,21 @@
     padding: 0;
 }
 /*///////////////////////////////////////////////////*/
+/* ASPECT RATIO HELPERS /////////////////////////////*/
+.force-square {
+    /* Constant aspect ratio hack */
+    height: 0px;
+    padding-top: 25%;
+    position: relative;
+}
+.force-square img, .force-square div {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+/*///////////////////////////////////////////////////*/
+
 
 .zindex-front {
     position: relative;

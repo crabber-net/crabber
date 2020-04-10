@@ -5,7 +5,6 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import uuid
-from werkzeug.utils import secure_filename
 
 # Regex stuff
 mention_pattern = re.compile(r'(?<!\\)@([\w]{1,32})(?!\w)')

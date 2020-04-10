@@ -140,7 +140,7 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" alt="Your profile picture">
+                        <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" height="28" alt="Your profile picture">
                         <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
                     </button>
                 </form>

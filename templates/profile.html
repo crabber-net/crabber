@@ -19,9 +19,9 @@
         <img class="w-100" src="{{url_for('static', filename=this_user.banner)}}" alt="Profile banner" >
     </div>
     <div class="profile-box-bio px-2 pt-2">
-        <div class="profile-box-avatar d-block w-25" {{expand_img() if current_page != "own-profile" else ""}}>
+        <div class="profile-box-avatar d-block w-25 force-square" {{expand_img() if current_page != "own-profile" else ""}}>
             {% if current_page == "own-profile" %}
-            <div class="avatar-edit-button clickable w-100 h-100" data-toggle="modal" data-target="#avatar_modal">
+            <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
                 <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
             </div>
             {% endif %}
