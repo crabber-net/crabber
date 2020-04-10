@@ -1,4 +1,7 @@
 <div class="notif mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container">
+    <div class="notif-age">
+        <span class="mini-molt-timestamp absolute-right mr-3"><a href="javascript:void(0)" title="{{notif.pretty_date}}">{{notif.pretty_age}}</a></span>
+    </div>
     <div class="notif-indent ml-5">
         <div class="notif-icon-row">
             {% if notif.type == "other" %}

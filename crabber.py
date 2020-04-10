@@ -210,19 +210,7 @@ class Molt(db.Model):
 
     @property
     def pretty_age(self):
-        now = datetime.datetime.utcnow()
-        delta = now - self.timestamp
-
-        if delta.seconds < 60:
-            return f"{round(delta.seconds)}s"
-        elif delta.seconds / 60 < 60:
-            return f"{round(delta.seconds / 60)}m"
-        elif delta.seconds / 60 / 60 < 24:
-            return f"{round(delta.seconds / 60 / 60)}h"
-        elif self.timestamp.year == now.year:
-            return self.timestamp.strftime("%b %e")
-        else:
-            return self.timestamp.strftime("%b %e, %Y")
+        return get_pretty_age(self.timestamp)
 
     def remolt(self, crab, comment="", **kwargs):
         new_remolt = crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
@@ -322,12 +310,36 @@ class Notification(db.Model):
     content = db.Column(db.String(140), nullable=True)
     link = db.Column(db.String(140), nullable=True)
 
+    @property
+    def pretty_date(self):
+        return self.timestamp.strftime("%I:%M %p · %b %e, %Y")
+
+    @property
+    def pretty_age(self):
+        return get_pretty_age(self.timestamp)
+
     def mark_read(self, is_read=True):
         self.read = is_read
         db.session.commit()
 
 
 # HELPER FUNCS #########################################################################################################
+
+def get_pretty_age(ts):
+    now = datetime.datetime.utcnow()
+    delta = now - ts
+
+    if delta.seconds < 60:
+        return f"{round(delta.seconds)}s"
+    elif delta.seconds / 60 < 60:
+        return f"{round(delta.seconds / 60)}m"
+    elif delta.seconds / 60 / 60 < 24:
+        return f"{round(delta.seconds / 60 / 60)}h"
+    elif ts.year == now.year:
+        return ts.strftime("%b %e")
+    else:
+        return ts.strftime("%b %e, %Y")
+
 
 def get_current_user():
     return Crab.query.filter_by(id=session.get("current_user")).first()
