@@ -7,6 +7,8 @@ import re
 import uuid
 from werkzeug.exceptions import RequestEntityTooLarge
 
+MOLT_CHAR_LIMIT = 240
+
 # Regex stuff
 mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
 tag_pattern = re.compile(r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
@@ -92,7 +94,7 @@ class Crab(db.Model):
         return sha256_crypt.verify(password, self.password)
 
     def molt(self, content, **kwargs):
-        new_molt = Molt(author=self, content=content[:140], **kwargs)
+        new_molt = Molt(author=self, content=content[:MOLT_CHAR_LIMIT], **kwargs)
         db.session.add(new_molt)
         for user in new_molt.mentions:
             user.notify(sender=self, type="mention", molt=new_molt)
@@ -140,7 +142,7 @@ class Molt(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                           nullable=False)
     author = db.relationship('Crab', back_populates='molts')
-    content = db.Column(db.String(140), nullable=False)
+    content = db.Column(db.String(1000), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False,
                           default=datetime.datetime.utcnow)
     deleted = db.Column(db.Boolean, nullable=False,
@@ -691,6 +693,12 @@ def crabtags(crabtag):
                                molts=molts, current_user=get_current_user(), crabtag=crabtag)
     else:
         return redirect("/login")
+
+
+# GLOBAL FLASK VARIABLES GO HERE
+@app.context_processor
+def inject_global_vars():
+    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT)
 
 
 @app.errorhandler(404)

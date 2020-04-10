@@ -8,7 +8,7 @@
     <div class="mini-molt-text-box w-100 h-100 px-2">
         <form method="POST" enctype="multipart/form-data">
             <div class="mini-compose-textarea">
-                <textarea name="molt_content" maxlength="140" rows="3" class="my-2 w-100"
+                <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
                     placeholder="How are you feeling?" onfocus="$(this).parents('.mini-compose-box').addClass('focused')" required></textarea>
             </div>
             <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
@@ -24,7 +24,7 @@
                     </div>
                 </div>
 
-                <span class="mini-character-counter text-muted my-auto mr-3 d-none">140</span>
+                <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
                 <input type="hidden" name="user_action" value="submit_molt">
                 <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
             </div>
