@@ -8,3 +8,4 @@ static/img/user_uploads/*
 models.py
 pretty_date.py
 reg.py
+putty_commands.txt
