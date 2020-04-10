@@ -15,6 +15,8 @@ username_pattern = re.compile(r'^\w+$')
 # User uploads config
 UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+with open("recommended_users.cfg", "r") as f:
+    RECOMMENDED_USERS = [username.strip() for username in f.read().strip().splitlines()]
 
 # App config
 app = Flask(__name__, template_folder="./templates")
@@ -529,7 +531,7 @@ def logout():
 
 @app.route("/signupsuccess")
 def signupsuccess():
-    recommended_users = Crab.query.filter(Crab.username.in_(("jake",))).all()
+    recommended_users = Crab.query.filter(Crab.username.in_(RECOMMENDED_USERS)).all()
     return render_template("signup_success.html", current_user=get_current_user(),
                            recommended_users=recommended_users)
 
