@@ -8,8 +8,8 @@ import uuid
 from werkzeug.exceptions import RequestEntityTooLarge
 
 # Regex stuff
-mention_pattern = re.compile(r'(?<!\\)@([\w]{1,32})(?!\w)')
-tag_pattern = re.compile(r'(?<!\\)%([\w]{1,16})(?!\w)')
+mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
+tag_pattern = re.compile(r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
 username_pattern = re.compile(r'^\w+$')
 
 # User uploads config
