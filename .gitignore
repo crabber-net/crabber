@@ -4,7 +4,7 @@ __pycache__
 .vscode
 CRABBER_DATABASE.db
 static/img/user_uploads/*
-"Browse database.lnk"
+*.lnk
 models.py
 pretty_date.py
 reg.py
