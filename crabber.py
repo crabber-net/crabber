@@ -15,7 +15,10 @@ username_pattern = re.compile(r'^\w+$')
 # User uploads config
 UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-with open("recommended_users.cfg", "r") as f:
+
+# Recommended users config
+location = "" if os.name == "nt" else "/var/www/crabber/crabber/"
+with open(location + "recommended_users.cfg", "r") as f:
     RECOMMENDED_USERS = [username.strip() for username in f.read().strip().splitlines()]
 
 # App config
