@@ -190,7 +190,10 @@ class Molt(db.Model):
 
     @property
     def mentions(self):
-        return Crab.query.filter(Crab.username.in_(self.raw_mentions.splitlines())).all()
+        if self.raw_mentions:
+            return Crab.query.filter(Crab.username.in_(self.raw_mentions.splitlines())).all()
+        else:
+            return list()
 
     @property
     def pretty_date(self):
