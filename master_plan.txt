@@ -51,4 +51,4 @@ Emoji policy: pro
 
 ------ TODO: ------
   * Make dates and ages display local time somehow
-  * Replying to a molt should bring you to that page
+  * User popovers
