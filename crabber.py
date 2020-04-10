@@ -275,7 +275,7 @@ class Like(db.Model):
 # HELPER FUNCS #########################################################################################################
 
 def get_current_user():
-    return Crab.query.filter_by(id=session["current_user"]).first()
+    return Crab.query.filter_by(id=session.get("current_user")).first()
 
 
 def validate_username(username):
@@ -384,7 +384,7 @@ def common_molt_actions():
     elif action == "delete_molt" and molt_id is not None:
         target_molt = Molt.query.filter_by(id=molt_id).first()
 
-        if target_molt.author.id == session["current_user"]:
+        if target_molt.author.id == get_current_user().id:
             target_molt.delete()
 
     elif action == "update_bio":
