@@ -13,7 +13,7 @@ tag_pattern = re.compile(r'(?<!\\)%([\w]{1,16})(?!\w)')
 username_pattern = re.compile(r'^\w+$')
 
 # User uploads config
-UPLOAD_FOLDER = './static/img/user_uploads'
+UPLOAD_FOLDER = ''
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # App config
