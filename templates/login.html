@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block title %} Log in {% endblock %}
-{% block heading %} Log in {% endblock %}
+{% block heading %}
+<!-- Logo -->
+<img class="logo"
+    src="{{ url_for('static', filename='img/crabber_logo.svg') }}" alt="Crabber Logo" width="43" height="43">
+{% endblock %}
 
 {% block body %}
     {% if login_failed %}
