@@ -13,7 +13,7 @@ tag_pattern = re.compile(r'(?<!\\)%([\w]{1,16})(?!\w)')
 username_pattern = re.compile(r'^\w+$')
 
 # User uploads config
-UPLOAD_FOLDER = 'static/img/user_uploads'
+UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # App config
