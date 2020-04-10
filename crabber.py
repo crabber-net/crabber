@@ -335,6 +335,7 @@ def common_molt_actions():
             img_attachment = None
             # Handle uploaded images
             print(request.files)
+            print(request.form)
             if request.files.get("molt-media"):
                 print("found image")
                 img = request.files['molt-media']
