@@ -74,6 +74,14 @@
 /*///////////////////////////////////////////////////*/
 
 
+.profile-banner {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background-size: cover;
+}
+
 .zindex-front {
     position: relative;
     z-index: 10;
