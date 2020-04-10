@@ -235,37 +235,38 @@
                                 <form method="POST" enctype="multipart/form-data">
                                     <div class="mini-compose-reply-textarea">
                                         <textarea name="molt_content" maxlength="140" rows="3" class="my-2 w-100"
-                                            placeholder="Remember to be kind"></textarea required>
-                                                </div>
-                                                <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
-                                                    
-                                                    <!-- Image picker -->
-                                                    <div class="file-input input-group mb-3">
-                                                        <div class="custom-file">
-                                                            <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
-                                                                aria-describedby="inputGroupFileAddon01">
-                                                            <label class="custom-file-label" for="inputGroupFile02">
-                                                                <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-
-                                                    <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
-                                                    <input type="hidden" name="user_action" value="submit_reply_molt">
-                                                    <input type="hidden" id="reply-molt-id" name="molt_id" value="">
-                                                    {% if current_page in ("home", "own-profile", "molt-page") %}
-                                                        <!-- Reload in place -->
-                                                        <button type="submit" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
-                                                    {% else %}
-                                                        <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
-                                                    {% endif %}
-                                                </div>
-                                            </form>
-                                        </div>
+                                            placeholder="Remember to be kind">
+                                        </textarea required>
                                     </div>
-                                </div>
+                                    <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
+                                        
+                                        <!-- Image picker -->
+                                        <div class="file-input input-group mb-3">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
+                                                    aria-describedby="inputGroupFileAddon01">
+                                                <label class="custom-file-label" for="inputGroupFile02">
+                                                    <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                                        <input type="hidden" name="user_action" value="submit_reply_molt">
+                                        <input type="hidden" id="reply-molt-id" name="molt_id" value="">
+                                        {% if current_page in ("home", "own-profile", "molt-page") %}
+                                            <!-- Reload in place -->
+                                            <button type="submit" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
+                                        {% else %}
+                                            <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
+                                        {% endif %}
+                                    </div>
+                                </form>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
             {% endif %}
 
             <!-- Image expand modal -->
