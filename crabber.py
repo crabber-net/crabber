@@ -5,6 +5,7 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import uuid
+from werkzeug.exceptions import RequestEntityTooLarge
 
 # Regex stuff
 mention_pattern = re.compile(r'(?<!\\)@([\w]{1,32})(?!\w)')
@@ -22,6 +23,7 @@ app.secret_key = 'crabs are better than birds because they can cut their wings r
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024
 
 # DATABASE #############################################################################################################
 
@@ -297,6 +299,7 @@ def common_molt_actions():
     if action == "change_avatar":
         if 'file' in request.files:
             img = request.files['file']
+            print(img.content_length)
             if img.filename == '':
                 return redirect(request.path + "?error=No image was selected")
             elif img and allowed_file(img.filename):
@@ -541,7 +544,8 @@ def user(username):
         error = request.args.get("error")
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user is not None:
-            molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(Molt.timestamp.desc())
+            molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
+                Molt.timestamp.desc())
             return render_template('profile.html',
                                    current_page=("own-profile" if this_user == get_current_user() else ""),
                                    molts=molts, current_user=get_current_user(), this_user=this_user, error=error)
@@ -562,7 +566,8 @@ def user_following(username, tab):
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user:
             followx = this_user.following if tab == "ing" else this_user.followers
-            return render_template('followx.html', current_page=("own-profile" if this_user == get_current_user() else ""),
+            return render_template('followx.html',
+                                   current_page=("own-profile" if this_user == get_current_user() else ""),
                                    followx=followx,
                                    current_user=get_current_user(), this_user=this_user, tab="follow" + tab)
         else:
@@ -610,6 +615,11 @@ def crabtags(crabtag):
 @app.errorhandler(404)
 def error_404(_error_msg):
     return render_template("404.html", current_page="404", current_user=get_current_user())
+
+
+@app.errorhandler(413)
+def file_to_big(e):
+    return redirect(request.path + "?error=Image must be smaller than 3 megabytes")
 
 
 if __name__ == '__main__':
