@@ -23,7 +23,7 @@ app.secret_key = 'crabs are better than birds because they can cut their wings r
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 
 # DATABASE #############################################################################################################
 
@@ -619,7 +619,7 @@ def error_404(_error_msg):
 
 @app.errorhandler(413)
 def file_to_big(e):
-    return redirect(request.path + "?error=Image must be smaller than 3 megabytes")
+    return redirect(request.path + "?error=Image must be smaller than 5 megabytes")
 
 
 if __name__ == '__main__':
