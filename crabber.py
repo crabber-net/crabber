@@ -633,5 +633,11 @@ def file_to_big(e):
     return redirect(request.path + "?error=Image must be smaller than 5 megabytes")
 
 
+@app.before_request
+def make_session_permanent():
+    # Persist session after browser is closed
+    session.permanent = True
+
+
 if __name__ == '__main__':
     app.run("0.0.0.0", 80, debug=True)
