@@ -15,4 +15,5 @@ crabber = Crab.create_new(username="crabber",
                           email="jaik.exe@gmail.com",
                           password="***REMOVED***",
                           display_name="Crabber",
+                          verified=True,
                           bio="Official account for website news and updates.")
