@@ -1,3 +1,6 @@
 __pycache__
 .history
 .idea
+.vscode
+CRABBER_DATABASE.db
+static/img/user_uploads/*
