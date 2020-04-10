@@ -333,9 +333,6 @@ div.mini-molt:hover {
 .mention, .crabtag {
     color: var(--primary);
 }
-.text-muted .mention, .crabtag {
-    color: var(--primary-faded-less);
-}
 
 .cool-input input {
     background: var(--dark-less-more) !important;
