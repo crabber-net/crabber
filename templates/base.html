@@ -195,7 +195,7 @@
                                             </div>
                                         </div>
 
-                                        <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                                        <span class="mini-character-counter text-muted my-auto mr-3 d-none">140</span>
                                         <input type="hidden" name="user_action" value="submit_molt">
                                         {% if current_page in ("home", "own-profile", "molt-page") %}
                                             <!-- Reload in place -->
@@ -250,7 +250,7 @@
                                             </div>
                                         </div>
 
-                                        <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                                        <span class="mini-character-counter text-muted my-auto mr-3 d-none">140</span>
                                         <input type="hidden" name="user_action" value="submit_reply_molt">
                                         <input type="hidden" id="reply-molt-id" name="molt_id" value="">
                                         {% if current_page in ("home", "own-profile", "molt-page") %}
@@ -297,5 +297,27 @@
 
     <!-- Jam Icons (https://jam-icons.com). Thanks so much! -->
     <script src="https://unpkg.com/jam-icons/js/jam.min.js"></script>
+
+    <script>
+        // Character counter stuff ///////////////////////////////////////////////////////////
+        function updateCounter() {
+            let textarea = $(this);
+            let counter = textarea.parents("form").find(".mini-character-counter");
+            counter.text(140 - textarea.val().length);
+        }
+
+        // Counter is hidden by default so if Javascript breaks or is blocked the user doesn't see it in a broken state
+        $(".mini-character-counter").each(function(index, el) {
+            $(el).removeClass("d-none");
+        })
+
+             
+        $(".mini-compose-textarea textarea, .mini-compose-reply-textarea textarea").each(function(index, el) {
+            // Bind change event to function
+            $(el).on("input propertychange", updateCounter);
+            // Run on init (in case of text being previously filled)
+            updateCounter.call(el);
+        })
+    </script>
 </body>
 </html>

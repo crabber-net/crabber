@@ -24,29 +24,10 @@
                     </div>
                 </div>
 
-                <span id="mini-character-counter" class="text-muted my-auto mr-3 d-none">140</span>
+                <span class="mini-character-counter text-muted my-auto mr-3 d-none">140</span>
                 <input type="hidden" name="user_action" value="submit_molt">
                 <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
             </div>
         </form>
     </div>
-    <!-- Character limit counter script -->
-    <script>
-        var counter = $("#mini-character-counter");
-        var textarea = $(".mini-compose-textarea textarea");
-        function updateCounter() {
-            counter.text(140 - textarea.val().length);
-        }
-
-        // Counter is hidden by default so if Javascript breaks or is blocked the user doesn't see it in a broken state
-        counter.removeClass("d-none");
-
-        // Bind change event to function
-        textarea.bind("input propertychange", function () {
-            updateCounter();
-        });
-
-        // Run on init (in case of text being previously filled)
-        updateCounter();
-    </script>
 </div>
