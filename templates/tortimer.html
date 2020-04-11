@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}ADMIN PANEL{% endblock %}
+{% block heading %}
+    ADMIN PANEL
+{% endblock %}
+
+{% block body %}
+<!-- All molts live here! -->
+<div id="followers">
+    {% for crab in crabs %}
+        <div class="p-2 border-top border-bottom border-dark text-muted">Account status: <strong>{{"Deleted" if crab.deleted else "Active"}}</strong></div>
+        {% include "mini_bio.html" %}
+        <div class="border-bottom border-dark p-2">
+            <form method="POST" onsubmit="return confirm('Are you sure?')">
+                <input type="hidden" name="crab_id" value="{{crab.id}}">
+                <div class="d-flex flex-row justify-content-around">
+                    <button type="submit" name="user_action" value="Verify" class="btn btn-primary">Verify</button>
+                    {% set del_action = "restore" if crab.deleted else "delete" %}
+                    <button type="submit" name="user_action" value="{{del_action}}" class="btn btn-secondary">{{del_action|title}}</button>
+                </div>
+            </form>
+        </div>
+        <div class="py-4 border-dark"></div>
+    {% endfor %}
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+</div>
+{% endblock %}

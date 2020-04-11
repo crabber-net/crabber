@@ -1,5 +1,5 @@
 {% macro expand_img() %}
-    style="cursor: pointer;" data-toggle="modal" data-target="#image_modal" onclick="$('#image_modal img').attr('src', $(this).find('img').attr('src'))"
+    style="cursor: pointer;" data-toggle="modal" data-target="#image_modal" onclick="$('#image_modal img').attr('src', $(this).find('img, div').attr('src'))"
 {% endmacro %}
 
 <!DOCTYPE html>
@@ -80,7 +80,7 @@
                 $('#follow-btn strong').text('Unfollow');
             }
         }
-
+        TODO: Yeah
         function clearModal() {
             // Clear text
             $("#compose_modal textarea").val("")
@@ -318,7 +318,7 @@
             $(el).removeClass("d-none");
         })
 
-             
+        // Update character count
         $(".mini-compose-textarea textarea, .mini-compose-reply-textarea textarea").each(function(index, el) {
             // Bind change event to function
             $(el).on("input propertychange", updateCounter);

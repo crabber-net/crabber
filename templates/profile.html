@@ -16,7 +16,7 @@
                 <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
             </div>
         {% endif %}
-        <div class="profile-banner" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
+        <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
     </div>
     <div class="profile-box-bio px-2 pt-2">
         <div class="profile-box-avatar d-block w-25 force-square" {{expand_img() if current_page != "own-profile" else ""}}>

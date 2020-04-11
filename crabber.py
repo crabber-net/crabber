@@ -8,6 +8,7 @@ import uuid
 from werkzeug.exceptions import RequestEntityTooLarge
 
 MOLT_CHAR_LIMIT = 240
+ADMINS = ('jake', 'crabber')
 
 # Regex stuff
 mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
@@ -356,7 +357,7 @@ def get_pretty_age(ts):
 
 
 def get_current_user():
-    return Crab.query.filter_by(id=session.get("current_user")).first()
+    return Crab.query.filter_by(id=session.get("current_user"), deleted=False).first()
 
 
 def validate_username(username):
@@ -590,7 +591,7 @@ def signup():
                                             display_name=display_name)
 
                             # "Log in"
-                            session["current_user"] = Crab.query.filter_by(username=username).first().id
+                            session["current_user"] = Crab.query.filter_by(username=username, deleted=False).first().id
                             # Redirect to let the user know it succeeded
                             return redirect("/signupsuccess")
                         else:
@@ -706,6 +707,30 @@ def crabtags(crabtag):
         return redirect("/login")
 
 
+# This wise tortoise, the admin control panel
+@app.route("/tortimer", methods=("GET", "POST"))
+def tortimer():
+    if get_current_user().username in ADMINS:
+        if request.method == "POST":
+            action = request.form.get("user_action")
+            target_crab = Crab.query.filter_by(id=request.form.get("crab_id")).first()
+            if action == "verify":
+                target_crab.verified = True
+                db.session.commit()
+            elif action == "delete":
+                target_crab.delete()
+            elif action == "restore":
+                target_crab.restore()
+
+            # PRG pattern
+            return redirect(request.url)
+
+        else:
+            crabs = Crab.query.all()
+            return render_template('tortimer.html', crabs=crabs, current_user=get_current_user())
+    else:
+        return error_404(BaseException)
+
 # GLOBAL FLASK VARIABLES GO HERE
 @app.context_processor
 def inject_global_vars():
@@ -725,10 +750,11 @@ def file_to_big(_e):
 @app.before_request
 def before_request():
     # Make sure cookies are still valid
-    if not Crab.query.filter_by(id=session.get("current_user"), deleted=False).all():
-        # Force logout
-        session["current_user"] = None
-        return redirect("/login")
+    if session.get("current_user"):
+        if not Crab.query.filter_by(id=session.get("current_user"), deleted=False).all():
+            # Force logout
+            session["current_user"] = None
+            return redirect("/login")
     # Persist session after browser is closed
     session.permanent = True
 
