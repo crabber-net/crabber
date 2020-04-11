@@ -129,7 +129,7 @@
                         <input name="file" class="text-muted file-input" type="file" required>
                     </div>
                     <div class="d-inline-block">
-                        <button type="submit" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                        <button type="submit" onclick="$(this).children().text('Uploading...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
                     </div>
                 </form>
             </div>
@@ -155,8 +155,7 @@
                         <input name="file" class="text-muted file-input" type="file" required>
                     </div>
                     <div class="d-inline-block">
-                        <button type="submit"
-                            class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                        <button type="submit" onclick="$(this).children().text('Uploading...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
                     </div>
                 </form>
             </div>

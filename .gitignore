@@ -2,7 +2,8 @@ __pycache__
 .history
 .idea
 .vscode
-CRABBER_DATABASE.db
+*.bak
+*.db
 static/img/user_uploads/*
 *.lnk
 models.py
