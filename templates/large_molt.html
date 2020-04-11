@@ -42,7 +42,7 @@
 
             {% if molt.image %}
             <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
-                <img class="w-100" src="{{url_for('static', filename=molt.image)}}" alt="Attached image">
+                <img class="w-100 rounded-media" src="{{url_for('static', filename=molt.image)}}" alt="Attached image">
             </div>
             {% endif %}
         </div>
