@@ -1,5 +1,5 @@
 <div class="mini-molt mini-bio border-bottom border-dark p-2 d-flex flex-row">
-    <div class="mini-molt-profile-box {{"mt-4" if is_remolt else ""}}">
+    <div class="mini-molt-profile-box zindex-front">
         <a href="/user/{{crab.username}}">
             <img class="rounded-circle" src="{{url_for('static', filename=crab.avatar)}}" alt="Profile picture" width="43" height="43">
         </a>
@@ -7,7 +7,7 @@
     <div class="mini-molt-text-box w-100 h-100 px-2">
         <!-- Display correct follow button if page is not current user -->
         {% if crab != current_user %}
-        <form method="POST" class="mini-follow">
+        <form method="POST" class="mini-follow zindex-front">
             <input type="hidden" name="target_user" value="{{crab.id}}">
             <!-- TODO: When an unfollow button is first display (hard refresh) clicking it the first time doesn't update screen. all further clicks do. -->
             {% if not current_user in crab.followers %}
@@ -22,14 +22,16 @@
         </form>
         {% endif %}
         <div class="mini-molt-credentials {{"mt-1" if is_remolt else ""}}"><a href="/user/{{crab.username}}"
-                class="mini-molt-display-name">{{crab.display_name}}</a>
+                class="mini-molt-display-name zindex-front">{{crab.display_name}}</a>
             {% if crab.verified %}
             <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
             {% endif %}
-            <br><span class="mini-molt-username" style="position: relative;top: -.1em;">@{{crab.username}}</span>
+            <br><span class="mini-molt-username zindex-front" style="position: relative;top: -.1em;">@{{crab.username}}</span>
         </div>
         <div class="mini-molt-content">
             <p class="mb-2">{{crab.bio}}</p>
         </div>
     </div>
+    <!-- User page link -->
+    <a href="/user/{{crab.username}}" class="absolute-fill"></a>
 </div>

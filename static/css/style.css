@@ -360,7 +360,7 @@ div.mini-molt:hover {
 .mini-follow button {
     position: absolute;
     right: 0;
-    margin-right: 2em;
+    /* margin-right: 2em; */
 }
 
 .mini-follow button, .mini-btn {

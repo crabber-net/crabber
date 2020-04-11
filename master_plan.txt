@@ -52,5 +52,3 @@ Emoji policy: pro
 ------ TODO: ------
   * Make dates and ages display local time somehow
   * User popovers
-  * Click whitespace on mini-bio to go to profile
-  * Fix banners/media not expanding and potentially going over rounded corners
