@@ -713,21 +713,25 @@ def tortimer():
     if get_current_user().username in ADMINS:
         if request.method == "POST":
             action = request.form.get("user_action")
-            target_crab = Crab.query.filter_by(id=request.form.get("crab_id")).first()
+            if request.form.get("target") == "crab":
+                target = Crab.query.filter_by(id=request.form.get("crab_id")).first()
+            else:
+                target = Molt.query.filter_by(id=request.form.get("molt_id")).first()
             if action == "verify":
-                target_crab.verified = True
+                target.verified = True
                 db.session.commit()
             elif action == "delete":
-                target_crab.delete()
+                target.delete()
             elif action == "restore":
-                target_crab.restore()
+                target.restore()
 
             # PRG pattern
             return redirect(request.url)
 
         else:
-            crabs = Crab.query.all()
-            return render_template('tortimer.html', crabs=crabs, current_user=get_current_user())
+            crabs = Crab.query.order_by(Crab.username).all()
+            molts = Molt.query.order_by(Molt.timestamp.desc()).all()
+            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user())
     else:
         return error_404(BaseException)
 
