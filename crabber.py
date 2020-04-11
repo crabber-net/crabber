@@ -103,6 +103,11 @@ class Crab(db.Model):
 
     def delete(self):
         self.deleted = True
+        db.session.commit()
+
+    def restore(self):
+        self.deleted = False
+        db.session.commit()
 
     def is_following(self, crab):
         return db.session.query(following_table).filter((following_table.c.follower_id == self.id) &
@@ -243,6 +248,10 @@ class Molt(db.Model):
 
     def delete(self):
         self.deleted = True
+        db.session.commit()
+
+    def restore(self):
+        self.deleted = False
         db.session.commit()
 
     @staticmethod
@@ -488,7 +497,8 @@ def index():
     elif session.get('current_user') is not None:
         following_ids = [crab.id for crab in get_current_user().following] + [get_current_user().id]
         molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
-            .filter_by(deleted=False, is_reply=False).order_by(Molt.timestamp.desc())
+            .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False))\
+            .order_by(Molt.timestamp.desc())
         return render_template('timeline.html', current_page="home",
                                molts=molts, current_user=get_current_user())
     else:
@@ -503,7 +513,8 @@ def wild_west():
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = Molt.query.filter_by(deleted=False, is_reply=False).order_by(Molt.timestamp.desc())
+        molts = Molt.query.filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False))\
+            .order_by(Molt.timestamp.desc())
         return render_template('wild-west.html', current_page="wild-west",
                                molts=molts, current_user=get_current_user())
     else:
@@ -688,7 +699,7 @@ def crabtags(crabtag):
     # Display page
     elif session.get('current_user') is not None:
         molts = Molt.query.filter(Molt.raw_tags.contains((crabtag + "\n"))).filter_by(deleted=False, is_reply=False) \
-            .order_by(Molt.timestamp.desc())
+            .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())
         return render_template('crabtag.html', current_page="crabtag",
                                molts=molts, current_user=get_current_user(), crabtag=crabtag)
     else:
@@ -712,7 +723,12 @@ def file_to_big(_e):
 
 
 @app.before_request
-def make_session_permanent():
+def before_request():
+    # Make sure cookies are still valid
+    if not Crab.query.filter_by(id=session.get("current_user"), deleted=False).all():
+        # Force logout
+        session["current_user"] = None
+        return redirect("/login")
     # Persist session after browser is closed
     session.permanent = True
 
