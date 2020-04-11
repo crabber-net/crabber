@@ -8,6 +8,10 @@
     {% block head %}
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
+
+    <!-- Mobile web app -->
+    <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <!-- Required meta tags -->
     <meta charset="utf-8">

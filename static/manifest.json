@@ -1,0 +1,13 @@
+{
+    "name": "Crabber",
+    "short_name": "Crabber",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/static/img/logo.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        }
+    ]
+}
