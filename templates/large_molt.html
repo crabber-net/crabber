@@ -50,7 +50,7 @@
             <!-- 11:30 AM · Apr 9, 2020 -->
             {{molt.timestamp.strftime("%I:%M %p · %b %e, %Y")}}
         </div>
-        <div class="mini-molt-actions d-flex flex-row border-dark justify-content-between w-100 py-2 px-4 mb-0">
+        <div class="mini-molt-actions d-flex flex-row border-dark justify-content-around w-100 py-2 px-4 mb-0">
             <input type="hidden" name="user_action" value="reply_molt">
             <input type="hidden" name="molt_id" value="{{molt.id}}">
             <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"

@@ -1,0 +1,18 @@
+<div class="mini-molt trophy mini-bio rounded-media m-2 absolute-container not-clickable"
+    data-toggle="tooltip" data-placement="bottom" title="{{trophy.description}}">
+    <div class="mini-molt-profile-box zindex-front d-flex justify-content-center">
+        <img src="{{url_for('static', filename=trophy.image)}}" alt="Trophy icon" width="95"
+            height="95">
+    </div>
+    <div class="mini-molt-text-box w-100 h-100 p-2">
+        <!-- Display correct follow button if page is not current user -->
+        <div class="mini-molt-credentials">
+            <div class="d-flex justify-content-center">
+                <strong>{{trophy.title}}</strong>
+            </div>
+            <div class="d-flex justify-content-center">
+                <small class="text-muted">awarded on {{trophy_case.timestamp.strftime("%m/%d/%Y")}}</small>
+            </div>
+        </div>
+    </div>
+</div>

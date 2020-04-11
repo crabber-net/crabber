@@ -1,7 +1,8 @@
 <div class="mini-molt mini-bio border-bottom border-dark p-2 d-flex flex-row">
     <div class="mini-molt-profile-box zindex-front">
         <a href="/user/{{crab.username}}">
-            <img class="rounded-circle" src="{{url_for('static', filename=crab.avatar)}}" alt="Profile picture" width="43" height="43">
+            <img class="rounded-circle" src="{{url_for('static', filename=crab.avatar)}}" alt="Profile picture"
+                width="43" height="43">
         </a>
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
@@ -24,9 +25,11 @@
         <div class="mini-molt-credentials {{"mt-1" if is_remolt else ""}}"><a href="/user/{{crab.username}}"
                 class="mini-molt-display-name zindex-front">{{crab.display_name}}</a>
             {% if crab.verified %}
-            <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
+            <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17"
+                    data-jam="shield-check-f"></span></a>
             {% endif %}
-            <br><span class="mini-molt-username zindex-front" style="position: relative;top: -.1em;">@{{crab.username}}</span>
+            <br><span class="mini-molt-username zindex-front"
+                style="position: relative;top: -.1em;">@{{crab.username}}</span>
         </div>
         <div class="mini-molt-content">
             <p class="mb-2">{{crab.bio}}</p>

@@ -376,7 +376,10 @@ div.mini-molt:hover {
 }
 
 .clickable {
-    cursor: pointer;
+    cursor: pointer !important;
+}
+.not-clickable {
+    cursor: default !important;
 }
 
 .banner-edit-button, .avatar-edit-button {
@@ -498,6 +501,9 @@ body, .master-container {
 .notif-unfollow {
     fill: var(--light-faded);
 }
+.notif-trophy {
+    fill: #7b600e;
+}
 
 .tiny-reply-context {
     opacity: 0.7;
@@ -513,4 +519,16 @@ body, .master-container {
 
 .profile-file-select {
     overflow: hidden;
+}
+
+.bs-tooltip-auto[x-placement^=bottom] .arrow::before,
+.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: var(--dark-less);
+}
+.tooltip-inner {
+    background-color: var(--dark-less);
+}
+
+.trophy {
+    width: 150px;
 }

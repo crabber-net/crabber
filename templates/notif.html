@@ -1,4 +1,9 @@
-<div class="notif mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container">
+<div class="notif mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container"
+    {% if notif.type == 'trophy' %}
+        onclick="location.href='/user/{{current_user.username}}?tab=trophies'"
+    {% elif notif.type == 'other' %}
+        onclick="location.href='{{notif.link}}'"
+    {% endif %}>
     <div class="notif-age">
         <span class="mini-molt-timestamp absolute-right mr-3"><a href="javascript:void(0)" title="{{notif.pretty_date}}">{{notif.pretty_age}}</a></span>
     </div>
@@ -6,6 +11,8 @@
         <div class="notif-icon-row">
             {% if notif.type == "other" %}
                 <span class="notif-icon notif-other" data-width="26" data-height="26" data-jam="bell-f"></span>
+            {% elif notif.type == "trophy" %}
+                <span class="notif-icon notif-trophy" data-width="26" data-height="26" data-jam="medal-f"></span>
             {% elif notif.type == "mention" %}
                 <span class="notif-icon notif-mention" data-width="26" data-height="26" data-jam="message-writing-f"></span>
             {% elif notif.type == "like" %}
@@ -19,13 +26,17 @@
             {% elif notif.type == "unfollow" %}
                 <span class="notif-icon notif-unfollow" data-width="26" data-height="26" data-jam="skull-f"></span>
             {% endif %}
-            <a href="/user/{{notif.sender.username}}" class="zindex-front">
-                <img class="rounded-circle notif-unfollow" src="{{url_for('static', filename=notif.sender.avatar)}}" alt="Profile picture" width="26" height="26">
-            </a>
+            {% if notif.type != "other" and notif.type != "trophy" %}
+                <a href="/user/{{notif.sender.username}}" class="zindex-front">
+                    <img class="rounded-circle notif-unfollow" src="{{url_for('static', filename=notif.sender.avatar)}}" alt="Profile picture" width="26" height="26">
+                </a>
+            {% endif %}
         </div>
-        <div class="notif-header-row mt-2">
+        <div class="notif-header-row {{'mt-2' if notif.type != 'other' and notif.type != 'trophy' else 'mt-1'}}">
             {% if notif.type == "other" %}
                 {{notif.content}}
+            {% elif notif.type == "trophy" %}
+                You earned the trophy: <strong>{{notif.content}}</strong>!
             {% elif notif.type == "mention" %}
                 <strong><a href="" class="text-light">{{notif.sender.display_name}}</a></strong>
                 mentioned you in a Molt

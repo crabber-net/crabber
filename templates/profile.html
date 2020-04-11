@@ -3,6 +3,12 @@
 {% block heading %} {{this_user.display_name}} {% endblock %}
 
 {% block body %}
+<script>
+    // Enable tooltips
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
 
 {% if error %}
     <div class="alert alert-danger p-1" role="alert">{{error}}</div>
@@ -83,18 +89,22 @@
                 <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
         </div>
         <div class="row mx-0">
-            <div id="molts-btn" class="profile-box-category mt-2 text-primary col active" onclick="switchTo('molts');">
+            <div id="molts-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'molts' else '' }}" onclick="switchTo('molts');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
             </div>
-            <div id="likes-btn" class="profile-box-category mt-2 text-primary col" onclick="switchTo('likes');">
+            <div id="likes-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'likes' else '' }}" onclick="switchTo('likes');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Likes</strong></div>
+            </div>
+            <div id="trophies-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'trophies' else '' }}" onclick="switchTo('trophies');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Trophies</strong></div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- All molts live here! -->
-<div id="molts">
+<!-- FIXME: I DELIBERATELY SET MOLTS TO HIDDEN, SWAP WITH TROPHIES BEFORE PUBLISH -->
+<div id="molts" class="{{ 'd-none' if current_tab != 'molts' else '' }}">
     {% for molt in molts %}
         {% include "molt.html" %}
     {% else %}
@@ -103,12 +113,27 @@
 </div>
 
 <!-- All likes live here! -->
-<div id="likes" class="d-none">
+<div id="likes" class="{{ 'd-none' if current_tab != 'likes' else ''}}">
     {% for molt in this_user.true_likes %}
         {% include "molt.html" %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not liked any molts... 💔</div>
     {% endfor %}
+</div>
+
+<!-- All trophies live here! -->
+<div id="trophies" class="{{ 'd-none' if current_tab != 'trophies' else ''}}">
+    <div class="d-flex mt-4 flex-wrap justify-content-center">
+        {% for trophy_case in this_user.trophies %}
+            {% with trophy = trophy_case.trophy %}
+                {% include "trophy.html" %}
+            {% endwith %}
+        {% else %}
+            <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user hasn't earned any trophies</div>
+        {% endfor %}
+        <div class="trophy-space-filler m-2" style="height: 0; width: 150px;"></div>
+        <div class="trophy-space-filler m-2" style="height: 0; width: 150px;"></div>
+    </div>
 </div>
 
 <!-- Avatar change popup -->
@@ -170,17 +195,31 @@
             // Switch active button
             $("#molts-btn").addClass("active");
             $("#likes-btn").removeClass("active");
+            $("#trophies-btn").removeClass("active");
             // Switch tab
             $("#molts").removeClass("d-none");
+            $("#trophies").addClass("d-none");
             $("#likes").addClass("d-none");
         }
         else if (tab == "likes") {
             // Switch active button
             $("#likes-btn").addClass("active");
             $("#molts-btn").removeClass("active");
+            $("#trophies-btn").removeClass("active");
             // Switch tab
             $("#likes").removeClass("d-none");
+            $("#trophies").addClass("d-none");
             $("#molts").addClass("d-none");
+        }
+        else if (tab == "trophies") {
+            // Switch active button
+            $("#trophies-btn").addClass("active");
+            $("#likes-btn").removeClass("active");
+            $("#molts-btn").removeClass("active");
+            // Switch tab
+            $("#likes").addClass("d-none");
+            $("#molts").addClass("d-none");
+            $("#trophies").removeClass("d-none");
         }
     }
 

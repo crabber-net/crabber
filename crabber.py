@@ -79,10 +79,46 @@ class Crab(db.Model):
     def true_likes(self):
         return [like.molt for like in self.likes if like.molt.deleted is False]
 
+    def award(self, title=None, trophy=None):
+        """
+        Award user trophy. Pass either a trophy object to `trophy`, or the title to `title`. Not both. Not neither.
+        :param trophy: Trophy object to award
+        :param title: Title of trophy to award
+        :return: Trophy case
+        """
+
+        if trophy is None and title is None:
+            raise TypeError("You must specify one of either trophy object or trophy title.")
+
+        # Use title instead of object
+        if trophy is None:
+            trophy = Trophy.query.filter_by(title=title).first()
+
+        # Check trophy hasn't already been awarded to user
+        if not TrophyCase.query.filter_by(owner=self, trophy=trophy).count():
+            new_trophy = TrophyCase(owner=self, trophy=trophy)
+            db.session.add(new_trophy)
+
+            # Notify of new award
+            self.notify(type="trophy", content=trophy.title)
+            db.session.commit()
+            return new_trophy
+
     def follow(self, crab):
         if crab not in self.following:
             self.following.append(crab)
+
+            # Create follow notification
             crab.notify(sender=self, type="follow")
+            # Check if awards are applicable:
+            follower_count = len(crab.followers)
+            if follower_count == 10:
+                crab.award(title="Social Newbie")
+            elif follower_count == 100:
+                crab.award(title="Life of the Party")
+            elif follower_count == 1000:
+                crab.award(title="Celebrity")
+
             db.session.commit()
 
     def unfollow(self, crab):
@@ -99,6 +135,10 @@ class Crab(db.Model):
         db.session.add(new_molt)
         for user in new_molt.mentions:
             user.notify(sender=self, type="mention", molt=new_molt)
+
+        # Check if awards are applicable:
+        if len(self.molts) == 1:
+            self.award(title="Baby Crab")
         db.session.commit()
         return new_molt
 
@@ -338,6 +378,34 @@ class Notification(db.Model):
         db.session.commit()
 
 
+# Stores what users have what trophies
+class TrophyCase(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # Crab who owns trophy
+    owner_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
+                         nullable=False)
+    owner = db.relationship('Crab', backref=db.backref('trophies', order_by='TrophyCase.timestamp.desc()'),
+                            foreign_keys=[owner_id])
+    # Trophy in question
+    trophy_id = db.Column(db.Integer, db.ForeignKey('trophy.id'),
+                          nullable=False)
+    trophy = db.relationship('Trophy', foreign_keys=[trophy_id])
+    # Time trophy was awarded
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.datetime.utcnow)
+
+
+# Stores each type of trophy
+class Trophy(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # Short display title
+    title = db.Column(db.String(32), nullable=False)
+    # Medium description of what it's for
+    description = db.Column(db.String(240), nullable=False)
+    # Image to display as an icon
+    image = db.Column(db.String(240), nullable=False, default="img/default_trophy.png")
+
+
 # HELPER FUNCS #########################################################################################################
 
 def get_pretty_age(ts):
@@ -498,7 +566,7 @@ def index():
     elif session.get('current_user') is not None:
         following_ids = [crab.id for crab in get_current_user().following] + [get_current_user().id]
         molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
-            .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False))\
+            .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
             .order_by(Molt.timestamp.desc())
         return render_template('timeline.html', current_page="home",
                                molts=molts, current_user=get_current_user())
@@ -514,7 +582,7 @@ def wild_west():
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = Molt.query.filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False))\
+        molts = Molt.query.filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
             .order_by(Molt.timestamp.desc())
         return render_template('wild-west.html', current_page="wild-west",
                                molts=molts, current_user=get_current_user())
@@ -637,13 +705,15 @@ def user(username):
     # Display page
     elif session.get('current_user') is not None:
         error = request.args.get("error")
+        current_tab = request.args.get("tab", default="molts")
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user is not None:
             molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
                 Molt.timestamp.desc())
             return render_template('profile.html',
                                    current_page=("own-profile" if this_user == get_current_user() else ""),
-                                   molts=molts, current_user=get_current_user(), this_user=this_user, error=error)
+                                   molts=molts, current_user=get_current_user(), this_user=this_user, error=error,
+                                   current_tab=current_tab)
         else:
             return render_template('not-found.html', current_user=get_current_user(), error=error, noun="user")
     else:
@@ -734,6 +804,7 @@ def tortimer():
             return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user())
     else:
         return error_404(BaseException)
+
 
 # GLOBAL FLASK VARIABLES GO HERE
 @app.context_processor
