@@ -124,6 +124,8 @@
         {% if current_user %}
             // When document loads
             $(function() {
+                // Initial notif count update
+                GetData("unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
                 // Update notif count every 5 seconds
                 setInterval(GetData, 5000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
             });
