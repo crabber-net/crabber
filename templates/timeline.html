@@ -6,6 +6,10 @@
     <!-- The compose box lives here! -->
     {% include "mini_compose.html" %}
 
+    <div id="new-molt-indicator" class="p-2 border-bottom border-dark clickable hoverable-light d-none" onclick="location.reload()">
+        <strong id="new-molt-counter"></strong> new molt<span id="new-molt-s">s</span> <span class="text-muted">(click to refresh)</span>
+    </div>
+
     <!-- All molts live here! -->
     {% for molt in molts %}
         {% include "molt.html" %}

@@ -832,12 +832,26 @@ def ajax_request(request_type):
             if crab:
                 return str(crab.unread_notifications)
         return "Crab not found. Did you specify 'crab_id'?"
+    if request_type == "molts_since":
+        if request.args.get("timestamp"):
+            if request.args.get("crab_id"):
+                crab = Crab.query.filter_by(id=request.args.get("crab_id")).first()
+                following_ids = [crab.id for crab in crab.following]
+                new_molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
+                    .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
+                    .filter(Molt.timestamp > datetime.datetime.fromtimestamp(int(request.args.get("timestamp"))))
+                return str(new_molts.count())
+
+            else:
+                return "Crab not found. Did you specify 'crab_id'?"
+
+        return "Did not specify 'timestamp'"
 
 
 # GLOBAL FLASK VARIABLES GO HERE
 @app.context_processor
 def inject_global_vars():
-    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT)
+    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT, TIMESTAMP=round(datetime.datetime.utcnow().timestamp()))
 
 
 @app.errorhandler(404)

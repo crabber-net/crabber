@@ -121,9 +121,26 @@
             }
         }
 
+        // Set new molt indicator to 'molt_count'
+        function updateNewMoltIndicator(molt_count) {
+            if (molt_count > 0) {
+                // Update counter
+                $("#new-molt-counter").text(molt_count);
+                // Update the s in 'new molts'
+                $("#new-molt-s").text((molt_count == 1) ? "" : "s");
+                // Made indicator visible
+                $("#new-molt-indicator").removeClass("d-none");
+            }
+        }
+
+        
         {% if current_user %}
             // When document loads
             $(function() {
+                {% if current_page == "home" %}
+                setInterval(GetData, 5000, "molts_since", {'crab_id': {{current_user.id}}, 'timestamp': {{TIMESTAMP}}}, updateNewMoltIndicator);
+                {% endif %}
+
                 // Initial notif count update
                 GetData("unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
                 // Update notif count every 5 seconds

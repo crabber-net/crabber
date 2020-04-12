@@ -381,6 +381,15 @@ div.mini-molt:hover {
 .not-clickable {
     cursor: default !important;
 }
+.hoverable:hover {
+    background: var(--dark-less);
+}
+.hoverable-light {
+    background: var(--dark-less);
+}
+.hoverable-light:hover {
+    background: var(--dark-lesser);
+}
 
 .banner-edit-button, .avatar-edit-button {
     position: absolute;
