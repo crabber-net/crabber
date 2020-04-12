@@ -25,12 +25,12 @@ with open(location + "recommended_users.cfg", "r") as f:
 
 # App config
 app = Flask(__name__, template_folder="./templates")
-db = SQLAlchemy(app)
 app.secret_key = 'crabs are better than birds because they can cut their wings right off'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+db = SQLAlchemy(app)
 
 # DATABASE #############################################################################################################
 
