@@ -5,7 +5,6 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import uuid
-from werkzeug.exceptions import RequestEntityTooLarge
 
 MOLT_CHAR_LIMIT = 240
 ADMINS = ('jake', 'crabber')
@@ -73,7 +72,7 @@ class Crab(db.Model):
     likes = db.relationship('Like')
 
     def __repr__(self):
-        return f"<Crab '{self.username}'>"
+        return f"<Crab '@{self.username}'>"
 
     @property
     def true_likes(self):
@@ -233,7 +232,7 @@ class Molt(db.Model):
             self.raw_mentions += user + "\n"
 
     def __repr__(self):
-        return f"<Molt by '{self.author.username}'>"
+        return f"<Molt by '@{self.author.username}'>"
 
     @property
     def rich_content(self):
@@ -343,7 +342,7 @@ class Like(db.Model):
     molt = db.relationship('Molt', back_populates='likes')
 
     def __repr__(self):
-        return f"<Like from '{self.crab.username}'>"
+        return f"<Like from '@{self.crab.username}'>"
 
 
 class Notification(db.Model):
@@ -375,6 +374,9 @@ class Notification(db.Model):
     content = db.Column(db.String(140), nullable=True)
     link = db.Column(db.String(140), nullable=True)
 
+    def __repr__(self):
+        return f"<Notification | '{self.type}' | for '@{self.recipient.username}'>"
+
     @property
     def pretty_date(self):
         return self.timestamp.strftime("%I:%M %p · %b %e, %Y")
@@ -404,6 +406,9 @@ class TrophyCase(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False,
                           default=datetime.datetime.utcnow)
 
+    def __repr__(self):
+        return f"<TrophyCase | '{self.trophy.title}' | '@{self.owner.username}'>"
+
 
 # Stores each type of trophy
 class Trophy(db.Model):
@@ -414,6 +419,9 @@ class Trophy(db.Model):
     description = db.Column(db.String(240), nullable=False)
     # Image to display as an icon
     image = db.Column(db.String(240), nullable=False, default="img/default_trophy.png")
+
+    def __repr__(self):
+        return f"<Trophy '{self.title}'>"
 
 
 # HELPER FUNCS #########################################################################################################
@@ -557,7 +565,7 @@ def common_molt_actions():
             desc = request.form.get('description').strip()
             current_user = get_current_user()
             current_user.display_name = disp_name
-            current_user.bio = desc if desc != "This user is boring and has no bio." else ""
+            current_user.bio = desc
             db.session.commit()
 
     # PRG pattern
