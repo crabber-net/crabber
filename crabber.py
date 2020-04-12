@@ -79,6 +79,14 @@ class Crab(db.Model):
     def true_likes(self):
         return [like.molt for like in self.likes if like.molt.deleted is False]
 
+    @property
+    def unread_notifications(self):
+        """
+        Get the amount of unread notifications for this Crab
+        :return: len of unread notifs
+        """
+        return Notification.query.filter_by(recipient=self, read=False).count()
+
     def award(self, title=None, trophy=None):
         """
         Award user trophy. Pass either a trophy object to `trophy`, or the title to `title`. Not both. Not neither.

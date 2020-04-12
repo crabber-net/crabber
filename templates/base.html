@@ -137,6 +137,9 @@
                     {% endif %}
                     >
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
+                        {% if current_page != "notifications" and current_user.unread_notifications %}
+                            <span class="notif-badge">{{current_user.unread_notifications}}</span>
+                        {% endif %}
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
                 </form>
@@ -260,12 +263,7 @@
                                         <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
                                         <input type="hidden" name="user_action" value="submit_reply_molt">
                                         <input type="hidden" id="reply-molt-id" name="molt_id" value="">
-                                        {% if current_page in ("home", "own-profile", "molt-page") %}
-                                            <!-- Reload in place -->
-                                            <button type="submit" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
-                                        {% else %}
-                                            <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
-                                        {% endif %}
+                                        <button type="submit" class="btn btn-primary rounded-pill"><strong>Reply</strong></button>
                                     </div>
                                 </form>
                             </div>
