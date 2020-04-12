@@ -50,6 +50,18 @@
             });
         }
 
+        function GetData(request_type, data, callback, error_callback=null) {
+            $.ajax({
+                url: "/ajax_request/" + request_type,
+                type: 'get',
+                data: data,
+                success: function (response) {
+                    callback(response);
+                },
+                error: error_callback
+            });
+        }
+
         function toggleLike(e) {
             let empty_heart = $(e).children(".jam")[0];
             let filled_heart = $(e).children(".jam")[1];
@@ -80,7 +92,7 @@
                 $('#follow-btn strong').text('Unfollow');
             }
         }
-        TODO: Yeah
+        //TODO: Yeah
         function clearModal() {
             // Clear text
             $("#compose_modal textarea").val("")
@@ -95,6 +107,28 @@
             // Update form reply-to ID
             $("#reply-molt-id").val(molt_id)
         }
+
+        // Set notification badge to 'unread_count'
+        function updateNotifBadge(unread_count) {
+            var badge = $(".notif-badge");
+
+            if (unread_count > 0) {
+                badge.removeClass("d-none");
+                badge.text(unread_count);
+            }
+            else {
+                badge.addClass("d-none");
+            }
+        }
+
+        {% if current_user %}
+            // When document loads
+            $(function() {
+                // Update notif count every 5 seconds
+                setInterval(GetData, 5000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
+            });
+        {% endif %}
+
     </script>
     {% endblock %}
 </head>
@@ -137,9 +171,7 @@
                     {% endif %}
                     >
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
-                        {% if current_page != "notifications" and current_user.unread_notifications %}
-                            <span class="notif-badge">{{current_user.unread_notifications}}</span>
-                        {% endif %}
+                        <span class="notif-badge d-none"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
                 </form>

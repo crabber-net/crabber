@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request, redirect, escape, session, url_for
+from flask import Flask, render_template, request, redirect, escape, session, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 from passlib.hash import sha256_crypt
@@ -822,6 +822,16 @@ def tortimer():
             return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user())
     else:
         return error_404(BaseException)
+
+
+@app.route("/ajax_request/<request_type>")
+def ajax_request(request_type):
+    if request_type == "unread_notif":
+        if request.args.get("crab_id"):
+            crab = Crab.query.filter_by(id=request.args.get("crab_id")).first()
+            if crab:
+                return str(crab.unread_notifications)
+        return "Crab not found. Did you specify 'crab_id'?"
 
 
 # GLOBAL FLASK VARIABLES GO HERE
