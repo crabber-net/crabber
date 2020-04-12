@@ -101,6 +101,9 @@ class Crab(db.Model):
         if trophy is None:
             trophy = Trophy.query.filter_by(title=title).first()
 
+        if trophy is None:
+            raise Exception(f"Trophy with title: '{title}' not found.")
+
         # Check trophy hasn't already been awarded to user
         if not TrophyCase.query.filter_by(owner=self, trophy=trophy).count():
             new_trophy = TrophyCase(owner=self, trophy=trophy)
@@ -127,6 +130,8 @@ class Crab(db.Model):
                 crab.award(title="Life of the Party")
             elif follower_count == 1000:
                 crab.award(title="Celebrity")
+            if self.verified:
+                crab.award(title="I Captivated the Guy")
 
             db.session.commit()
 
@@ -148,6 +153,10 @@ class Crab(db.Model):
         # Check if awards are applicable:
         if len(self.molts) == 1:
             self.award(title="Baby Crab")
+        if "420" in new_molt.tags:
+            self.award(title="Pineapple Express")
+        else:
+            print(new_molt.tags)
         db.session.commit()
         return new_molt
 
@@ -287,6 +296,14 @@ class Molt(db.Model):
             new_like = Like(crab=crab, molt=self)
             db.session.add(new_like)
             self.author.notify(sender=crab, type="like", molt=self)
+
+            # Check if awards are applicable:
+            if self.true_likes == 10:
+                self.author.award(title="Dopamine Hit")
+            if self.true_likes == 100:
+                self.author.award(title="Dopamine Addict")
+            if self.true_likes == 1000:
+                self.author.award(title="Full on Junkie")
             db.session.commit()
             return new_like
 
