@@ -179,6 +179,8 @@ class Crab(db.Model):
         return bool(Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).all())
 
     def notify(self, **kwargs):
+        if kwargs.get("sender") is self:
+            return "Declined notification on grounds of sender being recipient."
         new_notif = Notification(recipient=self, **kwargs)
         db.session.add(new_notif)
         db.session.commit()
