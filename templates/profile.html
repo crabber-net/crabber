@@ -68,7 +68,11 @@
             {% if current_page == "own-profile" %}
             <span class="edit-icon ml-1" data-width="16" data-height="18" data-jam="pencil-f"></span>
             {% endif %}
-            <p class="text-muted mb-1">@{{this_user.username}}</p>
+            <p class="text-muted mb-1">@{{this_user.username}}
+                {% if current_user in this_user.following %}
+                    <small class="follows-you">Follows you</small>
+                {% endif %}
+            </p>
         </div>
         <div class="profile-box-description w-100"
             {% if current_page == "own-profile" %}

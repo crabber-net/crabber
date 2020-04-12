@@ -29,7 +29,11 @@
                     data-jam="shield-check-f"></span></a>
             {% endif %}
             <br><span class="mini-molt-username zindex-front"
-                style="position: relative;top: -.1em;">@{{crab.username}}</span>
+                style="position: relative;top: -.1em;">@{{crab.username}}
+                {% if current_user in crab.following %}
+                    <small class="follows-you">Follows you</small>
+                {% endif %}
+            </span>
         </div>
         <div class="mini-molt-content">
             <p class="mb-2">{{crab.bio}}</p>
