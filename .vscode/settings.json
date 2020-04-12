@@ -12,7 +12,4 @@
         "notif",
         "zindex"
     ],
-    "files.associations": {
-        "*.html": "jinja-html"
-    }
 }
