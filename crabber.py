@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from passlib.hash import sha256_crypt
 import re
+import turtle_images
 import uuid
 
 MOLT_CHAR_LIMIT = 240
@@ -489,9 +490,9 @@ def common_molt_actions():
             if img.filename == '':
                 return redirect(request.path + "?error=No image was selected")
             elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
+                filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                img.save(location)
+                turtle_images.prep_and_save(img, location)
                 current_user = get_current_user()
                 current_user.avatar = "img/user_uploads/" + filename
                 db.session.commit()
@@ -505,9 +506,9 @@ def common_molt_actions():
             if img.filename == '':
                 return redirect(request.path + "?error=No image was selected")
             elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
+                filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                img.save(location)
+                turtle_images.prep_and_save(img, location)
                 current_user = get_current_user()
                 current_user.banner = "img/user_uploads/" + filename
                 db.session.commit()
@@ -529,9 +530,9 @@ def common_molt_actions():
                     print("image is not blank")
                     if img and allowed_file(img.filename):
                         print("filename looks good")
-                        filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
+                        filename = str(uuid.uuid4()) + ".jpg"
                         location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        img.save(location)
+                        turtle_images.prep_and_save(img, location)
                         img_attachment = "img/user_uploads/" + filename
             get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
     elif action == "follow":
