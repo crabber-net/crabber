@@ -466,8 +466,9 @@ def get_current_user():
     return Crab.query.filter_by(id=session.get("current_user"), deleted=False).first()
 
 
+# Check username isn't taken
 def validate_username(username):
-    return not Crab.query.filter_by(username=username, deleted=False).all()
+    return not Crab.query.filter.filter_by(deleted=False).filter(Crab.usernanme.like(username)).all()
 
 
 def validate_email(email):
