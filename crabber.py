@@ -455,7 +455,7 @@ def get_pretty_age(ts):
         return f"{round(delta.seconds)}s"
     elif delta.seconds / 60 < 60:
         return f"{round(delta.seconds / 60)}m"
-    elif delta.seconds / 60 / 60 < 24:
+    elif delta.seconds / 60 / 60 < 24 and delta.days == 0:
         return f"{round(delta.seconds / 60 / 60)}h"
     elif ts.year == now.year:
         return ts.strftime("%b %e")
