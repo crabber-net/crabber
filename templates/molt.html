@@ -9,7 +9,7 @@
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
-<div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark p-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
+<div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark px-3 py-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
     <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}}">
         <a href="/user/{{molt.author.username}}" class="zindex-front">
             <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
