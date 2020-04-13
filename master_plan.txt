@@ -53,3 +53,4 @@ Emoji policy: pro
   * Make dates and ages display local time somehow
   * User popovers
   * Notif stacking
+  * YouTube embeds
