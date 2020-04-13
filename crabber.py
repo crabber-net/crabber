@@ -77,7 +77,8 @@ class Crab(db.Model):
 
     @property
     def true_likes(self):
-        return [like.molt for like in self.likes if like.molt.deleted is False]
+        return Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False))\
+            .join(Molt, Like.molt).order_by(Molt.timestamp.desc()).all()
 
     @property
     def unread_notifications(self):
@@ -278,7 +279,7 @@ class Molt(db.Model):
 
     @property
     def true_likes(self):
-        return [like.molt for like in self.likes if like.molt.deleted is False]
+        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False)).all()
 
     @property
     def pretty_age(self):

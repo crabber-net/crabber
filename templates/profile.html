@@ -120,8 +120,10 @@
 
 <!-- All likes live here! -->
 <div id="likes" class="{{ 'd-none' if current_tab != 'likes' else ''}}">
-    {% for molt in this_user.true_likes %}
-        {% include "molt.html" %}
+    {% for like in this_user.true_likes %}
+        {% with molt = like.molt %}
+            {% include "molt.html" %}
+        {% endwith %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not liked any molts... 💔</div>
     {% endfor %}
