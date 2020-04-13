@@ -32,7 +32,8 @@
             </div>
             {% endif %}
             <div class="rounded-circle profile-picture shadow-expand" 
-                style="background-image: url('{{url_for('static', filename=this_user.avatar)}}');"></div>
+                style="background-image: url('{{url_for('static', filename=this_user.avatar)}}');"
+                src="{{url_for('static', filename=this_user.avatar)}}"></div>
         </div>
         <div class="profile-box-follow-row d-flex flex-row justify-content-end">
             <!-- Display correct follow button if page is not current user -->
