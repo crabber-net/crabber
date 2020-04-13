@@ -7,16 +7,22 @@
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This molt has been deleted</div>
     {% else %}
         {% if molt.is_reply %}
-            {% with molt=molt.original_molt %}
-                {% include "molt.html" %}
-            {% endwith %}
+            <div class="px-2 pt-2">
+                {% with molt=molt.original_molt, thread=true, is_parent=true, hide_border=true %}
+                    {% include "molt.html" %}
+                {% endwith %}
+            </div>
         {% endif %}
 
-        {% include "large_molt.html" %}
+        {% with thread=true %}
+            {% include "large_molt.html" %}
+        {% endwith %}
 
         <!-- All molts live here! -->
-        {% for molt in replies %}
-            {% include "molt.html" %}
+        {% for reply in replies %}
+            {% with molt=reply, thread=true, show_replies_from=molt.author %}
+                {% include "molt.html" %}
+            {% endwith %}
         {% else %}
             <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This molt has no replies</div>
         {% endfor %}

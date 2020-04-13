@@ -292,6 +292,12 @@ class Molt(db.Model):
     def pretty_age(self):
         return get_pretty_age(self.timestamp)
 
+    def get_reply_from(self, crab):
+        print(crab)
+        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab).order_by(Molt.timestamp).first()
+        print(reply)
+        return reply
+
     def remolt(self, crab, comment="", **kwargs):
         new_remolt = crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
         self.author.notify(sender=crab, type="remolt", molt=new_remolt)

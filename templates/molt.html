@@ -1,13 +1,24 @@
+{% set show_replies = show_replies_from and molt.get_reply_from(show_replies_from) %}
+{% if show_replies %}
+    {% set hide_border=true %}
+    {% set is_parent=true %}
+{% endif %}
+
 {% set is_remolt = molt.is_remolt %}
 {% if is_remolt %}
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
-<div class="mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container">
-    <div class="mini-molt-profile-box {{"mt-4" if is_remolt or molt.is_reply else ""}}">
+<div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark p-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
+    <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}}">
         <a href="/user/{{molt.author.username}}" class="zindex-front">
             <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
         </a>
+        {% if is_parent %}
+            <div class="thread-connector">
+                <div class="thread-line"></div>
+            </div>
+        {% endif %}
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
         {% if is_remolt %}
@@ -16,14 +27,14 @@
             <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="repeat"></span>
             <a href="/user/{{remolt_shell.author.username}}">{{remolt_shell.author.display_name}}</a> Remolted</small>
         {% endif %}
-        {% if molt.is_reply %}
+        {% if molt.is_reply and not thread %}
         <!-- Reply indicator -->
         <small class="mini-molt-remolt text-muted zindex-front">
             <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="message"></span>
             replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
                 {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}} molt</a></small>
         {% endif %}
-        <div class="mini-molt-credentials zindex-front {{"mt-1" if is_remolt or molt.is_reply else ""}}"><a href="/user/{{molt.author.username}}"
+        <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
                 class="mini-molt-display-name">{{molt.author.display_name}}</a>
             {% if molt.author.verified %}
             <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
@@ -95,6 +106,11 @@
             {% endif %}
         </div>
     </div>
-    <!-- Tweet page link -->
+    <!-- Molt page link -->
     <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill"></a>
 </div>
+{% if show_replies %}
+    {% with molt=molt.get_reply_from(show_replies_from), thread=true, show_replies_from=molt.author, hide_border=false, is_parent=false %}
+        {% include "molt.html" %}
+    {% endwith %}
+{% endif %}

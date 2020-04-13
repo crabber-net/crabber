@@ -608,3 +608,17 @@ body, .master-container {
     border-radius: 6px;
     font-size: 11px;
 }
+
+.thread-connector {
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    position: relative;
+}
+.thread-line {
+    height: calc(100% - 23px - 5px);
+    width: 2px;
+    background: var(--muted);
+    opacity: 0.5;
+    margin: 5px auto;
+}

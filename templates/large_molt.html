@@ -5,7 +5,7 @@
 {% endif %}
 <div class="mini-molt border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
     <div class="row mb-3">
-        <div class="mini-molt-profile-box {{"mt-4" if is_remolt or molt.is_reply else ""}} pr-1 col-auto">
+        <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}} pr-1 col-auto">
             <a href="/user/{{molt.author.username}}" class="zindex-front">
                 <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
             </a>
@@ -17,7 +17,7 @@
                 <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="repeat"></span>
                 <a href="/user/{{remolt_shell.author.username}}">{{remolt_shell.author.display_name}}</a> Remolted</small>
             {% endif %}
-            {% if molt.is_reply %}
+            {% if molt.is_reply and not thread %}
             <!-- Reply indicator -->
             <small class="mini-molt-remolt text-muted zindex-front">
                 <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="message"></span>
@@ -25,7 +25,7 @@
                     {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}}
                     molt</a></small>
             {% endif %}
-            <div class="mini-molt-credentials zindex-front {{"mt-1" if is_remolt or molt.is_reply else ""}}"><a href="/user/{{molt.author.username}}"
+            <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
                     class="mini-molt-display-name">{{molt.author.display_name}}</a>
                 {% if molt.author.verified %}
                 <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
