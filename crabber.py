@@ -15,6 +15,7 @@ mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
 tag_pattern = re.compile(r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
 username_pattern = re.compile(r'^\w+$')
 spotify_pattern = re.compile(r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
+youtube_pattern = re.compile(r'(?:https?://)?(?:www.)?youtube\.com/watch\?v=(\S{11})')
 
 # User uploads config
 UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
@@ -250,16 +251,37 @@ class Molt(db.Model):
     def rich_content(self):
         # Escape/sanitize user submitted content
         new_content = str(escape(self.content))
+
+        # Convert youtube link to embedded iframe
+        if youtube_pattern.search(new_content):
+            youtube_embed = render_template_string(("{% with video='" +
+                                                    youtube_pattern.search(new_content).group(1) +
+                                                    "' %}{% include 'youtube.html' %}{% endwith %}"))
+            new_content = youtube_pattern.sub('', new_content)
+        else:
+            youtube_embed = "<!-- no valid youtube links found -->"
+
+        # Convert spotify link to embedded iframe
+        if spotify_pattern.search(new_content):
+            results = spotify_pattern.search(new_content)
+            spotify_embed = render_template_string(("{% with link=('" +
+                                                    results.group(2) +
+                                                    "', '" +
+                                                    results.group(3) +
+                                                    "') %}{% include 'spotify.html' %}{% endwith %}"))
+            new_content = spotify_pattern.sub('', new_content)
+        else:
+            spotify_embed = "<!-- no valid youtube links found -->"
+
         # Preserve newlines
-        new_content = new_content.replace("\n", "<br>")
-        # Convert Spotify link to embedded iframe
-        new_content = render_template_string(
-            spotify_pattern.sub(r"{% with link=('\2', '\3') %}{% include 'spotify.html' %}{% endwith %}", new_content))
+        new_content = new_content.strip().replace("\n", "<br>")
+
         # Convert mentions into anchor tags
         new_content = Molt.label_mentions(new_content)
         # Convert crabtags into anchor tags
         new_content = Molt.label_crabtags(new_content)
-        return new_content
+
+        return new_content + youtube_embed + spotify_embed
 
     @property
     def tags(self):
