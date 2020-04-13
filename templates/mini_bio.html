@@ -1,8 +1,8 @@
 <div class="mini-molt mini-bio border-bottom border-dark p-2 d-flex flex-row">
     <div class="mini-molt-profile-box zindex-front">
         <a href="/user/{{crab.username}}">
-            <img class="rounded-circle" src="{{url_for('static', filename=crab.avatar)}}" alt="Profile picture"
-                width="43" height="43">
+            <div class="rounded-circle px43 profile-picture"
+                style="background-image: url('{{url_for('static', filename=crab.avatar)}}');"></div>
         </a>
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">

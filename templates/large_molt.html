@@ -7,7 +7,7 @@
     <div class="row mb-3">
         <div class="mini-molt-profile-box {{"mt-4" if is_remolt or molt.is_reply else ""}} pr-1 col-auto">
             <a href="/user/{{molt.author.username}}" class="zindex-front">
-                <img class="rounded-circle" src="{{url_for('static', filename=molt.author.avatar)}}" alt="Profile picture" width="43" height="43">
+                <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
             </a>
         </div>
         <div class="mini-molt-text-box w-100 px-2 col">

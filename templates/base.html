@@ -201,7 +201,9 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" height="28" alt="Your profile picture">
+                        <!-- <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" height="28" alt="Your profile picture"> -->
+                        <div class="rounded-circle px28 profile-picture d-inline-block valign-middle {{"box-shadow" if current_page == "own-profile" else ""}}"
+                            style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
                         <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
                     </button>
                 </form>
@@ -235,8 +237,8 @@
                         <div class="modal-body row">
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
-                                    <img class="rounded-circle" src="{{ url_for('static', filename=current_user.avatar) }}" alt="Profile picture"
-                                        width="43" height="43">
+                                    <div class="rounded-circle px43 profile-picture"
+                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
@@ -288,8 +290,8 @@
                         <div class="modal-body row">
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
-                                    <img class="rounded-circle" src="{{ url_for('static', filename=current_user.avatar) }}"
-                                        alt="Profile picture" width="43" height="43">
+                                    <div class="rounded-circle px43 profile-picture"
+                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
