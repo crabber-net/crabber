@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, request, redirect, escape, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, escape, session, url_for, jsonify, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 import os
 from passlib.hash import sha256_crypt
@@ -14,6 +14,7 @@ ADMINS = ('jake', 'crabber')
 mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
 tag_pattern = re.compile(r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
 username_pattern = re.compile(r'^\w+$')
+spotify_pattern = re.compile(r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
 
 # User uploads config
 UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
@@ -77,7 +78,7 @@ class Crab(db.Model):
 
     @property
     def true_likes(self):
-        return Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False))\
+        return Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
             .join(Molt, Like.molt).order_by(Molt.timestamp.desc()).all()
 
     @property
@@ -157,8 +158,6 @@ class Crab(db.Model):
             self.award(title="Baby Crab")
         if "420" in new_molt.tags:
             self.award(title="Pineapple Express")
-        else:
-            print(new_molt.tags)
         db.session.commit()
         return new_molt
 
@@ -249,8 +248,16 @@ class Molt(db.Model):
 
     @property
     def rich_content(self):
-        new_content = str(escape(self.content)).replace("\n", "<br>")
+        # Escape/sanitize user submitted content
+        new_content = str(escape(self.content))
+        # Preserve newlines
+        new_content = new_content.replace("\n", "<br>")
+        # Convert Spotify link to embedded iframe
+        new_content = render_template_string(
+            spotify_pattern.sub(r"{% with link=('\2', '\3') %}{% include 'spotify.html' %}{% endwith %}", new_content))
+        # Convert mentions into anchor tags
         new_content = Molt.label_mentions(new_content)
+        # Convert crabtags into anchor tags
         new_content = Molt.label_crabtags(new_content)
         return new_content
 
@@ -488,7 +495,6 @@ def common_molt_actions():
     if action == "change_avatar":
         if 'file' in request.files:
             img = request.files['file']
-            print(img.content_length)
             if img.filename == '':
                 return redirect(request.path + "?error=No image was selected")
             elif img and allowed_file(img.filename):
@@ -523,15 +529,10 @@ def common_molt_actions():
         if request.form.get('molt_content'):
             img_attachment = None
             # Handle uploaded images
-            print(request.files)
-            print(request.form)
             if request.files.get("molt-media"):
-                print("found image")
                 img = request.files['molt-media']
                 if img.filename != '':
-                    print("image is not blank")
                     if img and allowed_file(img.filename):
-                        print("filename looks good")
                         filename = str(uuid.uuid4()) + ".jpg"
                         location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                         turtle_images.prep_and_save(img, location)
@@ -540,7 +541,6 @@ def common_molt_actions():
     elif action == "follow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().follow(target_user)
-        print(target_user.followers)
     elif action == "unfollow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().unfollow(target_user)
@@ -549,14 +549,10 @@ def common_molt_actions():
         if request.form.get('molt_content'):
             img_attachment = None
             # Handle uploaded images
-            print(request.files)
             if request.files.get("molt-media"):
-                print("found image")
                 img = request.files['molt-media']
                 if img.filename != '':
-                    print("image is not blank")
                     if img and allowed_file(img.filename):
-                        print("filename looks good")
                         filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
                         location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                         img.save(location)
