@@ -5,7 +5,7 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import turtle_images
-from typing import List, Set, Tuple
+from typing import List, Set
 import uuid
 from werkzeug.wrappers import Response
 
