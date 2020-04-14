@@ -54,3 +54,6 @@ Emoji policy: pro
   * User popovers
   * Notif stacking
   * Turn molt content links into anchors
+  * Ability to award trophies on the Tortimer page
+  * DOCUMENTATION and refactoring
+  * Figure out how to add class type hints before declaration

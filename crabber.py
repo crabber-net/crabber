@@ -5,38 +5,224 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import turtle_images
+from typing import List, Set, Tuple
 import uuid
+from werkzeug.wrappers import Response
 
-MOLT_CHAR_LIMIT = 240
-ADMINS = ('jake', 'crabber')
 
-# Regex stuff
-mention_pattern = re.compile(r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
-tag_pattern = re.compile(r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
-username_pattern = re.compile(r'^\w+$')
-spotify_pattern = re.compile(r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
-youtube_pattern = re.compile(r'(?:https?://)?(?:www.)?youtube\.com/watch\?v=(\S{11})')
+# HELPER FUNCS #########################################################################################################
 
-# User uploads config
-UPLOAD_FOLDER = 'static/img/user_uploads' if os.name == "nt" else "/var/www/crabber/crabber/static/img/user_uploads"
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+def get_pretty_age(dt: datetime.datetime) -> str:
+    """
+    Converts datetime to pretty twitter-esque age string.
+    :param dt:
+    :return: Age string
+    """
+    now: datetime.datetime = datetime.datetime.utcnow()
+    delta = now - dt
 
-# Recommended users config
-location = "" if os.name == "nt" else "/var/www/crabber/crabber/"
-with open(location + "recommended_users.cfg", "r") as f:
-    RECOMMENDED_USERS = [username.strip() for username in f.read().strip().splitlines()]
+    if delta.seconds < 60:  # Less than a minute
+        # Return number of seconds
+        return f"{round(delta.seconds)}s"
+    elif delta.seconds / 60 < 60:  # Less than an hour
+        # Return number of minutes
+        return f"{round(delta.seconds / 60)}m"
+    elif delta.seconds / 60 / 60 < 24 and delta.days == 0:  # Less than a day
+        # Return number of hours
+        return f"{round(delta.seconds / 60 / 60)}h"
+    elif dt.year == now.year:  # Same year as now
+        # Return day and month
+        return dt.strftime("%b %e")
+    else:
+        # Return day month, year
+        return dt.strftime("%b %e, %Y")
 
-# App config
+
+def get_current_user():
+    """
+    Retrieves the object of the currently logged-in user by ID.
+    :return: The logged in user
+    """
+    return Crab.query.filter_by(id=session.get("current_user"), deleted=False).first()
+
+
+def validate_username(username: str) -> bool:
+    """
+    Validates `username` hasn't already been used by another (not deleted) user.
+    :param username: Username to validate
+    :return: Whether it's been taken
+    """
+    return not Crab.query.filter_by(deleted=False).filter(Crab.username.like(username)).all()
+
+
+def validate_email(email: str) -> bool:
+    """
+    Validates `email` hasn't already been used by another (not deleted) user.
+    :param email: Email to validate
+    :return: Whether it's been taken
+    """
+    return not Crab.query.filter_by(email=email, deleted=False).all()
+
+
+def allowed_file(filename: str) -> bool:
+    """
+    Verifies filename specified is valid and in `ALLOWED_EXTENSIONS`.
+    :param filename: Filename sans-path to check
+    :return: Whether it's valid
+    """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def common_molt_actions() -> Response:
+    """
+    Sorts through potential actions in POST form data and executes them.
+    :return: Redirect response to same page. See PRG pattern.
+    """
+    action = request.form.get('user_action')
+    molt_id = request.form.get('molt_id')  # Can very well be none.
+
+    if action == "change_avatar":
+        if 'file' in request.files:
+            img = request.files['file']
+            if img.filename == '':
+                return redirect(request.path + "?error=No image was selected")
+            elif img and allowed_file(img.filename):
+                filename = str(uuid.uuid4()) + ".jpg"
+                location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                turtle_images.prep_and_save(img, location)
+                current_user = get_current_user()
+                current_user.avatar = "img/user_uploads/" + filename
+                db.session.commit()
+                return redirect(request.path)
+            else:
+                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
+        return redirect(request.path + "?error=There was an error uploading your image")
+    elif action == "change_banner":
+        if 'file' in request.files:
+            img = request.files['file']
+            if img.filename == '':
+                return redirect(request.path + "?error=No image was selected")
+            elif img and allowed_file(img.filename):
+                filename = str(uuid.uuid4()) + ".jpg"
+                location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                turtle_images.prep_and_save(img, location)
+                current_user = get_current_user()
+                current_user.banner = "img/user_uploads/" + filename
+                db.session.commit()
+                return redirect(request.path)
+            else:
+                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
+        return redirect(request.path + "?error=There was an error uploading your image")
+    # Submit new molt
+    elif action == "submit_molt":
+        if request.form.get('molt_content'):
+            img_attachment = None
+            # Handle uploaded images
+            if request.files.get("molt-media"):
+                img = request.files['molt-media']
+                if img.filename != '':
+                    if img and allowed_file(img.filename):
+                        filename = str(uuid.uuid4()) + ".jpg"
+                        location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        turtle_images.prep_and_save(img, location)
+                        img_attachment = "img/user_uploads/" + filename
+            get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
+    elif action == "follow":
+        target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
+        get_current_user().follow(target_user)
+    elif action == "unfollow":
+        target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
+        get_current_user().unfollow(target_user)
+    elif action == "submit_reply_molt":
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        if request.form.get('molt_content'):
+            img_attachment = None
+            # Handle uploaded images
+            if request.files.get("molt-media"):
+                img = request.files['molt-media']
+                if img.filename != '':
+                    if img and allowed_file(img.filename):
+                        filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
+                        location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        img.save(location)
+                        img_attachment = "img/user_uploads/" + filename
+            reply = target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
+            return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
+    elif action == "remolt_molt" and molt_id is not None:
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        target_molt.remolt(get_current_user())
+
+    elif action == "like_molt" and molt_id is not None:
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        if get_current_user().has_liked(target_molt):
+            target_molt.unlike(get_current_user())
+        else:
+            target_molt.like(get_current_user())
+
+    elif action == "delete_molt" and molt_id is not None:
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+
+        if target_molt.author.id == get_current_user().id:
+            target_molt.delete()
+
+    elif action == "update_bio":
+        target_user = Crab.query.filter_by(id=request.form.get('user_id')).first()
+        if target_user == get_current_user():
+            disp_name = request.form.get('display_name').strip()
+            desc = request.form.get('description').strip()
+            current_user = get_current_user()
+            current_user.display_name = disp_name
+            current_user.bio = desc
+            db.session.commit()
+
+    # PRG pattern
+    return redirect(request.url)
+
+
+def load_usernames_from_file(filename: str) -> List[str]:
+    """
+    Load list of usernames from file.
+    :param filename: Filename without path or extension (assumes app root and cfg)
+    :return: List of usernames as they appear in file
+    """
+    location = "" if os.name == "nt" else "/var/www/crabber/crabber/"
+    with open(location + f"{filename}.cfg", "r") as f:
+        return [username.strip() for username in f.read().strip().splitlines()]
+
+
+# GENERAL CONFIG #######################################################################################################
+MOLT_CHAR_LIMIT: int = 240
+ADMINS: List[str] = load_usernames_from_file("admins")  # Users allowed to access the Tortimer page
+UPLOAD_FOLDER: str = 'static/img/user_uploads' if os.name == "nt" \
+    else "/var/www/crabber/crabber/static/img/user_uploads"
+ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
+RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
+
+# Regex patterns #######################################################################################################
+mention_pattern = re.compile(
+    r'(?:^|\s)(?<!\\)@([\w]{1,32})(?!\w)')
+tag_pattern = re.compile(
+    r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
+username_pattern = re.compile(
+    r'^\w+$')
+spotify_pattern = re.compile(
+    r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
+youtube_pattern = re.compile(
+    r'(?:https?://)?(?:www.)?youtube\.com/watch\?v=(\S{11})')
+
+# APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
 app.secret_key = 'crabs are better than birds because they can cut their wings right off'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
 db = SQLAlchemy(app)
 
 # DATABASE #############################################################################################################
 
+# This stores unidirectional follower-followee relationships
 following_table = db.Table('following',
                            db.Column('id', db.Integer, primary_key=True),
                            db.Column('follower_id', db.Integer, db.ForeignKey('crab.id')),
@@ -480,145 +666,7 @@ class Trophy(db.Model):
         return f"<Trophy '{self.title}'>"
 
 
-# HELPER FUNCS #########################################################################################################
-
-def get_pretty_age(ts):
-    now = datetime.datetime.utcnow()
-    delta = now - ts
-
-    if delta.seconds < 60:
-        return f"{round(delta.seconds)}s"
-    elif delta.seconds / 60 < 60:
-        return f"{round(delta.seconds / 60)}m"
-    elif delta.seconds / 60 / 60 < 24 and delta.days == 0:
-        return f"{round(delta.seconds / 60 / 60)}h"
-    elif ts.year == now.year:
-        return ts.strftime("%b %e")
-    else:
-        return ts.strftime("%b %e, %Y")
-
-
-def get_current_user():
-    return Crab.query.filter_by(id=session.get("current_user"), deleted=False).first()
-
-
-# Check username isn't taken
-def validate_username(username):
-    return not Crab.query.filter_by(deleted=False).filter(Crab.username.like(username)).all()
-
-
-def validate_email(email):
-    return not Crab.query.filter_by(email=email, deleted=False).all()
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def common_molt_actions():
-    action = request.form.get('user_action')
-    molt_id = request.form.get('molt_id')  # Can very well be none. Expect that.
-
-    if action == "change_avatar":
-        if 'file' in request.files:
-            img = request.files['file']
-            if img.filename == '':
-                return redirect(request.path + "?error=No image was selected")
-            elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + ".jpg"
-                location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                turtle_images.prep_and_save(img, location)
-                current_user = get_current_user()
-                current_user.avatar = "img/user_uploads/" + filename
-                db.session.commit()
-                return redirect(request.path)
-            else:
-                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
-        return redirect(request.path + "?error=There was an error uploading your image")
-    elif action == "change_banner":
-        if 'file' in request.files:
-            img = request.files['file']
-            if img.filename == '':
-                return redirect(request.path + "?error=No image was selected")
-            elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + ".jpg"
-                location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                turtle_images.prep_and_save(img, location)
-                current_user = get_current_user()
-                current_user.banner = "img/user_uploads/" + filename
-                db.session.commit()
-                return redirect(request.path)
-            else:
-                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
-        return redirect(request.path + "?error=There was an error uploading your image")
-    # Submit new molt
-    elif action == "submit_molt":
-        if request.form.get('molt_content'):
-            img_attachment = None
-            # Handle uploaded images
-            if request.files.get("molt-media"):
-                img = request.files['molt-media']
-                if img.filename != '':
-                    if img and allowed_file(img.filename):
-                        filename = str(uuid.uuid4()) + ".jpg"
-                        location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        turtle_images.prep_and_save(img, location)
-                        img_attachment = "img/user_uploads/" + filename
-            get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
-    elif action == "follow":
-        target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
-        get_current_user().follow(target_user)
-    elif action == "unfollow":
-        target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
-        get_current_user().unfollow(target_user)
-    elif action == "submit_reply_molt":
-        target_molt = Molt.query.filter_by(id=molt_id).first()
-        if request.form.get('molt_content'):
-            img_attachment = None
-            # Handle uploaded images
-            if request.files.get("molt-media"):
-                img = request.files['molt-media']
-                if img.filename != '':
-                    if img and allowed_file(img.filename):
-                        filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
-                        location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        img.save(location)
-                        img_attachment = "img/user_uploads/" + filename
-            reply = target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
-            return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
-    elif action == "remolt_molt" and molt_id is not None:
-        target_molt = Molt.query.filter_by(id=molt_id).first()
-        target_molt.remolt(get_current_user())
-
-    elif action == "like_molt" and molt_id is not None:
-        target_molt = Molt.query.filter_by(id=molt_id).first()
-        if get_current_user().has_liked(target_molt):
-            target_molt.unlike(get_current_user())
-        else:
-            target_molt.like(get_current_user())
-
-    elif action == "delete_molt" and molt_id is not None:
-        target_molt = Molt.query.filter_by(id=molt_id).first()
-
-        if target_molt.author.id == get_current_user().id:
-            target_molt.delete()
-
-    elif action == "update_bio":
-        target_user = Crab.query.filter_by(id=request.form.get('user_id')).first()
-        if target_user == get_current_user():
-            disp_name = request.form.get('display_name').strip()
-            desc = request.form.get('description').strip()
-            current_user = get_current_user()
-            current_user.display_name = disp_name
-            current_user.bio = desc
-            db.session.commit()
-
-    # PRG pattern
-    return redirect(request.url)
-
-
-# WEBSITE ##############################################################################################################
+# WEBSITE ROUTING ######################################################################################################
 
 @app.route("/", methods=("GET", "POST"))
 def index():
