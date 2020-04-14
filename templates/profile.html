@@ -95,13 +95,13 @@
                 <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
         </div>
         <div class="row mx-0">
-            <div id="molts-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'molts' else '' }}" onclick="switchTo('molts');">
+            <div id="molts-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'molts' else '' }}" onclick="switchTo('molts');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
             </div>
-            <div id="likes-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'likes' else '' }}" onclick="switchTo('likes');">
+            <div id="likes-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'likes' else '' }}" onclick="switchTo('likes');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Likes</strong></div>
             </div>
-            <div id="trophies-btn" class="profile-box-category mt-2 text-primary col {{ 'active' if current_tab == 'trophies' else '' }}" onclick="switchTo('trophies');">
+            <div id="trophies-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'trophies' else '' }}" onclick="switchTo('trophies');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Trophies</strong></div>
             </div>
         </div>

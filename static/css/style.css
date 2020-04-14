@@ -153,6 +153,7 @@ div.mini-molt {
     /* position: relative; */
     font-size: 13px;
     cursor: pointer;
+    transition: ease-in-out 200ms;
 }
 div.mini-molt:hover {
     background-color: var(--dark-less);
@@ -186,6 +187,7 @@ div.mini-molt:hover {
     padding: 10px;
     margin: -10px;
     border-radius: 100%;
+    transition: ease-out 150ms;
 }
 .mini-molt-action.reply:hover {
     color: var(--reply);
@@ -309,12 +311,16 @@ div.mini-molt:hover {
     border: 1px solid var(--primary-faded-less);
     outline: none;
 }
+.profile-box-category {
+    transition: ease-in-out 150ms;
+}
 .profile-box-category.active {
-    transition-duration: 200ms;
     border-bottom: 2px solid var(--primary);
+    color: var(--primary);
 }
 .profile-box-category:hover {
     background-color: var(--primary-faded);
+    color: var(--primary);
     cursor: pointer;
 }
 .profile-box-follow-row {
