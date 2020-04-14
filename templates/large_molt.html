@@ -38,7 +38,7 @@
         <div class="mini-molt-content large-molt-text">
             <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
             <!-- End-users won't have any idea what this comment is referring to :) -->
-            <p class="mb-2">{{molt.rich_content|safe}}</p>
+            <p class="mb-2"><span class="zindex-front not-clickable">{{molt.rich_content|safe}}</span></p>
 
             {% if molt.image %}
             <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
