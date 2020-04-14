@@ -504,7 +504,7 @@ def get_current_user():
 
 # Check username isn't taken
 def validate_username(username):
-    return not Crab.query.filter.filter_by(deleted=False).filter(Crab.usernanme.like(username)).all()
+    return not Crab.query.filter_by(deleted=False).filter(Crab.username.like(username)).all()
 
 
 def validate_email(email):
@@ -724,6 +724,8 @@ def signup():
 
                             # "Log in"
                             session["current_user"] = Crab.query.filter_by(username=username, deleted=False).first().id
+                            # TOOD: REMOVE WHEN OUT OF BETA
+                            get_current_user().award(title="Lab Rat")
                             # Redirect to let the user know it succeeded
                             return redirect("/signupsuccess")
                         else:
