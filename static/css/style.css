@@ -152,7 +152,6 @@
 div.mini-molt {
     /* position: relative; */
     font-size: 13px;
-    cursor: pointer;
     transition: ease-in-out 200ms;
 }
 div.mini-molt:hover {
