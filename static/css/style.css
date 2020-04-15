@@ -640,3 +640,9 @@ body, .master-container {
 .close-file-btn:hover {
     fill: var(--primary-faded-less);
 }
+
+.search-btn {
+    margin-top: auto;
+    margin-bottom: auto;
+    vertical-align: middle;
+}
