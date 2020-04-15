@@ -33,7 +33,7 @@
         <small class="mini-molt-remolt text-muted zindex-front">
             <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="message"></span>
             replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
-                {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}} molt</a></small>
+                {{"you" if molt.original_molt.author == current_user else molt.original_molt.author.display_name}}</a></small>
         {% endif %}
         <div class="mini-molt-credentials {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
                 class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>

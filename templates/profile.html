@@ -94,6 +94,9 @@
             <div id="molts-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'molts' else '' }}" onclick="switchTo('molts');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
             </div>
+            <div id="replies-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'replies' else '' }}" onclick="switchTo('replies');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Replies</strong></div>
+            </div>
             <div id="likes-btn" class="profile-box-category mt-2 col {{ 'active' if current_tab == 'likes' else '' }}" onclick="switchTo('likes');">
                 <div class="py-2"><strong class="d-inline-block w-100 text-center">Likes</strong></div>
             </div>
@@ -105,12 +108,20 @@
 </div>
 
 <!-- All molts live here! -->
-<!-- FIXME: I DELIBERATELY SET MOLTS TO HIDDEN, SWAP WITH TROPHIES BEFORE PUBLISH -->
 <div id="molts" class="{{ 'd-none' if current_tab != 'molts' else '' }}">
     {% for molt in molts %}
         {% include "molt.html" %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user does not have any molts 🤔</div>
+    {% endfor %}
+</div>
+
+<!-- All replies live here! -->
+<div id="replies" class="{{ 'd-none' if current_tab != 'replies' else '' }}">
+    {% for molt in replies %}
+        {% include "molt.html" %}
+    {% else %}
+        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not replied to anything</div>
     {% endfor %}
 </div>
 
@@ -200,36 +211,18 @@
 <script>
     // Molt/Like tab controller
     function switchTo(tab) {
-        if (tab == "molts") {
-            // Switch active button
-            $("#molts-btn").addClass("active");
-            $("#likes-btn").removeClass("active");
-            $("#trophies-btn").removeClass("active");
-            // Switch tab
-            $("#molts").removeClass("d-none");
-            $("#trophies").addClass("d-none");
-            $("#likes").addClass("d-none");
-        }
-        else if (tab == "likes") {
-            // Switch active button
-            $("#likes-btn").addClass("active");
-            $("#molts-btn").removeClass("active");
-            $("#trophies-btn").removeClass("active");
-            // Switch tab
-            $("#likes").removeClass("d-none");
-            $("#trophies").addClass("d-none");
-            $("#molts").addClass("d-none");
-        }
-        else if (tab == "trophies") {
-            // Switch active button
-            $("#trophies-btn").addClass("active");
-            $("#likes-btn").removeClass("active");
-            $("#molts-btn").removeClass("active");
-            // Switch tab
-            $("#likes").addClass("d-none");
-            $("#molts").addClass("d-none");
-            $("#trophies").removeClass("d-none");
-        }
+        var tabs = ['molts', 'replies', 'likes', 'trophies']
+        // Reset all buttons to inactive and tabs to hidden
+        tabs.forEach(tabName => {
+            $(`#${tabName}-btn`).removeClass("active");
+            $(`#${tabName}`).addClass("d-none");
+            
+        });
+        
+        // Switch active button
+        $(`#${tab}-btn`).addClass("active");
+        // Switch tab
+        $(`#${tab}`).removeClass("d-none");
     }
 
     // Display save button when a change is made

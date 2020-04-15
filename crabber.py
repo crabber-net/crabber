@@ -887,10 +887,12 @@ def user(username):
         if this_user is not None:
             molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
                 Molt.timestamp.desc())
+            replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True).order_by(
+                Molt.timestamp.desc())
             return render_template('profile.html',
                                    current_page=("own-profile" if this_user == get_current_user() else ""),
                                    molts=molts, current_user=get_current_user(), this_user=this_user,
-                                   current_tab=current_tab)
+                                   current_tab=current_tab, replies=replies)
         else:
             return render_template('not-found.html', current_user=get_current_user(), noun="user")
     else:
