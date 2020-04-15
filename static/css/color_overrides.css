@@ -41,11 +41,12 @@
     background-color: var(--primary-dark);
     border-color: var(--primary-darker);
 }
-.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled):focus {
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:disabled {
     background-color: var(--primary-darker);
     border-color: var(--like-trans);
     box-shadow: 0 0 0 .2rem var(--primary-faded) !important;
 }
+
 .text-primary {
     color: var(--primary) !important;
     fill: var(--primary) !important

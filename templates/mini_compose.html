@@ -6,10 +6,13 @@
         </a>
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
-        <form method="POST" enctype="multipart/form-data">
+        <form action={{location}} method="POST" enctype="multipart/form-data" onsubmit="return subMolt(this);">
             <div class="mini-compose-textarea">
                 <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
                     placeholder="How are you feeling?" onfocus="$(this).parents('.mini-compose-box').addClass('focused')" required></textarea>
+                <div class="mini-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                    <div class="img-preview mini-molt-media-img"></div>
+                </div>
             </div>
             <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
                 
@@ -17,11 +20,16 @@
                 <div class="file-input input-group mb-3">
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="inputGroupFile03" name="molt-media"
-                            aria-describedby="inputGroupFileAddon01">
+                            aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
+                            accept="image/x-png,image/jpeg">
                         <label class="custom-file-label" for="inputGroupFile03">
                             <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
                         </label>
                     </div>
+                </div>
+
+                <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
+                    <span data-width="28" data-height="28" data-jam="close-rectangle"></span>
                 </div>
 
                 <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>

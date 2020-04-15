@@ -34,4 +34,4 @@ def prep_and_save(img_bytes, filename):
         flat_img = img
 
     # Optimize and save image at 50% jpeg quality
-    flat_img.save(filename, optimize=True, quality=50)
+    flat_img.convert('RGB').save(filename, optimize=True, quality=50)

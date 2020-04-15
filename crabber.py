@@ -130,6 +130,8 @@ def common_molt_actions() -> Response:
                         turtle_images.prep_and_save(img, location)
                         img_attachment = "img/user_uploads/" + filename
             get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
+        else:
+            return redirect(request.path + "?error=Molts cannot be devoid of text")
 
     elif action == "follow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
@@ -985,9 +987,10 @@ def ajax_request(request_type):
 @app.context_processor
 def inject_global_vars():
     error = request.args.get("error")
+    location = request.path
     return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
                 TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
-                error=error)
+                error=error, location=location)
 
 
 @app.errorhandler(404)
