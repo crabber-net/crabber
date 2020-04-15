@@ -460,7 +460,12 @@
                 </div>
                 <div id="content-body" class="h-100">
                     {% if error %}
+                        <!-- ERROR MESSAGE -->
                         <div class="alert alert-danger p-1" role="alert">{{error}}</div>
+                    {% endif %}
+                    {% if msg %}
+                        <!-- MISC MESSAGE -->
+                        <div class="alert alert-secondary p-1" role="alert">{{msg}}</div>
                     {% endif %}
                     {% block body %} {% endblock %}
                 </div>

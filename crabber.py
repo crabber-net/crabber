@@ -12,6 +12,24 @@ from werkzeug.wrappers import Response
 
 # HELPER FUNCS #########################################################################################################
 
+def show_error(error_msg: str) -> Response:
+    """
+    Redirect user to current page with error message alert
+    :param error_msg: Message to display to user
+    :return: Response to return to user
+    """
+    return redirect(f"{request.path}?error={error_msg}")
+
+
+def show_message(misc_msg: str) -> Response:
+    """
+    Redirect user to current page with misc message alert
+    :param misc_msg: Message to display to user
+    :return: Response to return to user
+    """
+    return redirect(f"{request.path}?msg={misc_msg}")
+
+
 def get_pretty_age(dt: datetime.datetime) -> str:
     """
     Converts datetime to pretty twitter-esque age string.
@@ -86,7 +104,7 @@ def common_molt_actions() -> Response:
         if 'file' in request.files:
             img = request.files['file']
             if img.filename == '':
-                return redirect(request.path + "?error=No image was selected")
+                return show_error("No image was selected")
             elif img and allowed_file(img.filename):
                 filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -96,14 +114,14 @@ def common_molt_actions() -> Response:
                 db.session.commit()
                 return redirect(request.path)
             else:
-                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
-        return redirect(request.path + "?error=There was an error uploading your image")
+                return show_error("File must be either a jpg, jpeg, or png")
+        return show_error("There was an error uploading your image")
 
     elif action == "change_banner":
         if 'file' in request.files:
             img = request.files['file']
             if img.filename == '':
-                return redirect(request.path + "?error=No image was selected")
+                return show_error("No image was selected")
             elif img and allowed_file(img.filename):
                 filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -113,8 +131,8 @@ def common_molt_actions() -> Response:
                 db.session.commit()
                 return redirect(request.path)
             else:
-                return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
-        return redirect(request.path + "?error=There was an error uploading your image")
+                return show_error("File must be either a jpg, jpeg, or png")
+        return show_error("There was an error uploading your image")
     # Submit new molt
 
     elif action == "submit_molt":
@@ -131,7 +149,7 @@ def common_molt_actions() -> Response:
                         img_attachment = "img/user_uploads/" + filename
             get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
         else:
-            return redirect(request.path + "?error=Molts cannot be devoid of text")
+            return show_error("Molts cannot be devoid of text")
 
     elif action == "follow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
@@ -167,13 +185,13 @@ def common_molt_actions() -> Response:
                         target_molt.edit(new_content)
                         return redirect(f'/user/{get_current_user().username}/status/{target_molt.id}')
                     else:
-                        return redirect(request.path + "?error=No changes were made")
+                        return show_error("No changes were made")
                 else:
-                    return redirect(request.path + "?error=Molt text cannot be blank")
+                    return show_error("Molt text cannot be blank")
             else:
-                return redirect(request.path + "?error=Molt is no longer editable (must be less than 5 minutes old)")
+                return show_error("Molt is no longer editable (must be less than 5 minutes old)")
         else:
-            return redirect(request.path + "?error=You can't edit Molts that aren't yours")
+            return show_error("You can't edit Molts that aren't yours")
 
     elif action == "remolt_molt" and molt_id is not None:
         target_molt = Molt.query.filter_by(id=molt_id).first()
@@ -954,6 +972,7 @@ def search():
     else:
         return redirect("/login")
 
+
 # This wise tortoise, the admin control panel
 @app.route("/tortimer", methods=("GET", "POST"))
 def tortimer():
@@ -1011,10 +1030,11 @@ def ajax_request(request_type):
 @app.context_processor
 def inject_global_vars():
     error = request.args.get("error")
+    msg = request.args.get("msg")
     location = request.path
     return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
                 TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
-                error=error, location=location)
+                error=error, msg=msg, location=location)
 
 
 @app.errorhandler(404)
@@ -1024,7 +1044,7 @@ def error_404(_error_msg):
 
 @app.errorhandler(413)
 def file_to_big(_e):
-    return redirect(request.path + "?error=Image must be smaller than 5 megabytes")
+    return show_error("Image must be smaller than 5 megabytes")
 
 
 @app.before_request
