@@ -55,13 +55,15 @@
             {% endif %}
         </div>
         <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
-            <input type="hidden" name="user_action" value="reply_molt">
-            <input type="hidden" name="molt_id" value="{{molt.id}}">
-            <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
-                onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
-                <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="message"></span>
-                <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
-            </div>
+            <form>
+                <input type="hidden" name="user_action" value="reply_molt">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
+                    onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                    <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="message"></span>
+                    <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
+                </div>
+            </form>
             <form method="POST">
                 <input type="hidden" name="user_action" value="remolt_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">

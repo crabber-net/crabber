@@ -7,7 +7,7 @@
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This molt has been deleted</div>
     {% else %}
         {% if molt.is_reply %}
-            <div class="px-2 pt-2">
+            <div class="mt-2">
                 {% with molt=molt.original_molt, thread=true, is_parent=true, hide_border=true %}
                     {% include "molt.html" %}
                 {% endwith %}
