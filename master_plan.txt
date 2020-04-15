@@ -56,7 +56,6 @@ Emoji policy: pro
   * Turn molt content links into anchors
   * DOCUMENTATION and refactoring
   * Figure out how to add class type hints before declaration
-  * "Molts and replies" tab on profile
   * Quote-molting
   * Moderation helper -- gives content a profanity score and page displays highest-ranking things for the moderator to 
     either approve or take action on.
