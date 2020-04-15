@@ -484,6 +484,9 @@
             let textarea = $(this);
             let counter = textarea.parents("form").find(".mini-character-counter");
             counter.text({{ MOLT_CHAR_LIMIT }} - textarea.val().length);
+
+            // Enable/disable submit button
+            textarea.parents("form").find("button").attr("disabled", textarea.val().length == 0);
         }
 
         // Counter is hidden by default so if Javascript breaks or is blocked the user doesn't see it in a broken state
