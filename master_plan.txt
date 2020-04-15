@@ -58,3 +58,4 @@ Emoji policy: pro
   * DOCUMENTATION and refactoring
   * Figure out how to add class type hints before declaration
   * "Molts and replies" tab on profile
+  * Quote-molting
