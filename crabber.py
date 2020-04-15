@@ -420,6 +420,10 @@ class Crab(db.Model):
     def notify(self, **kwargs):
         if kwargs.get("sender") is self:
             return "Declined notification on grounds of sender being recipient."
+        if Notification.query.filter_by(recipient=self, sender=kwargs.get('sender'),
+                                        type=kwargs.get('type'), molt=kwargs.get('molt')).first():
+            print("#################################################### notif declined")
+            return "Declined notification on grounds of duplication."
         new_notif = Notification(recipient=self, **kwargs)
         db.session.add(new_notif)
         db.session.commit()
