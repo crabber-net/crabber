@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %} Search {% endblock %}
+{% block heading %} Search {% endblock %}
+
+{% block body %}
+    <!-- The compose box lives here! -->
+    <form action="{{location}}" method="GET" onsubmit="$(this).find('strong').text('Searching...')">
+        <div class="mini-compose-box border-bottom border-dark px-3 p-2 d-flex flex-row">
+            <input class="w-100" type="text" name="q" placeholder="search query" value="{{query if query else ''}}" {{'' if query else 'autofocus'}} required>
+            <div class="d-inline-block">
+                <button type="submit" class="btn btn-primary rounded-pill mini-btn"><strong>Search</strong></button>
+            </div>
+        </div>
+    </form>
+
+    {% if query %}
+        <!-- Tab buttons -->
+        <div class="row mx-0">
+            <div id="molts-btn" class="profile-box-category col active" onclick="switchTo('molts');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
+            </div>
+            <div id="crabs-btn" class="profile-box-category col" onclick="switchTo('crabs');">
+                <div class="py-2"><strong class="d-inline-block w-100 text-center">Crabs</strong></div>
+            </div>
+        </div>
+
+        <div id="molts">
+            {% for molt in molt_results %}
+                {% include "molt.html" %}
+            {% else %}
+                <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">No results.</div>
+            {% endfor %}
+        </div>
+        <div id="crabs" class="d-none">
+            {% for crab in crab_results %}
+                {% include "mini_bio.html" %}
+            {% else %}
+                <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">No results.</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+
+    <script>
+        // Molt/Like tab controller
+        function switchTo(tab) {
+            if (tab == "molts") {
+                // Switch active button
+                $("#molts-btn").addClass("active");
+                $("#crabs-btn").removeClass("active");
+                // Switch tab
+                $("#molts").removeClass("d-none");
+                $("#crabs").addClass("d-none");
+            }
+            else if (tab == "crabs") {
+                // Switch active button
+                $("#crabs-btn").addClass("active");
+                $("#molts-btn").removeClass("active");
+                // Switch tab
+                $("#crabs").removeClass("d-none");
+                $("#molts").addClass("d-none");
+            }
+        }
+    </script>
+{% endblock %}

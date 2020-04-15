@@ -7,7 +7,7 @@
 <head>
     {% block head %}
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} | Crabber</title>
     <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/x-icon">
 
     <!-- Mobile web app -->
@@ -230,7 +230,9 @@
                 </form>
 
                 <form action="/wild">
-                    <button type="submit" class="btn btn-secondary rounded-pill mt-2" {% if current_page == "wild-west" %} id="nav-active"
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2" 
+                        {% if current_page == "wild-west" %} 
+                            id="nav-active"
                         {% endif %}>
                         <span class="btn-icon" data-width="28" data-height="28"
                             data-jam="cactus{{"-f" if current_page == "wild-west" else ""}}"></span>
@@ -242,15 +244,24 @@
                 <form action="/notifications">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                     {% if current_page == "notifications" %}
-                    id="nav-active"
-                    {% endif %}
-                    >
+                        id="nav-active"
+                    {% endif %}>
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
                         <span class="notif-badge {{"" if current_user.unread_notifications else "d-none"}}">{{current_user.unread_notifications}}</span>
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
                 </form>
+                {% endif %}
 
+                <form action="/search">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
+                        {% if current_page == "search" %} id="nav-active" {% endif %}>
+                        <span class="btn-icon" data-width="28" data-height="28" data-jam="search"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Search</strong>
+                    </button>
+                </form>
+
+                {% if current_user %}
                 <form action="/user/{{current_user.username}}">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "own-profile" %}

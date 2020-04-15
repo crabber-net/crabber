@@ -239,7 +239,7 @@ div.mini-molt:hover {
 .mini-compose-box.focused {
     max-height: none;
 }
-.mini-compose-box textarea {
+.mini-compose-box textarea, .mini-compose-box input {
     background: none;
     color: inherit;
     border: none;

@@ -930,6 +930,30 @@ def crabtags(crabtag):
         return redirect("/login")
 
 
+@app.route("/search", methods=("GET", "POST"))
+def search():
+    # Handle forms and redirect to clear post data on browser
+    if request.method == "POST":
+        return common_molt_actions()
+
+    # Display page
+    elif session.get('current_user') is not None:
+        query = request.args.get('q')
+        if query:
+            crab_results = Crab.query.filter_by(deleted=False) \
+                .filter(db.or_(Crab.display_name.ilike(f'%{query}%'),
+                               Crab.username.ilike(f'%{query}%')))
+            molt_results = Molt.query.filter_by(deleted=False, is_reply=False) \
+                .filter(Molt.content.ilike(f'%{query}%')) \
+                .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())
+        else:
+            molt_results = tuple()
+            crab_results = tuple()
+        return render_template('search.html', current_page="search", query=query,
+                               molt_results=molt_results, crab_results=crab_results, current_user=get_current_user())
+    else:
+        return redirect("/login")
+
 # This wise tortoise, the admin control panel
 @app.route("/tortimer", methods=("GET", "POST"))
 def tortimer():
