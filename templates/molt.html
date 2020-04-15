@@ -21,6 +21,7 @@
         {% endif %}
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
+        <meta id="molt-content-{{molt.id}}" data-content="{{molt.content}}">
         {% if is_remolt %}
         <!-- Remolt indicator -->
         <small class="mini-molt-remolt text-muted zindex-front">
@@ -55,6 +56,19 @@
             {% endif %}
         </div>
         <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
+            {% if molt.author == current_user and molt.editable %}
+            <!-- EDIT BUTTON -->
+                <form>
+                    <input type="hidden" name="user_action" value="reply_molt">
+                    <input type="hidden" name="molt_id" value="{{molt.id}}">
+                    <div class="mini-molt-action edit rounded-circle zindex-front" data-toggle="modal"
+                        data-target="#edit_molt_modal"
+                        onclick="prepareEdit('{{molt.id}}');">
+                        <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="pencil"></span>
+                    </div>
+                </form>
+            {% endif %}
+            <!-- REPLY BUTTON -->
             <form>
                 <input type="hidden" name="user_action" value="reply_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -64,6 +78,7 @@
                     <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
                 </div>
             </form>
+            <!-- REMOLT BUTTON -->
             <form method="POST">
                 <input type="hidden" name="user_action" value="remolt_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -77,6 +92,7 @@
                     <span class="mini-molt-action-counter ml-1">{{molt.true_remolts|length}}</span>
                 </div>
             </form>
+            <!-- LIKE BUTTON -->
             <form method="POST">
                 <input type="hidden" name="user_action" value="like_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -87,7 +103,7 @@
                 </div>
             </form>
             {% if molt.author.id == current_user.id %}
-            <!-- Delete molt -->
+            <!-- DELETE BUTTON -->
             <form method="POST">
                 <input type="hidden" name="user_action" value="delete_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -97,7 +113,7 @@
             </form>
             {% endif %}
             {% if is_remolt and remolt_shell.author.id == current_user.id %}
-            <!-- Delete remolt -->
+            <!-- DELETE BUTTON -->
             <form method="POST">
                 <input type="hidden" name="user_action" value="delete_molt">
                 <input type="hidden" name="molt_id" value="{{remolt_shell.id}}">

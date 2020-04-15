@@ -109,6 +109,15 @@
             $("#reply-molt-id").val(molt_id)
         }
 
+        function prepareEdit(molt_id) {
+            // Update form edit-molt content
+            $("#edit-content").val($("#molt-content-" + molt_id).attr("data-content"))
+            // Update form edit-molt ID
+            $("#edit-molt-id").val(molt_id)
+            // Update character counter
+            updateCounter.call($('#edit_molt_modal textarea'));
+        }
+
         // Set notification badge to 'unread_count'
         function updateNotifBadge(unread_count) {
             var badge = $(".notif-badge");
@@ -274,9 +283,7 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
 
-            {% if current_user %}
             <!-- Molt reply popup -->
             <div class="modal fade" id="compose_reply_modal" tabindex="-1" role="dialog" aria-labelledby="composeReplyModalLabel"
                 aria-hidden="true">
@@ -325,6 +332,43 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Edit Molt popup -->
+            <div class="modal fade" id="edit_molt_modal" tabindex="-1" role="dialog" aria-labelledby="editMoltModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header py-2 border-dark">
+                            <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Editing your own Molt</a></strong>
+                        </div>
+                        <div class="modal-body row">
+                            <div class="mini-molt-profile-box col-lg-1 mr-2">
+                                <a href="/user/{{current_user.username}}">
+                                    <div class="rounded-circle px43 profile-picture"
+                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                                </a>
+                            </div>
+                            <div class="mini-molt-text-box w-100 h-100 px-2 col">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="mini-compose-reply-textarea">
+                                        <textarea id="edit-content" name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
+                                            placeholder="Remember to be kind"></textarea required>
+                                    </div>
+                                    <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
+                                        <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
+                                        <input type="hidden" name="user_action" value="submit_molt_edit">
+                                        <input type="hidden" id="edit-molt-id" name="molt_id" value="">
+                                        <button type="submit" class="btn btn-primary rounded-pill"><strong>Save</strong></button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endif %}
 
             <!-- Image expand modal -->
@@ -341,6 +385,9 @@
                     <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
                 </div>
                 <div id="content-body" class="h-100">
+                    {% if error %}
+                        <div class="alert alert-danger p-1" role="alert">{{error}}</div>
+                    {% endif %}
                     {% block body %} {% endblock %}
                 </div>
             </div>

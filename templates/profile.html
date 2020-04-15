@@ -10,10 +10,6 @@
     })
 </script>
 
-{% if error %}
-    <div class="alert alert-danger p-1" role="alert">{{error}}</div>
-{% endif %}
-
 <!-- Profile bio box -->
 <div class="profile-box border-bottom border-dark">
     <div class="profile-box-banner" {{expand_img() if current_page != "own-profile" else ""}}>

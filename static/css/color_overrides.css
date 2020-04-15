@@ -26,6 +26,8 @@
     --like-trans: rgba(230, 57, 70, 0.05);
     --trash: rgb(224, 110, 44);
     --trash-trans: rgba(224, 110, 44, 0.05);
+    --edit: rgb(223, 199, 64);
+    --edit-trans: rgba(223, 199, 64, 0.05);
 }
 
 /* Primaries */

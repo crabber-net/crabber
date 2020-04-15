@@ -98,6 +98,7 @@ def common_molt_actions() -> Response:
             else:
                 return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
         return redirect(request.path + "?error=There was an error uploading your image")
+
     elif action == "change_banner":
         if 'file' in request.files:
             img = request.files['file']
@@ -115,6 +116,7 @@ def common_molt_actions() -> Response:
                 return redirect(request.path + "?error=File must be either a jpg, jpeg, or png")
         return redirect(request.path + "?error=There was an error uploading your image")
     # Submit new molt
+
     elif action == "submit_molt":
         if request.form.get('molt_content'):
             img_attachment = None
@@ -128,12 +130,15 @@ def common_molt_actions() -> Response:
                         turtle_images.prep_and_save(img, location)
                         img_attachment = "img/user_uploads/" + filename
             get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
+
     elif action == "follow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().follow(target_user)
+
     elif action == "unfollow":
         target_user = Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().unfollow(target_user)
+
     elif action == "submit_reply_molt":
         target_molt = Molt.query.filter_by(id=molt_id).first()
         if request.form.get('molt_content'):
@@ -149,6 +154,25 @@ def common_molt_actions() -> Response:
                         img_attachment = "img/user_uploads/" + filename
             reply = target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
             return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
+
+    elif action == "submit_molt_edit":
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        new_content = request.form.get('molt_content')
+        if target_molt.author == get_current_user():
+            if target_molt.editable:
+                if new_content:
+                    if new_content != target_molt.content:
+                        target_molt.edit(new_content)
+                        return redirect(f'/user/{get_current_user().username}/status/{target_molt.id}')
+                    else:
+                        return redirect(request.path + "?error=No changes were made")
+                else:
+                    return redirect(request.path + "?error=Molt text cannot be blank")
+            else:
+                return redirect(request.path + "?error=Molt is no longer editable (must be less than 5 minutes old)")
+        else:
+            return redirect(request.path + "?error=You can't edit Molts that aren't yours")
+
     elif action == "remolt_molt" and molt_id is not None:
         target_molt = Molt.query.filter_by(id=molt_id).first()
         target_molt.remolt(get_current_user())
@@ -193,6 +217,7 @@ def load_usernames_from_file(filename: str) -> List[str]:
 
 # GENERAL CONFIG #######################################################################################################
 MOLT_CHAR_LIMIT: int = 240
+MINUTES_EDITABLE: int = 5
 ADMINS: List[str] = load_usernames_from_file("admins")  # Users allowed to access the Tortimer page
 UPLOAD_FOLDER: str = 'static/img/user_uploads' if os.name == "nt" \
     else "/var/www/crabber/crabber/static/img/user_uploads"
@@ -417,6 +442,7 @@ class Molt(db.Model):
     # replies
     # likes
     likes = db.relationship('Like')
+    edited = db.Column(db.Boolean, nullable=False, default=False)
 
     # Custom initialization required to process tags and mentions
     def __init__(self, **kwargs):
@@ -432,6 +458,13 @@ class Molt(db.Model):
 
     def __repr__(self):
         return f"<Molt by '@{self.author.username}'>"
+
+    @property
+    def editable(self) -> bool:
+        """
+        Returns true if molt is recent enough to edit
+        """
+        return (datetime.datetime.utcnow() - self.timestamp).total_seconds() < MINUTES_EDITABLE * 60
 
     @property
     def rich_content(self):
@@ -515,6 +548,11 @@ class Molt(db.Model):
         new_reply = crab.molt(comment, is_reply=True, original_molt=self, **kwargs)
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
+
+    def edit(self, new_content):
+        self.content = new_content
+        self.edited = True
+        db.session.commit()
 
     def like(self, crab):
         if not Like.query.filter_by(crab=crab, molt=self).all():
@@ -818,7 +856,6 @@ def user(username):
 
     # Display page
     elif session.get('current_user') is not None:
-        error = request.args.get("error")
         current_tab = request.args.get("tab", default="molts")
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user is not None:
@@ -826,10 +863,10 @@ def user(username):
                 Molt.timestamp.desc())
             return render_template('profile.html',
                                    current_page=("own-profile" if this_user == get_current_user() else ""),
-                                   molts=molts, current_user=get_current_user(), this_user=this_user, error=error,
+                                   molts=molts, current_user=get_current_user(), this_user=this_user,
                                    current_tab=current_tab)
         else:
-            return render_template('not-found.html', current_user=get_current_user(), error=error, noun="user")
+            return render_template('not-found.html', current_user=get_current_user(), noun="user")
     else:
         return redirect("/login")
 
@@ -947,7 +984,10 @@ def ajax_request(request_type):
 # GLOBAL FLASK VARIABLES GO HERE
 @app.context_processor
 def inject_global_vars():
-    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT, TIMESTAMP=round(datetime.datetime.utcnow().timestamp()))
+    error = request.args.get("error")
+    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
+                TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
+                error=error)
 
 
 @app.errorhandler(404)

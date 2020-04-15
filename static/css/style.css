@@ -209,6 +209,11 @@ div.mini-molt:hover {
     fill: var(--trash);
     background-color: var(--trash-trans);
 }
+.mini-molt-action.edit:hover {
+    color: var(--edit);
+    fill: var(--edit);
+    background-color: var(--edit-trans);
+}
 .mini-molt-action-icon {
     fill: inherit;
 }
