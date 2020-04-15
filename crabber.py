@@ -265,6 +265,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
 db = SQLAlchemy(app)
 
+
+# EXCEPTIONS ###########################################################################################################
+class NotFoundInDatabase(BaseException):
+    pass
+
+
 # DATABASE #############################################################################################################
 
 # This stores unidirectional follower-followee relationships
@@ -337,7 +343,7 @@ class Crab(db.Model):
             trophy = Trophy.query.filter_by(title=title).first()
 
         if trophy is None:
-            raise Exception(f"Trophy with title: '{title}' not found.")
+            raise NotFoundInDatabase(f"Trophy with title: '{title}' not found.")
 
         # Check trophy hasn't already been awarded to user
         if not TrophyCase.query.filter_by(owner=self, trophy=trophy).count():
@@ -980,16 +986,28 @@ def tortimer():
         if request.method == "POST":
             action = request.form.get("user_action")
             if request.form.get("target") == "crab":
-                target = Crab.query.filter_by(id=request.form.get("crab_id")).first()
+                target: Crab = Crab.query.filter_by(id=request.form.get("crab_id")).first()
             else:
-                target = Molt.query.filter_by(id=request.form.get("molt_id")).first()
+                target: Molt = Molt.query.filter_by(id=request.form.get("molt_id")).first()
             if action == "verify":
                 target.verified = True
                 db.session.commit()
+                return show_message(f"Verified @{target.username}")
             elif action == "delete":
                 target.delete()
+                return show_message(f"Deleted @{target.username}")
             elif action == "restore":
                 target.restore()
+                return show_message(f"Restored @{target.username}")
+            elif action == "award":
+                if request.form.get("award_title"):
+                    try:
+                        target.award(title=request.form.get("award_title"))
+                        return show_message(f"Awarded @{target.username}: {request.form.get('award_title')}")
+                    except NotFoundInDatabase:
+                        return show_error(f"Unable to find trophy with title: {request.form.get('award_title')}")
+                else:
+                    return show_error(f"No award title found.")
 
             # PRG pattern
             return redirect(request.url)
