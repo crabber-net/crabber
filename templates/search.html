@@ -6,8 +6,8 @@
     <!-- The compose box lives here! -->
     <form action="{{location}}" method="GET" onsubmit="$(this).find('strong').text('Searching...')">
         <div class="mini-compose-box border-bottom border-dark px-3 p-2 d-flex flex-row">
-            <input class="w-100" type="text" name="q" placeholder="search query" value="{{query if query else ''}}" {{'' if query else 'autofocus'}} required>
-            <div class="d-inline-block">
+            <input class="w-100 mr-2" type="text" name="q" placeholder="search query" value="{{query if query else ''}}" {{'' if query else 'autofocus'}} required>
+            <div class="d-inline-block ml-2">
                 <button type="submit" class="btn btn-primary rounded-pill mini-btn search-btn"><strong>Search</strong></button>
             </div>
         </div>

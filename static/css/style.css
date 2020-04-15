@@ -645,4 +645,5 @@ body, .master-container {
     margin-top: auto;
     margin-bottom: auto;
     vertical-align: middle;
+    height: 100%;
 }
