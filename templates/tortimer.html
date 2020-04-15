@@ -23,9 +23,17 @@
                 <input type="hidden" name="target" value="crab">
                 <input type="hidden" name="crab_id" value="{{crab.id}}">
                 <div class="d-flex flex-row justify-content-around">
-                    <button type="submit" name="user_action" value="Verify" class="btn btn-primary">Verify</button>
+                    <div class="input-group mx-2">
+                        <input type="text" name="award_title" class="form-control bg-dark text-light" placeholder="Trophy Title" aria-label="Trophy Title"
+                            aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button name="user_action" value="award" class="btn btn-info" type="submit">Award</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" name="user_action" value="verify" class="btn btn-success mx-2">Verify</button>
                     {% set del_action = "restore" if crab.deleted else "delete" %}
-                    <button type="submit" name="user_action" value="{{del_action}}" class="btn btn-secondary">{{del_action|title}}</button>
+                    <button type="submit" name="user_action" value="{{del_action}}" class="text-dark btn btn-warning mx-2">{{del_action|title}}</button>
                 </div>
             </form>
         </div>
