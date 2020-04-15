@@ -35,13 +35,13 @@
             replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
                 {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}} molt</a></small>
         {% endif %}
-        <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
-                class="mini-molt-display-name">{{molt.author.display_name}}</a>
+        <div class="mini-molt-credentials {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
+                class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
             {% if molt.author.verified %}
-            <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
+            <a title="Verified user" class="zindex-front"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
             {% endif %}
-            <span class="mini-molt-username">@{{molt.author.username}}</span>
-            <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
+            <span class="mini-molt-username zindex-front">@{{molt.author.username}}</span>
+            <span class="mini-molt-timestamp zindex-front">· <a href="javascript:void(0)"
                     title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
         </div>
         <div class="mini-molt-content">

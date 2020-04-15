@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Search {% endblock %}
+{% block title %} {{'"' + query + '"' if query else "Search"}} {% endblock %}
 {% block heading %} Search Crabber {% endblock %}
 
 {% block body %}
