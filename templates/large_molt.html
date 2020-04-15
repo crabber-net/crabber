@@ -48,12 +48,18 @@
             </div>
             {% endif %}
         </div>
-        <div class="w-100 mt-3 py-2 text-muted border-bottom border-dark">
+        <div class="w-100 pb-2 pt-1 text-muted border-bottom border-dark">
             <!-- 11:30 AM · Apr 9, 2020 -->
             {{molt.timestamp.strftime("%I:%M %p · %b %e, %Y")}}
             {% if molt.edited %}
             &mdash; This molt has been edited
             {% endif %}
+        </div>
+        <div class="mini-molt-actions d-flex flex-row border-dark border-bottom justify-content-start w-100 py-2 mb-0">
+            <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_remolts_modal">
+                <span class="text-light font-weight-bold">{{molt.true_remolts|length}}</span> Remolt{{'' if (molt.true_remolts|length) == 1 else 's'}}</a>
+            <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_likes_modal">
+                <span class="text-light font-weight-bold">{{molt.true_likes|length}}</span> Like{{'' if (molt.true_likes|length) == 1 else 's'}}</a>
         </div>
         <div class="mini-molt-actions d-flex flex-row border-dark justify-content-around w-100 py-2 px-4 mb-0">
             {% if molt.author == current_user and molt.editable %}
@@ -74,7 +80,6 @@
                 <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
                     onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="message"></span>
-                    <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
                 </div>
             </form>
             <!-- REMOLT BUTTON -->
@@ -88,7 +93,6 @@
                         onClick="alert('Don\'t remolt your own stuff!');"
                     {% endif %}>
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="repeat"></span>
-                    <span class="mini-molt-action-counter ml-1">{{molt.true_remolts|length}}</span>
                 </div>
             </form>
             <!-- LIKE BUTTON -->
@@ -98,7 +102,6 @@
                 <div class="mini-molt-action like zindex-front" onClick="SubForm(this.parentNode);toggleLike(this);">
                 <span class="mini-molt-action-icon {{"d-none" if current_user.has_liked(molt) else ""}}" data-width="20" data-height="20" data-jam="heart"></span>
                     <span class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" data-width="20" data-height="20" data-jam="heart-f"></span>
-                    <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.likes|length}}</span>
                 </div>
             </form>
             {% if molt.author.id == current_user.id %}
@@ -121,6 +124,53 @@
                 </div>
             </form>
             {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Remolts popup -->
+<div class="modal fade" id="molt_remolts_modal" tabindex="-1" role="dialog" aria-labelledby="moltRemoltsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark modal-left-align">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Remolted by</strong>
+            </div>
+            <div class="modal-body row m-1 w-100 d-block">
+                {% for remolt in molt.true_remolts %}
+                    {% with crab = remolt.author %}
+                        {% include "mini_bio.html" %}
+                    {% endwith %}
+                {% else %}
+                    <span class="text-muted">No one has remolted this</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Likes popup -->
+<div class="modal fade" id="molt_likes_modal" tabindex="-1" role="dialog" aria-labelledby="moltLikesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark modal-left-align">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Liked by</strong>
+            </div>
+            <div class="modal-body row m-1 w-100 d-block">
+                {% for like in molt.true_likes %}
+                    {% with crab = like.crab %}
+                        {% include "mini_bio.html" %}
+                    {% endwith %}
+                {% else %}
+                    <span class="text-muted">No one has liked this 💔</span>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
