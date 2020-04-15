@@ -54,8 +54,9 @@ Emoji policy: pro
   * User popovers
   * Notif stacking
   * Turn molt content links into anchors
-  * Ability to award trophies on the Tortimer page
   * DOCUMENTATION and refactoring
   * Figure out how to add class type hints before declaration
   * "Molts and replies" tab on profile
   * Quote-molting
+  * Moderation helper -- gives content a profanity score and page displays highest-ranking things for the moderator to 
+    either approve or take action on.
