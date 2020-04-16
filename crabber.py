@@ -245,6 +245,7 @@ UPLOAD_FOLDER: str = 'static/img/user_uploads' if os.name == "nt" \
     else "/var/www/crabber/crabber/static/img/user_uploads"
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
+BASE_URL = "http://localhost" if os.name == "nt" else "https://crabber.net"
 
 # Regex patterns #######################################################################################################
 mention_pattern = re.compile(
@@ -580,11 +581,15 @@ class Molt(db.Model):
         return get_pretty_age(self.timestamp)
 
     def dict(self):
-        return {"molt": {"author": self.author_id,
+        return {"molt": {"author": {"id": self.author.id,
+                                    "username": self.author.username,
+                                    "display_name": self.author.display_name},
                          "content": self.content,
                          "rich_content": self.rich_content,
                          "likes": [like.id for like in self.true_likes],
                          "remolts": [remolt.id for remolt in self.true_remolts],
+                         "image": (BASE_URL + url_for('static', filename=self.image)) if self.image else None,
+                         "id": self.id,
                          "timestamp": round(self.timestamp.timestamp())}}
 
     def get_reply_from(self, crab):
@@ -1100,6 +1105,30 @@ def api_v0(action):
                     return "Incorrect password", 400
             else:
                 return "No such user found", 400
+        # Reply to molt
+        elif action == "reply":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            content = request.form.get("content")
+            original_id = request.form.get("original_id")
+            original_molt: Molt = Molt.query.filter_by(id=original_id, deleted=False)\
+                .filter(Molt.author.has(deleted=False)).first()
+
+            target_user: Crab = Crab.query.filter_by(username=username).first()
+            if target_user:
+                if target_user.verify_password(password):
+                    if content:
+                        if original_molt:
+                            new_molt = original_molt.reply(target_user, content)
+                            return jsonify(new_molt.dict())
+                        else:
+                            return "No molt found with that ID", 400
+                    else:
+                        return "No content provided", 400
+                else:
+                    return "Incorrect password", 400
+            else:
+                return "No such user found", 400
 
         return jsonify("Blah!")
     elif request.method == "GET":
@@ -1116,6 +1145,16 @@ def api_v0(action):
                     return jsonify(molt.dict())
             else:
                 return "Molt not found", 400
+        # Get molts mentioning user
+        elif action == "mentions":
+            username = request.args.get("username")
+            since_ts = request.args.get("since", 0)
+            if username:
+                molts = Molt.query.filter(Molt.raw_mentions.contains((username + "\n")))\
+                    .filter(Molt.timestamp > datetime.datetime.fromtimestamp(int(since_ts))).all()
+                return jsonify([molt.dict() for molt in molts])
+            else:
+                return "Username not provided", 400
     return "What were you trying to do?", 400
 
 
