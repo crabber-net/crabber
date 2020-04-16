@@ -118,6 +118,8 @@
 #nav-panel button {
     /* Collapsible buttons in left sidebar */
     display: block;
+    /* Disable wrapping */
+    white-space: nowrap;
 }
 
 #nav-panel button:not(#molt-btn) {
