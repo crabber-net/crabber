@@ -39,10 +39,10 @@ def get_pretty_age(dt: datetime.datetime) -> str:
     now: datetime.datetime = datetime.datetime.utcnow()
     delta = now - dt
 
-    if delta.seconds < 60:  # Less than a minute
+    if delta.total_seconds() < 60:  # Less than a minute
         # Return number of seconds
         return f"{round(delta.seconds)}s"
-    elif delta.seconds / 60 < 60:  # Less than an hour
+    elif delta.total_seconds() / 60 < 60:  # Less than an hour
         # Return number of minutes
         return f"{round(delta.seconds / 60)}m"
     elif delta.seconds / 60 / 60 < 24 and delta.days == 0:  # Less than a day
