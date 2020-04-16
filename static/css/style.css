@@ -654,3 +654,32 @@ body, .master-container {
 .modal-left-align .close {
     margin: -1rem 0 -1rem -1rem;
 }
+
+.page-link {
+    min-width: 2rem;
+}
+
+/* Page nav buttons */
+.page-item .page-link, .page-item.disabled .page-link {
+    border-color: var(--dark-less-more);
+    background-color: var(--dark-less);
+    transition: ease-in-out 150ms;
+}
+/* Default fill/text color */
+.page-item .page-link {
+    color: var(--light-darker);
+    fill: var(--light-darker);
+}
+/* Disabled fill/text color */
+.page-item.disabled .page-link {
+    fill: var(--dark-lesserest);
+    color: var(--dark-lesserest);
+}
+/* Hover background */
+.page-item .page-link:hover {
+    background-color: var(--dark-lesserest);
+}
+/* Click background */
+.page-item .page-link:active {
+    background-color: var(--dark-lesser);
+}

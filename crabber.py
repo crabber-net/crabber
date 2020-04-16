@@ -237,6 +237,8 @@ def load_usernames_from_file(filename: str) -> List[str]:
 
 # GENERAL CONFIG #######################################################################################################
 MOLT_CHAR_LIMIT: int = 240
+MOLTS_PER_PAGE: int = 20
+NOTIFS_PER_PAGE: int = 20
 MINUTES_EDITABLE: int = 5
 ADMINS: List[str] = load_usernames_from_file("admins")  # Users allowed to access the Tortimer page
 UPLOAD_FOLDER: str = 'static/img/user_uploads' if os.name == "nt" \
@@ -316,8 +318,7 @@ class Crab(db.Model):
 
     @property
     def true_likes(self):
-        return Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
-            .join(Molt, Like.molt).order_by(Molt.timestamp.desc()).all()
+        return self.get_true_likes()
 
     @property
     def unread_notifications(self):
@@ -326,6 +327,21 @@ class Crab(db.Model):
         :return: len of unread notifs
         """
         return Notification.query.filter_by(recipient=self, read=False).count()
+
+    def get_notifications(self, paginated=False, page=1):
+        notifs = Notification.query.filter_by(recipient=self).order_by(Notification.timestamp.desc())
+        if paginated:
+            return notifs.paginate(page, NOTIFS_PER_PAGE, False)
+        else:
+            return notifs.all()
+
+    def get_true_likes(self, paginated=False, page=1):
+        likes = Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
+            .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
+        if paginated:
+            return likes.paginate(page, MOLTS_PER_PAGE, False)
+        else:
+            return likes.all()
 
     def award(self, title=None, trophy=None):
         """
@@ -747,11 +763,14 @@ def index():
 
     # Display page
     elif session.get('current_user') is not None:
+        page_n = request.args.get('p', 1, type=int)
+
         following_ids = [crab.id for crab in get_current_user().following] + [get_current_user().id]
         molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
             .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
-            .order_by(Molt.timestamp.desc())
-        return render_template('timeline.html', current_page="home",
+            .order_by(Molt.timestamp.desc()) \
+            .paginate(page_n, MOLTS_PER_PAGE, False)
+        return render_template('timeline.html', current_page="home", page_n=page_n,
                                molts=molts, current_user=get_current_user())
     else:
         return redirect("/login")
@@ -765,9 +784,11 @@ def wild_west():
 
     # Display page
     elif session.get('current_user') is not None:
+        page_n = request.args.get('p', 1, type=int)
         molts = Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False)\
-            .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())
-        return render_template('wild-west.html', current_page="wild-west",
+            .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc()) \
+            .paginate(page_n, MOLTS_PER_PAGE, False)
+        return render_template('wild-west.html', current_page="wild-west", page_n=page_n,
                                molts=molts, current_user=get_current_user())
     else:
         return redirect("/login")
@@ -781,21 +802,10 @@ def notifications():
 
     # Display page
     elif session.get('current_user') is not None:
-        # Mentions
-        # molts = Molt.query.filter_by(deleted=False, is_reply=False) \
-        #     .filter(Molt.raw_mentions.contains((get_current_user().username + "\n"))) \
-        #     .order_by(Molt.timestamp.desc())
-        # Replies
-        # molts = Molt.query.filter_by(is_reply=True, deleted=False).all()
-        # molts = [molt for molt in molts if molt.original_molt.author == get_current_user()
-        #          and not molt.original_molt.deleted]
-        # likes = Like.query.filter()
-
-        # return render_template('notifications.html', current_page="notifications",
-        #                        molts=molts, likes=likes, current_user=get_current_user())
-
+        page_n = request.args.get('p', 1, type=int)
+        notifications = get_current_user().get_notifications(paginated=True, page=page_n)
         return render_template('notifications.html', current_page="notifications",
-                               notifications=get_current_user().notifications, current_user=get_current_user())
+                               notifications=notifications, current_user=get_current_user())
     else:
         return redirect("/login")
 
@@ -892,13 +902,17 @@ def user(username):
         current_tab = request.args.get("tab", default="molts")
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user is not None:
+            m_page_n = request.args.get('mp', 1, type=int)
+            r_page_n = request.args.get('rp', 1, type=int)
+            l_page_n = request.args.get('lp', 1, type=int)
             molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
-                Molt.timestamp.desc())
+                Molt.timestamp.desc()).paginate(m_page_n, MOLTS_PER_PAGE, False)
             replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True).order_by(
-                Molt.timestamp.desc())
+                Molt.timestamp.desc()).paginate(r_page_n, MOLTS_PER_PAGE, False)
+            likes = this_user.get_true_likes(paginated=True, page=l_page_n)
             return render_template('profile.html',
                                    current_page=("own-profile" if this_user == get_current_user() else ""),
-                                   molts=molts, current_user=get_current_user(), this_user=this_user,
+                                   molts=molts, current_user=get_current_user(), this_user=this_user, likes=likes,
                                    current_tab=current_tab, replies=replies)
         else:
             return render_template('not-found.html', current_user=get_current_user(), noun="user")
@@ -972,17 +986,21 @@ def search():
     # Display page
     elif session.get('current_user') is not None:
         query = request.args.get('q')
+        page_n = request.args.get('p', 1, type=int)
+
         if query:
             crab_results = Crab.query.filter_by(deleted=False) \
                 .filter(db.or_(Crab.display_name.ilike(f'%{query}%'),
                                Crab.username.ilike(f'%{query}%')))
             molt_results = Molt.query.filter_by(deleted=False, is_reply=False) \
                 .filter(Molt.content.ilike(f'%{query}%')) \
-                .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())
+                .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())\
+                .paginate(page_n, MOLTS_PER_PAGE, False)
+
         else:
             molt_results = tuple()
             crab_results = tuple()
-        return render_template('search.html', current_page="search", query=query,
+        return render_template('search.html', current_page="search", query=query, page_n=page_n,
                                molt_results=molt_results, crab_results=crab_results, current_user=get_current_user())
     else:
         return redirect("/login")

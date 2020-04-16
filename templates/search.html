@@ -25,11 +25,31 @@
         </div>
 
         <div id="molts">
-            {% for molt in molt_results %}
+            {% for molt in molt_results.items %}
                 {% include "molt.html" %}
             {% else %}
                 <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">No results.</div>
             {% endfor %}
+
+            {% if molt_results.has_next or molt_results.has_prev%}          
+                <nav aria-label="Page navigation buttons" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {{'' if molt_results.has_prev else 'disabled'}}">
+                            <a class="page-link h-100 p-0" href="{{url_for('search', p=molt_results.prev_num, q=query)}}" tabindex="-1">
+                                <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
+                            </a>
+                        </li>
+                        <li class="page-item {{'' if page_n > 1 else 'disabled'}}">
+                            <a class="page-link" href="{{url_for('search', q=query)}}">Home</a>
+                        </li>
+                        <li class="page-item {{'' if molt_results.has_next else 'disabled'}}">
+                            <a class="page-link h-100 p-0" href="{{url_for('search', p=molt_results.next_num, q=query)}}">
+                                <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            {% endif %}
         </div>
         <div id="crabs" class="d-none">
             {% for crab in crab_results %}
@@ -41,6 +61,7 @@
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center"><em>"The world is your lobster."</em> - Christian D.</div>
     {% endif %}
+
     <!-- Spacer -->
     <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 
