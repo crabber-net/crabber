@@ -920,7 +920,8 @@ def user(username):
             l_page_n = request.args.get('lp', 1, type=int)
             molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
                 Molt.timestamp.desc()).paginate(m_page_n, MOLTS_PER_PAGE, False)
-            replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True).order_by(
+            replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True)\
+                .filter(Molt.original_molt.has(deleted=False)).order_by(
                 Molt.timestamp.desc()).paginate(r_page_n, MOLTS_PER_PAGE, False)
             likes = this_user.get_true_likes(paginated=True, page=l_page_n)
             return render_template('profile.html',
