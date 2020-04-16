@@ -762,8 +762,8 @@ def wild_west():
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = Molt.query.filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
-            .order_by(Molt.timestamp.desc())
+        molts = Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False)\
+            .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())
         return render_template('wild-west.html', current_page="wild-west",
                                molts=molts, current_user=get_current_user())
     else:
