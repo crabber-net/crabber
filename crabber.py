@@ -579,6 +579,14 @@ class Molt(db.Model):
     def pretty_age(self):
         return get_pretty_age(self.timestamp)
 
+    def dict(self):
+        return {"molt": {"author": self.author_id,
+                         "content": self.content,
+                         "rich_content": self.rich_content,
+                         "likes": [like.id for like in self.true_likes],
+                         "remolts": [remolt.id for remolt in self.true_remolts],
+                         "timestamp": round(self.timestamp.timestamp())}}
+
     def get_reply_from(self, crab):
         print(crab)
         reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab).order_by(Molt.timestamp).first()
@@ -1069,6 +1077,46 @@ def ajax_request(request_type):
                 return "Crab not found. Did you specify 'crab_id'?"
 
         return "Did not specify 'timestamp'"
+
+
+@app.route("/api/v0/<action>", methods=('GET', 'POST'))
+def api_v0(action):
+    if request.method == "POST":
+        # Submit molt
+        if action == "molt":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            content = request.form.get("content")
+
+            target_user: Crab = Crab.query.filter_by(username=username).first()
+            if target_user:
+                if target_user.verify_password(password):
+                    if content:
+                        new_molt = target_user.molt(content)
+                        return jsonify(new_molt.dict())
+                    else:
+                        return "No content provided", 400
+                else:
+                    return "Incorrect password", 400
+            else:
+                return "No such user found", 400
+
+        return jsonify("Blah!")
+    elif request.method == "GET":
+        # Test API
+        if action == "test":
+            return jsonify("Test success!")
+        # Get molt content
+        elif action == "molt":
+            molt = Molt.query.filter_by(id=request.args.get("id")).first()
+            if molt:
+                if molt.deleted:
+                    return "Molt has been deleted", 400
+                else:
+                    return jsonify(molt.dict())
+            else:
+                return "Molt not found", 400
+    return "What were you trying to do?", 400
 
 
 # GLOBAL FLASK VARIABLES GO HERE
