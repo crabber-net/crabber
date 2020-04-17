@@ -258,6 +258,8 @@ spotify_pattern = re.compile(
     r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
 youtube_pattern = re.compile(
     r'(?:https?://)?(?:www.)?youtube\.com/watch\?v=(\S{11})')
+giphy_pattern = re.compile(
+    r'https://(?:media\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)')
 
 # APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
@@ -527,6 +529,15 @@ class Molt(db.Model):
         else:
             youtube_embed = "<!-- no valid youtube links found -->"
 
+        # Convert giphy link to embedded iframe
+        if giphy_pattern.search(new_content):
+            giphy_embed = render_template_string(("{% with giphy_id='" +
+                                                  giphy_pattern.search(new_content).group(1) +
+                                                  "' %}{% include 'giphy.html' %}{% endwith %}"))
+            new_content = giphy_pattern.sub('', new_content)
+        else:
+            giphy_embed = "<!-- no valid giphy links found -->"
+
         # Convert spotify link to embedded iframe
         if spotify_pattern.search(new_content):
             results = spotify_pattern.search(new_content)
@@ -537,7 +548,7 @@ class Molt(db.Model):
                                                     "') %}{% include 'spotify.html' %}{% endwith %}"))
             new_content = spotify_pattern.sub('', new_content)
         else:
-            spotify_embed = "<!-- no valid youtube links found -->"
+            spotify_embed = "<!-- no valid spotify links found -->"
 
         # Preserve newlines
         new_content = new_content.strip().replace("\n", "<br>")
@@ -547,7 +558,7 @@ class Molt(db.Model):
         # Convert crabtags into anchor tags
         new_content = Molt.label_crabtags(new_content)
 
-        return new_content + youtube_embed + spotify_embed
+        return new_content + giphy_embed + youtube_embed + spotify_embed
 
     @property
     def tags(self):
@@ -798,7 +809,7 @@ def wild_west():
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        molts = Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False)\
+        molts = Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False) \
             .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
         return render_template('wild-west.html', current_page="wild-west", page_n=page_n,
@@ -920,7 +931,7 @@ def user(username):
             l_page_n = request.args.get('lp', 1, type=int)
             molts = Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
                 Molt.timestamp.desc()).paginate(m_page_n, MOLTS_PER_PAGE, False)
-            replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True)\
+            replies = Molt.query.filter_by(author=this_user, deleted=False, is_reply=True) \
                 .filter(Molt.original_molt.has(deleted=False)).order_by(
                 Molt.timestamp.desc()).paginate(r_page_n, MOLTS_PER_PAGE, False)
             likes = this_user.get_true_likes(paginated=True, page=l_page_n)
@@ -1008,7 +1019,7 @@ def search():
                                Crab.username.ilike(f'%{query}%')))
             molt_results = Molt.query.filter_by(deleted=False, is_reply=False) \
                 .filter(Molt.content.ilike(f'%{query}%')) \
-                .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc())\
+                .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc()) \
                 .paginate(page_n, MOLTS_PER_PAGE, False)
 
         else:
@@ -1112,7 +1123,7 @@ def api_v0(action):
             password = request.form.get("password")
             content = request.form.get("content")
             original_id = request.form.get("original_id")
-            original_molt: Molt = Molt.query.filter_by(id=original_id, deleted=False)\
+            original_molt: Molt = Molt.query.filter_by(id=original_id, deleted=False) \
                 .filter(Molt.author.has(deleted=False)).first()
 
             target_user: Crab = Crab.query.filter_by(username=username).first()
@@ -1151,7 +1162,7 @@ def api_v0(action):
             username = request.args.get("username")
             since_ts = request.args.get("since", 0)
             if username:
-                molts = Molt.query.filter(Molt.raw_mentions.contains((username + "\n")))\
+                molts = Molt.query.filter(Molt.raw_mentions.contains((username + "\n"))) \
                     .filter(Molt.timestamp > datetime.datetime.fromtimestamp(int(since_ts))).all()
                 return jsonify([molt.dict() for molt in molts])
             else:
