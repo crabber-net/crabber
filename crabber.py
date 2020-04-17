@@ -262,6 +262,9 @@ giphy_pattern = re.compile(
     r'https://(?:media\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)')
 ext_img_pattern = re.compile(
     r'(https://\S+\.(gif|jpe?g|png))(?:\s|$)')
+ext_link_pattern = re.compile(
+    r'\[([^\]\(\)]+)\]\((http[^\]\(\)]+)\)'
+)
 
 # APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
@@ -593,6 +596,8 @@ class Molt(db.Model):
         else:
             spotify_embed = "<!-- no valid spotify links found -->"
 
+        new_content = Molt.label_links(new_content)
+
         # Preserve newlines
         new_content = new_content.strip().replace("\n", "<br>")
 
@@ -668,6 +673,19 @@ class Molt(db.Model):
     def restore(self):
         self.deleted = False
         db.session.commit()
+
+    @staticmethod
+    def label_links(content):
+        output = content
+        match = ext_link_pattern.search(output)
+        if match:
+            start, end = match.span()
+            output = "".join([output[:start],
+                              f'<a href="{match.group(2)}" class="mention zindex-front">',
+                              match.group(1),
+                              '</a>',
+                              Molt.label_mentions(output[end:])])
+        return output
 
     @staticmethod
     def label_mentions(content):
