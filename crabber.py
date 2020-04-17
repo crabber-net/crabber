@@ -681,7 +681,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             output = "".join([output[:start],
-                              f'<a href="{match.group(2)}" class="mention zindex-front">',
+                              f'<a href="{match.group(2)}" class="mention zindex-front" target="_blank">',
                               match.group(1),
                               '</a>',
                               Molt.label_mentions(output[end:])])
