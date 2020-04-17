@@ -681,7 +681,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             output = "".join([output[:start],
-                              f'<a href="{match.group(2)}" class="mention zindex-front" target="_blank">',
+                              f'<a href="{match.group(2)}" class="no-onclick mention zindex-front" target="_blank">',
                               match.group(1),
                               '</a>',
                               Molt.label_mentions(output[end:])])
@@ -694,7 +694,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             output = "".join([output[:start],
-                              f'<a href="/user/{match.group(1)}" class="mention zindex-front">',
+                              f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
                               output[start:end],
                               '</a>',
                               Molt.label_mentions(output[end:])])
@@ -707,7 +707,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             output = "".join([output[:start],
-                              f'<a href="/crabtag/{match.group(1)}" class="crabtag zindex-front">',
+                              f'<a href="/crabtag/{match.group(1)}" class="no-onclick crabtag zindex-front">',
                               output[start:end],
                               '</a>',
                               Molt.label_crabtags(output[end:])])
