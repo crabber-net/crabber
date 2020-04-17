@@ -260,6 +260,8 @@ youtube_pattern = re.compile(
     r'(?:https?://)?(?:www.)?youtube\.com/watch\?v=(\S{11})')
 giphy_pattern = re.compile(
     r'https://(?:media\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)')
+ext_img_pattern = re.compile(
+    r'(https://\S+\.(gif|jpe?g|png))(?:\s|$)')
 
 # APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
@@ -516,51 +518,6 @@ class Molt(db.Model):
         return (datetime.datetime.utcnow() - self.timestamp).total_seconds() < MINUTES_EDITABLE * 60
 
     @property
-    def rich_content(self):
-        # Escape/sanitize user submitted content
-        new_content = str(escape(self.content))
-
-        # Convert youtube link to embedded iframe
-        if youtube_pattern.search(new_content):
-            youtube_embed = render_template_string(("{% with video='" +
-                                                    youtube_pattern.search(new_content).group(1) +
-                                                    "' %}{% include 'youtube.html' %}{% endwith %}"))
-            new_content = youtube_pattern.sub('', new_content)
-        else:
-            youtube_embed = "<!-- no valid youtube links found -->"
-
-        # Convert giphy link to embedded iframe
-        if giphy_pattern.search(new_content):
-            giphy_embed = render_template_string(("{% with giphy_id='" +
-                                                  giphy_pattern.search(new_content).group(1) +
-                                                  "' %}{% include 'giphy.html' %}{% endwith %}"))
-            new_content = giphy_pattern.sub('', new_content)
-        else:
-            giphy_embed = "<!-- no valid giphy links found -->"
-
-        # Convert spotify link to embedded iframe
-        if spotify_pattern.search(new_content):
-            results = spotify_pattern.search(new_content)
-            spotify_embed = render_template_string(("{% with link=('" +
-                                                    results.group(2) +
-                                                    "', '" +
-                                                    results.group(3) +
-                                                    "') %}{% include 'spotify.html' %}{% endwith %}"))
-            new_content = spotify_pattern.sub('', new_content)
-        else:
-            spotify_embed = "<!-- no valid spotify links found -->"
-
-        # Preserve newlines
-        new_content = new_content.strip().replace("\n", "<br>")
-
-        # Convert mentions into anchor tags
-        new_content = Molt.label_mentions(new_content)
-        # Convert crabtags into anchor tags
-        new_content = Molt.label_crabtags(new_content)
-
-        return new_content + giphy_embed + youtube_embed + spotify_embed
-
-    @property
     def tags(self):
         return self.raw_tags.splitlines()
 
@@ -591,12 +548,67 @@ class Molt(db.Model):
     def pretty_age(self):
         return get_pretty_age(self.timestamp)
 
+    def rich_content(self, full_size_media=False):
+        # Escape/sanitize user submitted content
+        new_content = str(escape(self.content))
+
+        # Convert youtube link to embedded iframe
+        if youtube_pattern.search(new_content):
+            youtube_embed = render_template_string(("{% with video='" +
+                                                    youtube_pattern.search(new_content).group(1) +
+                                                    "' %}{% include 'youtube.html' %}{% endwith %}"))
+            new_content = youtube_pattern.sub('', new_content)
+        else:
+            youtube_embed = "<!-- no valid youtube links found -->"
+
+        # Convert giphy link to embedded iframe
+        if giphy_pattern.search(new_content):
+            giphy_embed = render_template_string(("{% with giphy_id='" +
+                                                  giphy_pattern.search(new_content).group(1) +
+                                                  "' %}{% include 'giphy.html' %}{% endwith %}"),
+                                                 full_size_media=full_size_media)
+            new_content = giphy_pattern.sub('', new_content)
+        else:
+            giphy_embed = "<!-- no valid giphy links found -->"
+
+        # Convert giphy link to embedded iframe
+        if ext_img_pattern.search(new_content):
+            ext_img_embed = render_template_string(("{% with link='" +
+                                                    ext_img_pattern.search(new_content).group(1) +
+                                                    "' %}{% include 'external_img.html' %}{% endwith %}"),
+                                                   full_size_media=full_size_media)
+            new_content = ext_img_pattern.sub('', new_content)
+        else:
+            ext_img_embed = "<!-- no valid external image links found -->"
+
+        # Convert spotify link to embedded iframe
+        if spotify_pattern.search(new_content):
+            results = spotify_pattern.search(new_content)
+            spotify_embed = render_template_string(("{% with link=('" +
+                                                    results.group(2) +
+                                                    "', '" +
+                                                    results.group(3) +
+                                                    "') %}{% include 'spotify.html' %}{% endwith %}"))
+            new_content = spotify_pattern.sub('', new_content)
+        else:
+            spotify_embed = "<!-- no valid spotify links found -->"
+
+        # Preserve newlines
+        new_content = new_content.strip().replace("\n", "<br>")
+
+        # Convert mentions into anchor tags
+        new_content = Molt.label_mentions(new_content)
+        # Convert crabtags into anchor tags
+        new_content = Molt.label_crabtags(new_content)
+
+        return new_content + giphy_embed + ext_img_embed + youtube_embed + spotify_embed
+
     def dict(self):
         return {"molt": {"author": {"id": self.author.id,
                                     "username": self.author.username,
                                     "display_name": self.author.display_name},
                          "content": self.content,
-                         "rich_content": self.rich_content,
+                         "rich_content": self.rich_content(),
                          "likes": [like.id for like in self.true_likes],
                          "remolts": [remolt.id for remolt in self.true_remolts],
                          "image": (BASE_URL + url_for('static', filename=self.image)) if self.image else None,

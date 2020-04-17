@@ -80,7 +80,7 @@
     position: absolute;
     top: 0;
     background-size: cover;
-    background-position: center;
+    background-position: 50% 10%;
 }
 
 .zindex-front {
@@ -231,6 +231,20 @@ div.mini-molt:hover {
 .mini-molt-media-container img {
     position: absolute;
     top: 0;
+}
+
+.mini-molt-crop-square {
+    /* Constant aspect ratio hack */
+    height: 0px;
+    padding-top: 100%;
+    overflow: hidden;
+    position: relative;
+}
+.aspect-ratio-child {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .mini-compose-box {
