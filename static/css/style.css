@@ -215,6 +215,11 @@ div.mini-molt:hover {
     fill: var(--edit);
     background-color: var(--edit-trans);
 }
+.mini-molt-action.pin:hover {
+    color: var(--pin);
+    fill: var(--pin);
+    background-color: var(--pin-trans);
+}
 .mini-molt-action-icon {
     fill: inherit;
 }
@@ -245,6 +250,10 @@ div.mini-molt:hover {
     top: 0;
     width: 100%;
     height: 100%;
+}
+
+.border-thicc {
+    border-width: 7px !important;
 }
 
 .mini-compose-box {
@@ -698,4 +707,14 @@ body, .master-container {
 /* Click background */
 .page-item .page-link:active {
     background-color: var(--dark-lesser);
+}
+
+.pin-button {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.mini-molt:hover .pin-button {
+    display: inline;
 }

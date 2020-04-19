@@ -133,8 +133,8 @@ def common_molt_actions() -> Response:
             else:
                 return show_error("File must be either a jpg, jpeg, or png")
         return show_error("There was an error uploading your image")
-    # Submit new molt
 
+    # Submit new molt
     elif action == "submit_molt":
         if request.form.get('molt_content'):
             img_attachment = None
@@ -203,6 +203,16 @@ def common_molt_actions() -> Response:
             target_molt.unlike(get_current_user())
         else:
             target_molt.like(get_current_user())
+
+    elif action == "pin_molt" and molt_id is not None:
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        if target_molt.author is get_current_user():
+            target_molt.author.pin(target_molt)
+
+    elif action == "unpin_molt" and molt_id is not None:
+        target_molt = Molt.query.filter_by(id=molt_id).first()
+        if target_molt.author is get_current_user():
+            target_molt.author.unpin()
 
     elif action == "delete_molt" and molt_id is not None:
         target_molt = Molt.query.filter_by(id=molt_id).first()
@@ -321,6 +331,8 @@ class Crab(db.Model):
                                 backref=db.backref('followers'))
     likes = db.relationship('Like')
 
+    pinned_molt_id = db.Column(db.Integer, nullable=True)
+
     def __repr__(self):
         return f"<Crab '@{self.username}'>"
 
@@ -335,6 +347,18 @@ class Crab(db.Model):
         :return: len of unread notifs
         """
         return Notification.query.filter_by(recipient=self, read=False).count()
+
+    @property
+    def pinned(self):
+        return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def pin(self, molt):
+        self.pinned_molt_id = molt.id
+        db.session.commit()
+
+    def unpin(self):
+        self.pinned_molt_id = None
+        db.session.commit()
 
     def get_notifications(self, paginated=False, page=1):
         notifs = Notification.query.filter_by(recipient=self).order_by(Notification.timestamp.desc())

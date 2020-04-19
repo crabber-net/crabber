@@ -10,7 +10,26 @@
     {% set molt = molt.original_molt %}
 {% endif %}
 <div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark px-3 py-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
-    <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}}">
+    {% if current_page == "own-profile" %}
+    <div class="pin-button p-2">
+        <form method="POST">
+            {% if current_user.pinned == molt %}
+                <input type="hidden" name="user_action" value="unpin_molt">
+            {% else %}
+                <input type="hidden" name="user_action" value="pin_molt">
+            {% endif %}
+            <input type="hidden" name="molt_id" value="{{molt.id}}">
+            <div class="mini-molt-action pin zindex-front" onClick="this.parentNode.submit();">
+                {% if current_user.pinned == molt %}
+                    <span class="mini-molt-action-icon text-muted" data-width="16" data-height="16" data-jam="pin-f"></span>
+                {% else %}
+                    <span class="mini-molt-action-icon text-muted" data-width="16" data-height="16" data-jam="pin"></span>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}}">
         <a href="/user/{{molt.author.username}}" class="zindex-front">
             <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
         </a>
@@ -22,6 +41,12 @@
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
         <meta id="molt-content-{{molt.id}}" data-content="{{molt.content}}">
+        {% if is_pin %}
+            <!-- Pin indicator -->
+            <small class="mini-molt-remolt text-muted zindex-front">
+                <span class="mini-molt-action-icon remolt-icon" data-width="12" data-height="12" data-jam="pin-f"></span>
+                Pinned Molt</small>
+        {% endif %}
         {% if is_remolt %}
         <!-- Remolt indicator -->
         <small class="mini-molt-remolt text-muted zindex-front">
@@ -35,7 +60,7 @@
             replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
                 {{"you" if molt.original_molt.author == current_user else molt.original_molt.author.display_name}}</a></small>
         {% endif %}
-        <div class="mini-molt-credentials {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
+        <div class="mini-molt-credentials {{"mt-1" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
                 class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
             {% if molt.author.verified %}
             <a title="Verified user" class="zindex-front"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>

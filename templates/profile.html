@@ -109,6 +109,16 @@
 
 <!-- All molts live here! -->
 <div id="molts" class="{{ 'd-none' if current_tab != 'molts' else '' }}">
+    
+    {% if this_user.pinned %}
+        <!-- Pinned Molt -->
+        {% with molt=this_user.pinned, is_pin=True %}
+            <div class="border-bottom border-dark border-thicc">
+                {% include "molt.html" %}
+            </div>
+        {% endwith %}
+    {% endif %}
+
     {% for molt in molts.items %}
         {% include "molt.html" %}
     {% else %}
