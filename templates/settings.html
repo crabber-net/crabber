@@ -3,7 +3,7 @@
 {% block heading %} {{current_user.display_name}}'s settings {% endblock %}
 
 {% block body %}
-<div class="p-2">
+<div class="p-2 w-100" style="overflow-x: visible;">
     <h2>Bio Settings</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_bio">

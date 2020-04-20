@@ -100,7 +100,11 @@
 
 #content-body {
     /* Content scroll-box */
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: visible;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dark-lesserest) var(--dark-less);
+    scroll-behavior: smooth;
 }
 
 #main-panel {
