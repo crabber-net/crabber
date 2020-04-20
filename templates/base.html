@@ -286,9 +286,19 @@
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
+                <form action="/settings"
+                    {% if current_page == "settings" %}
+                        id="nav-active"
+                    {% endif %}>
+                    
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 {{'text-primary' if current_page == 'settings' else 'text-muted'}}">
+                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="cog{{'-f' if current_page == 'settings'}}"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
+                    </button>
+                </form>
                 <form action="/logout">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 text-muted">
-                        <span class="btn-icon" data-width="28" data-height="28" data-jam="log-out"></span>
+                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="log-out"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
                     </button>
                 </form>

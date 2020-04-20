@@ -250,6 +250,8 @@ def common_molt_actions() -> Response:
             current_user.display_name = disp_name
             current_user.bio = desc
             db.session.commit()
+            if request.form.get('page') == "settings":
+                return show_message("Changes saved.")
 
     elif action == "update_account":
         target_user = get_current_user()

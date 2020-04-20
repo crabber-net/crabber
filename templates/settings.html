@@ -4,8 +4,36 @@
 
 {% block body %}
 <div class="p-2">
+    <h2>Bio Settings</h2>
+    <form method="POST" class="p-2">
+        <input type="hidden" name="user_action" value="update_bio">
+        <input type="hidden" name="page" value="settings">
+        <input type="hidden" name="user_id" value="{{current_user.id}}">
+    
+        <!-- Display name -->
+        <div class="form-group cool-input">
+            <label for="displayName">Display name</label>
+            <input type="text" name="display_name" class="form-control" id="displayName"
+                placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
+        </div>
+    
+        <!-- Display name -->
+        <div class="form-group cool-input">
+            <label for="displayName">About me</label>
+            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you." 
+            required aria-required>{{current_user.bio.strip()}}</textarea>
+        </div>
+    
+        <!-- Submit button -->
+        <button class="btn btn-primary rounded-pill float-right" type="submit"><strong>Save</strong></button>
+        <div class="clearfix"></div>
+    </form>
+    
+    <!-- Section border -->
+    <hr class="border-dark border my-4">
+
     <h2>Account Settings</h2>
-    <form method="POST" class="p-2 border-dark border rounded">
+    <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_account">
 
         <!-- Email address -->
@@ -32,8 +60,11 @@
         <div class="clearfix"></div>
     </form>
 
-    <h2 class="mt-4">General Settings</h2>
-    <form method="POST" class="p-2 border-dark border rounded">
+    <!-- Section border -->
+    <hr class="border-dark border my-4">
+
+    <h2>General Settings</h2>
+    <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_general_settings">
         
         <!-- Timezone dropdown -->
