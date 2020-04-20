@@ -107,6 +107,10 @@
     scroll-behavior: smooth;
 }
 
+.no-h-scroll {
+    overflow-x: hidden;
+}
+
 #main-panel {
     height: 100vh;
     overflow: hidden;
