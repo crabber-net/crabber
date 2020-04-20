@@ -50,7 +50,7 @@
         </div>
         <div class="w-100 pb-2 pt-1 text-muted border-bottom border-dark">
             <!-- 11:30 AM · Apr 9, 2020 -->
-            {{molt.timestamp.strftime("%I:%M %p · %b %e, %Y")}}
+            {{localize(molt.timestamp).strftime("%#I:%M %p · %b %e, %Y") if IS_WINDOWS else localize(molt.timestamp).strftime("%-I:%M %p · %b %e, %Y")}}
             {% if molt.edited %}
             &mdash; This molt has been edited
             {% endif %}

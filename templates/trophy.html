@@ -11,7 +11,7 @@
                 <strong>{{trophy.title}}</strong>
             </div>
             <div class="d-flex justify-content-center">
-                <small class="text-muted">awarded on {{trophy_case.timestamp.strftime("%m/%d/%Y")}}</small>
+                <small class="text-muted">awarded on {{localize(trophy_case.timestamp).strftime("%m/%d/%Y")}}</small>
             </div>
         </div>
     </div>

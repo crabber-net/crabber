@@ -122,6 +122,10 @@
     white-space: nowrap;
 }
 
+.no-wrap {
+    white-space: nowrap;
+}
+
 #nav-panel button:not(#molt-btn) {
     /* All buttons except the molt one */
     background: none;
@@ -717,4 +721,8 @@ body, .master-container {
 }
 .mini-molt:hover .pin-button {
     display: inline;
+}
+
+#lastfm-loading {
+    opacity: 0.5;
 }

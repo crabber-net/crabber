@@ -4,9 +4,53 @@
 
 {% block body %}
 <script>
-    // Enable tooltips
+    function getNowPlaying(username) {
+        let api_key = "7d46cfc3d2c68c0f50504b7a09516898";
+        $.ajax({
+            url: "http://ws.audioscrobbler.com/2.0/",
+            data: {
+                'method': 'user.getrecenttracks',
+                'user': username,
+                'limit': 1,
+                'api_key': api_key,
+                'format': 'json'
+            },
+            success: updateLastfm,
+            error: function(data) {
+                $("#lastfm-loading em").text("failed to load last.fm");
+                console.warn(data);
+            }
+        })
+    }
+
+    function updateLastfm(data) {
+        console.log(data);
+        var currentTrack = data.recenttracks.track[0];
+
+        // Currently playing or last played
+        if (!(currentTrack["@attr"] && currentTrack["@attr"].nowplaying)) {
+            $("#lastfm-status").text("last played");
+        }
+        // Hide loading message
+        $("#lastfm-loading").addClass("d-none");
+
+        // Update track info
+        $("#lastfm-artist").text(currentTrack.artist["#text"]);
+        $("#lastfm-track").text(currentTrack.name);
+
+        // Reveal last played/currently playing
+        $("#lastfm-now-playing").removeClass("d-none");
+    }
+
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        // Enable tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // Load Last.fm data
+        $("#lastfm").each(function(index, elem) {
+            var username = $(elem).data("lastfm-username");
+            getNowPlaying(username);
+        })
     })
 </script>
 
@@ -79,8 +123,22 @@
             {{this_user.bio}}
         </div>
         <div class="profile-box-join-date text-muted mt-1">
-            <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="birthday-cake"></span>
-            Joined {{this_user.register_time.strftime('%B %Y')}}
+            <div class="d-inline-block mr-2" id="join-date">
+                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="birthday-cake"></span>
+                Joined {{localize(this_user.register_time).strftime('%B %Y')}}
+            </div>
+            {% if this_user.lastfm %}
+                <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
+                    <img class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
+                    <!-- Now Playing -->
+                    <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none">
+                        <span id="lastfm-status">now playing</span>
+                        <strong class="italic" id="lastfm-artist"></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
+                    </a>
+                    <!-- Loading -->
+                    <span class="text-faded" id="lastfm-loading"><em>loading Last.fm...</em></span>
+                </div>
+            {% endif %}
         </div>
         <div class="profile-box-following mt-1">
             <a class="text-inherit" href="/user/{{this_user.username}}/following">

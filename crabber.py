@@ -12,6 +12,27 @@ from werkzeug.wrappers import Response
 
 # HELPER FUNCS #########################################################################################################
 
+def localize(dt: datetime.datetime) -> datetime.datetime:
+    """
+    Localizes datetime to user's timezone
+    https://www.youtube.com/watch?v=-5wpm-gesOY
+
+    :param dt: datetime to localize
+    :return: Localized datetime
+    """
+    current_user = get_current_user()
+    if current_user:
+        new_dt = dt + current_user.timedelta
+    else:
+        # Defaults to Chicago time
+        new_dt = dt + datetime.timedelta(hours=-6)
+
+    # Daylight Saving
+    if new_dt.month in range(4, 11) or (new_dt.month == 3 and new_dt.day >= 8):
+        new_dt += datetime.timedelta(hours=1)
+    return new_dt
+
+
 def show_error(error_msg: str) -> Response:
     """
     Redirect user to current page with error message alert
@@ -50,10 +71,10 @@ def get_pretty_age(dt: datetime.datetime) -> str:
         return f"{round(delta.seconds / 60 / 60)}h"
     elif dt.year == now.year:  # Same year as now
         # Return day and month
-        return dt.strftime("%b %e")
+        return localize(dt).strftime("%b %e")
     else:
         # Return day month, year
-        return dt.strftime("%b %e, %Y")
+        return localize(dt).strftime("%b %e, %Y")
 
 
 def get_current_user():
@@ -230,6 +251,39 @@ def common_molt_actions() -> Response:
             current_user.bio = desc
             db.session.commit()
 
+    elif action == "update_account":
+        target_user = get_current_user()
+        new_email = request.form.get('email').strip()
+        new_username = request.form.get('username').strip()
+        if validate_email(new_email) or target_user.email == new_email:
+            if validate_username(new_username) or target_user.username == new_username:
+                if len(new_username) in range(4, 32):
+                    if username_pattern.fullmatch(new_username):
+                        target_user.email = new_email
+                        target_user.username = new_username
+                        db.session.commit()
+                        return show_message("Changes saved.")
+                    else:
+                        return show_error("Username must only contain letters, numbers, and underscores")
+                else:
+                    return show_error("Username must be at least 4 characters and less than 32")
+            else:
+                return show_error("That username is taken")
+        else:
+            return show_error("An account with that email address already exists")
+
+    elif action == "update_general_settings":
+        target_user = get_current_user()
+        new_timezone = request.form.get('timezone')
+        new_lastfm = request.form.get('lastfm').strip()
+        if timezone_pattern.fullmatch(new_timezone):
+            target_user.timezone = new_timezone
+            target_user.lastfm = new_lastfm
+            db.session.commit()
+            return show_message("Changes saved.")
+        else:
+            return show_error("That timezone is invalid, you naughty dog")
+
     # PRG pattern
     return redirect(request.url)
 
@@ -274,6 +328,9 @@ ext_img_pattern = re.compile(
     r'(https://\S+\.(gif|jpe?g|png))(?:\s|$)')
 ext_link_pattern = re.compile(
     r'\[([^\]\(\)]+)\]\((http[^\]\(\)]+)\)'
+)
+timezone_pattern = re.compile(
+    r'^-?(1[0-2]|0[0-9]).\d{2}$'
 )
 
 # APP CONFIG ###########################################################################################################
@@ -321,6 +378,8 @@ class Crab(db.Model):
                               default=datetime.datetime.utcnow)
     deleted = db.Column(db.Boolean, nullable=False,
                         default=False)
+    timezone = db.Column(db.String(8), nullable=False, default="-06.00")
+    lastfm = db.Column(db.String, nullable=True)
 
     # Dynamic relationships
     molts = db.relationship('Molt', back_populates='author')
@@ -335,6 +394,10 @@ class Crab(db.Model):
 
     def __repr__(self):
         return f"<Crab '@{self.username}'>"
+
+    @property
+    def timedelta(self):
+        return datetime.timedelta(hours=float(self.timezone))
 
     @property
     def true_likes(self):
@@ -558,7 +621,7 @@ class Molt(db.Model):
 
     @property
     def pretty_date(self):
-        return self.timestamp.strftime("%I:%M %p · %b %e, %Y")
+        return localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
     def replies(self):
@@ -787,7 +850,7 @@ class Notification(db.Model):
 
     @property
     def pretty_date(self):
-        return self.timestamp.strftime("%I:%M %p · %b %e, %Y")
+        return localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
     def pretty_age(self):
@@ -966,6 +1029,18 @@ def signupsuccess():
     recommended_users = Crab.query.filter(Crab.username.in_(RECOMMENDED_USERS)).all()
     return render_template("signup_success.html", current_user=get_current_user(),
                            recommended_users=recommended_users)
+
+
+@app.route("/settings/", methods=("GET", "POST"))
+def settings():
+    # Handle forms and redirect to clear post data on browser
+    if request.method == "POST":
+        return common_molt_actions()
+
+    # Display page
+    elif session.get('current_user') is not None:
+        return render_template("settings.html", current_page="settings",
+                               current_user=get_current_user())
 
 
 @app.route("/user/<username>/", methods=("GET", "POST"))
@@ -1231,6 +1306,8 @@ def inject_global_vars():
     location = request.path
     return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
                 TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
+                IS_WINDOWS=os.name == "nt",
+                localize=localize,
                 error=error, msg=msg, location=location)
 
 

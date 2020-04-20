@@ -4,7 +4,9 @@
         "allowtransparency",
         "crossorigin",
         "endmacro",
+        "nowplaying",
         "propertychange",
+        "recenttracks",
         "remolt",
         "tabindex"
     ],
