@@ -468,10 +468,11 @@ class Crab(db.Model):
     def notify(self, **kwargs):
         if kwargs.get("sender") is self:
             return "Declined notification on grounds of sender being recipient."
-        if Notification.query.filter_by(recipient=self, sender=kwargs.get('sender'),
-                                        type=kwargs.get('type'), molt=kwargs.get('molt')).first():
-            print("#################################################### notif declined")
-            return "Declined notification on grounds of duplication."
+        if kwargs.get("molt"):
+            if Notification.query.filter_by(recipient=self, sender=kwargs.get('sender'),
+                                            type=kwargs.get('type'), molt=kwargs.get('molt')).first():
+                print("#################################################### notif declined")
+                return "Declined notification on grounds of duplication."
         new_notif = Notification(recipient=self, **kwargs)
         db.session.add(new_notif)
         db.session.commit()
@@ -931,8 +932,6 @@ def signup():
 
                             # "Log in"
                             session["current_user"] = Crab.query.filter_by(username=username, deleted=False).first().id
-                            # TOOD: REMOVE WHEN OUT OF BETA
-                            get_current_user().award(title="Lab Rat")
                             # Redirect to let the user know it succeeded
                             return redirect("/signupsuccess")
                         else:
