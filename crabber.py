@@ -855,7 +855,7 @@ def index():
         return redirect("/login")
 
 
-@app.route("/wild", methods=("GET", "POST"))
+@app.route("/wild/", methods=("GET", "POST"))
 def wild_west():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -873,7 +873,7 @@ def wild_west():
         return redirect("/login")
 
 
-@app.route("/notifications", methods=("GET", "POST"))
+@app.route("/notifications/", methods=("GET", "POST"))
 def notifications():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -889,7 +889,7 @@ def notifications():
         return redirect("/login")
 
 
-@app.route("/login", methods=("GET", "POST"))
+@app.route("/login/", methods=("GET", "POST"))
 def login():
     if request.method == "POST":
         email, password = request.form.get("email").strip().lower(), request.form.get("password")
@@ -908,7 +908,7 @@ def login():
         return render_template("login.html", current_page="login", hide_sidebar=True, login_failed=login_failed)
 
 
-@app.route("/signup", methods=("GET", "POST"))
+@app.route("/signup/", methods=("GET", "POST"))
 def signup():
     if request.method == "POST":
         # Validate data
@@ -955,20 +955,20 @@ def signup():
                                signup_failed=signup_failed, error_msg=error_msg)
 
 
-@app.route("/logout")
+@app.route("/logout/")
 def logout():
     session["current_user"] = None
     return redirect("/login")
 
 
-@app.route("/signupsuccess")
+@app.route("/signupsuccess/")
 def signupsuccess():
     recommended_users = Crab.query.filter(Crab.username.in_(RECOMMENDED_USERS)).all()
     return render_template("signup_success.html", current_user=get_current_user(),
                            recommended_users=recommended_users)
 
 
-@app.route("/user/<username>", methods=("GET", "POST"))
+@app.route("/user/<username>/", methods=("GET", "POST"))
 def user(username):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -998,7 +998,7 @@ def user(username):
         return redirect("/login")
 
 
-@app.route("/user/<username>/follow<tab>", methods=("GET", "POST"))
+@app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
 def user_following(username, tab):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -1019,7 +1019,7 @@ def user_following(username, tab):
         return redirect("/login")
 
 
-@app.route("/user/<username>/status/<molt_id>", methods=("GET", "POST"))
+@app.route("/user/<username>/status/<molt_id>/", methods=("GET", "POST"))
 def molt_page(username, molt_id):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -1039,7 +1039,7 @@ def molt_page(username, molt_id):
         return redirect("/login")
 
 
-@app.route("/crabtag/<crabtag>", methods=("GET", "POST"))
+@app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))
 def crabtags(crabtag):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -1055,7 +1055,7 @@ def crabtags(crabtag):
         return redirect("/login")
 
 
-@app.route("/search", methods=("GET", "POST"))
+@app.route("/search/", methods=("GET", "POST"))
 def search():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -1085,7 +1085,7 @@ def search():
 
 
 # This wise tortoise, the admin control panel
-@app.route("/tortimer", methods=("GET", "POST"))
+@app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
     if get_current_user().username in ADMINS:
         if request.method == "POST":
@@ -1125,7 +1125,7 @@ def tortimer():
         return error_404(BaseException)
 
 
-@app.route("/ajax_request/<request_type>")
+@app.route("/ajax_request/<request_type>/")
 def ajax_request(request_type):
     if request_type == "unread_notif":
         if request.args.get("crab_id"):
@@ -1149,7 +1149,7 @@ def ajax_request(request_type):
         return "Did not specify 'timestamp'"
 
 
-@app.route("/api/v0/<action>", methods=('GET', 'POST'))
+@app.route("/api/v0/<action>/", methods=('GET', 'POST'))
 def api_v0(action):
     if request.method == "POST":
         # Submit molt
