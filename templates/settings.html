@@ -19,7 +19,7 @@
     
         <!-- Display name -->
         <div class="form-group cool-input">
-            <label for="displayName">About me</label>
+            <label for="description">About me</label>
             <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you." 
             required aria-required>{{current_user.bio.strip()}}</textarea>
         </div>
@@ -70,7 +70,7 @@
         <!-- Timezone dropdown -->
         <div class="form-group">
             <label for="timezone">Timezone</label>
-            <div class="input-group">
+            <div class="input-group cool-input">
                 <select class="custom-select" name="timezone" id="timezone">
                     <option value="-12.00" {{'selected' if current_user.timezone == "-12.00"}}>(GMT -12:00) Eniwetok, Kwajalein</option>
                     <option value="-11.00" {{'selected' if current_user.timezone == "-11.00"}}>(GMT -11:00) Midway Island, Samoa</option>
