@@ -7,7 +7,7 @@
     function getNowPlaying(username) {
         let api_key = "7d46cfc3d2c68c0f50504b7a09516898";
         $.ajax({
-            url: "http://ws.audioscrobbler.com/2.0/",
+            url: "https://ws.audioscrobbler.com/2.0/",
             data: {
                 'method': 'user.getrecenttracks',
                 'user': username,
