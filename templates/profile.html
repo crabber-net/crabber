@@ -35,6 +35,7 @@
         $("#lastfm-loading").addClass("d-none");
 
         // Update track info
+        // append ' em' to selector to make it italic
         $("#lastfm-artist").text(currentTrack.artist["#text"]);
         $("#lastfm-track").text(currentTrack.name);
 
@@ -133,7 +134,7 @@
                     <!-- Now Playing -->
                     <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none">
                         <span id="lastfm-status">now playing</span>
-                        <strong class="italic" id="lastfm-artist"></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
+                        <strong class="italic" id="lastfm-artist"><em></em></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
                     </a>
                     <!-- Loading -->
                     <span class="text-faded" id="lastfm-loading"><em>loading Last.fm...</em></span>
