@@ -47,7 +47,7 @@
                     {% endwith %}
                 </div>
             {% else %}
-                <strong><a href="user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}</a></strong>
+                <strong><a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}</a></strong>
                 {% if notif.type == "follow" %}
                     followed you
                 {% elif notif.type =="unfollow" %}
