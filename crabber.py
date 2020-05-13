@@ -965,7 +965,7 @@ def login():
                 session["current_user"] = attempted_user.id
                 return redirect("/")
         # Login failed
-        return redirect("login?failed")
+        return redirect("/login?failed")
     elif session.get("current_user"):
         return redirect("/")
     else:
