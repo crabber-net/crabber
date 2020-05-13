@@ -964,8 +964,10 @@ def login():
                 # Login successful
                 session["current_user"] = attempted_user.id
                 return redirect("/")
-        # Login failed
-        return redirect("/login?failed")
+            else:
+                return show_error("Incorrect password")
+        else:
+            return show_error("No account with that email exists")
     elif session.get("current_user"):
         return redirect("/")
     else:
