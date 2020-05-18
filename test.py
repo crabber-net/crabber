@@ -8,19 +8,19 @@ pwd = "fish"
 
 # User test
 jake = Crab.create_new(username="jake",
-                       email="contactjakeledoux@gmail.com",
+                       email="jake@crabber.net",
                        password=pwd,
                        display_name="Jake Ledoux")
 
 mezrah = Crab.create_new(username="mezinator5000",
-                         email="mnavehm@gmail.com",
+                         email="mezrah@crabber.net",
                          password=pwd,
                          display_name="Mezrah")
 
 christian = Crab.create_new(username="DiFrankSinatra",
-                            email="cdnation19@gmail.com",
+                            email="chris@crabber.net",
                             password=pwd,
-                            display_name="Christian 😊")
+                            display_name="Christian 😊")  # Emoji test
 
 assert jake.register_time is not None
 assert jake.verify_password("fish")
