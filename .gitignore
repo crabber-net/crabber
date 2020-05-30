@@ -1,4 +1,5 @@
 venv
+*.swp
 __pycache__
 .history
 .idea
