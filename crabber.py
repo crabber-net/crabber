@@ -399,10 +399,15 @@ class Crab(db.Model):
 
     @property
     def timedelta(self):
+        """ Returns time offset for user's timezone
+        """
+
         return datetime.timedelta(hours=float(self.timezone))
 
     @property
     def true_likes(self):
+        """ Returns all molts the user has liked that are still available.
+        """
         return self.get_true_likes()
 
     @property
@@ -415,17 +420,25 @@ class Crab(db.Model):
 
     @property
     def pinned(self):
+        """ Return user's currently pinned molt. (May be None)
+        """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
 
     def pin(self, molt):
+        """ Set `molt` as user's pinned molt
+        """
         self.pinned_molt_id = molt.id
         db.session.commit()
 
     def unpin(self):
+        """ Unpin whatever molt user currently has pinned.
+        """
         self.pinned_molt_id = None
         db.session.commit()
 
     def get_notifications(self, paginated=False, page=1):
+        """ Return all valid notifications for user.
+        """
         notifs = Notification.query.filter_by(recipient=self).order_by(Notification.timestamp.desc())
         if paginated:
             return notifs.paginate(page, NOTIFS_PER_PAGE, False)
@@ -433,6 +446,8 @@ class Crab(db.Model):
             return notifs.all()
 
     def get_true_likes(self, paginated=False, page=1):
+        """ Returns all molts the user has liked that are still available.
+        """
         likes = Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
             .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
         if paginated:
@@ -469,6 +484,8 @@ class Crab(db.Model):
             return new_trophy
 
     def follow(self, crab):
+        """ Adds user to `crab`'s following.
+        """
         if crab not in self.following:
             self.following.append(crab)
 
@@ -490,15 +507,22 @@ class Crab(db.Model):
             db.session.commit()
 
     def unfollow(self, crab):
+        """ Removers user from `crab`'s following.
+        """
         if crab in self.following:
             self.following.remove(crab)
             crab.notify(sender=self, type="unfollow")
             db.session.commit()
 
     def verify_password(self, password):
+        """ Returns true if `password` matches user's password.
+            :param password: Hash of password to check
+        """
         return sha256_crypt.verify(password, self.password)
 
     def molt(self, content, **kwargs):
+        """ Create and publish new Molt.
+        """
         new_molt = Molt(author=self, content=content[:MOLT_CHAR_LIMIT], **kwargs)
         db.session.add(new_molt)
         for user in new_molt.mentions:
@@ -513,24 +537,36 @@ class Crab(db.Model):
         return new_molt
 
     def delete(self):
+        """ Delete user. (Can be undone).
+        """
         self.deleted = True
         db.session.commit()
 
     def restore(self):
+        """ Restore deleted user.
+        """
         self.deleted = False
         db.session.commit()
 
     def is_following(self, crab):
+        """ Returns True if user is following `crab`.
+        """
         return db.session.query(following_table).filter((following_table.c.follower_id == self.id) &
                                                         (following_table.c.following_id == crab.id))
 
     def has_liked(self, molt):
+        """ Returns True if user has liked `molt`.
+        """
         return bool(Like.query.filter_by(molt=molt, crab=self).all())
 
     def has_remolted(self, molt):
+        """ Returns True if user has remolted `molt`.
+        """
         return bool(Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).all())
 
     def notify(self, **kwargs):
+        """ Create notification for user.
+        """
         if kwargs.get("sender") is self:
             return "Declined notification on grounds of sender being recipient."
         if kwargs.get("molt"):
@@ -545,6 +581,8 @@ class Crab(db.Model):
 
     @staticmethod
     def create_new(**kwargs):
+        """ Create new user. See `Crab.__init__` for arguments.
+        """
         kwargs["password"] = Crab.hash_pass(kwargs["password"])
         new_crab = Crab(**kwargs)
         db.session.add(new_crab)
@@ -553,6 +591,8 @@ class Crab(db.Model):
 
     @staticmethod
     def hash_pass(password):
+        """ Returns hash of `password`.
+        """
         new_hash = sha256_crypt.encrypt(password)
         return new_hash
 
