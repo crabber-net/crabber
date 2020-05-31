@@ -1,5 +1,6 @@
 # crabber
-Twitter clone written in Python using Flask
+Twitter clone written in Python using Flask.
+
 [Visit the official live site at crabber.net](https://crabber.net/)
 ![screenshot of crabber.net](https://i.imgur.com/8PvtcVF.png)
 
