@@ -645,16 +645,20 @@ class Molt(db.Model):
     @property
     def editable(self) -> bool:
         """
-        Returns true if molt is recent enough to edit
+        Returns true if molt is recent enough to edit.
         """
         return (datetime.datetime.utcnow() - self.timestamp).total_seconds() < MINUTES_EDITABLE * 60
 
     @property
     def tags(self):
+        """ Return list of tags contained withing Molt.
+        """
         return self.raw_tags.splitlines()
 
     @property
     def mentions(self):
+        """ Return all mentions contained within Molt.
+        """
         if self.raw_mentions:
             return Crab.query.filter(Crab.username.in_(self.raw_mentions.splitlines())).all()
         else:
@@ -662,25 +666,37 @@ class Molt(db.Model):
 
     @property
     def pretty_date(self):
+        """ Return date of publish, formatted for display.
+        """
         return localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
     def replies(self):
+        """ List all currently valid Molts that reply to this Molt.
+        """
         return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False).all()
 
     @property
     def true_remolts(self):
+        """ List all currently valid remolts of Molt.
+        """
         return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False).all()
 
     @property
     def true_likes(self):
+        """ List all currently valid likes of Molt.
+        """
         return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False)).all()
 
     @property
     def pretty_age(self):
+        """ Property wrapper for `Molt.get_pretty_age`.
+        """
         return get_pretty_age(self.timestamp)
 
     def rich_content(self, full_size_media=False):
+        """ Return HTML-formatted content of Molt with embeds, media, tags, and etc.
+        """
         # Escape/sanitize user submitted content
         new_content = str(escape(self.content))
 
@@ -738,6 +754,8 @@ class Molt(db.Model):
         return new_content + giphy_embed + ext_img_embed + youtube_embed + spotify_embed
 
     def dict(self):
+        """ Serialize Molt into dictionary.
+        """
         return {"molt": {"author": {"id": self.author.id,
                                     "username": self.author.username,
                                     "display_name": self.author.display_name},
@@ -750,12 +768,14 @@ class Molt(db.Model):
                          "timestamp": round(self.timestamp.timestamp())}}
 
     def get_reply_from(self, crab):
-        print(crab)
+        """ Return first reply Molt from `crab` if it exists.
+        """
         reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab).order_by(Molt.timestamp).first()
-        print(reply)
         return reply
 
     def remolt(self, crab, comment="", **kwargs):
+        """ Remolt Molt as `crab` with optional `comment`.
+        """
         # Already remolted
         if Molt.query.filter_by(is_remolt=True, original_molt=self, author=crab).first():
             return "Remolt declined on grounds of duplication."
@@ -764,16 +784,22 @@ class Molt(db.Model):
         return new_remolt
 
     def reply(self, crab, comment, **kwargs):
+        """ Reply to Molt as `crab`.
+        """
         new_reply = crab.molt(comment, is_reply=True, original_molt=self, **kwargs)
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
 
     def edit(self, new_content):
+        """ Change Molt content to `new_content`.
+        """
         self.content = new_content
         self.edited = True
         db.session.commit()
 
     def like(self, crab):
+        """ Like Molt as `crab`.
+        """
         if not Like.query.filter_by(crab=crab, molt=self).all():
             new_like = Like(crab=crab, molt=self)
             db.session.add(new_like)
@@ -790,21 +816,29 @@ class Molt(db.Model):
             return new_like
 
     def unlike(self, crab):
+        """ Unlike Molt as `crab`.
+        """
         old_like = Like.query.filter_by(crab=crab, molt=self).first()
         if old_like is not None:
             db.session.delete(old_like)
             db.session.commit()
 
     def delete(self):
+        """ Delete molt.
+        """
         self.deleted = True
         db.session.commit()
 
     def restore(self):
+        """ Undelete/restore Molt.
+        """
         self.deleted = False
         db.session.commit()
 
     @staticmethod
     def label_links(content):
+        """ Replace links with HTML tags.
+        """
         output = content
         match = ext_link_pattern.search(output)
         if match:
@@ -818,6 +852,8 @@ class Molt(db.Model):
 
     @staticmethod
     def label_mentions(content):
+        """ Replace mentions with HTML links to users.
+        """
         output = content
         match = mention_pattern.search(output)
         if match:
@@ -831,6 +867,8 @@ class Molt(db.Model):
 
     @staticmethod
     def label_crabtags(content):
+        """ Replace crabtags with HTML links to crabtag exploration page.
+        """
         output = content
         match = tag_pattern.search(output)
         if match:
