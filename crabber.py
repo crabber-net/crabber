@@ -1399,7 +1399,7 @@ def error_404(_error_msg):
 
 @app.errorhandler(413)
 def file_to_big(_e):
-    return show_error("Image must be smaller than 5 megabytes")
+    return show_error("Image must be smaller than 5 megabytes.")
 
 
 @app.before_request
@@ -1415,4 +1415,5 @@ def before_request():
 
 
 if __name__ == '__main__':
+    # Start server locally
     app.run("0.0.0.0", 80, debug=True)
