@@ -1,7 +1,16 @@
-{% set show_replies = show_replies_from and molt.get_reply_from(show_replies_from) %}
+{% if current_depth is not defined %}
+    {% set current_depth = 1 %}
+{% endif %}
+
+{% if depth_limit is not defined %}
+    {% set depth_limit = 10 %}
+{% endif %}
+
+{% set show_replies = show_replies_from and molt.get_reply_from(show_replies_from) and current_depth <= depth_limit %}
+
 {% if show_replies %}
-    {% set hide_border=true %}
-    {% set is_parent=true %}
+    {% set hide_border = true %}
+    {% set is_parent = true %}
 {% endif %}
 
 {% set is_remolt = molt.is_remolt %}
@@ -156,7 +165,7 @@
     <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill" draggable="false"></a>
 </div>
 {% if show_replies %}
-    {% with molt=molt.get_reply_from(show_replies_from), thread=true, show_replies_from=molt.author, hide_border=false, is_parent=false %}
+    {% with molt=molt.get_reply_from(show_replies_from), thread=true, show_replies_from=molt.author, hide_border=false, is_parent=false, current_depth=current_depth + 1 %}
         {% include "molt.html" %}
     {% endwith %}
 {% endif %}
