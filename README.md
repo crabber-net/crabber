@@ -1,9 +1,9 @@
 # crabber
 Twitter clone written in Python using Flask
-
 [Visit the official live site at crabber.net](https://crabber.net/)
+![screenshot of crabber.net](https://i.imgur.com/8PvtcVF.png)
 
-Code still needs documentation. The API is a placeholder.
+*Disclaimer: Code still needs documentation and a proper REST API.*
 
 ## Installation
 1. Clone the repo
