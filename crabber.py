@@ -358,8 +358,9 @@ following_table = db.Table('following',
                            db.Column('following_id', db.Integer, db.ForeignKey('crab.id')))
 
 
-# User database class
 class Crab(db.Model):
+    """ Crab object is the what stores user data. Users are referred to as crabs. Create new with `Crab.create_new`.
+    """
     id = db.Column(db.Integer, primary_key=True)
 
     # User info
@@ -596,8 +597,9 @@ class Crab(db.Model):
         return new_hash
 
 
-# Molt database class, equivalent to a Tweet
 class Molt(db.Model):
+    """ Molt object is the equivilant of a tweet. Create using `Crab.molt`.
+    """
     id = db.Column(db.Integer, primary_key=True)
 
     # Static info
