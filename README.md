@@ -13,7 +13,7 @@ Twitter clone written in Python using Flask.
 `pip3 install -r requirements.txt`
 3. Setup the database  
 `python3 initialize_database.py`
-4. Add any site administrators to admins.cfg via their usernames
+4. Add any site administrators to `admins.cfg` via their usernames
 
 ## Running
 Simply run `crabber.py` in your configured environment.  
