@@ -7,10 +7,14 @@ Twitter clone written in Python using Flask.
 *Disclaimer: Code still needs documentation and a proper REST API.*
 
 ## Installation
-1. Clone the repo
-2. Create a python3 virtual environment and install the requirements
-3. Run `initialize_database.py`
+1. Clone the repo  
+`git clone https://github.com/jakeledoux/crabber.git`
+2. Create a python3 virtual environment and install the requirements  
+`pip3 install -r requirements.txt`
+3. Setup the database  
+`python3 initialize_database.py`
 4. Add any site administrators to admins.cfg via their usernames
 
 ## Running
-Simply run `crabber.py` in your configured environment.
+Simply run `crabber.py` in your configured environment.  
+`python3 crabber.py`
