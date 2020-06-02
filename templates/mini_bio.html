@@ -7,7 +7,7 @@
     </div>
     <div class="mini-molt-text-box w-100 h-100 px-2">
         <!-- Display correct follow button if page is not current user -->
-        {% if crab != current_user %}
+        {% if crab != current_user and current_user %}
         <form method="POST" class="mini-follow zindex-front">
             <input type="hidden" name="target_user" value="{{crab.id}}">
             <!-- TODO: When an unfollow button is first display (hard refresh) clicking it the first time doesn't update screen. all further clicks do. -->
