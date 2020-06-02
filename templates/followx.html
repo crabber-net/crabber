@@ -28,7 +28,9 @@
 <!-- All molts live here! -->
 <div id="followers">
     {% for crab in followx %}
-        {% include "mini_bio.html" %}
+        {% with hide_border=loop.last %}
+            {% include "mini_bio.html" %}
+        {% endwith %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't have any followers 😢</div>
     {% endfor %}
@@ -37,7 +39,9 @@
 <!-- All likes live here! -->
 <div id="following">
     {% for crab in followx %}
-        {% include "mini_bio.html" %}
+        {% with hide_border=loop.last %}
+            {% include "mini_bio.html" %}
+        {% endwith %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't follow anyone</div>
     {% endfor %}
