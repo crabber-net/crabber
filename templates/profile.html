@@ -179,7 +179,9 @@
     {% endif %}
 
     {% for molt in molts.items %}
-        {% include "molt.html" %}
+        {% with thread=true, show_replies_from=molt.author, depth_limit=3 %}
+            {% include "molt.html" %}
+        {% endwith %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user does not have any molts 🤔</div>
     {% endfor %}
