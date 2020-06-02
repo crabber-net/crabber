@@ -1133,7 +1133,7 @@ def user(username):
         return common_molt_actions()
 
     # Display page
-    elif session.get('current_user') is not None:
+    else:
         current_tab = request.args.get("tab", default="molts")
         this_user = Crab.query.filter_by(username=username, deleted=False).first()
         if this_user is not None:
@@ -1152,8 +1152,6 @@ def user(username):
                                    current_tab=current_tab, replies=replies)
         else:
             return render_template('not-found.html', current_user=get_current_user(), noun="user")
-    else:
-        return redirect("/login")
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
@@ -1184,7 +1182,7 @@ def molt_page(username, molt_id):
         return common_molt_actions()
 
     # Display page
-    elif session.get('current_user') is not None:
+    else:
         primary_molt = Molt.query.filter_by(id=molt_id).first()
         if primary_molt:
             replies = Molt.query.filter_by(deleted=False, is_reply=True, original_molt_id=molt_id) \
@@ -1193,8 +1191,6 @@ def molt_page(username, molt_id):
                                    replies=replies, current_user=get_current_user())
         else:
             return render_template('not-found.html', current_user=get_current_user(), noun="molt")
-    else:
-        return redirect("/login")
 
 
 @app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))

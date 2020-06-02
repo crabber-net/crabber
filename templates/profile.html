@@ -78,7 +78,11 @@
         </div>
         <div class="profile-box-follow-row d-flex flex-row justify-content-end">
             <!-- Display correct follow button if page is not current user -->
-            {% if this_user != current_user %}
+            {% if not current_user %}
+                <button type="submit" class="btn btn-primary rounded-pill" onclick="location.href='/login'">
+                    <strong>Log in to follow this user</strong>
+                </button>
+            {% elif this_user != current_user %}
                 <form method="POST">
                     <input type="hidden" name="target_user" value="{{this_user.id}}">
                     {% if not current_user in this_user.followers %}

@@ -92,6 +92,7 @@
             </div>
             {% endif %}
         </div>
+        {% if current_user %}
         <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
             {% if molt.author == current_user and molt.editable %}
             <!-- EDIT BUTTON -->
@@ -160,6 +161,7 @@
             </form>
             {% endif %}
         </div>
+        {% endif %}
     </div>
     <!-- Molt page link -->
     <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill" draggable="false"></a>

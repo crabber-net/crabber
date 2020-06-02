@@ -61,6 +61,8 @@
             <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_likes_modal">
                 <span class="text-light font-weight-bold">{{molt.true_likes|length}}</span> Like{{'' if (molt.true_likes|length) == 1 else 's'}}</a>
         </div>
+
+        {% if current_user %}
         <div class="mini-molt-actions d-flex flex-row border-dark justify-content-around w-100 py-2 px-4 mb-0">
             {% if molt.author == current_user and molt.editable %}
             <!-- EDIT BUTTON -->
@@ -125,6 +127,7 @@
             </form>
             {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 
