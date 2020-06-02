@@ -144,7 +144,7 @@
             </div>
             <div class="modal-body row m-1 w-100 d-block">
                 {% for remolt in molt.true_remolts %}
-                    {% with crab = remolt.author %}
+                    {% with crab = remolt.author, hide_border=loop.last %}
                         {% include "mini_bio.html" %}
                     {% endwith %}
                 {% else %}
@@ -167,7 +167,7 @@
             </div>
             <div class="modal-body row m-1 w-100 d-block">
                 {% for like in molt.true_likes %}
-                    {% with crab = like.crab %}
+                    {% with crab = like.crab, hide_border=loop.last %}
                         {% include "mini_bio.html" %}
                     {% endwith %}
                 {% else %}
