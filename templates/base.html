@@ -225,18 +225,9 @@
                 <!-- Nav Buttons -->
 
                 {% if not current_user %}
-                <form action="/">
-                    <p class="mt-2 text-muted">You're viewing a stripped down version of this page. Log in to view the whole thing.</p>
-                    <button type="button" class="btn btn-secondary rounded-pill w-md-75 mt-4" id="molt-btn" 
-                        onclick="location.href='/login'">
-                        <strong class="">Log in</strong>
-                    </button>
-
-                    <button type="button" class="btn btn-primary rounded-pill w-md-75 mt-2" id="molt-btn"
-                        onclick="location.href='/signup'">
-                        <strong class="">Join Crabber</strong>
-                    </button>
-                </form>
+                    <div class="d-none d-lg-block">
+                        {% include 'join_crabber.html' %}
+                    </div>
                 {% endif %}
 
                 {% if current_user %}
@@ -482,6 +473,12 @@
             <!-- Main Content -->
             <!-- TODO: Make scrollbar appear on the outside edge -->
             <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
+                {% if not current_user %}
+                    <div class="border-dark border-bottom p-2 d-block d-lg-none">
+                        {% include 'join_crabber.html' %}
+                    </div>
+                {% endif %}
+                
                 <div class="border-dark border-bottom p-2" id="content-heading">
                     <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
                 </div>

@@ -80,7 +80,7 @@
             <!-- Display correct follow button if page is not current user -->
             {% if not current_user %}
                 <button type="submit" class="btn btn-primary rounded-pill" onclick="location.href='/login'">
-                    <strong>Log in to follow this user</strong>
+                    <strong>Log in to follow users</strong>
                 </button>
             {% elif this_user != current_user %}
                 <form method="POST">
