@@ -473,7 +473,7 @@
             <!-- Main Content -->
             <!-- TODO: Make scrollbar appear on the outside edge -->
             <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
-                {% if not current_user %}
+                {% if not current_user and not hide_sidebar %}
                     <div class="border-dark border-bottom p-2 d-block d-lg-none">
                         {% include 'join_crabber.html' %}
                     </div>
