@@ -747,3 +747,45 @@ body, .master-container {
 #nav-footer {
     line-height: 1.1em;
 }
+
+.header-cover {
+	width: 100%;
+	max-width: 70em;
+}
+
+.feature {
+    max-width: 30em;
+}
+
+.scrollbox {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: visible;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dark-lesserest) var(--dark-less);
+    scroll-behavior: smooth;
+}
+
+.h-center {
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.icon-overlap {
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position: absolute;
+    clip-path: circle(0);
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+div.feature:hover .icon-overlap {
+    clip-path: circle(28px);
+}

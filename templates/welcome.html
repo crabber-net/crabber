@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %} Welcome{% endblock %}
+{% block heading %} Welcome to Crabber {% endblock %}
+
+{% block fullpage %}
+    <!-- Large crabber logo / header -->
+    <img src="{{url_for('static', filename='img/crabber_header.svg')}}" alt="Large crabber header"
+        class="header-cover mb-4">
+    <div class="d-flex flex w-100 justify-content-center">
+        <div class="w-75">
+            <h2 class="text-light-darker-er mt-lg-4 pb-3">Crabber is an open-source micro-blogging platform powered by crabs.</h2>
+            <!-- Feature list-->
+            <div id="feature-showcase" class="mt-4 row row-cols-1 row-cols-lg-2">
+                <div class="col">
+                    <div class="feature row">
+                        <div class="col-auto">
+                            <span class="btn-icon" data-width="64" data-height="64" data-jam="write-f"></span>
+                        </div>
+                        <div class="col">
+                            <h5>Typo-free</h5>
+                            <p class="text-light-darker">
+                                On Crabber you can edit your posts for up to five minutes after they're published. <em>It's not that hard, Twitter.</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="feature row">
+                        <div class="col-auto">
+                            <span class="btn-icon" data-width="64" data-height="64" data-jam="terminal"></span>
+                        </div>
+                        <div class="col">
+                            <h5>Programmable</h5>
+                            <p class="text-light-darker">
+                                With an open REST API, developing integrations with Crabber is easy. You don't have to jump through any verification hoops.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="feature row">
+                        <div class="col-auto">
+                            <span class="btn-icon" data-width="64" data-height="64" data-jam="eye-close-f"></span>
+                        </div>
+                        <div class="col">
+                            <h5>Full privacy</h5>
+                            <p class="text-light-darker">
+                                There are no advertisers, trackers, mailing-lists, or other sneaky tactics. Your data stays on the site.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="feature row">
+                        <div class="col-auto">
+                            <span class="btn-icon rainbow" data-width="64" data-height="64" data-jam="heart-f"></span>
+                            <img src="{{url_for('static', filename='img/rainbow_heart.svg')}}" class="p-0 icon-overlap h-center" height="64" width="64" alt="">
+                        </div>
+                        <div class="col">
+                            <h5>Friendly</h5>
+                            <p class="text-light-darker">
+                                We accept everyone regardless of how they want to identify. Hateful or intolerant speech is not welcome here, and we enforce that.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-100 justify-content-center row row-cols-1 mt-4">
+                <h5 class="mt-4 text-center text-light-darker">Sound good? Come join us among the Crabs!</h5>
+                <div class="d-block mt-2">
+                    <button type="button" class="h-center btn btn-primary rounded-pill w-md-75 mt-lg-2" id="molt-btn"
+                        onclick="location.href='/signup'">
+                        <strong class="">Join Crabber</strong>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spacer -->
+            <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+        </div> 
+    </div>
+{% endblock %}
