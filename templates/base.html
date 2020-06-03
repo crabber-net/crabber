@@ -214,7 +214,7 @@
 </head>
 <body class="bg-dark text-light">
     <div class="container-fluid vh-100 master-container">
-        <div class="row h-100 justify-content-{{ "center" if hide_sidebar else "start" }}">
+        <div class="row h-100 justify-content-{{ "center" if hide_sidebar and not fullwidth else "start" }}">
             {% if not hide_sidebar %}
             <!-- Nav Panel -->
             <div class="col-2 col-lg-3 col-xl-2 offset-lg-1 offset-xl-2 p-1" id="nav-panel">
@@ -477,29 +477,34 @@
             </div>
 
             <!-- Main Content -->
-            <!-- TODO: Make scrollbar appear on the outside edge -->
-            <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
-                {% if not current_user and not hide_sidebar %}
-                    <div class="border-dark border-bottom p-2 d-block d-lg-none">
-                        {% include 'join_crabber.html' %}
+            {% if not fullwidth %}
+                <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
+                    {% if not current_user and not hide_sidebar %}
+                        <div class="border-dark border-bottom p-2 d-block d-lg-none">
+                            {% include 'join_crabber.html' %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="border-dark border-bottom p-2" id="content-heading">
+                        <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
                     </div>
-                {% endif %}
-                
-                <div class="border-dark border-bottom p-2" id="content-heading">
-                    <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
+                    <div id="content-body" class="h-100">
+                        {% if error %}
+                            <!-- ERROR MESSAGE -->
+                            <div class="alert alert-danger p-1" role="alert">{{error}}</div>
+                        {% endif %}
+                        {% if msg %}
+                            <!-- MISC MESSAGE -->
+                            <div class="alert alert-secondary p-1" role="alert">{{msg}}</div>
+                        {% endif %}
+                        {% block body %} {% endblock %}
+                    </div>
                 </div>
-                <div id="content-body" class="h-100">
-                    {% if error %}
-                        <!-- ERROR MESSAGE -->
-                        <div class="alert alert-danger p-1" role="alert">{{error}}</div>
-                    {% endif %}
-                    {% if msg %}
-                        <!-- MISC MESSAGE -->
-                        <div class="alert alert-secondary p-1" role="alert">{{msg}}</div>
-                    {% endif %}
-                    {% block body %} {% endblock %}
+            {% else %}
+                <div class="scrollbox">
+                    {% block fullpage %} {% endblock %}
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
     <!-- Bootstrap JS -->

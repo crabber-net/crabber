@@ -996,7 +996,7 @@ def index():
         return render_template('timeline.html', current_page="home", page_n=page_n,
                                molts=molts, current_user=get_current_user())
     else:
-        return redirect("/login")
+        return render_template('welcome.html', current_user=get_current_user(), fullwidth=True, hide_sidebar=True)
 
 
 @app.route("/wild/", methods=("GET", "POST"))

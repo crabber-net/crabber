@@ -7,6 +7,7 @@
     --primary-darker: rgb(110, 17, 25);
     --light: rgb(217, 217, 217);
     --light-darker: rgb(151, 151, 151);
+    --light-darker-er: rgb(112, 113, 124);
     --light-faded: rgb(74, 82, 85);
     --light-faded-more: #1a1c22 !important;
     --dark: rgb(10, 12, 15);
@@ -56,6 +57,15 @@
     fill: var(--primary) !important
 }
 
+.text-light-darker {
+    color: var(--light-darker) !important;
+    fill: var(--light-darker) !important
+}
+
+.text-light-darker-er {
+    color: var(--light-darker-er) !important;
+    fill: var(--light-darker-er) !important
+}
 .btn {
     color: var(--light);
 }
