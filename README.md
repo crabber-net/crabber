@@ -11,8 +11,6 @@ A Twitter clone for crabby people.
 ---
 ![screenshot of crabber.net](https://i.imgur.com/8PvtcVF.png)
 
-*Disclaimer: Code still needs documentation and a proper REST API.*
-
 ## Installation
 1. Clone the repo  
 `git clone https://github.com/jakeledoux/crabber.git`
