@@ -784,7 +784,9 @@ body, .master-container {
     position: absolute;
     clip-path: circle(0);
     transition-duration: 0.5s;
+    -webkit-transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+    -webkit-transition-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
 div.feature:hover .icon-overlap {
     clip-path: circle(28px);
