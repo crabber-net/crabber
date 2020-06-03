@@ -1,9 +1,9 @@
 ![crabber](https://i.imgur.com/WrhXpnX.png)
 A Twitter clone for crabby people.
 
-![](https://img.shields.io/github/languages/code-size/jakeledoux/crabber)
-![](https://img.shields.io/github/issues/jakeledoux/crabber)
-![](https://img.shields.io/website?url=https%3A%2F%2Fcrabber.net)
+[![](https://img.shields.io/github/languages/code-size/jakeledoux/crabber)](https://github.com/jakeledoux/crabber)
+[![](https://img.shields.io/github/issues/jakeledoux/crabber)](https://github.com/jakeledoux/crabber/issues)
+[![](https://img.shields.io/website?url=https%3A%2F%2Fcrabber.net)](https://crabber.net)
 
 ---
 
