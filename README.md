@@ -1,4 +1,4 @@
-![crabber](https://i.imgur.com/2l0efDD.png)
+![crabber](https://i.imgur.com/WrhXpnX.png)
 A Twitter clone for crabby people.
 
 ![](https://img.shields.io/github/languages/code-size/jakeledoux/crabber)
