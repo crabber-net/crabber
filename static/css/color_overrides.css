@@ -8,6 +8,7 @@
     --light: rgb(217, 217, 217);
     --light-darker: rgb(151, 151, 151);
     --light-faded: rgb(74, 82, 85);
+    --light-faded-more: #1a1c22 !important;
     --dark: rgb(10, 12, 15);
     --dark-less: rgb(16, 19, 24);
     --dark-lesser: rgb(18, 23, 28);
@@ -86,7 +87,13 @@
     color: var(--light-faded);
     fill: var(--light-faded);
 }
-
+.text-muted-more {
+    color: var(--light-faded-more);
+    fill: var(--light-faded-more);
+}
+a.text-muted-more, .text-muted-more a {
+    color: #133860;
+}
 .text-inherit, .text-inherit:hover, .text-inherit:focus {
     color: inherit;
 }
