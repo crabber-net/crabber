@@ -1,5 +1,11 @@
-# crabber
-Twitter clone written in Python using Flask.
+![crabber](https://i.imgur.com/2l0efDD.png)
+A Twitter clone for crabby people.
+
+![](https://img.shields.io/github/languages/code-size/jakeledoux/crabber)
+![](https://img.shields.io/github/issues/jakeledoux/crabber)
+![](https://img.shields.io/website?url=https%3A%2F%2Fcrabber.net)
+
+---
 
 [Visit the official live site at crabber.net](https://crabber.net/)
 ![screenshot of crabber.net](https://i.imgur.com/8PvtcVF.png)
