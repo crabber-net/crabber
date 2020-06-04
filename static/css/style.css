@@ -791,3 +791,7 @@ body, .master-container {
 div.feature:hover .icon-overlap {
     clip-path: circle(28px);
 }
+
+.avatar-indent {
+    margin-top: 1.5em;
+}

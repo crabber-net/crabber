@@ -38,7 +38,7 @@
         </form>
     </div>
     {% endif %}
-    <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}}">
+    <div class="mini-molt-profile-box {{"avatar-indent" if (is_remolt or (molt.is_reply and not thread) or is_pin) else ""}}">
         <a href="/user/{{molt.author.username}}" class="zindex-front">
             <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
         </a>
