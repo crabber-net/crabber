@@ -50,13 +50,11 @@ Emoji policy: pro
     situations, it is okay to display "This {object} has been deleted." as an alternative to just omitting it.
 
 ------ TODO: ------
-  * Make dates and ages display local time somehow
   * User popovers
   * Notif stacking
   * Turn molt content links into anchors
   * DOCUMENTATION and refactoring
-  * Figure out how to add class type hints before declaration
+  * ~~Figure out how to add class type hints before declaration~~ USE BACKTICKS AROUND CLASS NAME
   * Quote-molting
   * Moderation helper -- gives content a profanity score and page displays highest-ranking things for the moderator to 
     either approve or take action on.
-  * Molt pinning
