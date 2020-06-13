@@ -60,7 +60,7 @@
     <div class="profile-box-banner" {{expand_img() if current_page != "own-profile" else ""}}>
         {% if current_page == "own-profile" %}
             <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
-                <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
+                <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
             </div>
         {% endif %}
         <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
@@ -69,7 +69,7 @@
         <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{expand_img() if current_page != "own-profile" else ""}}>
             {% if current_page == "own-profile" %}
             <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
-                <span class="text-light" data-width="46" data-height="46" data-jam="pencil-f"></span>
+                <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
             </div>
             {% endif %}
             <div class="rounded-circle profile-picture shadow-expand" 
@@ -111,9 +111,6 @@
                 {{this_user.display_name}}</strong>
             {% if this_user.verified %}
             <a title="Verified user"><span class="verified" data-width="18" data-height="18" data-jam="shield-check-f"></span></a>
-            {% endif %}
-            {% if current_page == "own-profile" %}
-            <span class="edit-icon ml-1" data-width="16" data-height="18" data-jam="pencil-f"></span>
             {% endif %}
             <p class="text-muted mb-1">@{{this_user.username}}
                 {% if current_user in this_user.following %}
