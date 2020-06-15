@@ -34,6 +34,8 @@
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't have any followers 😢</div>
     {% endfor %}
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 </div>
 {% elif tab == "following" %}
 <!-- All likes live here! -->
@@ -45,6 +47,8 @@
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't follow anyone</div>
     {% endfor %}
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 </div>
 {% endif %}
 {% endblock %}
