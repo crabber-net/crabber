@@ -1340,9 +1340,14 @@ def tortimer():
             return redirect(request.url)
 
         else:
-            crabs = Crab.query.order_by(Crab.username).all()
-            molts = Molt.query.order_by(Molt.timestamp.desc()).all()
-            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user())
+            crab_page_n = request.args.get('pc', 1, type=int)
+            molt_page_n = request.args.get('pm', 1, type=int)
+            crabs = Crab.query.order_by(Crab.username) \
+                .paginate(crab_page_n, MOLTS_PER_PAGE, False)
+            molts = Molt.query.order_by(Molt.timestamp.desc()) \
+                .paginate(molt_page_n, MOLTS_PER_PAGE, False)
+            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user(),
+                                   crab_page_n=crab_page_n, molt_page_n=molt_page_n)
     else:
         return error_404(BaseException)
 
