@@ -199,6 +199,13 @@
                             <li>Scrobbled <strong class="text-primary">{{this_user.scrobbles | commafy}}</strong> times on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a></li>
                         {% endif %}
                         <li><strong class="text-primary">{{this_user.trophy_count}}</strong> {{"trophy" if this_user.trophy_count == 1 else "trophies"}}</li>
+                        <li><strong class="text-primary">
+                            {% if this_user.following | length > 0 %}
+                                {{this_user.followers | length / this_user.following | length}}
+                            {% else %}
+                                <span class="" data-width="16" data-height="16" data-jam="infinite"></span>
+                            {% endif %}
+                        </strong> follower/following ratio</li>
                     </ul>
                 </div>
 

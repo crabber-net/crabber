@@ -62,7 +62,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Latest obsession</label>
             </div>
-            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="playing with my Tamagotchi" 
+            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="playing with my Tamagotchi" 
                 {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
                 >
         </div>
@@ -70,7 +70,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Favorite emoji</label>
             </div>
-            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder=";)" 
+            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder=";)" 
                 {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
                 >
         </div>

@@ -842,7 +842,7 @@ div.feature:hover .icon-overlap {
     overflow: hidden;
     padding: 0 1rem;
     transition: ease-in-out 300ms;
-    height: 22rem;
+    height: 25rem;
     border-bottom: 1px solid var(--border-dark);
 }
 #shell-contents.shell-collapsed {
