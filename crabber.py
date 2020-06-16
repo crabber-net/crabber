@@ -322,6 +322,7 @@ UPLOAD_FOLDER: str = os.path.join(BASE_PATH, 'static/img/user_uploads')
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
 BASE_URL = "http://localhost" if os.name == "nt" else "https://crabber.net"
+SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
 
 # Regex patterns #######################################################################################################
 mention_pattern = re.compile(
@@ -1454,6 +1455,7 @@ def inject_global_vars():
                 TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
                 IS_WINDOWS=os.name == "nt",
                 localize=localize,
+                server_start=SERVER_START,
                 error=error, msg=msg, location=location)
 
 
