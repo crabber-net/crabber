@@ -1456,11 +1456,13 @@ def inject_global_vars():
     error = request.args.get("error")
     msg = request.args.get("msg")
     location = request.path
+    now = datetime.datetime.utcnow()
     return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
-                TIMESTAMP=round(datetime.datetime.utcnow().timestamp()),
+                TIMESTAMP=round(now.timestamp()),
                 IS_WINDOWS=os.name == "nt",
                 localize=localize,
                 server_start=SERVER_START,
+                current_year=now.utcnow().year,
                 error=error, msg=msg, location=location)
 
 
