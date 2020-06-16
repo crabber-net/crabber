@@ -192,6 +192,8 @@
 
         function loadingIcon(e) {
             $(e).find(".btn-icon").toggleClass("d-none");
+            // Notification badge handling
+            $(e).find(".notif-badge").addClass("d-none");
             // Profile link handling
             $(e).find(".profile-picture").addClass("d-none");
             $(e).find(".profile-picture").removeClass("d-inline-block");
