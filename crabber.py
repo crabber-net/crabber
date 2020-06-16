@@ -1,9 +1,11 @@
 import datetime
 from flask import Flask, render_template, request, redirect, escape, session, url_for, jsonify, render_template_string
 from flask_sqlalchemy import SQLAlchemy
+import json
 import os
 from passlib.hash import sha256_crypt
 import re
+import requests
 import turtle_images
 from typing import List, Set
 import uuid
@@ -241,14 +243,23 @@ def common_molt_actions() -> Response:
         if target_molt.author.id == get_current_user().id:
             target_molt.delete()
 
-    elif action == "update_bio":
+    elif action == "update_description":
         target_user = Crab.query.filter_by(id=request.form.get('user_id')).first()
         if target_user == get_current_user():
             disp_name = request.form.get('display_name').strip()
             desc = request.form.get('description').strip()
+
+            # Bio JSON assembly
+            new_bio = dict() 
+            for key, value in request.form.items():
+                if "bio." in key:
+                    if value.strip():
+                        new_bio[key.split(".")[1].strip()] = value.strip()
+            
             current_user = get_current_user()
             current_user.display_name = disp_name
-            current_user.bio = desc
+            current_user.description = desc
+            current_user.raw_bio = json.dumps(new_bio)
             db.session.commit()
             if request.form.get('page') == "settings":
                 return show_message("Changes saved.")
@@ -368,8 +379,10 @@ class Crab(db.Model):
     email = db.Column(db.String(120), nullable=False)
     display_name = db.Column(db.String(32), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    bio = db.Column(db.String(140), nullable=False,
-                    server_default="This user is boring and has no bio.")
+    description = db.Column(db.String(140), nullable=False,
+                    server_default="This user has no description.")
+    raw_bio = db.Column(db.String, nullable=False,
+                    server_default='{\"pronouns\": \"?\",\"age\": \"?\",\"jam\": \"?\",\"quote\": \"?\"}')
     verified = db.Column(db.Boolean, nullable=False,
                          default=False)
     avatar = db.Column(db.String(140), nullable=False,
@@ -398,6 +411,12 @@ class Crab(db.Model):
         return f"<Crab '@{self.username}'>"
 
     @property
+    def bio(self):
+        """ Returns bio JSON as dictionary.
+        """
+        return json.loads(self.raw_bio)
+
+    @property
     def timedelta(self):
         """ Returns time offset for user's timezone
         """
@@ -410,6 +429,45 @@ class Crab(db.Model):
         """
         return self.get_true_likes()
 
+    @property
+    def true_molts(self):
+        """ Returns all molts the user has published that are still available.
+        """
+        return self.get_true_molts()
+
+    @property
+    def true_molts_count(self):
+        """ Returns count of molts the user has published that are still available.
+        """
+        return len(self.true_molts)
+
+    @property
+    def days_active(self):
+        """ Returns number of days since user signed up.
+        """
+        return (datetime.datetime.utcnow() - self.register_time).days
+
+    @property
+    def scrobbles(self):
+        """ Returns scrobble count if user has connected with Last.fm, else 0.
+        """
+        if self.lastfm:
+            r = requests.get("http://ws.audioscrobbler.com/2.0",
+                        data={"method": "user.getrecenttracks",
+                            "user": self.lastfm,
+                            "api_key": "7d46cfc3d2c68c0f50504b7a09516898",
+                            "limit": 1,
+                            "format": "json"})
+            if r.ok:
+                return int(r.json()['recenttracks']['@attr']['total'])
+        return 0
+
+    @property
+    def trophy_count(self):
+        """ Returns amount of trophies user has earned.
+        """
+        return len(self.trophies)
+    
     @property
     def unread_notifications(self):
         """
@@ -454,6 +512,15 @@ class Crab(db.Model):
             return likes.paginate(page, MOLTS_PER_PAGE, False)
         else:
             return likes.all()
+
+    def get_true_molts(self, paginated=False, page=1):
+        """ Returns all molts the user has published that are still available.
+        """
+        molts = Molt.query.filter_by(author=self).filter_by(deleted=False).order_by(Molt.timestamp.desc())
+        if paginated:
+            return molts.paginate(page, MOLTS_PER_PAGE, False)
+        else:
+            return molts.all()
 
     def award(self, title=None, trophy=None):
         """
@@ -1388,6 +1455,11 @@ def inject_global_vars():
                 IS_WINDOWS=os.name == "nt",
                 localize=localize,
                 error=error, msg=msg, location=location)
+
+
+@app.template_filter()
+def commafy(value):
+    return format(int(value), ',d')
 
 
 @app.errorhandler(404)
