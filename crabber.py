@@ -445,7 +445,7 @@ class Crab(db.Model):
     def days_active(self):
         """ Returns number of days since user signed up.
         """
-        return (datetime.datetime.now() - self.register_time).days
+        return (datetime.datetime.utcnow() - self.register_time).days
 
     @property
     def scrobbles(self):
