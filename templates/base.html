@@ -189,6 +189,14 @@
             alert("Molt cannot be devoid of text.");
             return false;
         }
+
+        function loadingIcon(e) {
+            $(e).find(".btn-icon").toggleClass("d-none");
+            // Profile link handling
+            $(e).find(".profile-picture").addClass("d-none");
+            $(e).find(".profile-picture").removeClass("d-inline-block");
+
+        }
         
         {% if current_user %}
             // When document loads
@@ -231,48 +239,56 @@
                 {% endif %}
 
                 {% if current_user %}
-                <form action="/">
+                <form onsubmit="loadingIcon(this);" action="/">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "home" %}
                     id="nav-active"
                     {% endif %}
                     >
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="home{{"-f" if current_page == "home" else ""}}"></span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Home</strong>
                     </button>
                 </form>
 
-                <form action="/wild">
+                <form onsubmit="loadingIcon(this);" action="/wild">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2" 
                         {% if current_page == "wild-west" %} 
                             id="nav-active"
                         {% endif %}>
                         <span class="btn-icon" data-width="28" data-height="28"
                             data-jam="cactus{{"-f" if current_page == "wild-west" else ""}}"></span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
                     </button>
                 </form>
                 
-                <form action="/notifications">
+                <form onsubmit="loadingIcon(this);" action="/notifications">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                     {% if current_page == "notifications" %}
                         id="nav-active"
                     {% endif %}>
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
                         <span class="notif-badge {{"" if current_user.unread_notifications else "d-none"}}">{{current_user.unread_notifications}}</span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
                 </form>
 
-                <form action="/search">
+                <form onsubmit="loadingIcon(this);" action="/search">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
                         <span class="btn-icon" data-width="28" data-height="28" data-jam="search"></span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Search</strong>
                     </button>
                 </form>
 
-                <form action="/user/{{current_user.username}}">
+                <form onsubmit="loadingIcon(this);" action="/user/{{current_user.username}}">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "own-profile" %}
                     id="nav-active"
@@ -281,6 +297,8 @@
                         <!-- <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" height="28" alt="Your profile picture"> -->
                         <div class="rounded-circle px28 profile-picture d-inline-block valign-middle {{"box-shadow" if current_page == "own-profile" else ""}}"
                             style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
                     </button>
                 </form>
@@ -291,13 +309,15 @@
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
-                <form action="/settings"
+                <form onsubmit="loadingIcon(this);" action="/settings"
                     {% if current_page == "settings" %}
                         id="nav-active"
                     {% endif %}>
                     
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 {{'text-primary' if current_page == 'settings' else 'text-muted'}}">
                         <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="cog{{'-f' if current_page == 'settings'}}"></span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
                     </button>
                 </form>

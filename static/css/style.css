@@ -16,6 +16,16 @@
     }
 }
 
+/* ANIMATION DEFINITIONS /////////////////////////////*/
+@keyframes rot-clockwise {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(180deg);
+    }
+}
+
 /* CENTERING HELPERS ////////////////////////////////*/
 .absolute-top {
     position: absolute;
@@ -861,4 +871,13 @@ div.feature:hover .icon-overlap {
 table#user-info th {
     color: var(--primary);
     width: 8rem;
+}
+
+
+.loading-icon {
+    fill: var(--primary);
+    animation-name: rot-clockwise;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(.68,-0.55,.27,1.55);
 }
