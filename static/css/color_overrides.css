@@ -9,12 +9,14 @@
     --light-darker: rgb(151, 151, 151);
     --light-darker-er: rgb(112, 113, 124);
     --light-faded: rgb(74, 82, 85);
+    --light-faded-less: rgb(105, 114, 117);
     --light-faded-more: #1a1c22 !important;
     --dark: rgb(10, 12, 15);
     --dark-less: rgb(16, 19, 24);
     --dark-lesser: rgb(18, 23, 28);
     --dark-lesserest: rgb(35, 41, 48);
     --dark-less-more: rgb(12, 15, 18);
+    --border-dark: #343a40;
     --secondary: #399de6;
     --tertiary: #39e683;
     --quad: #1D3557;
@@ -89,6 +91,9 @@
 .bg-dark {
     background-color: var(--dark) !important;
 }
+.bg-dark-less {
+    background-color: var(--dark-less) !important;
+}
 .text-dark {
     color: var(--dark);
 }
@@ -106,4 +111,14 @@ a.text-muted-more, .text-muted-more a {
 }
 .text-inherit, .text-inherit:hover, .text-inherit:focus {
     color: inherit;
+}
+
+.btn-trans {
+    background: none;
+    color: var(--light-faded);
+    fill: var(--light-faded);
+}
+.btn-trans:hover {
+    color: var(--light-faded-less);
+    fill: var(--light-faded-less);
 }
