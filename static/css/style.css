@@ -846,7 +846,7 @@ div.feature:hover .icon-overlap {
 }
 
 #shell-contents {
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 0 1rem;
     transition: ease-in-out 300ms;
     height: 25rem;
