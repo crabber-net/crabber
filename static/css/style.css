@@ -427,12 +427,12 @@ div.mini-molt:hover {
 .cool-input input, .cool-input textarea {
     background: var(--dark-less) !important;
     border: none;
-    border-bottom: 2px solid var(--light);
+    border-bottom: 2px solid var(--light-faded);
     color: var(--light) !important;
 }
 .cool-input input, .cool-input textarea, .cool-input select {
     border: none;
-    border-bottom: 2px solid var(--light);
+    border-bottom: 2px solid var(--light-faded);
 }
 .cool-input input:hover {
     background: var(--dark-less) !important;
@@ -443,6 +443,11 @@ div.mini-molt:hover {
 }
 .cool-input:focus-within .input-group-prepend .input-group-text {
     background-color: var(--secondary) !important;
+    color: var(--light);
+}
+.cool-input .input-group-text {
+    background-color: var(--dark-lesserest);
+    border-color: var(--dark-lesser);
     color: var(--light);
 }
 
@@ -803,4 +808,50 @@ div.feature:hover .icon-overlap {
 
 .avatar-indent {
     margin-top: 1.5em;
+}
+
+.shell {
+    /* background-color: var(--dark-less); */
+    background: none;
+}
+
+#shell-toggle {
+    outline: none !important;
+    box-shadow: none;
+}
+.shell-toggle-chevron {
+    transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 300ms transform;
+}
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.shell-stats {
+    list-style: none;
+}
+.shell-stats li::before {
+    content: "-";
+    color: var(--light-faded);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+}
+
+#shell-contents {
+    overflow: hidden;
+    padding: 0 1rem;
+    transition: ease-in-out 300ms;
+    height: 22rem;
+    border-bottom: 1px solid var(--border-dark);
+}
+#shell-contents.shell-collapsed {
+    height: 0px;
+    padding: 0px 1rem;
+    border-color: var(--dark);
+}
+
+table#user-info th {
+    color: var(--primary);
+    width: 8rem;
 }

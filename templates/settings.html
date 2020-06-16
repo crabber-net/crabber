@@ -6,7 +6,7 @@
 <div class="p-2 w-100 no-h-scroll">
     <h2>Bio Settings</h2>
     <form method="POST" class="p-2">
-        <input type="hidden" name="user_action" value="update_bio" autofocus>
+        <input type="hidden" name="user_action" value="update_description" autofocus>
         <input type="hidden" name="page" value="settings">
         <input type="hidden" name="user_id" value="{{current_user.id}}">
     
@@ -17,11 +17,62 @@
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
         </div>
     
-        <!-- Display name -->
+        <!-- Description -->
         <div class="form-group cool-input">
             <label for="description">About me</label>
             <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you." 
-            required aria-required>{{current_user.bio.strip()}}</textarea>
+            required aria-required>{{current_user.description.strip()}}</textarea>
+        </div>
+
+        <!-- Bio -->
+        <label>Fun facts</label>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Age</label>
+            </div>
+            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="42" 
+                {% if current_user.bio.get("age", "?") != "?" %}value="{{current_user.bio.get("age")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Pronouns</label>
+            </div>
+            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="they/them" 
+                {% if current_user.bio.get("pronouns", "?") != "?" %}value="{{current_user.bio.get("pronouns")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Quote</label>
+            </div>
+            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="The world is your lobster." 
+                {% if current_user.bio.get("quote", "?") != "?" %}value="{{current_user.bio.get("quote")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">My jam</label>
+            </div>
+            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="Frank Sinatra - My Way" 
+                {% if current_user.bio.get("jam", "?") != "?" %}value="{{current_user.bio.get("jam")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Latest obsession</label>
+            </div>
+            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="playing with my Tamagotchi" 
+                {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Favorite emoji</label>
+            </div>
+            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder=";)" 
+                {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
+                >
         </div>
     
         <!-- Submit button -->
