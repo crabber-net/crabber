@@ -25,6 +25,11 @@
     position: absolute;
     right: 0;
 }
+.absolute-top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
 .absolute-bottom {
     position: absolute;
     bottom: 0;
@@ -86,6 +91,10 @@
 .zindex-front {
     position: relative;
     z-index: 10;
+}
+
+.zindex-1 {
+    z-index: 1;
 }
 
 .logo {
