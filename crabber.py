@@ -383,7 +383,7 @@ class Crab(db.Model):
     description = db.Column(db.String(140), nullable=False,
                     server_default="This user has no description.")
     raw_bio = db.Column(db.String, nullable=False,
-                    server_default='{\"pronouns\": \"?\",\"age\": \"?\",\"jam\": \"?\",\"quote\": \"?\"}')
+                        server_default='{}')
     verified = db.Column(db.Boolean, nullable=False,
                          default=False)
     avatar = db.Column(db.String(140), nullable=False,
