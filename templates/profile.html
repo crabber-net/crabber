@@ -195,7 +195,7 @@
                         <li><strong class="text-primary">{{this_user.trophy_count}}</strong> {{"trophy" if this_user.trophy_count == 1 else "trophies"}}</li>
                         <li><strong class="d-inline-block text-primary">
                             {% if this_user.following | length > 0 %}
-                                {{this_user.followers | length / this_user.following | length}}
+                                {{"%.1f"|format(this_user.followers | length / this_user.following | length)}}
                             {% else %}
                                 <span class="" data-width="16" data-height="16" data-jam="infinite"></span>
                             {% endif %}
