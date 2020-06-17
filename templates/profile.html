@@ -198,6 +198,7 @@
                     <ul class="shell-stats pl-2 m-0">
                         <li>Member for <strong class="text-primary">{{this_user.days_active | commafy}}</strong> days</li>
                         <li><strong class="text-primary">{{this_user.true_molts_count | commafy}}</strong> Molts published</li>
+                        <li>Liked <strong class="text-primary">{{this_user.true_likes | length | commafy}}</strong> Molt{{"s" if this_user.true_likes | length != 1}}</li>
                         {% if this_user.lastfm %}
                             <li>Scrobbled <strong class="text-primary">{{this_user.scrobbles | commafy}}</strong> times on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a></li>
                         {% endif %}
