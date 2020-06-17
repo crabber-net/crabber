@@ -1342,7 +1342,7 @@ def tortimer():
         else:
             crab_page_n = request.args.get('pc', 1, type=int)
             molt_page_n = request.args.get('pm', 1, type=int)
-            crabs = Crab.query.order_by(Crab.username) \
+            crabs = Crab.query \
                 .order_by(Crab.register_time.desc()) \
                 .paginate(crab_page_n, MOLTS_PER_PAGE, False)
             molts = Molt.query.order_by(Molt.timestamp.desc()) \
