@@ -166,30 +166,20 @@
                 <h5>Fun facts</h5>
                 <div class="rounded bg-dark-less p-3">
                     <table id="user-info">
+                        {% set bio_names = {'age': 'Age',
+                                            'pronouns': 'Pronouns',
+                                            'quote': 'Quote',
+                                            'jam': 'My jam',
+                                            'obsession': 'Latest obsession',
+                                            'emoji': 'Favorite emoji'} %}
+                        {% for key, value in this_user.bio.items() %}
                         <tr>
-                            <th>Age</th>
-                            <td>{{this_user.bio.get('age', '?')}}</td>
+                            <th>{{bio_names[key]}}</th>
+                            <td>{{value}}</td>
                         </tr>
-                        <tr>
-                            <th>Pronouns</th>
-                            <td>{{this_user.bio.get('pronouns', '?')}}</td>
-                        </tr>
-                        <tr>
-                            <th>Quote</th>
-                            <td>{{this_user.bio.get('quote', '?')}}</td>
-                        </tr>
-                        <tr>
-                            <th>My jam</th>
-                            <td>{{this_user.bio.get('jam', '?')}}</td>
-                        </tr>
-                        <tr>
-                            <th>Latest obsession</th>
-                            <td>{{this_user.bio.get('obsession', '?')}}</td>
-                        </tr>
-                        <tr>
-                            <th>Favorite emoji</th>
-                            <td>{{this_user.bio.get('emoji', '?')}}</td>
-                        </tr>
+                        {% else %}
+                          <p class="text-muted">This user hasn't filled out their bio 😦</p>
+                        {% endfor %}
                     </table>
                 </div>
 
