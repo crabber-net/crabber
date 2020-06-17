@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block title %} {{this_user.display_name}} (@{{this_user.username}}) {% endblock %}
-{% block heading %} {{this_user.display_name}} {% endblock %}
+{% block heading %}
+    {{this_user.display_name}}<br>
+    <small class="text-muted">{{this_user.true_molts | length}} {{'Molt' if this_user.true_molts | length == 1 else 'Molts'}}</small>
+{% endblock %}
 
 {% block body %}
 <script>
