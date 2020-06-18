@@ -25,6 +25,11 @@
         transform: rotate(180deg) translateX(1px);
     }
 }
+@keyframes rot-clockwise-center {
+    to {
+        transform: rotate(180deg);
+    }
+}
 @keyframes tippy-taps {
     0% {
         transform: translateY(0px) rotate(15deg);
@@ -932,12 +937,15 @@ table#user-info th {
 }
 
 
-.loading-icon {
+.loading-icon, .loading-icon-center {
     fill: var(--primary);
     animation-name: rot-clockwise;
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-timing-function: cubic-bezier(.68,-0.55,.27,1.55);
+}
+.loading-icon-center {
+    animation-name: rot-clockwise-center;
 }
 
 .form-group:nth-last-of-type(2) {
