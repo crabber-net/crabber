@@ -385,8 +385,12 @@ class Crab(db.Model):
     description = db.Column(db.String(140), nullable=False,
                     server_default="This user has no description.")
     raw_bio = db.Column(db.String, nullable=False,
+<<<<<<< HEAD
                     server_default='{\"pronouns\": \"?\",\"age\": \"?\",\"jam\": \"?\",\"quote\": \"?\"}')
     location = db.Column(db.String, nullable=True)
+=======
+                        server_default='{}')
+>>>>>>> 7934e54ab0876723b330016e57c527fd13ed1033
     verified = db.Column(db.Boolean, nullable=False,
                          default=False)
     avatar = db.Column(db.String(140), nullable=False,
@@ -1345,7 +1349,8 @@ def tortimer():
         else:
             crab_page_n = request.args.get('pc', 1, type=int)
             molt_page_n = request.args.get('pm', 1, type=int)
-            crabs = Crab.query.order_by(Crab.username) \
+            crabs = Crab.query \
+                .order_by(Crab.register_time.desc()) \
                 .paginate(crab_page_n, MOLTS_PER_PAGE, False)
             molts = Molt.query.order_by(Molt.timestamp.desc()) \
                 .paginate(molt_page_n, MOLTS_PER_PAGE, False)
