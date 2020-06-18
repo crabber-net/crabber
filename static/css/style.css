@@ -65,6 +65,14 @@
         transition-timing-function: ease-in;
     }
 }
+@keyframes shadow-drop {
+    from {
+        text-shadow: 0 0 #ff6a47;
+    }
+    to {
+        text-shadow: .5rem 0 #ff6a47;
+    }
+}
 
 /* CENTERING HELPERS ////////////////////////////////*/
 .absolute-top {
@@ -996,4 +1004,25 @@ table#user-info th {
     right: 0;
     position: absolute;
     margin: 5rem auto;
+}
+
+.http-error {
+    text-shadow: .5rem 0 #ff6a47;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 11rem;
+    animation-name: shadow-drop;
+    animation-duration: 1s;
+    animation-iteration-count: cubic-bezier(.77,0,.18,1);
+}
+.http-error-img {
+    width: 90%;
+    mix-blend-mode: screen;
+}
+
+.center-img {
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: block;
 }
