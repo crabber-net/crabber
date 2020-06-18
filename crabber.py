@@ -1064,7 +1064,7 @@ def index():
             .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
             .order_by(Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
-        return render_template('timeline_content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
+        return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
                                molts=molts, current_user=get_current_user())
     else:
         return render_template('welcome.html', current_user=get_current_user(), fullwidth=True, hide_sidebar=True)
@@ -1082,7 +1082,7 @@ def wild_west():
         molts = Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False) \
             .filter(Molt.author.has(deleted=False)).order_by(Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
-        return render_template('wild-west.html', current_page="wild-west", page_n=page_n,
+        return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
                                molts=molts, current_user=get_current_user())
     else:
         return redirect("/login")
