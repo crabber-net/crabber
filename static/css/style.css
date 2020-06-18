@@ -17,12 +17,45 @@
 }
 
 /* ANIMATION DEFINITIONS /////////////////////////////*/
+:root {
+    --playful-timing: cubic-bezier(.46,.03,.52,.96);
+}
 @keyframes rot-clockwise {
     from {
         transform: rotate(0deg);
     }
     to {
         transform: rotate(180deg);
+    }
+}
+@keyframes tippy-taps {
+    0% {
+        transform: translateY(0px) rotate(15deg);
+        transition-timing-function: ease-in;
+    }
+    25% {
+        transform: translateY(-20px) rotate(-5deg);
+        transition-timing-function: var(--playful-timing);
+    }
+    37.5% {
+        transform: translateY(6px) rotate(-15deg);
+        transition-timing-function: var(--playful-timing);
+    }
+    50% {
+        transform: translateY(0px) rotate(-15deg);
+        transition-timing-function: ease-in;
+    }
+    75% {
+        transform: translateY(-20px) rotate(5deg);
+        transition-timing-function: var(--playful-timing);
+    }
+    87.5% { 
+        transform: translateY(6px) rotate(15deg);
+        transition-timing-function: var(--playful-timing);
+    }
+    100% {
+        transform: translateY(0px) rotate(15deg);
+        transition-timing-function: ease-in;
     }
 }
 
@@ -892,4 +925,18 @@ table#user-info th {
 }
 .font-small {
     font-size: small;
+}
+
+
+.content-loading-indicator img, .content-loading-indicator svg {
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin: 5rem auto;
+    height: 5rem;
+    width: 5rem;
+    fill: var(--light-faded-more);
+    animation-name: tippy-taps;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
 }
