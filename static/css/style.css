@@ -166,6 +166,25 @@
     -webkit-overflow-scrolling: touch;
 }
 
+#content-body::-webkit-scrollbar-track,
+.cool-scroll::-webkit-scrollbar-track
+{
+    background-color: var(--dark-less);
+}
+
+#content-body::-webkit-scrollbar,
+.cool-scroll::-webkit-scrollbar
+{
+    width: 7px;
+    background-color: var(--dark-lesserest);
+}
+
+#content-body::-webkit-scrollbar-thumb,
+.cool-scroll::-webkit-scrollbar-thumb
+{
+    background-color: var(--dark-lesserest);
+}
+
 .no-h-scroll {
     overflow-x: hidden;
 }
