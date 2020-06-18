@@ -34,6 +34,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?version={{server_start}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}?version={{server_start}}">
 
+    <!-- Preload loading indicator so you never see alt-text -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+
     <!-- Custom scripts -->
     <script>
         // AJAX Form Submit
