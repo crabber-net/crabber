@@ -982,11 +982,12 @@ table#user-info th {
     position: absolute;
     margin: 5rem auto;
     height: 5rem;
-    width: 5rem;
+    /* width: 5rem; */
     fill: var(--light-faded-more);
     animation-name: tippy-taps;
+    animation-direction: reverse;
     animation-iteration-count: infinite;
-    animation-duration: 1s;
+    animation-duration: 960ms;
 }
 
 .content-loading-failed a {
