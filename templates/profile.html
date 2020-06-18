@@ -129,9 +129,15 @@
         </div>
         <div class="profile-box-join-date text-muted mt-1">
             <div class="d-inline-block mr-2" id="join-date">
-                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="birthday-cake"></span>
+                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="calendar-f"></span>
                 Joined {{localize(this_user.register_time).strftime('%B %Y')}}
             </div>
+            {% if this_user.location %}
+            <div class="d-inline-block mr-2" id="user-location">
+                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="map-marker-f"></span>
+                {{this_user.location}}
+            </div>
+            {% endif %}
             {% if this_user.lastfm %}
                 <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
                     <img class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">

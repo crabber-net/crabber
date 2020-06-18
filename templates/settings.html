@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="p-2 w-100 no-h-scroll">
-    <h2>Bio Settings</h2>
+    <h2 class="mb-3">Bio</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_description" autofocus>
         <input type="hidden" name="page" value="settings">
@@ -16,6 +16,13 @@
             <input type="text" name="display_name" class="form-control" id="displayName"
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
         </div>
+
+        <!-- Location -->
+        <div class="form-group cool-input">
+            <label for="location">Location <span class="text-muted">(optional)</span></label>
+            <input type="text" name="location" class="form-control" id="location"
+                placeholder="Planet Earth, The Solar System" value="{{current_user.location if current_user.location else ""}}">
+        </div>
     
         <!-- Description -->
         <div class="form-group cool-input">
@@ -25,7 +32,7 @@
         </div>
 
         <!-- Bio -->
-        <label>Fun facts<br><small class="text-muted">Tell people about yourself!</small></label>
+        <label>Fun facts <span class="text-muted">(optional)</span><br><small class="text-muted">Tell people about yourself!</small></label>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Age</label>
@@ -66,11 +73,19 @@
                 {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
                 >
         </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="description">Remember when</label>
+            </div>
+            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?" 
+                {% if current_user.bio.get("remember", "?") != "?" %}value="{{current_user.bio.get("remember")}}"{% endif %}
+                >
+        </div>
         <div class="input-group cool-input">
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Favorite emoji</label>
             </div>
-            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. ;)" 
+            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)" 
                 {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
                 >
         </div>
@@ -81,9 +96,9 @@
     </form>
     
     <!-- Section border -->
-    <hr class="border-dark border my-4">
+    <hr class="border-dark mb-3 mt-4">
 
-    <h2>Account Settings</h2>
+    <h2 class="mb-3">Account</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_account">
 
@@ -112,9 +127,9 @@
     </form>
 
     <!-- Section border -->
-    <hr class="border-dark border my-4">
+    <hr class="border-dark mb-3 mt-4">
 
-    <h2>General Settings</h2>
+    <h2 class="mb-3">Misc</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_general_settings">
         
@@ -160,7 +175,7 @@
 
         <!-- Last.fm Username -->
         <div class="form-group cool-input">
-            <label for="inlineFormInputGroup">Last.fm Username</label>
+            <label for="inlineFormInputGroup">Last.fm Username <span class="text-muted">(optional)</span></label>
             <div class="input-group">
                 <input name="lastfm" type="text" class="form-control" id="inlineFormInputGroup" placeholder="rock_lobster"
                     value="{{current_user.lastfm if current_user.lastfm}}">
