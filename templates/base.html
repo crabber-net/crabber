@@ -86,16 +86,16 @@
             }
         }
 
-        function toggleFollow() {
-            if ($('[name=\'user_action\']').val() == "unfollow") {
-                $('[name=\'user_action\']').val('follow');
-                $('#follow-btn strong').text('Follow');
+        function toggleFollow(e) {
+            if (e.form.user_action.value == "unfollow") {
+                e.form.user_action.value = "follow";
+                $(e).find('strong').text('Follow');
             } else {
-                $('[name=\'user_action\']').val('unfollow');
-                $('#follow-btn strong').text('Unfollow');
+                e.form.user_action.value = "unfollow";
+                $(e).find('strong').text('Unfollow');
             }
         }
-        //TODO: Yeah
+
         function clearModal() {
             // Clear text
             $("#compose_modal textarea").val("")

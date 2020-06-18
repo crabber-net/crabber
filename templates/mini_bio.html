@@ -13,11 +13,11 @@
             <!-- TODO: When an unfollow button is first display (hard refresh) clicking it the first time doesn't update screen. all further clicks do. -->
             {% if not current_user in crab.followers %}
             <input type="hidden" name="user_action" value="follow">
-            <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow();"
+            <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow(this);"
                 class="btn btn-primary rounded-pill" id="follow-btn"><strong>Follow</strong></button>
             {% else %}
             <input type="hidden" name="user_action" value="unfollow">
-            <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow();"
+            <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow(this);"
                 class="btn btn-primary rounded-pill" id="follow-btn"><strong>Unfollow</strong></button>
             {% endif %}
         </form>
