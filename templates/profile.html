@@ -24,6 +24,21 @@
                 console.warn(data);
             }
         })
+        $.ajax({
+            url: "https://ws.audioscrobbler.com/2.0/",
+            data: {
+                'method': 'user.getLovedTracks',
+                'user': username,
+                'limit': 1,
+                'api_key': api_key,
+                'format': 'json'
+            },
+            success: updateLastfmLoved,
+            error: function(data) {
+                $("#loved-loading em").text("failed to load loved tracks");
+                console.warn(data);
+            }
+        })
     }
 
     function updateLastfm(data) {
@@ -50,6 +65,19 @@
         $("#lastfm-now-playing").removeClass("d-none");
         // Reveal scrobble count
         $("#lastfm-scrobbles").removeClass("d-none");
+    }
+    function updateLastfmLoved(data) {
+        console.log(data);
+        var lovedTracks = parseInt(data.lovedtracks['@attr'].total).toLocaleString();
+
+        // Hide loading message
+        $("#loved-loading").addClass("d-none");
+
+        // Update loved count
+        $("#lastfm-loved-count").text(lovedTracks);
+        
+        // Reveal loved count
+        $("#lastfm-loved").removeClass("d-none");
     }
 
     $(function () {
@@ -198,15 +226,27 @@
                 <h5 class="mt-3">Stats</h5>
                 <div class="rounded bg-dark-less p-3">
                     <ul class="shell-stats pl-2 m-0">
+                        <!-- Member duration -->
                         <li>Member for <strong class="text-primary">{{this_user.days_active | commafy}}</strong> days</li>
+                        <!-- Molts published -->
                         <li><strong class="text-primary">{{this_user.true_molts_count | commafy}}</strong> Molts published</li>
+                        <!-- Molts liked -->
                         <li>Liked <strong class="text-primary">{{this_user.true_likes | length | commafy}}</strong> Molt{{"s" if this_user.true_likes | length != 1}}</li>
                         {% if this_user.lastfm %}
+                            <!-- Scrobble count -->
                             <li class="font-0">
                                 <!-- Loading -->
                                 <span class="font-small text-faded lastfm-loading"><em>loading Last.fm...</em></span>
                                 <span class="d-none font-small" id="lastfm-scrobbles">
                                     Scrobbled <strong id="lastfm-scrobble-count" class="text-primary"></strong> times on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a>
+                                </span>
+                            </li>
+                            <!-- Loved tracks count -->
+                            <li class="font-0">
+                                <!-- Loading -->
+                                <span class="font-small text-faded" id="loved-loading"><em>loading Last.fm...</em></span>
+                                <span class="d-none font-small" id="lastfm-loved">
+                                    <strong id="lastfm-loved-count" class="text-primary"></strong> loved tracks on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a>
                                 </span>
                             </li>
                         {% endif %}
