@@ -275,6 +275,10 @@ div.mini-molt:hover {
     cursor: pointer;
     color: var(--light-faded);
     fill: var(--light-faded);
+    height: 3em;
+    width: 3em;
+    overflow: visible;
+    white-space: nowrap;
     padding: 10px;
     margin: -10px;
     border-radius: 100%;
