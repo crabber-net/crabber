@@ -25,7 +25,7 @@
         transform: rotate(0deg);
     }
     to {
-        transform: rotate(180deg);
+        transform: rotate(180deg) translateX(1px);
     }
 }
 @keyframes tippy-taps {

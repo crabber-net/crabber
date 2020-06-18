@@ -243,7 +243,7 @@
                 {% endif %}
 
                 {% if current_user %}
-                <form onsubmit="loadingIcon(this);" action="/">
+                <form onsubmit="loadingIcon(this);return false;" action="/">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "home" %}
                     id="nav-active"
