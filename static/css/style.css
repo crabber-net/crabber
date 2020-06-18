@@ -970,6 +970,7 @@ table#user-info th {
     height: 28px;
     background-color: var(--primary);
     z-index: -1;
+    position: relative;
 }
 
 .form-group:nth-last-of-type(2) {
