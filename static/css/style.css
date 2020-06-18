@@ -940,3 +940,11 @@ table#user-info th {
     animation-iteration-count: infinite;
     animation-duration: 1s;
 }
+
+.content-loading-failed a {
+    display: table;
+    left: 0;
+    right: 0;
+    position: absolute;
+    margin: 5rem auto;
+}

@@ -24,6 +24,9 @@
         <!-- Spacer -->
         <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
     </div>
+    <div class="content-loading-failed d-none">
+        <a href="javascript:loadContent();">failed to load content :(<br>click to try again.</a>
+    </div>
 
     <!-- Load timeline content -->
     <script>
@@ -31,11 +34,23 @@
             $("#content-body").append(data);
             $(".content-loading-indicator").addClass("d-none");
         }
-        $.get(
-            url=location.href,
-            data={'ajax_content': true},
-            success=insertBodyHTML
-        );
+        function contentLoadError() {
+            $(".content-loading-failed").removeClass("d-none");
+            $(".content-loading-indicator").addClass("d-none");
+        }
+        function loadContent() {
+            $(".content-loading-indicator").removeClass("d-none");
+            $(".content-loading-failed").addClass("d-none");
+            $.ajax({
+                url: location.href,
+                type: 'GET',
+                data: {'ajax_content': true},
+                success: insertBodyHTML,
+                error: contentLoadError
+            });
+        }
+
+        loadContent();
     </script>
     
 {% endblock %}
