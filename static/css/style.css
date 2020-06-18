@@ -21,9 +21,6 @@
     --playful-timing: cubic-bezier(.46,.03,.52,.96);
 }
 @keyframes rot-clockwise {
-    from {
-        transform: rotate(0deg);
-    }
     to {
         transform: rotate(180deg) translateX(1px);
     }
