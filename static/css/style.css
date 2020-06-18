@@ -848,6 +848,7 @@ div.feature:hover .icon-overlap {
 }
 .shell-stats li::before {
     content: "-";
+    font-size: small;
     color: var(--light-faded);
     font-weight: bold;
     display: inline-block;
@@ -884,4 +885,11 @@ table#user-info th {
 
 .form-group:nth-last-of-type(2) {
     margin-bottom: 0;
+}
+
+.font-0 {
+    font-size: 0;
+}
+.font-small {
+    font-size: small;
 }

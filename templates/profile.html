@@ -20,7 +20,7 @@
             },
             success: updateLastfm,
             error: function(data) {
-                $("#lastfm-loading em").text("failed to load last.fm");
+                $(".lastfm-loading em").text("failed to load last.fm");
                 console.warn(data);
             }
         })
@@ -29,21 +29,27 @@
     function updateLastfm(data) {
         console.log(data);
         var currentTrack = data.recenttracks.track[0];
+        var totalScrobbles = parseInt(data.recenttracks['@attr'].total).toLocaleString();
 
         // Currently playing or last played
         if (!(currentTrack["@attr"] && currentTrack["@attr"].nowplaying)) {
             $("#lastfm-status").text("last played");
         }
         // Hide loading message
-        $("#lastfm-loading").addClass("d-none");
+        $(".lastfm-loading").addClass("d-none");
 
         // Update track info
         // append ' em' to selector to make it italic
         $("#lastfm-artist").text(currentTrack.artist["#text"]);
         $("#lastfm-track").text(currentTrack.name);
 
+        // Update scrobble count
+        $("#lastfm-scrobble-count").text(totalScrobbles);
+        
         // Reveal last played/currently playing
         $("#lastfm-now-playing").removeClass("d-none");
+        // Reveal scrobble count
+        $("#lastfm-scrobbles").removeClass("d-none");
     }
 
     $(function () {
@@ -147,7 +153,7 @@
                         <strong class="italic" id="lastfm-artist"><em></em></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
                     </a>
                     <!-- Loading -->
-                    <span class="text-faded" id="lastfm-loading"><em>loading Last.fm...</em></span>
+                    <span class="text-faded lastfm-loading"><em>loading Last.fm...</em></span>
                 </div>
             {% endif %}
         </div>
@@ -196,7 +202,13 @@
                         <li><strong class="text-primary">{{this_user.true_molts_count | commafy}}</strong> Molts published</li>
                         <li>Liked <strong class="text-primary">{{this_user.true_likes | length | commafy}}</strong> Molt{{"s" if this_user.true_likes | length != 1}}</li>
                         {% if this_user.lastfm %}
-                            <li>Scrobbled <strong class="text-primary">{{this_user.scrobbles | commafy}}</strong> times on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a></li>
+                            <li class="font-0">
+                                <!-- Loading -->
+                                <span class="font-small text-faded lastfm-loading"><em>loading Last.fm...</em></span>
+                                <span class="d-none font-small" id="lastfm-scrobbles">
+                                    Scrobbled <strong id="lastfm-scrobble-count" class="text-primary"></strong> times on <a target="_blank" href="https://last.fm/user/{{this_user.lastfm}}" class="text-primary">Last.fm</a>
+                                </span>
+                            </li>
                         {% endif %}
                         <li><strong class="text-primary">{{this_user.trophy_count}}</strong> {{"trophy" if this_user.trophy_count == 1 else "trophies"}}</li>
                         <li><strong class="d-inline-block text-primary">
