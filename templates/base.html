@@ -197,8 +197,7 @@
             // Notification badge handling
             $(e).find(".notif-badge").addClass("d-none");
             // Profile link handling
-            $(e).find(".profile-picture").addClass("d-none");
-            $(e).find(".profile-picture").removeClass("d-inline-block");
+            $(e).find(".profile-picture").find(".loading-icon").removeClass("d-none");
 
         }
         
@@ -298,11 +297,10 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <!-- <img class="rounded-circle {{"box-shadow" if current_page == "own-profile" else ""}}" src="{{url_for('static', filename=current_user.avatar)}}" width="28" height="28" alt="Your profile picture"> -->
                         <div class="rounded-circle px28 profile-picture d-inline-block valign-middle {{"box-shadow" if current_page == "own-profile" else ""}}"
-                            style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+                            style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');">
+                            <div class="d-none rounded-circle loading-icon loading-profile"></div>
+                        </div>
                         <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
                     </button>
                 </form>

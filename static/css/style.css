@@ -20,6 +20,11 @@
 :root {
     --playful-timing: cubic-bezier(.46,.03,.52,.96);
 }
+@keyframes scale-bounce {
+    to {
+        transform: scale(1.5);
+    }
+}
 @keyframes rot-clockwise {
     to {
         transform: rotate(180deg) translateX(1px);
@@ -946,6 +951,17 @@ table#user-info th {
 }
 .loading-icon-center {
     animation-name: rot-clockwise-center;
+}
+.loading-profile {
+    animation-name: scale-bounce;
+    animation-direction: alternate;
+    animation-duration: .4s;
+    animation-timing-function: cubic-bezier(.84,.28,.23,1.65);
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background-color: var(--primary);
+    z-index: -1;
 }
 
 .form-group:nth-last-of-type(2) {
