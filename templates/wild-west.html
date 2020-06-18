@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %} Wild West 🤠 {% endblock %}
-{% block heading %}🌵 This here page shows every public Molt with no filters, pardner. 🤠{% endblock %}
+{% block heading %}🌵 This here page shows every single public Molt, pardner. 🤠{% endblock %}
 
 {% block body %}
     <!-- The compose box lives here! -->
@@ -14,8 +14,7 @@
         </svg>
         {% else %}
         <!-- Animated logo -->
-        <img class="" src="{{ url_for('static', filename='img/content-loading-indicator.gif') }}"
-            alt="Loading indicator">
+        <img src="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
         {% endif %}
         <!-- Spacer -->
         <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
