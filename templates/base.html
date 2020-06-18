@@ -128,7 +128,7 @@
                     </button>
                 </form>
 
-                <form onsubmit="loadingIcon(this); return false;" action="/user/{{current_user.username}}">
+                <form onsubmit="loadingIcon(this);" action="/user/{{current_user.username}}">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "own-profile" %}
                     id="nav-active"
