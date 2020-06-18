@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block ext_head %}
+    <!-- Preload loading indicator so you never see alt-text -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+{% endblock %}
 {% block title %} Wild West 🤠 {% endblock %}
 {% block heading %}🌵 This here page shows every single public Molt, pardner. 🤠{% endblock %}
 
