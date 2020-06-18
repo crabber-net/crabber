@@ -881,3 +881,7 @@ table#user-info th {
     animation-iteration-count: infinite;
     animation-timing-function: cubic-bezier(.68,-0.55,.27,1.55);
 }
+
+.form-group:nth-last-of-type(2) {
+    margin-bottom: 0;
+}
