@@ -27,23 +27,48 @@
         <a href="javascript:loadContent();">failed to load content :(<br>click to try again.</a>
     </div>
 
+    <meta name="page-number" content={{page_n}}>
+    <div id="loaded-molts"></div>
+
     <!-- Load timeline content -->
     <script>
+        // Ajax history handler
+        window.onpopstate = function(e) {
+            if(e.state) {
+                $("#loaded-molts").empty();
+                $("#loaded-molts").append(e.state);
+            }
+        };
+
         function insertBodyHTML(data) {
-            $("#content-body").append(data);
+            window.history.pushState(data, "Wild West 🤠 | Crabber", `/wild/?p=${parseInt($('meta[name="page-number"]').attr("content"))}`);
+            $("#loaded-molts").append(data);
             $(".content-loading-indicator").addClass("d-none");
         }
         function contentLoadError() {
             $(".content-loading-failed").removeClass("d-none");
             $(".content-loading-indicator").addClass("d-none");
         }
-        function loadContent() {
+        function loadContent(page=null) {
+            if (page === null) {
+                page = parseInt($('meta[name="page-number"]').attr("content"));
+            }
+            else {
+                parseInt($('meta[name="page-number"]').attr("content", page));
+            }
+
+            // Clear loaded molts if any
+            $("#loaded-molts").empty();
+
+            // Display loading indicator
             $(".content-loading-indicator").removeClass("d-none");
             $(".content-loading-failed").addClass("d-none");
+
+            // Make request
             $.ajax({
-                url: location.href,
+                url: '/',
                 type: 'GET',
-                data: {'ajax_content': true},
+                data: {'ajax_content': true, 'p': page},
                 success: insertBodyHTML,
                 error: contentLoadError
             });

@@ -74,7 +74,7 @@
         function insertBodyHTML(data) {
             let pNum = parseInt($('meta[name="page-number"]').attr("content"));
             let query = $('meta[name="query"]').attr("content");
-            window.history.pushState({'html': data, 'query': query, 'page': pNum}, "Search | Crabber", `/search?q=${query}&p=${pNum}`);
+            window.history.pushState({'html': data, 'query': query, 'page': pNum}, "Search | Crabber", `/search/?q=${query}&p=${pNum}`);
             $("#search-results").append(data);
             $(".content-loading-indicator").addClass("d-none");
         }
