@@ -453,7 +453,7 @@ div.mini-molt:hover {
     outline: none;
 }
 .profile-box-category {
-    transition: ease-in-out 150ms;
+    transition: ease-in-out 150ms color, background-color;
 }
 .profile-box-category.active {
     border-bottom: 2px solid var(--primary);
