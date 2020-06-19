@@ -1303,8 +1303,9 @@ def search():
         else:
             molt_results = tuple()
             crab_results = tuple()
-        return render_template('search.html', current_page="search", query=query, page_n=page_n,
-                               molt_results=molt_results, crab_results=crab_results, current_user=get_current_user())
+        return render_template('search-results.html' if query else 'search.html', current_page="search", 
+                               query=query, page_n=page_n, molt_results=molt_results, 
+                               crab_results=crab_results, current_user=get_current_user())
     else:
         return redirect("/login")
 
