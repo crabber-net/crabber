@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?version={{server_start}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}?version={{server_start}}">
     
+    <meta name="last-refresh" content="{{TIMESTAMP}}">
     {% block ext_head %}{% endblock %}
 
     <!-- Custom scripts -->
@@ -43,7 +44,7 @@
             // When document loads
             $(function() {
                 {% if current_page == "home" %}
-                setInterval(GetData, 5000, "molts_since", {'crab_id': {{current_user.id}}, 'timestamp': {{TIMESTAMP}}}, updateNewMoltIndicator);
+                setInterval(GetData, 5000, "molts_since", {'crab_id': {{current_user.id}}, 'timestamp': -1}, updateNewMoltIndicator);
                 {% endif %}
 
                 // Initial notif count update

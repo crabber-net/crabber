@@ -1,3 +1,4 @@
+import calendar
 import datetime
 from flask import Flask, render_template, request, redirect, escape, session, url_for, jsonify, render_template_string
 from flask_sqlalchemy import SQLAlchemy
@@ -1374,7 +1375,7 @@ def ajax_request(request_type):
                 following_ids = [crab.id for crab in crab.following]
                 new_molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
                     .filter_by(deleted=False, is_reply=False).filter(Molt.author.has(deleted=False)) \
-                    .filter(Molt.timestamp > datetime.datetime.fromtimestamp(int(request.args.get("timestamp"))))
+                    .filter(Molt.timestamp > datetime.datetime.utcfromtimestamp(int(request.args.get("timestamp"))))
                 return str(new_molts.count())
 
             else:
@@ -1465,7 +1466,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
-                TIMESTAMP=round(now.timestamp()),
+                TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
                 IS_WINDOWS=os.name == "nt",
                 localize=localize,
                 server_start=SERVER_START,

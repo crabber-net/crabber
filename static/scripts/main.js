@@ -14,10 +14,18 @@ function SubForm(form, url=null) {
 }
 
 function GetData(request_type, data, callback, error_callback=null) {
+    // Create deep copy
+    var request_data = JSON.parse(JSON.stringify(data));
+
+    // Timestamp asking for substitution
+    if (request_data.timestamp == -1) {
+        request_data.timestamp = $("meta[name='last-refresh']").attr("content");
+    }
+
     $.ajax({
         url: "/ajax_request/" + request_type,
         type: 'get',
-        data: data,
+        data: request_data,
         success: function (response) {
             callback(response);
         },
