@@ -1198,6 +1198,7 @@ def settings():
                                current_user=get_current_user())
 
 
+@app.route("/u/<username>/", methods=("GET", "POST"))
 @app.route("/user/<username>/", methods=("GET", "POST"))
 def user(username):
     # Handle forms and redirect to clear post data on browser
