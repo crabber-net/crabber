@@ -1255,10 +1255,11 @@ def molt_page(username, molt_id):
     # Display page
     else:
         primary_molt = Molt.query.filter_by(id=molt_id).first()
+        ajax_content = request.args.get('ajax_content')
         if primary_molt:
             replies = Molt.query.filter_by(deleted=False, is_reply=True, original_molt_id=molt_id) \
                 .order_by(Molt.timestamp.desc())
-            return render_template('molt_page.html', current_page="molt-page", molt=primary_molt,
+            return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
                                    replies=replies, current_user=get_current_user())
         else:
             return render_template('not-found.html', current_user=get_current_user(), noun="molt")
