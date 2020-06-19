@@ -69,7 +69,7 @@
                     <input type="hidden" name="molt_id" value="{{molt.id}}">
                     <div class="mini-molt-action remolt zindex-front {{"active-remolt" if current_user.has_remolted(molt) else ""}}"
                         {% if molt.author.id != current_user.id %}
-                            onClick="javascript:this.parentNode.submit();"
+                            onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
                         {% else %}
                             onClick="alert('Don\'t remolt your own stuff!');"
                         {% endif %}>
