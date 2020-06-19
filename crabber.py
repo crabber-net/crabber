@@ -1290,6 +1290,7 @@ def search():
     elif session.get('current_user') is not None:
         query = request.args.get('q')
         page_n = request.args.get('p', 1, type=int)
+        ajax_content = request.args.get('ajax_content')
 
         if query:
             crab_results = Crab.query.filter_by(deleted=False) \
@@ -1303,7 +1304,7 @@ def search():
         else:
             molt_results = tuple()
             crab_results = tuple()
-        return render_template('search-results.html' if query else 'search.html', current_page="search", 
+        return render_template('search-results.html' if ajax_content else 'search.html', current_page="search", 
                                query=query, page_n=page_n, molt_results=molt_results, 
                                crab_results=crab_results, current_user=get_current_user())
     else:

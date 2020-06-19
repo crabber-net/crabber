@@ -13,6 +13,9 @@
         </div>
     </form>
 
+    <meta name="page-number" content={{page_n}}>
+    <meta name="query" {% if query %} content={{query}} {% endif %}>
+
     <div id="dynamic-content">
         <!-- Content loading indicator -->
         <div class="content-loading-indicator d-none">
@@ -34,16 +37,44 @@
         <!-- Display search results here once loaded -->
         <div id="search-results">
             <!-- Pre-search quote -->
-            <div class="d-inline-block w-100 p-5 text-muted text-molt text-center"><em>"The world is your lobster."</em> - Christian D.</div>
+            <div id="ps-quote" class="d-inline-block w-100 p-5 text-muted text-molt text-center"><em>"The world is your lobster."</em> - Christian D.</div>
         </div>
-
     </div>
 
     <!-- Spacer -->
     <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 
     <script>
+        // Ajax history handler
+        window.onpopstate = function(e) {
+            if(e.state) {
+                // Going back to pre-search state
+                if (e.state.query === null) {
+                    // Update query box
+                    $("input[name=q]").val("");
+
+                    $('meta[name="query"]').removeAttr("content")
+                    $('meta[name="page-number"]').attr("content", 1);
+
+                    $("#search-results").empty();
+                    $("#search-results").append(e.state.html);
+                }
+
+                // Update query box
+                $("input[name=q]").val(e.state.query);
+
+                $('meta[name="query"]').attr("content", e.state.query);
+                $('meta[name="page-number"]').attr("content", e.state.page);
+
+                $("#search-results").empty();
+                $("#search-results").append(e.state.html);
+            }
+        };
+
         function insertBodyHTML(data) {
+            let pNum = parseInt($('meta[name="page-number"]').attr("content"));
+            let query = $('meta[name="query"]').attr("content");
+            window.history.pushState({'html': data, 'query': query, 'page': pNum}, "Search | Crabber", `/search?q=${query}&p=${pNum}`);
             $("#search-results").append(data);
             $(".content-loading-indicator").addClass("d-none");
         }
@@ -62,11 +93,24 @@
                 return false;
             }
 
-            loadContent(query);
+            loadContent(query, 1);
         }
         
         // Fetch search results from server and display them
-        function loadContent(query, page=1) {
+        function loadContent(query=null, page=null) {
+            if (query === null) {
+                query = $('meta[name="query"]').attr("content");
+            }
+            else {
+                $('meta[name="query"]').attr("content", query);
+            }
+            if (page === null) {
+                page = parseInt($('meta[name="page-number"]').attr("content"));
+            }
+            else {
+                $('meta[name="page-number"]').attr("content", page);
+            }
+
             // Remove previous search results / pre-search quote
             $("#search-results").empty();
 
@@ -75,12 +119,21 @@
             $(".content-loading-failed").addClass("d-none");
 
             $.ajax({
-                url: location.href,
+                url: '/search',
                 type: 'GET',
-                data: {'q': query, 'p': page},
+                data: {'q': query, 'p': page, 'ajax_content': true},
                 success: insertBodyHTML,
                 error: contentLoadError
             });
+        }
+
+        // Do Ajax request on load if query is set
+        if ($('meta[name="query"]').attr("content")) {
+            loadContent();
+        } 
+        // Create history state to fall back on
+        else {
+            window.history.pushState({'html': $("#search-results").html(), 'query': null, 'page': 1}, "Search | Crabber", '/search');
         }
 
         // Molt/Like tab controller
