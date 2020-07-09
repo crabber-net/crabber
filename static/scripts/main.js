@@ -178,3 +178,30 @@ function updateCounter() {
     // Enable/disable submit button
     textarea.parents("form").find("button").attr("disabled", textarea.val().length == 0);
 }
+
+// Scroll-back button stuff //////////////////////////////////////////////////////////
+var scrollBackActive = false;
+function hideScrollback() {
+    let scrollBack = $(".scroll-back");
+    scrollBackActive = false;
+    scrollBack.removeClass("active");
+}
+function showScrollback() {
+    let scrollBack = $(".scroll-back");
+    scrollBackActive = true;
+    scrollBack.addClass("active");
+}
+function updateScrollback() {
+    // The point at which the scrollback button appears
+    const magicNumber = 1000;
+
+    let contentBody = $("#content-body");
+    if (contentBody.scrollTop() > magicNumber && scrollBackActive == false)
+        showScrollback();
+    else if (contentBody.scrollTop() <= magicNumber && scrollBackActive == true)
+        hideScrollback();
+}
+function scrollToTop() {
+    let contentBody = $("#content-body");
+    contentBody.scrollTop(0);
+}

@@ -346,9 +346,14 @@
                     {% endif %}
                     
                     <div class="border-dark border-bottom p-2" id="content-heading">
-                        <h6 class="m-1"><strong>{% block heading %}{% endblock %}</strong></h6>
+                        <h6 class="m-1 absolute-container">
+                            <strong>{% block heading %}{% endblock %}</strong>
+                            <div class="absolute-middle-right scroll-back" onclick="scrollToTop();">
+                                <span class="btn-icon" data-width="28" data-height="28" data-jam="arrow-up"></span>
+                            </div>
+                        </h6>
                     </div>
-                    <div id="content-body" class="h-100">
+                    <div id="content-body" onscroll="updateScrollback();" class="h-100">
                         {% if error %}
                             <!-- ERROR MESSAGE -->
                             <div class="alert alert-danger p-1" role="alert">{{error}}</div>
