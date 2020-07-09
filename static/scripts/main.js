@@ -191,14 +191,15 @@ function showScrollback() {
     scrollBackActive = true;
     scrollBack.addClass("active");
 }
-function updateScrollback() {
+function updateScrollback(scroll) {
     // The point at which the scrollback button appears
     const magicNumber = 1000;
-
     let contentBody = $("#content-body");
-    if (contentBody.scrollTop() > magicNumber && scrollBackActive == false)
+    var scroll = contentBody.scrollTop();
+
+    if (scroll > magicNumber && scrollBackActive == false)
         showScrollback();
-    else if (contentBody.scrollTop() <= magicNumber && scrollBackActive == true)
+    else if (scroll <= magicNumber && scrollBackActive == true)
         hideScrollback();
 }
 function scrollToTop() {

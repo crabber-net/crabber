@@ -14,6 +14,17 @@
         position: relative;
         left: -0.25em;
     }
+
+    .scroll-back {
+        transition-duration: 500ms;
+        transition-timing-function: cubic-bezier(.35,.26,0,1.45);
+        transition-property: opacity transform;
+
+        transform: rotate(-90deg);
+    }
+    .scroll-back.active {
+        transform: rotate(0deg);
+    }
 }
 
 /* ANIMATION DEFINITIONS /////////////////////////////*/
@@ -1046,17 +1057,10 @@ table#user-info th {
     opacity: 0;
     z-index: -1;
     cursor: pointer;
-
-    transform: rotate(-90deg);
-    transition-duration: 500ms;
-    transition-timing-function: cubic-bezier(.35,.26,0,1.45);
-    transition-property: opacity transform;
 }
 .scroll-back.active {
     z-index: auto;
     opacity: 1;
-
-    transform: rotate(0deg);
 }
 .scroll-back:hover svg {
     fill: var(--primary);
