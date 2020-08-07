@@ -932,7 +932,8 @@ class Molt(db.Model):
         match = mention_pattern.search(output)
         if match:
             start, end = match.span()
-            username = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(output[start + 1:end])).first()
+            username_str = output[start : end].strip("@ \t\n")
+            username = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(username_str)).first()
             if username:
                 output = "".join([output[:start],
                                 f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
