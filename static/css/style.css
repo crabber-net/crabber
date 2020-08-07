@@ -78,10 +78,10 @@
 }
 @keyframes shadow-drop {
     from {
-        text-shadow: 0 0 #ff6a47;
+        text-shadow: 0 0 var(--primary);
     }
     to {
-        text-shadow: .5rem 0 #ff6a47;
+        text-shadow: .5rem 0 var(--primary);
     }
 }
 
@@ -1026,9 +1026,9 @@ table#user-info th {
 }
 
 .http-error {
-    text-shadow: .5rem 0 #ff6a47;
+    text-shadow: .5rem 0 var(--primary);
     font-weight: 600;
-    color: var(--primary);
+    color: var(--light);
     font-size: 11rem;
     animation-name: shadow-drop;
     animation-duration: 1s;
