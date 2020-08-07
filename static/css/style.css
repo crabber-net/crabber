@@ -1109,6 +1109,49 @@ table#user-info th {
     border-radius: 10px;
 }
 
+.stat-num {
+    font-weight: 600;
+}
+
+.circle-back {
+    background: var(--dark-lesser);
+    display: block;
+    width: 80px;
+    height: 60px;
+    border-radius: 10%;
+    position: absolute;
+    z-index: -1;
+    /* opacity: 0.1; */
+
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.crown-name {
+    height: 3.5rem;
+}
+
+.crown-name h1 {
+    background-color: var(--dark);
+    width: 5em;
+    left: 0;
+    right: 0;
+    margin: auto;
+    position: absolute;
+}
+
+.horizontal-line {
+	height: 2px;
+	width: 100%;
+	background: var(--dark-less);
+	top: 0;
+	bottom: 0;
+	margin: auto;
+    position: absolute;
+    z-index: -1;
+}
+
 .king-profile .profile-picture {
     width: 100px;
     height: 100px;
@@ -1141,4 +1184,5 @@ table#user-info th {
     background-color: var(--dark-lesser);
     color: var(--light-darker);
     border-radius: 5px;
+    white-space: nowrap;
 }

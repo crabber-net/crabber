@@ -12,7 +12,7 @@
         </svg>
     </div>
 
-    <div class="mt-4 stat-container" id="trophies">
+    <div class="mt-5 p-3 stat-container" id="trophies">
         <div class="d-flex flex-wrap justify-content-center">
             {% for stat in stats['mini_stats'] %}
                 {% include "stat.html" %}
@@ -24,7 +24,10 @@
 
     {% with king = stats['crab_king'][0] %}
     <div class="crab-king mt-5 w-100">
-        <h1 class="text-center">Crab King</h1>
+        <div class="crown-name absolute-container">
+            <h1 class="text-center">Crab King</h1>
+            <div class="horizontal-line"></div>
+        </div>
         <p class="text-center text-muted">The most followed active user</p>
         <div class="king-profile row flex-row absolute-container">
             <div class="col-auto">
@@ -59,7 +62,10 @@
 
     {% with baby = stats['baby_crab'] %}
     <div class="crab-king mt-5 w-100">
-        <h1 class="text-center">Baby Crab</h1>
+        <div class="crown-name absolute-container">
+            <h1 class="text-center">Baby Crab</h1>
+            <div class="horizontal-line"></div>
+        </div>
         <p class="text-center text-muted">Our newest member. Go say hello!</p>
         <div class="king-profile row flex-row absolute-container">
             <div class="col-auto">

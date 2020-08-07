@@ -149,6 +149,18 @@
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
+                <form onsubmit="loadingIcon(this);" action="/stats"
+                    {% if current_page == "stats" %}
+                        id="nav-active"
+                    {% endif %}>
+                    
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 {{'text-primary' if current_page == 'stats' else 'text-muted'}}">
+                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="dashboard{{'-f' if current_page == 'stats'}}"></span>
+                        <span class="btn-icon loading-icon-center d-none" data-width="28" data-height="28"
+                            data-jam="refresh"></span>
+                        <strong class="d-none d-lg-inline-block ml-2">Stats</strong>
+                    </button>
+                </form>
                 <form onsubmit="loadingIcon(this);" action="/settings"
                     {% if current_page == "settings" %}
                         id="nav-active"
