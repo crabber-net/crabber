@@ -78,10 +78,21 @@
 }
 @keyframes shadow-drop {
     from {
-        text-shadow: 0 0 var(--primary);
+        text-shadow: 0 0 var(--light-darker);
     }
     to {
-        text-shadow: .5rem 0 var(--primary);
+        text-shadow: .5rem 0 var(--light-darker);
+    }
+}
+@keyframes fun-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(45deg) scale(0.9);
+    }
+    100% {
+        transform: rotate(90deg);
     }
 }
 
@@ -1064,4 +1075,70 @@ table#user-info th {
 }
 .scroll-back:hover svg {
     fill: var(--primary);
+}
+
+/*///////////////////////////////////////////////////////////////////////////*/
+/*                                                                           */
+/*                               STATS PAGE                                  */
+/*                                                                           */
+/*///////////////////////////////////////////////////////////////////////////*/
+.big-badge {
+    fill: var(--primary);
+    position: absolute;
+    top: 0;
+    height: 15rem;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: -1;
+    animation-name: fun-spin;
+    animation-timing-function: cubic-bezier(.79,.14,.15,.86);
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.user-count {
+    text-shadow: .3rem 0 var(--light-darker);
+    font-weight: 600;
+    color: var(--light);
+    font-size: 11rem;
+}
+
+.stat-container {
+    background: var(--dark-less-more);
+    border-radius: 10px;
+}
+
+.king-profile .profile-picture {
+    width: 100px;
+    height: 100px;
+}
+
+.avatar-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background: var(--dark);
+    display: block;
+    position: absolute;
+    text-align: center;
+}
+.avatar-badge-icon {
+    fill: goldenrod;
+}
+
+.king-display-name {
+    font-size: 2rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+.king-display-name .verified {
+    vertical-align: bottom;
+}
+
+.king-profile .follow-count {
+    background-color: var(--dark-lesser);
+    color: var(--light-darker);
+    border-radius: 5px;
 }

@@ -1,0 +1,19 @@
+<div class="mini-molt trophy mini-bio rounded-media m-2 absolute-container not-clickable"
+    data-toggle="tooltip" data-placement="bottom" title="{{stat['desc']}}">
+    <div class="mini-molt-profile-box zindex-front d-flex justify-content-center">
+        <h1>{{stat['number']}}</h1>
+    </div>
+    <div class="mini-molt-text-box w-100 h-100 p-2">
+        <!-- Display correct follow button if page is not current user -->
+        <div class="mini-molt-credentials">
+            <div class="d-flex justify-content-center">
+                <strong class="text-muted">{{stat['label']}}</strong>
+            </div>
+            {% if stat.get('sublabel') %}
+                <div class="d-flex justify-content-center">
+                    <small class="text-muted">{{stat['sublabel']}}</small>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

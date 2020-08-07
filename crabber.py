@@ -7,6 +7,7 @@ import os
 from passlib.hash import sha256_crypt
 import re
 import requests
+from sqlalchemy.sql import func
 import turtle_images
 from typing import List, Set
 import uuid
@@ -1319,6 +1320,30 @@ def search():
     else:
         return redirect("/login")
 
+
+@app.route("/stats/", methods=("GET",))
+def stats():
+    # Query follow counts for users
+    sub = db.session.query(following_table.c.following_id, func.count(following_table.c.following_id).label('count')) \
+        .group_by(following_table.c.following_id).subquery()
+    most_followed = db.session.query(Crab, sub.c.count).outerjoin(sub, Crab.id == sub.c.following_id) \
+        .order_by(db.desc('count')).filter(Crab.deleted == False).first()
+    newest_user = Crab.query.filter_by(deleted=False).order_by(Crab.register_time.desc()).first()
+    stats_dict = dict(users=Crab.query.filter_by(deleted=False).count(), 
+                      mini_stats=[
+                          dict(number=Molt.query.count(),
+                               label="molts sent"),
+                          dict(number=Molt.query.filter_by(deleted=True).count(),
+                               label="molts deleted",
+                               sublabel="what are they hiding?"),
+                          dict(number=Like.query.count(),
+                               label="likes given"),
+                          dict(number=TrophyCase.query.count(),
+                               label="trophies awarded")
+                      ],
+                      crab_king=most_followed,
+                      baby_crab=newest_user)
+    return render_template('stats.html', current_user=get_current_user(), stats=stats_dict)
 
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
