@@ -932,11 +932,16 @@ class Molt(db.Model):
         match = mention_pattern.search(output)
         if match:
             start, end = match.span()
-            output = "".join([output[:start],
-                              f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
-                              output[start:end],
-                              '</a>',
-                              Molt.label_mentions(output[end:])])
+            username = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(output[start + 1:end])).first()
+            if username:
+                output = "".join([output[:start],
+                                f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
+                                output[start:end],
+                                '</a>',
+                                Molt.label_mentions(output[end:])])
+            else:
+                output = "".join([output[:end],
+                                Molt.label_mentions(output[end:])])
         return output
 
     @staticmethod
