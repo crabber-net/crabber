@@ -921,7 +921,7 @@ class Molt(db.Model):
                               f'<a href="{match.group(2)}" class="no-onclick mention zindex-front" target="_blank">',
                               match.group(1),
                               '</a>',
-                              Molt.label_mentions(output[end:])])
+                              Molt.label_links(output[end:])])
         return output
 
     @staticmethod
