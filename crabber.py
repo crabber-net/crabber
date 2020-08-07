@@ -1208,7 +1208,7 @@ def user(username):
     # Display page
     else:
         current_tab = request.args.get("tab", default="molts")
-        this_user = Crab.query.filter_by(username=username, deleted=False).first()
+        this_user = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(username)).first()
         if this_user is not None:
             m_page_n = request.args.get('mp', 1, type=int)
             r_page_n = request.args.get('rp', 1, type=int)
