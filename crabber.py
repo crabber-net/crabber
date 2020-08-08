@@ -1332,9 +1332,14 @@ def stats():
     newest_user = Crab.query.filter_by(deleted=False).order_by(Crab.register_time.desc()).first()
 
     best_molt = db.session.query(Like.molt_id, func.count(Like.id)).filter(Like.molt.has(deleted=False)) \
-        .filter(Like.crab.has(deleted=False)).order_by(func.count(Like.id).desc()).group_by(Like.molt_id).first()
+        .filter(Like.crab.has(deleted=False)) \
+        .filter(Like.molt.has(Molt.author.has(deleted=False))) \
+        .order_by(func.count(Like.id).desc()).group_by(Like.molt_id).first()
     best_molt = Molt.query.filter_by(id=best_molt[0]).first(), best_molt[1]
-    talked_molt = db.session.query(Molt.original_molt_id).filter_by(is_reply=True).group_by(Molt.original_molt_id) \
+    talked_molt = db.session.query(Molt.original_molt_id).filter_by(is_reply=True, deleted=False) \
+        .filter(Molt.author.has(deleted=False)).filter(Molt.original_molt.has(deleted=False)) \
+        .filter(Molt.original_molt.has(Molt.author.has(deleted=False))) \
+        .group_by(Molt.original_molt_id) \
         .order_by(func.count(Molt.id).desc()).first()
     talked_molt = (Molt.query.filter_by(id=talked_molt[0]).first(),)
     stats_dict = dict(users=Crab.query.filter_by(deleted=False).count(), 
