@@ -8,6 +8,7 @@ from passlib.hash import sha256_crypt
 import re
 import requests
 from sqlalchemy.sql import func
+import sys
 import turtle_images
 from typing import List, Set
 import uuid
@@ -1345,6 +1346,11 @@ def stats():
                       baby_crab=newest_user)
     return render_template('stats.html', current_user=get_current_user(), stats=stats_dict,
                            current_page='stats')
+
+@app.route("/debug/")
+def debug():
+    debug_details = dict(python=sys.executable)
+    return jsonify(debug_details)
 
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
