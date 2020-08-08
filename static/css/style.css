@@ -76,6 +76,14 @@
         transition-timing-function: ease-in;
     }
 }
+@keyframes primary-shadow-drop {
+    from {
+        text-shadow: 0 0 var(--primary);
+    }
+    to {
+        text-shadow: .5rem 0 var(--primary);
+    }
+}
 @keyframes shadow-drop {
     from {
         text-shadow: 0 0 var(--light-darker);
@@ -1041,7 +1049,7 @@ table#user-info th {
     font-weight: 600;
     color: var(--light);
     font-size: 11rem;
-    animation-name: shadow-drop;
+    animation-name: primary-shadow-drop;
     animation-duration: 1s;
     animation-iteration-count: cubic-bezier(.77,0,.18,1);
 }

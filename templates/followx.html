@@ -15,10 +15,10 @@
 <!-- Profile bio box -->
 <div class="profile-box border-bottom border-dark">
     <div class="row mx-0">
-        <div id="followers-btn" class="profile-box-category mt-2 col {{"active" if tab == "followers" else ""}}" onclick="location.href='./followers';">
+        <div id="followers-btn" class="profile-box-category mt-2 col {{"active" if tab == "followers" else ""}}" onclick="location.href='/user/{{this_user.username}}/followers';">
             <div class="py-2"><strong class="d-inline-block w-100 text-center">Followers</strong></div>
         </div>
-        <div id="following-btn" class="profile-box-category mt-2 col {{"active" if tab == "following" else ""}}" onclick="location.href='./following';">
+        <div id="following-btn" class="profile-box-category mt-2 col {{"active" if tab == "following" else ""}}" onclick="location.href='/user/{{this_user.username}}/following';">
             <div class="py-2"><strong class="d-inline-block w-100 text-center">Following</strong></div>
         </div>
     </div>
