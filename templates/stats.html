@@ -98,6 +98,32 @@
     </div>
     {% endwith %}
 
+    {% with molt = stats['best_molt'][0], hide_border=True %}
+    <div class="crab-king mt-5 w-100">
+        <div class="crown-name absolute-container">
+            <h1 class="text-center">Best Molt</h1>
+            <div class="horizontal-line"></div>
+        </div>
+        <p class="text-center text-muted">The most liked molt</p>
+        <div>
+            {% include 'molt.html' %}
+        </div>
+    </div>
+    {% endwith %}
+
+    {% with molt = stats['talked_molt'][0], hide_border=True %}
+    <div class="crab-king mt-5 w-100">
+        <div class="crown-name absolute-container">
+            <h1 class="text-center" style="width: 17rem;">Talked About</h1>
+            <div class="horizontal-line"></div>
+        </div>
+        <p class="text-center text-muted">The molt with the most replies</p>
+        <div>
+            {% include 'molt.html' %}
+        </div>
+    </div>
+    {% endwith %}
+
     <!-- Spacer -->
     <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center">thanks for using crabber &lt;3</div>
 </div>

@@ -1330,6 +1330,13 @@ def stats():
     most_followed = db.session.query(Crab, sub.c.count).outerjoin(sub, Crab.id == sub.c.following_id) \
         .order_by(db.desc('count')).filter(Crab.deleted == False).first()
     newest_user = Crab.query.filter_by(deleted=False).order_by(Crab.register_time.desc()).first()
+
+    best_molt = db.session.query(Like.molt_id, func.count(Like.id)).filter(Like.molt.has(deleted=False)) \
+        .filter(Like.crab.has(deleted=False)).order_by(func.count(Like.id).desc()).group_by(Like.molt_id).first()
+    best_molt = Molt.query.filter_by(id=best_molt[0]).first(), best_molt[1]
+    talked_molt = db.session.query(Molt.original_molt_id).filter_by(is_reply=True).group_by(Molt.original_molt_id) \
+        .order_by(func.count(Molt.id).desc()).first()
+    talked_molt = (Molt.query.filter_by(id=talked_molt[0]).first(),)
     stats_dict = dict(users=Crab.query.filter_by(deleted=False).count(), 
                       mini_stats=[
                           dict(number=Molt.query.count(),
@@ -1343,14 +1350,15 @@ def stats():
                                label="trophies awarded")
                       ],
                       crab_king=most_followed,
-                      baby_crab=newest_user)
+                      baby_crab=newest_user,
+                      best_molt=best_molt,
+                      talked_molt=talked_molt)
     return render_template('stats.html', current_user=get_current_user(), stats=stats_dict,
                            current_page='stats')
 
 @app.route("/debug/")
 def debug():
-    debug_details = dict(python=sys.executable)
-    return jsonify(debug_details)
+    return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
 
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
