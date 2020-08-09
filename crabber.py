@@ -339,7 +339,7 @@ username_pattern = re.compile(
 spotify_pattern = re.compile(
     r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
 youtube_pattern = re.compile(
-    r'(?:https?://)?(?:www.)?(?:youtube\.com/watch\?v=|youtu\.be/)(\S{11})')
+    r'(?:https?://)?(?:www.)?(?:youtube\.com/watch\?(?:[^&]+&)*v=|youtu\.be/)(\S{11})')
 giphy_pattern = re.compile(
     r'https://(?:media\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)')
 ext_img_pattern = re.compile(
