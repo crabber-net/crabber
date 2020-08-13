@@ -345,11 +345,11 @@ giphy_pattern = re.compile(
 ext_img_pattern = re.compile(
     r'(https://\S+\.(gif|jpe?g|png))(?:\s|$)')
 ext_link_pattern = re.compile(
-    r'https?://\S+'
-)
+    r'(?<!href=[\'"])(https?://\S+)')
+ext_md_link_pattern = re.compile(
+    r'\[([^\]\(\)]+)\]\((http[^\]\(\)]+)\)')
 timezone_pattern = re.compile(
-    r'^-?(1[0-2]|0[0-9]).\d{2}$'
-)
+    r'^-?(1[0-2]|0[0-9]).\d{2}$')
 
 # APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
@@ -817,6 +817,7 @@ class Molt(db.Model):
         else:
             spotify_embed = "<!-- no valid spotify links found -->"
 
+        new_content = Molt.label_md_links(new_content)
         new_content = Molt.label_links(new_content)
 
         # Preserve newlines
@@ -919,12 +920,27 @@ class Molt(db.Model):
         match = ext_link_pattern.search(output)
         if match:
             start, end = match.span()
-            url = match.group(0)
+            url = match.group(1)
             output = "".join([output[:start],
                               f'<a href="{url}" class="no-onclick mention zindex-front" target="_blank">',
                               url if len(url) <= max_len else url[:max_len - 3] + '...',
                               '</a>',
                               Molt.label_links(output[end:])])
+        return output
+
+    @staticmethod
+    def label_md_links(content):
+        """ Replace markdown links with HTML tags.
+        """
+        output = content
+        match = ext_md_link_pattern.search(output)
+        if match:
+            start, end = match.span()
+            output = "".join([output[:start],
+                              f'<a href="{match.group(2)}" class="no-onclick mention zindex-front" target="_blank">',
+                              match.group(1),
+                              '</a>',
+                              Molt.label_md_links(output[end:])])
         return output
 
     @staticmethod
