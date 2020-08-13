@@ -1,3 +1,5 @@
+from config import *
+import crabber
 import datetime
 from extensions import db
 import models
@@ -8,7 +10,7 @@ def get_current_user():
     Retrieves the object of the currently logged-in user by ID.
     :return: The logged in user
     """
-    return models.Crab.query.filter_by(id=session.get("current_user"), deleted=False).first()
+    return models.Crab.query.filter_by(id=crabber.session.get("current_user"), deleted=False).first()
 
 
 def get_pretty_age(dt: datetime.datetime) -> str:
