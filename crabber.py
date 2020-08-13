@@ -515,5 +515,6 @@ def before_request():
 
 
 if __name__ == '__main__':
-    # Start server locally
+    # Start server locally.
+    # If using WSGI this will not be run.
     app.run("0.0.0.0", 80, debug=True)
