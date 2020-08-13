@@ -9,7 +9,6 @@ __pycache__
 static/img/user_uploads/*
 !static/img/user_uploads/.ignore
 *.lnk
-models.py
 pretty_date.py
 reg.py
 putty_*.txt
