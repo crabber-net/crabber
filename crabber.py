@@ -9,7 +9,6 @@ import patterns
 from sqlalchemy.sql import func
 import utils
 
-# APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
 app.secret_key = 'crabs are better than birds because they can cut their wings right off'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -18,7 +17,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
 db.init_app(app)
 
-# WEBSITE ROUTING ######################################################################################################
 @app.route("/", methods=("GET", "POST"))
 def index():
     # Handle forms and redirect to clear post data on browser

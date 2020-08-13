@@ -7,12 +7,10 @@ from passlib.hash import sha256_crypt
 import patterns
 import utils
 
-# EXCEPTIONS ###########################################################################################################
+
 class NotFoundInDatabase(BaseException):
     pass
 
-
-# DATABASE #############################################################################################################
 
 # This stores unidirectional follower-followee relationships
 following_table = db.Table('following',
@@ -277,7 +275,6 @@ class Crab(db.Model):
         if kwargs.get("molt"):
             if Notification.query.filter_by(recipient=self, sender=kwargs.get('sender'),
                                             type=kwargs.get('type'), molt=kwargs.get('molt')).first():
-                print("#################################################### notif declined")
                 return "Declined notification on grounds of duplication."
         new_notif = Notification(recipient=self, **kwargs)
         db.session.add(new_notif)
