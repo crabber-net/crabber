@@ -9,8 +9,6 @@ import patterns
 from sqlalchemy.sql import func
 import utils
 
-
-
 # APP CONFIG ###########################################################################################################
 app = Flask(__name__, template_folder="./templates")
 app.secret_key = 'crabs are better than birds because they can cut their wings right off'
@@ -21,33 +19,32 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploade
 db.init_app(app)
 
 # WEBSITE ROUTING ######################################################################################################
-
 @app.route("/", methods=("GET", "POST"))
 def index():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
 
-        following_ids = [crab.id for crab in get_current_user().following] + [get_current_user().id]
+        following_ids = [crab.id for crab in utils.get_current_user().following] + [utils.get_current_user().id]
         molts = models.Molt.query.filter(models.Molt.author_id.in_(following_ids)) \
             .filter_by(deleted=False, is_reply=False).filter(models.Molt.author.has(deleted=False)) \
             .order_by(models.Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
         return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
-                               molts=molts, current_user=get_current_user())
+                               molts=molts, current_user=utils.get_current_user())
     else:
-        return render_template('welcome.html', current_user=get_current_user(), fullwidth=True, hide_sidebar=True)
+        return render_template('welcome.html', current_user=utils.get_current_user(), fullwidth=True, hide_sidebar=True)
 
 
 @app.route("/wild/", methods=("GET", "POST"))
 def wild_west():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
@@ -56,7 +53,7 @@ def wild_west():
             .filter(models.Molt.author.has(deleted=False)).order_by(models.Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
         return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
-                               molts=molts, current_user=get_current_user())
+                               molts=molts, current_user=utils.get_current_user())
     else:
         return redirect("/login")
 
@@ -65,14 +62,14 @@ def wild_west():
 def notifications():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        notifications = get_current_user().get_notifications(paginated=True, page=page_n)
+        notifications = utils.get_current_user().get_notifications(paginated=True, page=page_n)
         return render_template('notifications.html', current_page="notifications",
-                               notifications=notifications, current_user=get_current_user())
+                               notifications=notifications, current_user=utils.get_current_user())
     else:
         return redirect("/login")
 
@@ -88,9 +85,9 @@ def login():
                 session["current_user"] = attempted_user.id
                 return redirect("/")
             else:
-                return show_error("Incorrect password")
+                return utils.show_error("Incorrect password")
         else:
-            return show_error("No account with that email exists")
+            return utils.show_error("No account with that email exists")
     elif session.get("current_user"):
         return redirect("/")
     else:
@@ -109,8 +106,8 @@ def signup():
         password = form.get("password").strip()
         confirm_password = form.get("confirm-password").strip()
 
-        if validate_email(email):
-            if validate_username(username):
+        if utils.validate_email(email):
+            if utils.validate_username(username):
                 if len(username) in range(4, 32):
                     if patterns.username.fullmatch(username):
                         if password == confirm_password:
@@ -154,7 +151,7 @@ def logout():
 @app.route("/signupsuccess/")
 def signupsuccess():
     recommended_users = models.Crab.query.filter(models.Crab.username.in_(RECOMMENDED_USERS)).all()
-    return render_template("signup_success.html", current_user=get_current_user(),
+    return render_template("signup_success.html", current_user=utils.get_current_user(),
                            recommended_users=recommended_users)
 
 
@@ -162,12 +159,12 @@ def signupsuccess():
 def settings():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
         return render_template("settings.html", current_page="settings",
-                               current_user=get_current_user())
+                               current_user=utils.get_current_user())
 
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
@@ -175,7 +172,7 @@ def settings():
 def user(username):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     else:
@@ -192,18 +189,18 @@ def user(username):
                 models.Molt.timestamp.desc()).paginate(r_page_n, MOLTS_PER_PAGE, False)
             likes = this_user.get_true_likes(paginated=True, page=l_page_n)
             return render_template('profile.html',
-                                   current_page=("own-profile" if this_user == get_current_user() else ""),
-                                   molts=molts, current_user=get_current_user(), this_user=this_user, likes=likes,
+                                   current_page=("own-profile" if this_user == utils.get_current_user() else ""),
+                                   molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,
                                    current_tab=current_tab, replies=replies)
         else:
-            return render_template('not-found.html', current_user=get_current_user(), noun="user")
+            return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
 def user_following(username, tab):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
@@ -211,11 +208,11 @@ def user_following(username, tab):
         if this_user:
             followx = this_user.following if tab == "ing" else this_user.followers
             return render_template('followx.html',
-                                   current_page=("own-profile" if this_user == get_current_user() else ""),
+                                   current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                    followx=followx,
-                                   current_user=get_current_user(), this_user=this_user, tab="follow" + tab)
+                                   current_user=utils.get_current_user(), this_user=this_user, tab="follow" + tab)
         else:
-            return render_template('not-found.html', current_user=get_current_user(), noun="user")
+            return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
     else:
         return redirect("/login")
 
@@ -224,7 +221,7 @@ def user_following(username, tab):
 def molt_page(username, molt_id):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     else:
@@ -234,23 +231,23 @@ def molt_page(username, molt_id):
             replies = models.Molt.query.filter_by(deleted=False, is_reply=True, original_molt_id=molt_id) \
                 .order_by(models.Molt.timestamp.desc())
             return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
-                                   replies=replies, current_user=get_current_user())
+                                   replies=replies, current_user=utils.get_current_user())
         else:
-            return render_template('not-found.html', current_user=get_current_user(), noun="molt")
+            return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
 
 
 @app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))
 def crabtags(crabtag):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
         molts = models.Molt.query.filter(models.Molt.raw_tags.contains((crabtag + "\n"))).filter_by(deleted=False, is_reply=False) \
             .filter(models.Molt.author.has(deleted=False)).order_by(models.Molt.timestamp.desc())
         return render_template('crabtag.html', current_page="crabtag",
-                               molts=molts, current_user=get_current_user(), crabtag=crabtag)
+                               molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
     else:
         return redirect("/login")
 
@@ -259,7 +256,7 @@ def crabtags(crabtag):
 def search():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return common_molt_actions()
+        return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
@@ -281,7 +278,7 @@ def search():
             crab_results = tuple()
         return render_template('search-results.html' if ajax_content else 'search.html', current_page="search", 
                                query=query, page_n=page_n, molt_results=molt_results, 
-                               crab_results=crab_results, current_user=get_current_user())
+                               crab_results=crab_results, current_user=utils.get_current_user())
     else:
         return redirect("/login")
 
@@ -322,7 +319,7 @@ def stats():
                       baby_crab=newest_user,
                       best_molt=best_molt,
                       talked_molt=talked_molt)
-    return render_template('stats.html', current_user=get_current_user(), stats=stats_dict,
+    return render_template('stats.html', current_user=utils.get_current_user(), stats=stats_dict,
                            current_page='stats')
 
 @app.route("/debug/")
@@ -332,7 +329,7 @@ def debug():
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
-    if get_current_user().username in ADMINS:
+    if utils.get_current_user().username in ADMINS:
         if request.method == "POST":
             action = request.form.get("user_action")
             if request.form.get("target") == "crab":
@@ -342,22 +339,22 @@ def tortimer():
             if action == "verify":
                 target.verified = True
                 db.session.commit()
-                return show_message(f"Verified @{target.username}")
+                return utils.show_message(f"Verified @{target.username}")
             elif action == "delete":
                 target.delete()
-                return show_message(f"Deleted @{target.username}")
+                return utils.show_message(f"Deleted @{target.username}")
             elif action == "restore":
                 target.restore()
-                return show_message(f"Restored @{target.username}")
+                return utils.show_message(f"Restored @{target.username}")
             elif action == "award":
                 if request.form.get("award_title"):
                     try:
                         target.award(title=request.form.get("award_title"))
-                        return show_message(f"Awarded @{target.username}: {request.form.get('award_title')}")
+                        return utils.show_message(f"Awarded @{target.username}: {request.form.get('award_title')}")
                     except models.NotFoundInDatabase:
-                        return show_error(f"Unable to find trophy with title: {request.form.get('award_title')}")
+                        return utils.show_error(f"Unable to find trophy with title: {request.form.get('award_title')}")
                 else:
-                    return show_error(f"No award title found.")
+                    return utils.show_error(f"No award title found.")
 
             # PRG pattern
             return redirect(request.url)
@@ -370,7 +367,7 @@ def tortimer():
                 .paginate(crab_page_n, MOLTS_PER_PAGE, False)
             molts = models.Molt.query.order_by(models.Molt.timestamp.desc()) \
                 .paginate(molt_page_n, MOLTS_PER_PAGE, False)
-            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=get_current_user(),
+            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=utils.get_current_user(),
                                    crab_page_n=crab_page_n, molt_page_n=molt_page_n)
     else:
         return error_404(BaseException)
@@ -497,12 +494,12 @@ def commafy(value):
 
 @app.errorhandler(404)
 def error_404(_error_msg):
-    return render_template("404.html", current_page="404", current_user=get_current_user())
+    return render_template("404.html", current_page="404", current_user=utils.get_current_user())
 
 
 @app.errorhandler(413)
 def file_to_big(_e):
-    return show_error("Image must be smaller than 5 megabytes.")
+    return utils.show_error("Image must be smaller than 5 megabytes.")
 
 
 @app.before_request
