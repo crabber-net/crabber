@@ -913,7 +913,7 @@ class Molt(db.Model):
         db.session.commit()
 
     @staticmethod
-    def label_links(content, max_len=50):
+    def label_links(content, max_len=35):
         """ Replace links with HTML tags.
         """
         output = content
