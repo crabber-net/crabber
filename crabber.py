@@ -345,7 +345,7 @@ giphy_pattern = re.compile(
 ext_img_pattern = re.compile(
     r'(https://\S+\.(gif|jpe?g|png))(?:\s|$)')
 ext_link_pattern = re.compile(
-    r'\[([^\]\(\)]+)\]\((http[^\]\(\)]+)\)'
+    r'https?://\S+'
 )
 timezone_pattern = re.compile(
     r'^-?(1[0-2]|0[0-9]).\d{2}$'
@@ -912,16 +912,17 @@ class Molt(db.Model):
         db.session.commit()
 
     @staticmethod
-    def label_links(content):
+    def label_links(content, max_len=50):
         """ Replace links with HTML tags.
         """
         output = content
         match = ext_link_pattern.search(output)
         if match:
             start, end = match.span()
+            url = match.group(0)
             output = "".join([output[:start],
-                              f'<a href="{match.group(2)}" class="no-onclick mention zindex-front" target="_blank">',
-                              match.group(1),
+                              f'<a href="{url}" class="no-onclick mention zindex-front" target="_blank">',
+                              url if len(url) <= max_len else url[:max_len - 3] + '...',
                               '</a>',
                               Molt.label_links(output[end:])])
         return output
