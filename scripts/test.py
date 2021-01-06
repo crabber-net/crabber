@@ -3,7 +3,6 @@ from crabber import db, Crab, Molt
 db.drop_all()
 db.create_all()
 
-# pwd = Crab.hash_pass("fish")
 pwd = "fish"
 
 # User test
