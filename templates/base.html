@@ -10,6 +10,9 @@
     <title>{% block title %}{% endblock %} | Crabber</title>
     <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/x-icon">
 
+    <!-- Load the loading indicator as soon as possible -->
+    <img rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+
     <!-- Mobile web app -->
     <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
     <meta name="apple-mobile-web-app-capable" content="yes">
