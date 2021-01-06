@@ -1200,3 +1200,7 @@ table#user-info th {
     border-radius: 5px;
     white-space: nowrap;
 }
+
+.lastfm-logo {
+    padding-bottom: 0.1em;
+}

@@ -166,7 +166,7 @@
             {% endif %}
             {% if this_user.lastfm %}
                 <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
-                    <img class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
+                    <img class="lastfm-logo" class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
                     <!-- Now Playing -->
                     <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none">
                         <span id="lastfm-status">now playing</span>
