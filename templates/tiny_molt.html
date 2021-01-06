@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 {% set is_remolt = molt.is_remolt %}
 {% set is_reply = molt.is_reply %}
 {% if is_remolt %}
@@ -51,7 +53,7 @@
                 <p class="mb-2">{{molt.rich_content()|safe}}</p>
 
                 {% if molt.image %}
-                <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                     <div class="mini-molt-media-img" src="{{url_for('static', filename=molt.image)}}" style="background-image: url('{{url_for('static', filename=molt.image)}}');"></div>
                 </div>
                 {% endif %}

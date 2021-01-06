@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 {% set is_remolt = molt.is_remolt %}
 {% if is_remolt %}
     {% set remolt_shell = molt %}
@@ -43,7 +45,7 @@
             <p class="mb-2"><span class="zindex-front not-clickable">{{molt.rich_content(full_size_media=True)|safe}}</span></p>
 
             {% if molt.image %}
-            <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+            <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                 <img class="w-100 rounded-media" src="{{url_for('static', filename=molt.image)}}" alt="Attached image">
             </div>
             {% endif %}

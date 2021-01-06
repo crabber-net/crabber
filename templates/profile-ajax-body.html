@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 <script>
     function getNowPlaying(username) {
         let api_key = "7d46cfc3d2c68c0f50504b7a09516898";
@@ -84,7 +86,7 @@
 
 <!-- Profile bio box -->
 <div class="profile-box border-bottom border-dark">
-    <div class="profile-box-banner" {{expand_img() if current_page != "own-profile" else ""}}>
+    <div class="profile-box-banner" {{macros.expand_img() if current_page != "own-profile" else ""}}>
         {% if current_page == "own-profile" %}
             <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
                 <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
@@ -93,7 +95,7 @@
         <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
     </div>
     <div class="profile-box-bio px-2 pt-2">
-        <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{expand_img() if current_page != "own-profile" else ""}}>
+        <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{macros.expand_img() if current_page != "own-profile" else ""}}>
             {% if current_page == "own-profile" %}
             <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
                 <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
