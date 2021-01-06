@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 -4 24 24">
-  <defs>
-    <pattern id="rainbow" width="1%" height="100%" viewBox="0 11.5 .25 1">
-      <rect width="2160" height="18%" style="fill:#62bb47"/>
-      <rect id="Rectangle_1_copy" data-name="Rectangle 1 copy" y="16.66667%" width="2160" height="18%" style="fill:#fcb827"/>
-      <rect id="Rectangle_1_copy_2" data-name="Rectangle 1 copy 2" y="33.3333333%" width="2160" height="18%" style="fill:#f6821f"/>
-      <rect id="Rectangle_1_copy_3" data-name="Rectangle 1 copy 3" y="50%" width="2160" height="18%" style="fill:#e03a3e"/>
-      <rect id="Rectangle_1_copy_4" data-name="Rectangle 1 copy 4" y="66.666667%" width="2160" height="18%" style="fill:#963d97"/>
-      <rect id="Rectangle_1_copy_5" data-name="Rectangle 1 copy 5" y="83.3333333%" width="2160" height="18%" style="fill:#009ddc"/>
-    </pattern>
-  </defs>
-  <path fill="url(#rainbow)" d="M9.293 1.55l.707.708.707-.707a5 5 0 1 1 7.071 7.071l-7.07 7.071a1 1 0 0 1-1.415 0L2.222 8.622a5 5 0 1 1 7.07-7.071z"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 -4 24 24"><defs><pattern id="prefix__a" width="1%" height="100%" viewBox="0 11.5 .25 1"><rect width="2160" height="18%" fill="#62bb47"/><rect data-name="Rectangle 1 copy" y="16.667%" width="2160" height="18%" fill="#fcb827"/><rect data-name="Rectangle 1 copy 2" y="33.333%" width="2160" height="18%" fill="#f6821f"/><rect data-name="Rectangle 1 copy 3" y="50%" width="2160" height="18%" fill="#e03a3e"/><rect data-name="Rectangle 1 copy 4" y="66.667%" width="2160" height="18%" fill="#963d97"/><rect data-name="Rectangle 1 copy 5" y="83.333%" width="2160" height="18%" fill="#009ddc"/></pattern></defs><path fill="url(#prefix__a)" d="M9.293 1.55l.707.708.707-.707a5 5 0 117.071 7.071l-7.07 7.071a1 1 0 01-1.415 0L2.222 8.622a5 5 0 117.07-7.071z"/></svg>
