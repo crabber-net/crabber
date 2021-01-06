@@ -1,6 +1,4 @@
-{% macro expand_img() %}
-    style="cursor: pointer;" data-toggle="modal" data-target="#image_modal" onclick="$('#image_modal img').attr('src', $(this).find('img, div').attr('src'))"
-{% endmacro %}
+{% import "macros.jinja" as macros %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -215,7 +213,7 @@
                                     <div class="mini-compose-textarea">
                                         <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
                                             placeholder="How are you feeling?"></textarea required>
-                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <img class="img-preview w-100 rounded-media"></img>
                                         </div>
                                     </div>
@@ -272,7 +270,7 @@
                                     <div class="mini-compose-reply-textarea">
                                         <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
                                             placeholder="Remember to be kind"></textarea required>
-                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <img class="img-preview w-100 rounded-media"></img>
                                         </div>
                                     </div>

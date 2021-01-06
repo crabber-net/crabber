@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 <div class="notif mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container {{'' if notif.read else 'notif-unread'}}"
     {% if notif.type == 'trophy' %}
         onclick="location.href='/user/{{current_user.username}}?tab=trophies'"
@@ -38,7 +40,13 @@
             {% elif notif.type == "trophy" %}
                 You earned the trophy: <strong>{{notif.content}}</strong>!
             {% elif notif.type == "mention" %}
-                <strong><a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}</a></strong>
+                <strong>
+                    <a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}
+                        {% if notif.sender.verified %}
+                        <a title="Verified user">{{macros.verified(17)}}</a>
+                        {% endif %}
+                    </a>
+                </strong>
                 mentioned you in a Molt
 
                 <div class="mt-2">
@@ -47,7 +55,13 @@
                     {% endwith %}
                 </div>
             {% else %}
-                <strong><a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}</a></strong>
+                <strong>
+                    <a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}
+                        {% if notif.sender.verified %}
+                        <a title="Verified user">{{macros.verified(17)}}</a>
+                        {% endif %}
+                    </a>
+                </strong>
                 {% if notif.type == "follow" %}
                     followed you
                 {% elif notif.type =="unfollow" %}

@@ -15,8 +15,7 @@
             <div class="tiny-reply-context">
                 <div class="mini-molt-credentials"><a href="/user/{{molt.author.username}}" class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
                     {% if molt.author.verified %}
-                    <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17"
-                            data-jam="shield-check-f"></span></a>
+                    {{macros.verified(17)}}
                     {% endif %}
                     <span class="mini-molt-username">@{{molt.author.username}}</span>
                     <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
@@ -41,7 +40,7 @@
             <div class="mini-molt-credentials"><a href="/user/{{molt.author.username}}"
                     class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
                 {% if molt.author.verified %}
-                <a title="Verified user"><span class="mini-molt-action-icon verified" data-width="17" data-height="17" data-jam="shield-check-f"></span></a>
+                <a title="Verified user">{{macros.verified(17)}}</a>
                 {% endif %}
                 <span class="mini-molt-username">@{{molt.author.username}}</span>
                 <span class="mini-molt-timestamp">· <a href="javascript:void(0)"

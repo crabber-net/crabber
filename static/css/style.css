@@ -537,6 +537,8 @@ div.mini-molt:hover {
 .verified {
     fill: var(--light);
     vertical-align: text-top;
+    scale: 80%;
+    cursor: help;
 }
 
 .edit-icon {
