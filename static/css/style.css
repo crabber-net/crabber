@@ -1193,6 +1193,10 @@ table#user-info th {
     z-index: -1;
 }
 
+.king-profile {
+    justify-content: center;
+}
+
 .king-profile .profile-picture {
     width: 100px;
     height: 100px;
@@ -1210,15 +1214,22 @@ table#user-info th {
 .avatar-badge-icon {
     fill: var(--light);
 }
-.avatar-badge-icon.avatar-crown {
-    transform: rotate(-15deg) scale(125%);
-    fill: goldenrod;
+.profile-crown {
+	position: absolute;
+	transform: rotate(-25deg) translate(5px, -21px);
+	width: 50px;
+}
+
+.stat-explanation {
+    position: relative;
+    z-index: 10;
 }
 
 .king-display-name {
     font-size: 2rem;
     font-weight: 300;
     margin: 0;
+    white-space: nowrap;
 }
 
 .king-display-name .verified {
