@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 {% set placeholder = "How are you feeling?"%}
 {% if current_user %}
     {% if current_user.username == "Colmag15" %}
@@ -16,7 +18,7 @@
             <div class="mini-compose-textarea">
                 <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
                     placeholder="{{placeholder}}" onfocus="$(this).parents('.mini-compose-box').addClass('focused')" required></textarea>
-                <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+                <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                     <img class="img-preview w-100 rounded-media"></img>
                 </div>
             </div>

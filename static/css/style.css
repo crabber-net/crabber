@@ -263,8 +263,8 @@
     white-space: nowrap;
 }
 
-.no-wrap {
-    white-space: nowrap;
+#nav-panel button.extra-navs:not(#nav-active) strong {
+    color: var(--light-faded);
 }
 
 #nav-panel button:not(#molt-btn) {
@@ -421,6 +421,12 @@ div.mini-molt:hover {
 }
 
 .box-shadow {
+    -webkit-box-shadow: 0px 0px 0px 2px var(--primary);
+    -moz-box-shadow: 0px 0px 0px 2px var(--primary);
+    box-shadow: 0px 0px 0px 2px var(--primary);
+}
+
+#nav-active .profile-picture {
     -webkit-box-shadow: 0px 0px 0px 2px var(--primary);
     -moz-box-shadow: 0px 0px 0px 2px var(--primary);
     box-shadow: 0px 0px 0px 2px var(--primary);

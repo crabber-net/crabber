@@ -1,3 +1,5 @@
+{% import "macros.jinja" as macros %}
+
 {% if current_depth is not defined %}
     {% set current_depth = 1 %}
 {% endif %}
@@ -87,7 +89,7 @@
             </span></p>
 
             {% if molt.image %}
-            <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{expand_img()}}>
+            <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                 <div class="mini-molt-media-img" src="{{url_for('static', filename=molt.image)}}" style="background-image: url('{{url_for('static', filename=molt.image)}}');"></div>
             </div>
             {% endif %}

@@ -163,7 +163,8 @@ function subMolt(form) {
 }
 
 function loadingIcon(e) {
-    $(e).find(".btn-icon").toggleClass("d-none");
+    $(e).find(".btn-icon:not(.d-none)").addClass("d-none");
+    $(e).find(".loading-icon").removeClass("d-none");
     // Notification badge handling
     $(e).find(".notif-badge").addClass("d-none");
     // Profile link handling

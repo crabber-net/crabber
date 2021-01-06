@@ -39,6 +39,7 @@
 
     <!-- Custom scripts -->
     <script src="{{ url_for('static', filename='scripts/main.js') }}?version={{server_start}}"></script>
+    <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>
     <script>
         {% if current_user %}
             // When document loads
@@ -86,7 +87,8 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <span class="btn-icon" data-width="28" data-height="28" data-jam="home{{"-f" if current_page == "home" else ""}}"></span>
+                        <span class="btn-icon {{"d-none" if current_page == "home" else ""}}" data-width="28" data-height="28" data-jam="home"></span>
+                        <span class="btn-icon {{"" if current_page == "home" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="home-f"></span>
                         <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
                             data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Home</strong>
@@ -98,8 +100,8 @@
                         {% if current_page == "wild-west" %} 
                             id="nav-active"
                         {% endif %}>
-                        <span class="btn-icon" data-width="28" data-height="28"
-                            data-jam="cactus{{"-f" if current_page == "wild-west" else ""}}"></span>
+                        <span class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" data-width="28" data-height="28" data-jam="cactus"></span>
+                        <span class="btn-icon {{"" if current_page == "wild-west" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="cactus-f"></span>
                         <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
                             data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
@@ -111,7 +113,8 @@
                     {% if current_page == "notifications" %}
                         id="nav-active"
                     {% endif %}>
-                        <span class="btn-icon" data-width="28" data-height="28" data-jam="bell{{"-f" if current_page == "notifications" else ""}}"></span>
+                        <span class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" data-width="28" data-height="28" data-jam="bell"></span>
+                        <span class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="bell-f"></span>
                         <span class="notif-badge {{"" if current_user.unread_notifications else "d-none"}}">{{current_user.unread_notifications}}</span>
                         <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
                             data-jam="refresh"></span>
@@ -122,7 +125,8 @@
                 <form onsubmit="loadingIcon(this);" action="/search">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
-                        <span class="btn-icon" data-width="28" data-height="28" data-jam="search"></span>
+                        <span class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" data-width="28" data-height="28" data-jam="search"></span>
+                        <span class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="search"></span>
                         <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
                             data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Search</strong>
@@ -135,7 +139,7 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <div class="rounded-circle px28 profile-picture d-inline-block valign-middle {{"box-shadow" if current_page == "own-profile" else ""}}"
+                        <div class="rounded-circle px28 profile-picture d-inline-block valign-middle"
                             style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');">
                             <div class="d-none rounded-circle loading-icon loading-profile"></div>
                         </div>
@@ -149,32 +153,34 @@
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
-                <form onsubmit="loadingIcon(this);" action="/stats"
+                <form onsubmit="loadingIcon(this);" action="/stats">
+                    
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "stats" %}
                         id="nav-active"
                     {% endif %}>
-                    
-                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 {{'text-primary' if current_page == 'stats' else 'text-muted'}}">
-                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="dashboard{{'-f' if current_page == 'stats'}}"></span>
-                        <span class="btn-icon loading-icon-center d-none" data-width="28" data-height="28"
+                        <span class="btn-icon text-muted {{"d-none" if current_page == "stats" else ""}}" data-width="28" data-height="28" data-jam="dashboard"></span>
+                        <span class="btn-icon text-muted {{"" if current_page == "stats" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="dashboard-f"></span>
+                        <span class="btn-icon loading-icon loading-icon-center d-none" data-width="28" data-height="28"
                             data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Stats</strong>
                     </button>
                 </form>
-                <form onsubmit="loadingIcon(this);" action="/settings"
+                <form onsubmit="loadingIcon(this);" action="/settings">
+                    
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "settings" %}
                         id="nav-active"
                     {% endif %}>
-                    
-                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 {{'text-primary' if current_page == 'settings' else 'text-muted'}}">
-                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="cog{{'-f' if current_page == 'settings'}}"></span>
-                        <span class="btn-icon loading-icon-center d-none" data-width="28" data-height="28"
+                        <span class="btn-icon text-muted {{"d-none" if current_page == "settings" else ""}}" data-width="28" data-height="28" data-jam="cog"></span>
+                        <span class="btn-icon text-muted {{"" if current_page == "settings" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="cog-f"></span>
+                        <span class="btn-icon loading-icon loading-icon-center d-none" data-width="28" data-height="28"
                             data-jam="cog"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
                     </button>
                 </form>
                 <form onsubmit="return confirm('Are you sure you want to log out?')" action="/logout">
-                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 text-muted">
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs">
                         <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="log-out"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
                     </button>
