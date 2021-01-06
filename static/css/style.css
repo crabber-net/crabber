@@ -92,15 +92,23 @@
         text-shadow: .5rem 0 var(--light-darker);
     }
 }
-@keyframes fun-spin {
+@keyframes fun-spin { 
     0% {
         transform: rotate(0deg);
     }
     50% {
-        transform: rotate(45deg) scale(0.9);
+        transform: rotate(90deg) scale(0.9);
     }
     100% {
-        transform: rotate(90deg);
+        transform: rotate(180deg);
+    }
+}
+@keyframes boring-spin { 
+    0% {
+        transform: rotate(0deg) scale(1.1);
+    }
+    100% {
+        transform: rotate(-90deg) scale(1.1);
     }
 }
 
@@ -1099,6 +1107,7 @@ table#user-info th {
 /*                                                                           */
 /*///////////////////////////////////////////////////////////////////////////*/
 .big-badge {
+    width: 100%;
     fill: var(--primary);
     position: absolute;
     top: 0;
@@ -1110,6 +1119,22 @@ table#user-info th {
     animation-name: fun-spin;
     animation-timing-function: cubic-bezier(.79,.14,.15,.86);
     animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.big-badge-back {
+    width: 100%;
+    fill: var(--primary-faded);
+    position: absolute;
+    top: 0;
+    height: 15rem;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: -2;
+    animation-name: boring-spin;
+    animation-timing-function: linear;
+    animation-duration: 5s;
     animation-iteration-count: infinite;
 }
 
