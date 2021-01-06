@@ -544,8 +544,8 @@ div.mini-molt:hover {
 
 .verified {
     fill: var(--light);
-    vertical-align: text-bottom;
-    scale: 70%;
+    vertical-align: text-top;
+    transform: scale(80%);
     cursor: help;
 }
 
