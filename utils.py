@@ -145,7 +145,8 @@ def common_molt_actions() -> Response:
                         location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
                         turtle_images.prep_and_save(img, location)
                         img_attachment = "img/user_uploads/" + filename
-            get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
+            new_molt = get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
+            return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
         else:
             return show_error("Molts cannot be devoid of text")
 

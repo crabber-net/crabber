@@ -232,12 +232,9 @@
 
                                         <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
                                         <input type="hidden" name="user_action" value="submit_molt">
-                                        {% if current_page in ("home", "own-profile", "molt-page") %}
-                                            <!-- Reload in place -->
-                                            <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
-                                        {% else %}
-                                            <button type="button" onclick="SubForm(this.parentNode.parentNode);clearModal();" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
-                                        {% endif %}
+
+                                        <!-- Submit molt and reload in place -->
+                                        <button type="submit" class="btn btn-primary rounded-pill"><strong>Molt</strong></button>
                                     </div>
                                 </form>
                             </div>

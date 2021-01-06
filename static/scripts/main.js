@@ -2,6 +2,8 @@
 function SubForm(form, url=null) {
     if (url == null) {
         url = document.location.pathname;
+        if (!url.endsWith('/'))
+            url += '/'
     }
     $.ajax({
         url: url,

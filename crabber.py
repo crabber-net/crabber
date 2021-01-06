@@ -281,8 +281,12 @@ def search():
         return redirect("/login")
 
 
-@app.route("/stats/", methods=("GET",))
+@app.route("/stats/", methods=("GET", "POST"))
 def stats():
+    # Handle forms and redirect to clear post data on browser
+    if request.method == "POST":
+        return utils.common_molt_actions()
+
     # Query follow counts for users
     sub = db.session.query(models.following_table.c.following_id, func.count(models.following_table.c.following_id).label('count')) \
         .group_by(models.following_table.c.following_id).subquery()
