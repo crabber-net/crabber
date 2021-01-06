@@ -1208,6 +1208,10 @@ table#user-info th {
     text-align: center;
 }
 .avatar-badge-icon {
+    fill: var(--light);
+}
+.avatar-badge-icon.avatar-crown {
+    transform: rotate(-15deg) scale(125%);
     fill: goldenrod;
 }
 
