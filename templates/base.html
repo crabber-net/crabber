@@ -48,6 +48,7 @@
 
                 // Initial notif count update
                 GetData("unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
+
                 // Update notif count every 5 seconds
                 setInterval(GetData, 5000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
 
@@ -67,8 +68,10 @@
             <!-- Nav Panel -->
             <div class="col-2 col-lg-3 col-xl-2 offset-lg-1 offset-xl-2 p-1" id="nav-panel">
                 <!-- Logo -->
-                <img class="mt-2 d-block mx-auto d-lg-inline mx-lg-0 logo clickable" src="{{ url_for('static', filename='img/crabber_logo.svg') }}"
-                alt="Crabber Logo" width="43" height="43" onclick="location.href='/'">
+                <img class="mt-2 d-block mx-auto d-lg-inline mx-lg-0 logo clickable"
+                src="{{ url_for('static', filename='img/crabber_logo.svg') }}"
+                alt="Crabber Logo" width="43" height="43"
+                onclick="location.href='/'">
 
                 <!-- Nav Buttons -->
 
@@ -79,6 +82,8 @@
                 {% endif %}
 
                 {% if current_user %}
+
+                <!-- Home page button -->
                 <form onsubmit="loadingIcon(this);" action="/">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "home" %}
@@ -87,12 +92,12 @@
                     >
                         <span class="btn-icon {{"d-none" if current_page == "home" else ""}}" data-width="28" data-height="28" data-jam="home"></span>
                         <span class="btn-icon {{"" if current_page == "home" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="home-f"></span>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28" data-jam="refresh"></span>
                         <strong class="d-none d-lg-inline-block ml-2">Home</strong>
                     </button>
                 </form>
 
+                <!-- Wild West page button -->
                 <form onsubmit="loadingIcon(this);" action="/wild">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                         {% if current_page == "wild-west" %}
@@ -106,6 +111,7 @@
                     </button>
                 </form>
 
+                <!-- Notification page button -->
                 <form onsubmit="loadingIcon(this);" action="/notifications">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                     {% if current_page == "notifications" %}
@@ -120,6 +126,7 @@
                     </button>
                 </form>
 
+                <!-- Search page button -->
                 <form onsubmit="loadingIcon(this);" action="/search">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
@@ -131,6 +138,7 @@
                     </button>
                 </form>
 
+                <!-- User page button -->
                 <form onsubmit="loadingIcon(this);" action="/user/{{current_user.username}}">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2"
                     {% if current_page == "own-profile" %}
@@ -151,8 +159,8 @@
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
+                <!-- Stats page button -->
                 <form onsubmit="loadingIcon(this);" action="/stats">
-
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "stats" %}
                         id="nav-active"
@@ -164,8 +172,9 @@
                         <strong class="d-none d-lg-inline-block ml-2">Stats</strong>
                     </button>
                 </form>
-                <form onsubmit="loadingIcon(this);" action="/settings">
 
+                <!-- Settings page button -->
+                <form onsubmit="loadingIcon(this);" action="/settings">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "settings" %}
                         id="nav-active"
@@ -177,6 +186,8 @@
                         <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
                     </button>
                 </form>
+
+                <!-- Logout button -->
                 <form onsubmit="return confirm('Are you sure you want to log out?')" action="/logout">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs">
                         <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="log-out"></span>
@@ -184,6 +195,7 @@
                     </button>
                 </form>
 
+                <!-- Copyright footer -->
                 <div id="nav-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
                     <small>&copy; Copyright {{current_year}}, Crabber</small>
                     <br>
@@ -385,6 +397,7 @@
             {% endif %}
         </div>
     </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
