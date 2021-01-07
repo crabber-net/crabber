@@ -14,12 +14,12 @@
     <link rel="apple-touch-icon" href="{{url_for('static', filename='img/icon.jpg')}}">
     <link rel="apple-touch-startup-image" href="{{url_for('static', filename='img/launch.png')}}">
     <meta name="apple-mobile-web-app-title" content="Crabber">
-    
+
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="frame-src open.spotify.com youtube.com www.youtube.com giphy.com;" >
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
-    
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -31,7 +31,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?version={{server_start}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}?version={{server_start}}">
-    
+
     <meta name="last-refresh" content="{{TIMESTAMP}}">
     {% block ext_head %}{% endblock %}
 
@@ -69,7 +69,7 @@
                 <!-- Logo -->
                 <img class="mt-2 d-block mx-auto d-lg-inline mx-lg-0 logo clickable" src="{{ url_for('static', filename='img/crabber_logo.svg') }}"
                 alt="Crabber Logo" width="43" height="43" onclick="location.href='/'">
-                
+
                 <!-- Nav Buttons -->
 
                 {% if not current_user %}
@@ -94,8 +94,8 @@
                 </form>
 
                 <form onsubmit="loadingIcon(this);" action="/wild">
-                    <button type="submit" class="btn btn-secondary rounded-pill mt-2" 
-                        {% if current_page == "wild-west" %} 
+                    <button type="submit" class="btn btn-secondary rounded-pill mt-2"
+                        {% if current_page == "wild-west" %}
                             id="nav-active"
                         {% endif %}>
                         <span class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" data-width="28" data-height="28" data-jam="cactus"></span>
@@ -105,7 +105,7 @@
                         <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
                     </button>
                 </form>
-                
+
                 <form onsubmit="loadingIcon(this);" action="/notifications">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                     {% if current_page == "notifications" %}
@@ -152,7 +152,7 @@
                 </button>
 
                 <form onsubmit="loadingIcon(this);" action="/stats">
-                    
+
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "stats" %}
                         id="nav-active"
@@ -165,7 +165,7 @@
                     </button>
                 </form>
                 <form onsubmit="loadingIcon(this);" action="/settings">
-                    
+
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs"
                     {% if current_page == "settings" %}
                         id="nav-active"
@@ -229,7 +229,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
                                             <span data-width="28" data-height="28" data-jam="close-rectangle"></span>
                                         </div>
@@ -275,11 +275,11 @@
                                         </div>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
-                                        
+
                                         <!-- Image picker -->
                                         <div class="file-input input-group mb-3">
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media" 
+                                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
                                                     aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
                                                     accept="image/x-png,image/jpeg">
                                                 <label class="custom-file-label" for="inputGroupFile02">
@@ -357,7 +357,7 @@
                             {% include 'join_crabber.html' %}
                         </div>
                     {% endif %}
-                    
+
                     <div class="border-dark border-bottom p-2" id="content-heading">
                         <h6 class="m-1 absolute-container">
                             <strong>{% block heading %}{% endblock %}</strong>
