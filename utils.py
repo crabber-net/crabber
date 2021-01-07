@@ -10,22 +10,28 @@ import turtle_images
 import uuid
 from werkzeug.wrappers import Response
 
-def show_error(error_msg: str) -> Response:
+def show_error(error_msg: str, redirect_url=None) -> Response:
     """
     Redirect user to current page with error message alert
     :param error_msg: Message to display to user
+    :param redirect_url: Location to redirect user to. Will default to current
+        location.
     :return: Response to return to user
     """
-    return redirect(f"{request.path}?error={error_msg}")
+    target_url = redirect_url or request.path
+    return redirect(f"{target_url}?error={error_msg}")
 
 
-def show_message(misc_msg: str) -> Response:
+def show_message(misc_msg: str, redirect_url=None) -> Response:
     """
     Redirect user to current page with misc message alert
     :param misc_msg: Message to display to user
+    :param redirect_url: Location to redirect user to. Will default to current
+        location.
     :return: Response to return to user
     """
-    return redirect(f"{request.path}?msg={misc_msg}")
+    target_url = redirect_url or request.path
+    return redirect(f"{target_url}?msg={misc_msg}")
 
 
 def get_pretty_age(dt: datetime.datetime) -> str:
@@ -96,13 +102,16 @@ def common_molt_actions() -> Response:
     :return: Redirect response to same page. See PRG pattern.
     """
     action = request.form.get('user_action')
-    molt_id = request.form.get('molt_id')  # Can very well be none.
+    molt_id = request.form.get('molt_id')
 
     if action == "change_avatar":
+        # User has uploaded file
         if 'file' in request.files:
             img = request.files['file']
+            # Filename is blank, meaning no actual file was provided.
             if img.filename == '':
                 return show_error("No image was selected")
+            # File exists and filename passes pattern verification
             elif img and allowed_file(img.filename):
                 filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
@@ -115,11 +124,14 @@ def common_molt_actions() -> Response:
                 return show_error("File must be either a jpg, jpeg, or png")
         return show_error("There was an error uploading your image")
 
+    # User is attempting to change their profile banner
     elif action == "change_banner":
         if 'file' in request.files:
             img = request.files['file']
+            # Filename is blank, meaning no actual file was provided.
             if img.filename == '':
                 return show_error("No image was selected")
+            # File exists and filename passes pattern verification
             elif img and allowed_file(img.filename):
                 filename = str(uuid.uuid4()) + ".jpg"
                 location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
@@ -227,12 +239,12 @@ def common_molt_actions() -> Response:
             location = request.form.get('location').strip()
 
             # Bio JSON assembly
-            new_bio = dict() 
+            new_bio = dict()
             for key, value in request.form.items():
                 if "bio." in key:
                     if value.strip():
                         new_bio[key.split(".")[1].strip()] = value.strip()
-            
+
             current_user = get_current_user()
             current_user.display_name = disp_name
             current_user.description = desc
