@@ -34,9 +34,9 @@ def index():
             .paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
-            for block in ('title', 'heading', 'body'): 
-                blocks[block] = render_template(f'timeline-ajax-{block}.html', 
-                                                current_page="home", 
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'timeline-ajax-{block}.html',
+                                                current_page="home",
                                                 page_n=page_n, molts=molts,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
@@ -61,10 +61,10 @@ def wild_west():
             .paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
-            for block in ('title', 'heading', 'body'): 
-                blocks[block] = render_template(f'wild-west-ajax-{block}.html', 
-                                                current_page="wild-west", 
-                                                page_n=page_n, molts=molts, 
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'wild-west-ajax-{block}.html',
+                                                current_page="wild-west",
+                                                page_n=page_n, molts=molts,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
@@ -86,15 +86,15 @@ def notifications():
         notifications = utils.get_current_user().get_notifications(paginated=True, page=page_n)
         if request.args.get('ajax_json'):
             blocks = dict()
-            for block in ('title', 'heading', 'body'): 
-                blocks[block] = render_template(f'notifications-ajax-{block}.html', 
-                                                current_page="notifications", 
-                                                notifications=notifications, 
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'notifications-ajax-{block}.html',
+                                                current_page="notifications",
+                                                notifications=notifications,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
-            return render_template('notifications.html', current_page="notifications", 
-                                   notifications=notifications, 
+            return render_template('notifications.html', current_page="notifications",
+                                   notifications=notifications,
                                    current_user=utils.get_current_user())
     else:
         return redirect("/login")
@@ -191,8 +191,8 @@ def settings():
     elif session.get('current_user') is not None:
         if request.args.get('ajax_json'):
             blocks = dict()
-            for block in ('title', 'heading', 'body'): 
-                blocks[block] = render_template(f'settings-ajax-{block}.html', 
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'settings-ajax-{block}.html',
                                                 current_page='settings',
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
@@ -225,11 +225,11 @@ def user(username):
 
             if request.args.get('ajax_json'):
                 blocks = dict()
-                for block in ('title', 'heading', 'body'): 
+                for block in ('title', 'heading', 'body'):
                     blocks[block] = render_template(
                         f'profile-ajax-{block}.html',
                         current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                        molts=molts, current_user=utils.get_current_user(), 
+                        molts=molts, current_user=utils.get_current_user(),
                         this_user=this_user, likes=likes,
                         current_tab=current_tab, replies=replies
                     )
@@ -326,17 +326,17 @@ def search():
 
         if request.args.get('ajax_json'):
             blocks = dict()
-            for block in ('title', 'heading', 'body'): 
-                blocks[block] = render_template(f'search-ajax-{block}.html', 
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'search-ajax-{block}.html',
                                                 current_page="search",
-                                                query=query, page_n=page_n, 
-                                                molt_results=molt_results, 
-                                                crab_results=crab_results, 
+                                                query=query, page_n=page_n,
+                                                molt_results=molt_results,
+                                                crab_results=crab_results,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
-            return render_template('search-results.html' if ajax_content else 'search.html', current_page="search", 
-                                   query=query, page_n=page_n, molt_results=molt_results, 
+            return render_template('search-results.html' if ajax_content else 'search.html', current_page="search",
+                                   query=query, page_n=page_n, molt_results=molt_results,
                                    crab_results=crab_results, current_user=utils.get_current_user())
     else:
         return redirect("/login")
@@ -366,7 +366,7 @@ def stats():
         .group_by(models.Molt.original_molt_id) \
         .order_by(func.count(models.Molt.id).desc()).first()
     talked_molt = (models.Molt.query.filter_by(id=talked_molt[0]).first(),)
-    stats_dict = dict(users=models.Crab.query.filter_by(deleted=False).count(), 
+    stats_dict = dict(users=models.Crab.query.filter_by(deleted=False).count(),
                       mini_stats=[
                           dict(number=models.Molt.query.count(),
                                label="molts sent"),
@@ -384,13 +384,13 @@ def stats():
                       talked_molt=talked_molt)
     if request.args.get('ajax_json'):
         blocks = dict()
-        for block in ('title', 'heading', 'body'): 
-            blocks[block] = render_template(f'stats-ajax-{block}.html', 
+        for block in ('title', 'heading', 'body'):
+            blocks[block] = render_template(f'stats-ajax-{block}.html',
                                             current_user=utils.get_current_user(),
                                             stats=stats_dict, current_page='stats')
         return jsonify(blocks)
     else:
-        return render_template('stats.html', current_user=utils.get_current_user(), 
+        return render_template('stats.html', current_user=utils.get_current_user(),
                                stats=stats_dict, current_page='stats')
 
 @app.route("/debug/")
