@@ -2,41 +2,39 @@ To submit content, browse this website, and otherwise make use of this service
 you must agree to the terms specified in this document. Failure to do so will
 result in a denial of service.
 
+Crabber, at this moment, does not use the user's email address for anything
+other than the sign-up and login pages. It is kept on record both for this
+purpose and for if we need to contact a user for any reason listed below.
+
 Crabber reserves the right to claim back usernames that have already been taken
 if the situation demands it. (For instance, if the president of the United
 States joins the site and wants his username, we would probably allow that.) If
 your username is claimed back we will notify you, and be in touch to arrange a
 new one for you. You may be given notice in advance but this is not guaranteed.
 
-Follow the rules. Breaking a rule may result in banishment. Even if you don't
-break the rules, the site, it's creator, and other moderators reserve the right
-to suspend or terminate your account if we feel it's necessary. We may IP-ban
-you if you are banned multiple times or commit an offense we deem worthy of
-further punishment. These actions stated are the bare minimum, and we also
-reserve the right to take further action at our own discretion. You have been
-warned.
+Follow the rules. Breaking a rule may result in banishment. The site, its
+creator, and other moderators reserve the right to suspend or terminate your
+account at our discretion. An IP-ban or alternative action may be taken if
+deemed necessary.
 
 The basic rules are as follows:
-  * Follow the law of both your own country and of the United States, as that's
-    where the site is hosted.
+
   * Respect other users.
+  * Follow the law of both your own country and of the United States.
   * Do not reveal personal information of others. It's recommended not to
     reveal your own, but that's up to you unless we deem it inappropriate.
-  * Hate speech is not allowed. This includes the saying of a few specific
-    words (you know which ones I mean) as well as the general slander of
-    people groups, whether minority or majority.
-  * Political discussion is allowed up to a point. Once we feel it has crossed
-    that point, we will take whatever actions we see fit.
+  * Hate speech is not allowed. This includes slurs, "dog whistling", and
+    otherwise hateful or slanderous behaviour.
   * Incel, alt-right, KKK, Nazi, and other hateful ideologies are not allowed.
-    Go back to 4-chan and complain how this is an SJW site. We don't care.
-  * Somewhat contrary to the previous rule: no cancel culture. Give people the
-    benefit of the doubt and don't brigade them for their minor mistakes.
-    People grow and this site encourages that.
+    Go back to Parler and complain how this is an SJW site. We don't care.
+  * This site does not support "cancel culture". Give people the benefit of the
+    doubt and don't brigade them for their minor mistakes. People grow and this
+    site encourages that.
 
 Rules can and will be modified and/or appended, agreeing to these terms means
 you agree to this current document in it's current state as well as all future
 versions of it, regardless of whether you're notified of said changes.
 
-Once more for the idiots, this document merely states the bare minimum of what
-we will and won't allow. Just because something isn't disallowed here doesn't
-mean we won't ban you for it.
+If you see someone breaking the rules or if you feel we have omitted a rule
+that is negatively affecting your experience, please get in touch with a site
+administrator.
