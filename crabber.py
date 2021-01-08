@@ -137,7 +137,7 @@ def signup():
 
         if utils.validate_email(email):
             if utils.validate_username(username):
-                if len(username) in range(4, 32):
+                if len(username) in range(3, 32):
                     if patterns.username.fullmatch(username):
                         if password == confirm_password:
                             # Create user account
@@ -156,7 +156,7 @@ def signup():
                         return redirect("/signup?failed&error_msg=Username must only contain \
                                         letters, numbers, and underscores")
                 else:
-                    return redirect("/signup?failed&error_msg=Username must be at least 4 characters and less than 32")
+                    return redirect("/signup?failed&error_msg=Username must be at least 3 characters and less than 32")
             else:
                 return redirect("/signup?failed&error_msg=That username is taken")
         else:
