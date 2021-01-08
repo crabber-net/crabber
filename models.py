@@ -493,7 +493,7 @@ class Molt(db.Model):
     def get_reply_from(self, crab):
         """ Return first reply Molt from `crab` if it exists.
         """
-        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab).order_by(Molt.timestamp).first()
+        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab, deleted=False).order_by(Molt.timestamp).first()
         return reply
 
     def remolt(self, crab, comment="", **kwargs):
