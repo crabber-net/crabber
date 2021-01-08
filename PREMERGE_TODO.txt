@@ -1,3 +1,4 @@
 Logout banned users
 Notify user when attempting to sign in to banned account
 Filter by banned wherever filtering by deleted
+REMOVE DATABASE FROM GIT TRACKING
