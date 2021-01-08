@@ -5,7 +5,7 @@ __pycache__
 .idea
 .vscode
 *.bak
-*.db
+# *.db
 static/img/user_uploads/*
 !static/img/user_uploads/.ignore
 *.lnk
