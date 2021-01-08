@@ -93,6 +93,18 @@ class Crab(db.Model):
         return len(self.true_molts)
 
     @property
+    def true_following(self):
+        """ Returns this Crab's following without deleted/banned users.
+        """
+        return self.get_true_following()
+
+    @property
+    def true_followers(self):
+        """ Returns this Crab's followers without deleted/banned users.
+        """
+        return self.get_true_followers()
+
+    @property
     def days_active(self):
         """ Returns number of days since user signed up.
         """
@@ -172,6 +184,22 @@ class Crab(db.Model):
             return molts.paginate(page, MOLTS_PER_PAGE, False)
         else:
             return molts.all()
+
+    def get_true_following(self):
+        """ Returns this Crab's following without deleted/banned users.
+        """
+        return db.session.query(Crab) \
+               .join(following_table, Crab.id==following_table.c.following_id) \
+               .filter(following_table.c.follower_id == self.id) \
+               .filter(Crab.banned == False, Crab.deleted == False).all()
+
+    def get_true_followers(self):
+        """ Returns this Crab's followers without deleted/banned users.
+        """
+        return db.session.query(Crab) \
+               .join(following_table, Crab.id==following_table.c.follower_id) \
+               .filter(following_table.c.following_id == self.id) \
+               .filter(Crab.banned == False, Crab.deleted == False).all()
 
     def award(self, title=None, trophy=None):
         """

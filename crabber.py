@@ -263,7 +263,7 @@ def user_following(username, tab):
             return render_template('not-found.html', current_user=utils.get_current_user(), 
                                    message='This user has been banned.')
         else:
-            followx = this_user.following if tab == "ing" else this_user.followers
+            followx = this_user.true_following if tab == "ing" else this_user.true_followers
             return render_template('followx.html',
                                    current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                    followx=followx,
