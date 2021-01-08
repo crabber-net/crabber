@@ -20,7 +20,13 @@
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
+
+{% set is_deleted = molt.deleted %}
+
 <div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark px-3 py-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
+    {% if is_deleted %}
+        <p>This Molt has been deleted.</p>
+    {% else %}
     {% if current_page == "own-profile" %}
     <div class="pin-button p-2">
         <form method="POST">
@@ -195,6 +201,7 @@
     </div>
     <!-- Molt page link -->
     <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill" draggable="false"></a>
+    {% endif %}
 </div>
 {% if show_replies %}
     {% with molt=molt.get_reply_from(show_replies_from), thread=true, show_replies_from=molt.author, hide_border=false, is_parent=false, current_depth=current_depth + 1 %}
