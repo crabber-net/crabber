@@ -12,6 +12,9 @@
     <div id="molts-btn" class="profile-box-category mt-2 col" onclick="switchTo('molts');">
         <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
     </div>
+    <div id="reports-btn" class="profile-box-category mt-2 col" onclick="switchTo('reports');">
+        <div class="py-2"><strong class="d-inline-block w-100 text-center">Reports</strong></div>
+    </div>
 </div>
 
 <div id="crabs">
@@ -59,17 +62,69 @@
 </div>
 <div id="molts" class="d-none">
     {% for molt in molts.items %}
-    <div class="p-2 border-top border-bottom border-dark text-muted">Molt status:
-        <strong>{{"Deleted" if molt.deleted else "Active"}}</strong></div>
+        <div class="p-2 border-top border-bottom border-dark text-muted">Molt status:
+            <strong>{{"Deleted" if molt.deleted else "Active"}}</strong>
+            <br>
+            Reports:
+            <strong>{{molt.reports}}</strong>
+        </div>
         {% include "molt.html" %}
         <div class="border-bottom border-dark p-2">
             <form method="POST" onsubmit="return confirm('Are you sure?')">
                 <input type="hidden" name="target" value="molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                 <div class="d-flex flex-row justify-content-start">
+                    <button type="submit" name="user_action" value="approve"
+                        class="btn btn-success mr-3">Approve</button>
                     {% set del_action = "restore" if molt.deleted else "delete" %}
+                    {% set del_color = "secondary" if molt.deleted else "danger" %}
                     <button type="submit" name="user_action" value="{{del_action}}"
-                        class="btn btn-secondary">{{del_action|title}}</button>
+                        class="btn btn-{{del_color}}">{{del_action|title}}</button>
+                </div>
+            </form>
+        </div>
+        <div class="py-4 border-dark"></div>
+    {% endfor %}
+    <!-- Molt pagination controller -->
+    <nav aria-label="Page navigation buttons" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {{'' if molts.has_prev else 'disabled'}}">
+                <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.prev_num)}}" tabindex="-1">
+                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
+                </a>
+            </li>
+            <li class="page-item {{'' if molt_page_n > 1 else 'disabled'}}"><a class="page-link" href="/tortimer">Home</a></li>
+            <li class="page-item {{'' if molts.has_next else 'disabled'}}">
+                <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.next_num)}}">
+                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+</div>
+
+<div id="reports" class="d-none">
+    {% for molt in reports.items %}
+        <div class="p-2 border-top border-bottom border-dark text-muted">
+            Molt status:
+            <strong>{{"Deleted" if molt.deleted else "Active"}}</strong>
+            <br>
+            Reports:
+            <strong>{{molt.reports}}</strong>
+        </div>
+        {% include "molt.html" %}
+        <div class="border-bottom border-dark p-2">
+            <form method="POST" onsubmit="return confirm('Are you sure?')">
+                <input type="hidden" name="target" value="molt">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                <div class="d-flex flex-row justify-content-start">
+                    <button type="submit" name="user_action" value="approve"
+                        class="btn btn-success mr-3">Approve</button>
+                    {% set del_action = "restore" if molt.deleted else "delete" %}
+                    {% set del_color = "secondary" if molt.deleted else "danger" %}
+                    <button type="submit" name="user_action" value="{{del_action}}"
+                        class="btn btn-{{del_color}}">{{del_action|title}}</button>
                 </div>
             </form>
         </div>
@@ -94,24 +149,19 @@
     <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 </div>
 <script>
-    // Molt/Like tab controller
     function switchTo(tab) {
-        if (tab == "molts") {
-            // Switch active button
-            $("#molts-btn").addClass("active");
-            $("#crabs-btn").removeClass("active");
-            // Switch tab
-            $("#molts").removeClass("d-none");
-            $("#crabs").addClass("d-none");
-        }
-        else if (tab == "crabs") {
-            // Switch active button
-            $("#crabs-btn").addClass("active");
-            $("#molts-btn").removeClass("active");
-            // Switch tab
-            $("#crabs").removeClass("d-none");
-            $("#molts").addClass("d-none");
-        }
+        var tabs = ['crabs', 'molts', 'reports']
+        // Reset all buttons to inactive and tabs to hidden
+        tabs.forEach(tabName => {
+            $(`#${tabName}-btn`).removeClass("active");
+            $(`#${tabName}`).addClass("d-none");
+            
+        });
+        
+        // Switch active button
+        $(`#${tab}-btn`).addClass("active");
+        // Switch tab
+        $(`#${tab}`).removeClass("d-none");
     }
 </script>
 {% endblock %}

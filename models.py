@@ -402,6 +402,20 @@ class Molt(db.Model):
         """
         return utils.get_pretty_age(self.timestamp)
 
+    def approve(self):
+        """ Approve Molt so it doesn't show in reports page.
+        """
+        if not self.approved:
+            self.approved = True
+            db.session.commit()
+
+    def unapprove(self):
+        """ Undo the approval of this Molt.
+        """
+        if self.approved:
+            self.approved = False
+            db.session.commit()
+
     def rich_content(self, full_size_media=False):
         """ Return HTML-formatted content of Molt with embeds, media, tags, and etc.
         """

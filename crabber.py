@@ -413,10 +413,17 @@ def tortimer():
                 return utils.show_message(f"Verified @{target.username}")
             elif action == "delete":
                 target.delete()
-                return utils.show_message(f"Deleted @{target.username}")
+                if isinstance(target, models.Crab):
+                    return utils.show_message(f"Deleted @{target.username}")
+                return utils.show_message(f"Deleted Molt")
             elif action == "restore":
                 target.restore()
-                return utils.show_message(f"Restored @{target.username}")
+                if isinstance(target, models.Crab):
+                    return utils.show_message(f"Restored @{target.username}")
+                return utils.show_message(f"Restored Molt")
+            elif action == "approve":
+                target.approve()
+                return utils.show_message(f"Approved Molt")
             elif action == "award":
                 if request.form.get("award_title"):
                     try:
@@ -436,9 +443,16 @@ def tortimer():
             crabs = models.Crab.query \
                 .order_by(models.Crab.register_time.desc()) \
                 .paginate(crab_page_n, MOLTS_PER_PAGE, False)
-            molts = models.Molt.query.order_by(models.Molt.timestamp.desc()) \
+            molts = models.Molt.query.filter_by(is_remolt=False) \
+                .order_by(models.Molt.timestamp.desc()) \
                 .paginate(molt_page_n, MOLTS_PER_PAGE, False)
-            return render_template('tortimer.html', crabs=crabs, molts=molts, current_user=utils.get_current_user(),
+            reports = models.Molt.query.filter_by(approved=False, is_remolt=False) \
+                .order_by(models.Molt.reports.desc(),
+                          models.Molt.timestamp.desc()) \
+                .paginate(molt_page_n, MOLTS_PER_PAGE, False)
+            return render_template('tortimer.html', crabs=crabs, molts=molts,
+                                   reports=reports,
+                                   current_user=utils.get_current_user(),
                                    crab_page_n=crab_page_n, molt_page_n=molt_page_n)
     else:
         return error_404(BaseException)
