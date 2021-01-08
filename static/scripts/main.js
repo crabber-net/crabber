@@ -209,3 +209,13 @@ function scrollToTop() {
     let contentBody = $("#content-body");
     contentBody.scrollTop(0);
 }
+
+function toggleDropdown(dropdownID) {
+    $(`#${dropdownID}`).dropdown('toggle');
+}
+
+function replaceMolt(elem, text) {
+    $(elem).parents('.mini-molt').html(
+        `<div class="molt-message text-muted">${text}</div>`
+    );
+}

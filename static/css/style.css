@@ -1247,3 +1247,20 @@ table#user-info th {
 .lastfm-logo {
     padding-bottom: 0.1em;
 }
+
+.molt-dropdown {
+    background: var(--dark-less);
+    border: solid var(--border-dark) 1px;
+}
+.molt-dropdown .dropdown-item {
+    color: var(--light);
+    fill: var(--light);
+    transition: ease-in-out 100ms;
+    transition-property: background;
+}
+.molt-dropdown .dropdown-item:hover {
+    background: var(--dark-lesser);
+}
+.molt-dropdown svg {
+    vertical-align: text-bottom;
+}

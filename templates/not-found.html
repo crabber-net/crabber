@@ -3,5 +3,9 @@
 {% block heading %} Invalid {{noun}} {% endblock %}
 
 {% block body %}
+{% if message %}
+    <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">{{message}}</div>
+{% else %}
     <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This {{noun}} does not exist.</div>
+{% endif %}
 {% endblock %}

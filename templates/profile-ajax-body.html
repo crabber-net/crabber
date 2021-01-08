@@ -181,10 +181,10 @@
         </div>
         <div class="profile-box-following mt-1">
             <a class="text-inherit" href="/user/{{this_user.username}}/following">
-            <div class="d-inline mr-2"><strong>{{this_user.following|length}}</strong> 
+            <div class="d-inline mr-2"><strong>{{this_user.true_following|length}}</strong> 
                 <span class="text-muted">Following</span></div></a>
             <a class="text-inherit" href="/user/{{this_user.username}}/followers">
-            <div class="d-inline mr-2"><strong>{{this_user.followers|length}}</strong>
+            <div class="d-inline mr-2"><strong>{{this_user.true_followers|length}}</strong>
                 <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
         </div>
         

@@ -42,10 +42,10 @@ class Crab(db.Model):
                        server_default="img/banner.png")
     register_time = db.Column(db.DateTime, nullable=False,
                               default=datetime.datetime.utcnow)
-    deleted = db.Column(db.Boolean, nullable=False,
-                        default=False)
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
     timezone = db.Column(db.String(8), nullable=False, default="-06.00")
     lastfm = db.Column(db.String, nullable=True)
+    banned = db.Column(db.Boolean, nullable=False, default=False)
 
     # Dynamic relationships
     molts = db.relationship('Molt', back_populates='author')
@@ -93,6 +93,18 @@ class Crab(db.Model):
         return len(self.true_molts)
 
     @property
+    def true_following(self):
+        """ Returns this Crab's following without deleted/banned users.
+        """
+        return self.get_true_following()
+
+    @property
+    def true_followers(self):
+        """ Returns this Crab's followers without deleted/banned users.
+        """
+        return self.get_true_followers()
+
+    @property
     def days_active(self):
         """ Returns number of days since user signed up.
         """
@@ -117,6 +129,20 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def ban(self):
+        """ Banish this user from the site.
+        """
+        if not self.banned:
+            self.banned = True
+            db.session.commit()
+
+    def unban(self):
+        """ Restore a banned user's access to the site.
+        """
+        if self.banned:
+            self.banned = False
+            db.session.commit()
 
     def pin(self, molt):
         """ Set `molt` as user's pinned molt
@@ -143,6 +169,7 @@ class Crab(db.Model):
         """ Returns all molts the user has liked that are still available.
         """
         likes = Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
+            .filter(Like.molt.has(Molt.author.has(banned=False, deleted=False))) \
             .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
         if paginated:
             return likes.paginate(page, MOLTS_PER_PAGE, False)
@@ -157,6 +184,22 @@ class Crab(db.Model):
             return molts.paginate(page, MOLTS_PER_PAGE, False)
         else:
             return molts.all()
+
+    def get_true_following(self):
+        """ Returns this Crab's following without deleted/banned users.
+        """
+        return db.session.query(Crab) \
+               .join(following_table, Crab.id==following_table.c.following_id) \
+               .filter(following_table.c.follower_id == self.id) \
+               .filter(Crab.banned == False, Crab.deleted == False).all()
+
+    def get_true_followers(self):
+        """ Returns this Crab's followers without deleted/banned users.
+        """
+        return db.session.query(Crab) \
+               .join(following_table, Crab.id==following_table.c.follower_id) \
+               .filter(following_table.c.following_id == self.id) \
+               .filter(Crab.banned == False, Crab.deleted == False).all()
 
     def award(self, title=None, trophy=None):
         """
@@ -319,6 +362,10 @@ class Molt(db.Model):
                          server_default="")
     image = db.Column(db.String(1024), nullable=True)
 
+    # Moderation/flagging
+    reports = db.Column(db.Integer, nullable=False, default=0)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
+
     # Remolt/reply information
     is_remolt = db.Column(db.Boolean, nullable=False, default=False)
     is_reply = db.Column(db.Boolean, nullable=False, default=False)
@@ -378,25 +425,41 @@ class Molt(db.Model):
     def replies(self):
         """ List all currently valid Molts that reply to this Molt.
         """
-        return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False).all()
+        return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_remolts(self):
         """ List all currently valid remolts of Molt.
         """
-        return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False).all()
+        return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_likes(self):
         """ List all currently valid likes of Molt.
         """
-        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False)).all()
+        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False, banned=False)).all()
 
     @property
     def pretty_age(self):
         """ Property wrapper for `Molt.get_pretty_age`.
         """
         return utils.get_pretty_age(self.timestamp)
+
+    def approve(self):
+        """ Approve Molt so it doesn't show in reports page.
+        """
+        if not self.approved:
+            self.approved = True
+            db.session.commit()
+
+    def unapprove(self):
+        """ Undo the approval of this Molt.
+        """
+        if self.approved:
+            self.approved = False
+            db.session.commit()
 
     def rich_content(self, full_size_media=False):
         """ Return HTML-formatted content of Molt with embeds, media, tags, and etc.
@@ -475,7 +538,7 @@ class Molt(db.Model):
     def get_reply_from(self, crab):
         """ Return first reply Molt from `crab` if it exists.
         """
-        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab).order_by(Molt.timestamp).first()
+        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab, deleted=False).order_by(Molt.timestamp).first()
         return reply
 
     def remolt(self, crab, comment="", **kwargs):
@@ -495,6 +558,12 @@ class Molt(db.Model):
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
 
+    def report(self):
+        """ Increment report counter for Molt.
+        """
+        self.reports += 1
+        db.session.commit()
+        
     def edit(self, new_content):
         """ Change Molt content to `new_content`.
         """
@@ -580,7 +649,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             username_str = output[start : end].strip("@ \t\n")
-            username = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(username_str)).first()
+            username = Crab.query.filter_by(deleted=False, banned=False).filter(Crab.username.ilike(username_str)).first()
             if username:
                 output = "".join([output[:start],
                                 f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
