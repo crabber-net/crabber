@@ -19,7 +19,10 @@
 
 <div id="crabs">
     {% for crab in crabs.items %}
-        <div class="p-2 border-top border-bottom border-dark text-muted">Account status: <strong>{{"Deleted" if crab.deleted else "Active"}}</strong></div>
+        <div class="p-2 border-top border-bottom border-dark text-muted">
+            Deleted status: <strong>{{"Deleted" if crab.deleted else "Active"}}</strong><br>
+            Ban status: <strong>{{"Banned" if crab.banned else "Active"}}</strong>
+        </div>
         {% include "mini_bio.html" %}
         <div class="border-bottom border-dark p-2">
             <form method="POST" onsubmit="return confirm('Are you sure?')">
@@ -33,10 +36,11 @@
                             <button name="user_action" value="award" class="btn btn-info" type="submit">Award</button>
                         </div>
                     </div>
-
                     <button type="submit" name="user_action" value="verify" class="btn btn-success mx-2">Verify</button>
                     {% set del_action = "restore" if crab.deleted else "delete" %}
                     <button type="submit" name="user_action" value="{{del_action}}" class="text-dark btn btn-warning mx-2">{{del_action|title}}</button>
+                    {% set ban_action = "unban" if crab.banned else "ban" %}
+                    <button type="submit" name="user_action" value="{{ban_action}}" class="text-dark btn btn-warning mx-2">{{ban_action|title}}</button>
                 </div>
             </form>
         </div>

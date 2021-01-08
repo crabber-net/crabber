@@ -100,25 +100,28 @@ def notifications():
         return redirect("/login")
 
 
-@app.route("/login/", methods=("GET", "POST"))
+@app.route("/login/", methods=('GET', 'POST'))
 def login():
-    if request.method == "POST":
-        email, password = request.form.get("email").strip().lower(), request.form.get("password")
+    if request.method == 'POST':
+        email, password = request.form.get('email').strip().lower(), request.form.get('password')
         attempted_user = models.Crab.query.filter_by(email=email, deleted=False).first()
         if attempted_user is not None:
             if attempted_user.verify_password(password):
-                # Login successful
-                session["current_user"] = attempted_user.id
-                return redirect("/")
+                if not attempted_user.banned:
+                    # Login successful
+                    session['current_user'] = attempted_user.id
+                    return redirect("/")
+                else:
+                    return utils.show_error('The account you\'re attempting to access has been banned.')
             else:
-                return utils.show_error("Incorrect password")
+                return utils.show_error('Incorrect password.')
         else:
-            return utils.show_error("No account with that email exists")
-    elif session.get("current_user"):
-        return redirect("/")
+            return utils.show_error('No account with that email exists.')
+    elif session.get('current_user'):
+        return redirect('/')
     else:
-        login_failed = request.args.get("failed") is not None
-        return render_template("login.html", current_page="login", hide_sidebar=True, login_failed=login_failed)
+        login_failed = request.args.get('failed') is not None
+        return render_template('login.html', current_page='login', hide_sidebar=True, login_failed=login_failed)
 
 
 @app.route("/signup/", methods=("GET", "POST"))
@@ -421,6 +424,12 @@ def tortimer():
                 if isinstance(target, models.Crab):
                     return utils.show_message(f"Restored @{target.username}")
                 return utils.show_message(f"Restored Molt")
+            elif action == "ban":
+                target.ban()
+                return utils.show_message(f"Banned @{target.username}")
+            elif action == "unban":
+                target.unban()
+                return utils.show_message(f"Unbanned @{target.username}")
             elif action == "approve":
                 target.approve()
                 return utils.show_message(f"Approved Molt")
@@ -591,7 +600,7 @@ def file_to_big(_e):
 def before_request():
     # Make sure cookies are still valid
     if session.get("current_user"):
-        if not models.Crab.query.filter_by(id=session.get("current_user"), deleted=False).all():
+        if not models.Crab.query.filter_by(id=session.get("current_user"), deleted=False, banned=False).all():
             # Force logout
             session["current_user"] = None
             return redirect("/login")

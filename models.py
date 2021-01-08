@@ -42,10 +42,10 @@ class Crab(db.Model):
                        server_default="img/banner.png")
     register_time = db.Column(db.DateTime, nullable=False,
                               default=datetime.datetime.utcnow)
-    deleted = db.Column(db.Boolean, nullable=False,
-                        default=False)
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
     timezone = db.Column(db.String(8), nullable=False, default="-06.00")
     lastfm = db.Column(db.String, nullable=True)
+    banned = db.Column(db.Boolean, nullable=False, default=False)
 
     # Dynamic relationships
     molts = db.relationship('Molt', back_populates='author')
@@ -117,6 +117,20 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def ban(self):
+        """ Banish this user from the site.
+        """
+        if not self.banned:
+            self.banned = True
+            db.session.commit()
+
+    def unban(self):
+        """ Restore a banned user's access to the site.
+        """
+        if self.banned:
+            self.banned = False
+            db.session.commit()
 
     def pin(self, molt):
         """ Set `molt` as user's pinned molt
