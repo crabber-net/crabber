@@ -482,7 +482,7 @@ class Molt(db.Model):
         """ Remolt Molt as `crab` with optional `comment`.
         """
         # Already remolted
-        if Molt.query.filter_by(is_remolt=True, original_molt=self, author=crab).first():
+        if Molt.query.filter_by(is_remolt=True, original_molt=self, author=crab, deleted=False).first():
             return "Remolt declined on grounds of duplication."
         new_remolt = crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
         self.author.notify(sender=crab, type="remolt", molt=new_remolt)
