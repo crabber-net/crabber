@@ -319,6 +319,10 @@ class Molt(db.Model):
                          server_default="")
     image = db.Column(db.String(1024), nullable=True)
 
+    # Moderation/flagging
+    reports = db.Column(db.Integer, nullable=False, default=0)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
+
     # Remolt/reply information
     is_remolt = db.Column(db.Boolean, nullable=False, default=False)
     is_reply = db.Column(db.Boolean, nullable=False, default=False)
@@ -495,6 +499,12 @@ class Molt(db.Model):
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
 
+    def report(self):
+        """ Increment report counter for Molt.
+        """
+        self.reports += 1
+        db.session.commit()
+        
     def edit(self, new_content):
         """ Change Molt content to `new_content`.
         """

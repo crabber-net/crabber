@@ -208,6 +208,10 @@ def common_molt_actions() -> Response:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         target_molt.remolt(get_current_user())
 
+    elif action == "report_molt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        target_molt.report()
+
     elif action == "like_molt" and molt_id is not None:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         if get_current_user().has_liked(target_molt):
