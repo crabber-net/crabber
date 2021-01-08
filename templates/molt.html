@@ -22,10 +22,25 @@
 {% endif %}
 
 {% set is_deleted = molt.deleted %}
+{% set is_banned = molt.author.banned %}
 
 <div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark px-3 py-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
     {% if is_deleted %}
-        <p>This Molt has been deleted.</p>
+        {% if is_parent %}
+            <div class="border-bottom border-dark w-100">
+                <p class="text-muted text-center">This Molt has been deleted.</p>
+            </div>
+        {% else %}
+            <p class="text-muted text-center">This Molt has been deleted.</p>
+        {% endif %}
+    {% elif is_banned %}
+        {% if is_parent %}
+            <div class="border-bottom border-dark w-100">
+                <p class="text-muted text-center">The author of this Molt has been banned.</p>
+            </div>
+        {% else %}
+            <p class="text-muted text-center">The author of this Molt has been banned.</p>
+        {% endif %}
     {% else %}
     {% if current_page == "own-profile" %}
     <div class="pin-button p-2">

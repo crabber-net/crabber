@@ -157,6 +157,7 @@ class Crab(db.Model):
         """ Returns all molts the user has liked that are still available.
         """
         likes = Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
+            .filter(Like.molt.has(Molt.author.has(banned=False, deleted=False))) \
             .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
         if paginated:
             return likes.paginate(page, MOLTS_PER_PAGE, False)
@@ -396,19 +397,21 @@ class Molt(db.Model):
     def replies(self):
         """ List all currently valid Molts that reply to this Molt.
         """
-        return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False).all()
+        return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_remolts(self):
         """ List all currently valid remolts of Molt.
         """
-        return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False).all()
+        return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_likes(self):
         """ List all currently valid likes of Molt.
         """
-        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False)).all()
+        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False, banned=False)).all()
 
     @property
     def pretty_age(self):
@@ -618,7 +621,7 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             username_str = output[start : end].strip("@ \t\n")
-            username = Crab.query.filter_by(deleted=False).filter(Crab.username.ilike(username_str)).first()
+            username = Crab.query.filter_by(deleted=False, banned=False).filter(Crab.username.ilike(username_str)).first()
             if username:
                 output = "".join([output[:start],
                                 f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
