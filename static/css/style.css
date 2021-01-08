@@ -1250,6 +1250,7 @@ table#user-info th {
 
 .molt-dropdown {
     background: var(--dark-less);
+    border: solid var(--border-dark) 1px;
 }
 .molt-dropdown .dropdown-item {
     color: var(--light);
@@ -1259,4 +1260,7 @@ table#user-info th {
 }
 .molt-dropdown .dropdown-item:hover {
     background: var(--dark-lesser);
+}
+.molt-dropdown svg {
+    vertical-align: text-bottom;
 }
