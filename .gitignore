@@ -14,3 +14,4 @@ reg.py
 putty_*.txt
 bfg.jar
 .DS_Store
+db.json
