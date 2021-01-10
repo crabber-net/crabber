@@ -1,0 +1,52 @@
+:root {
+    --primary: rgb(230, 57, 70);
+    --primary-faded: rgba(230, 57, 71, 0.1);
+    --primary-faded-less: rgba(230, 57, 71, 0.3);
+    --primary-dark: rgb(167, 25, 37);
+    --primary-darker: rgb(110, 17, 25);
+    --light: rgb(29, 29, 29);
+    --light-darker: rgb(51, 51, 51);
+    --light-darker-er: rgb(80, 81, 90);
+    --light-faded: rgb(80, 83, 83);
+    --light-faded-less: rgb(105, 114, 117);
+    --light-faded-more: #babcc2 !important;
+    --dark: rgb(243, 243, 243);
+    --dark-less: rgb(230, 230, 230);
+    --dark-lesser: rgb(208, 210, 212);
+    --dark-lesserest: rgb(186, 188, 192);
+    --dark-less-more: rgb(230, 230, 230);
+    --border-dark: #dddddd;
+    --border-darker: #dddbdb;
+    --secondary: #399de6;
+    --tertiary: #39e683;
+    --quad: #1D3557;
+
+    --muted: #535557;
+;
+}
+
+.border-dark {
+    border-color: var(--border-dark) !important;
+}
+
+.btn.btn-primary{
+    color: var(--dark);
+    border: none;
+}
+
+.text-light {
+    color: var(--light) !important;
+    fill: var(--light) !important;
+}
+
+.text-muted {
+    color: var(--muted);
+}
+
+.verified {
+    fill: var(--primary);
+}
+
+.logo {
+    fill: var(--primary);
+}

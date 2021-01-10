@@ -1083,7 +1083,7 @@ table#user-info th {
 }
 
 #user-info tr:not(:last-child), .shell-stats li:not(:last-child) {
-    border-bottom: 1px solid rgb(21, 25, 30);
+    border-bottom: 1px solid var(--border-darker);
 }
 
 .scroll-back {
