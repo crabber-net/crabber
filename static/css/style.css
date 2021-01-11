@@ -4,6 +4,9 @@
     #nav-panel {
         max-width: 60px;
     }
+    #main-panel {
+        max-width: none;
+    }
 }
 /* Large devices and larger */
 @media (min-width: 992px) {
