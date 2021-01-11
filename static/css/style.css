@@ -660,6 +660,10 @@ div.mini-molt:hover {
 
 .mini-bio {
     position: relative;
+    overflow-x: hidden;
+}
+.mini-bio .mini-molt-text-box {
+    overflow-x: hidden;
 }
 
 .youtube-embed {
