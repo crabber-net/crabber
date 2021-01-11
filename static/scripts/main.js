@@ -207,7 +207,7 @@ function updateScrollback(scroll) {
 }
 function scrollToTop() {
     let contentBody = $("#content-body");
-    contentBody.scrollTop(0);
+    contentBody.get(0).scroll({top: 0, behavior: 'smooth'});
 }
 
 function toggleDropdown(dropdownID) {

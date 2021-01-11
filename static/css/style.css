@@ -219,13 +219,11 @@
     overflow-x: visible;
     scrollbar-width: thin;
     scrollbar-color: var(--dark-lesserest) var(--dark-less);
-    scroll-behavior: smooth;
 }
 
 .cool-scroll {
     scrollbar-width: thin;
     scrollbar-color: var(--dark-lesserest) var(--dark-less);
-    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -926,7 +924,6 @@ body, .master-container {
     overflow-x: visible;
     scrollbar-width: thin;
     scrollbar-color: var(--dark-lesserest) var(--dark-less);
-    scroll-behavior: smooth;
 }
 
 .h-center {

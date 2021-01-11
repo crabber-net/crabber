@@ -17,6 +17,8 @@ function loadHTML(url) {
             $("#content-heading strong").html(data.heading);
             $("#content-body").html(data.body);
 
+            $("#content-body").scrollTop(0, {behaviour: 'auto'});
+
             // Update navbar icons
             let oldPageButton = $('#nav-active');
             oldPageButton.attr('id', null);
@@ -33,7 +35,6 @@ function loadHTML(url) {
             if (!oldPageButton.is(loadingIcon.parent())) {
                 oldPageButton.children('.btn-icon:not(.btn-icon-f):not(.loading-icon)').removeClass('d-none');
             }
-
 
             // Refresh Jam Icons
             $("#content-body").append('<script src="https://unpkg.com/jam-icons/js/jam.min.js"></script>')
