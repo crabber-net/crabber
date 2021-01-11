@@ -230,7 +230,10 @@
     {% endif %}
 </div>
 {% if show_replies %}
-    {% with molt=molt.get_reply_from(show_replies_from), thread=true, show_replies_from=molt.author, hide_border=false, is_parent=false, current_depth=current_depth + 1 %}
-        {% include "molt.html" %}
+    {% with molt=molt.get_reply_from(show_replies_from) %}
+        {% with thread=true, show_replies_from=molt.author, hide_border=false, 
+           is_parent=false, current_depth=current_depth + 1 %}
+            {% include "molt.html" %}
+        {% endwith %}
     {% endwith %}
 {% endif %}
