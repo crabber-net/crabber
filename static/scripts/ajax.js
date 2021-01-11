@@ -10,6 +10,8 @@ function loadHTML(url) {
         type: 'GET',
         data: {'ajax_json': true},
         success: function(data) {
+            if (!url.match(/\/(?:$|\?)/))
+                url += '/';
             window.history.pushState(data.body, `${data.title} | Crabber`, url);
 
             // Insert HTML
@@ -25,7 +27,6 @@ function loadHTML(url) {
             oldPageButton.children('.btn-icon-f').addClass('d-none');
 
             let loadingIcon = $('.loading-icon:not(.d-none)');
-            console.log(loadingIcon);
             loadingIcon.addClass('d-none');
             let newPageButton = loadingIcon.parents('button');
             newPageButton.attr('id', 'nav-active');

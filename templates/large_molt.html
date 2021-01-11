@@ -90,13 +90,24 @@
             </form>
             <!-- REMOLT BUTTON -->
             <form method="POST">
+                {% set has_remolted = current_user.has_remolted(molt) %}
+                {% if has_remolted %}
+                <input type="hidden" name="user_action" value="delete_molt">
+                <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+                {% else %}
                 <input type="hidden" name="user_action" value="remolt_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if current_user.has_remolted(molt) else ""}}"
-                    {% if molt.author.id != current_user.id %}
-                        onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
+                {% endif %}
+                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if has_remolted else ""}}"
+                    {% if has_remolted %}
+                        onClick="if (confirm('Are you sure you want to un-remolt this?')) {
+                        this.parentNode.submit();$(this).parents('div.mini-molt').remove();}"
                     {% else %}
-                        onClick="alert('Don\'t remolt your own stuff!');"
+                        {% if molt.author.id != current_user.id %}
+                            onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
+                        {% else %}
+                            onClick="alert('Don\'t remolt your own stuff!');"
+                        {% endif %}
                     {% endif %}>
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="repeat"></span>
                 </div>

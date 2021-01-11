@@ -306,9 +306,10 @@ class Crab(db.Model):
         return bool(Like.query.filter_by(molt=molt, crab=self).all())
 
     def has_remolted(self, molt):
-        """ Returns True if user has remolted `molt`.
+        """ Returns the Remolt if user has remolted `molt`, otherwise None.
         """
-        return bool(Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).all())
+        molt = Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).first()
+        return molt
 
     def notify(self, **kwargs):
         """ Create notification for user.

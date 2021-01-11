@@ -142,13 +142,24 @@
             </form>
             <!-- REMOLT BUTTON -->
             <form method="POST">
+                {% set has_remolted = current_user.has_remolted(molt) %}
+                {% if has_remolted %}
+                <input type="hidden" name="user_action" value="delete_molt">
+                <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+                {% else %}
                 <input type="hidden" name="user_action" value="remolt_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if current_user.has_remolted(molt) else ""}}"
-                    {% if molt.author.id != current_user.id %}
-                        onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
+                {% endif %}
+                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if has_remolted else ""}}"
+                    {% if has_remolted %}
+                        onClick="if (confirm('Are you sure you want to un-remolt this?')) {
+                        this.parentNode.submit();$(this).parents('div.mini-molt').remove();}"
                     {% else %}
-                        onClick="alert('Don\'t remolt your own stuff!');"
+                        {% if molt.author.id != current_user.id %}
+                            onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
+                        {% else %}
+                            onClick="alert('Don\'t remolt your own stuff!');"
+                        {% endif %}
                     {% endif %}>
                     <span class="mini-molt-action-icon" data-width="16" data-height="16" data-jam="repeat"></span>
                     <span class="mini-molt-action-counter ml-1">{{molt.true_remolts|length}}</span>
@@ -178,7 +189,7 @@
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="delete_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                                <div onClick="if (confirm('Are you sure you want to delete this Molt? (Cannot be undone)')) {
+                                <div onClick="if (confirm('Are you sure you want to delete this Molt?')) {
                                     SubForm(this.parentNode);$(this).parents('div.mini-molt').remove();}">
                                     <span data-width="16" data-height="16" data-jam="trash"></span>
                                     Delete Molt
@@ -189,10 +200,10 @@
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="delete_molt">
                                 <input type="hidden" name="molt_id" value="{{remolt_shell.id}}">
-                                <div onClick="if (confirm('Are you sure you want to delete this Molt? (Cannot be undone)')) {
+                                <div onClick="if (confirm('Are you sure you want to delete this Remolt?')) {
                                     SubForm(this.parentNode);$(this).parents('div.mini-molt').remove();}">
                                     <span data-width="16" data-height="16" data-jam="trash"></span>
-                                    Delete Re-Molt
+                                    Delete Remolt
                                 </div>
                             </form>
                         {% endif %}
