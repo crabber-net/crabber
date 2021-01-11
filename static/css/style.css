@@ -603,9 +603,7 @@ div.mini-molt:hover {
 }
 
 .mini-follow button {
-    position: absolute;
-    right: 0;
-    /* margin-right: 2em; */
+    float: right;
 }
 
 .mini-follow button, .mini-btn {
@@ -818,6 +816,7 @@ body, .master-container {
     margin: -3px -3px -3px 5px;
     border-radius: 6px;
     font-size: 11px;
+    white-space: nowrap;
 }
 
 .thread-connector {
