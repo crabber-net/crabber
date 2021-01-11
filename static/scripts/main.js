@@ -38,21 +38,37 @@ function GetData(request_type, data, callback, error_callback=null) {
 function toggleLike(e) {
     let empty_heart = $(e).children(".jam")[0];
     let filled_heart = $(e).children(".jam")[1];
-    let counter = $(e).children("span")[0]
+    let counter = $(e).children("span").get(0);
+
+    let updateLikeCounter = function(amount) {
+        likesCounter = $(e).parents('.mini-molt').find('[data-target="#molt_likes_modal"]');
+        likesNum = parseInt(likesCounter.children('#likes-number').text());
+        likesNum += amount;
+        likesCounter.children('#likes-number').text(likesNum);
+        likesCounter.children('#likes-text').text((likesNum == 1) ? 'Like' : 'Likes');
+    };
 
     // was liked, needs to be unliked
     if (empty_heart.classList.contains("d-none")) {
         $(empty_heart).removeClass("d-none");
         $(filled_heart).addClass("d-none");
-        $(counter).removeClass("text-primary");
-        counter.textContent = parseInt(counter.textContent) - 1
+        if (counter != undefined) {
+            $(counter).removeClass("text-primary");
+            counter.textContent = parseInt(counter.textContent) - 1;
+        } else {
+            updateLikeCounter(-1)
+        }
     }
     // was unliked, needs to be liked
     else {
         $(filled_heart).removeClass("d-none");
         $(empty_heart).addClass("d-none");
-        $(counter).addClass("text-primary");
-        counter.textContent = parseInt(counter.textContent) + 1
+        if (counter != undefined) {
+            $(counter).addClass("text-primary");
+            counter.textContent = parseInt(counter.textContent) + 1;
+        } else {
+            updateLikeCounter(1)
+        }
     }
 }
 

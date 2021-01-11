@@ -61,7 +61,9 @@
             <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_remolts_modal">
                 <span class="text-light font-weight-bold">{{molt.true_remolts|length}}</span> Remolt{{'' if (molt.true_remolts|length) == 1 else 's'}}</a>
             <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_likes_modal">
-                <span class="text-light font-weight-bold">{{molt.true_likes|length}}</span> Like{{'' if (molt.true_likes|length) == 1 else 's'}}</a>
+                <span id="likes-number" class="text-light font-weight-bold">{{molt.true_likes|length}}</span>
+                <span id="likes-text">Like{{'' if (molt.true_likes|length) == 1 else 's'}}</span>
+            </a>
         </div>
 
         {% if current_user %}
