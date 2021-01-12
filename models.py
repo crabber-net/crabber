@@ -542,6 +542,19 @@ class Molt(db.Model):
         reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab, deleted=False).order_by(Molt.timestamp).first()
         return reply
 
+    def get_reply_from_following(self, crab):
+        """ Return first reply Molt from a crab that `crab` follows if it exists.
+        """
+        # following = db.session.query(Crab) \
+        #     .join(following_table, Crab.id==following_table.c.following_id) \
+        #     .filter(following_table.c.follower_id == crab.id) \
+        #     .filter(Crab.banned == False, Crab.deleted == False)
+        # reply = Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False) \
+        #     .filter(Molt.author.has(following.subquery())) \
+        #     .order_by(Molt.timestamp).first()
+        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab, deleted=False).order_by(Molt.timestamp).first()
+        return reply
+
     def remolt(self, crab, comment="", **kwargs):
         """ Remolt Molt as `crab` with optional `comment`.
         """

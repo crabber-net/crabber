@@ -8,7 +8,11 @@
     {% set depth_limit = 10 %}
 {% endif %}
 
-{% set show_replies = show_replies_from and molt.get_reply_from(show_replies_from) and current_depth <= depth_limit %}
+{% if show_replies_from == 'following' %}
+    {% set show_replies = show_replies_from and molt.get_reply_from_following(current_user) and current_depth <= depth_limit %}
+{% else %}
+    {% set show_replies = show_replies_from and molt.get_reply_from(show_replies_from) and current_depth <= depth_limit %}
+{% endif %}
 
 {% if show_replies %}
     {% set hide_border = true %}
@@ -230,10 +234,19 @@
     {% endif %}
 </div>
 {% if show_replies %}
-    {% with molt=molt.get_reply_from(show_replies_from) %}
-        {% with thread=true, show_replies_from=molt.author, hide_border=false, 
-           is_parent=false, current_depth=current_depth + 1 %}
-            {% include "molt.html" %}
+    {% if show_replies_from == 'following' %}
+        {% with molt=molt.get_reply_from_following(current_user) %}
+            {% with thread=true, show_replies_from=molt.author, hide_border=false, 
+            is_parent=false, current_depth=current_depth + 1 %}
+                {% include "molt.html" %}
+            {% endwith %}
         {% endwith %}
-    {% endwith %}
+    {% else %}
+        {% with molt=molt.get_reply_from(show_replies_from) %}
+            {% with thread=true, show_replies_from=molt.author, hide_border=false, 
+            is_parent=false, current_depth=current_depth + 1 %}
+                {% include "molt.html" %}
+            {% endwith %}
+        {% endwith %}
+    {% endif %}
 {% endif %}
