@@ -1270,3 +1270,6 @@ table#user-info th {
 #follow-btn {
     width: 7em;
 }
+.mini-molt.trophy {
+	overflow: hidden;
+}
