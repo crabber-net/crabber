@@ -1,13 +1,13 @@
 {% if full_size_media %}
 <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
     data-toggle="modal" data-target="#image_modal"
-    onclick="$('#image_modal img').attr('src', $(this).find('img, div').attr('src'))">
+    onclick="expandImage($(this).find('img, div').attr('src'))">
     <img class="w-100 rounded-media" src="https://media.giphy.com/media/{{giphy_id}}/giphy.gif" alt="Attached image">
 </div>
 {% else %}
 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
     data-toggle="modal" data-target="#image_modal"
-    onclick="$('#image_modal img').attr('src', $(this).find('img, div').attr('src'))">
+    onclick="expandImage($(this).find('img, div').attr('src'))">
     <div src="https://media.giphy.com/media/{{giphy_id}}/giphy.gif"
         style="background-image: url('https://media.giphy.com/media/{{giphy_id}}/giphy.gif');"
         class="mini-molt-media-img"></div>

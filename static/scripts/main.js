@@ -235,3 +235,7 @@ function replaceMolt(elem, text) {
         `<div class="molt-message text-muted">${text}</div>`
     );
 }
+
+function expandImage(url) {
+    $('#image_modal .image-modal-body').css('background-image', `url("${url}")`);
+}
