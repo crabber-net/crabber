@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import models
 import os
 import patterns
+from sqlalchemy import or_
 from sqlalchemy.sql import func
 import utils
 
@@ -28,7 +29,8 @@ def index():
         page_n = request.args.get('p', 1, type=int)
 
         following_ids = [crab.id for crab in utils.get_current_user().following] + [utils.get_current_user().id]
-        molts = models.Molt.query.filter(models.Molt.author_id.in_(following_ids)) \
+        base_query = models.Molt.query.filter(models.Molt.author_id.in_(following_ids))
+        molts = base_query \
             .filter_by(deleted=False, is_reply=False).filter(models.Molt.author.has(deleted=False, banned=False)) \
             .order_by(models.Molt.timestamp.desc()) \
             .paginate(page_n, MOLTS_PER_PAGE, False)
