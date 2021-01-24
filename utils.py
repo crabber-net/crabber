@@ -1,7 +1,7 @@
 from config import *
 import crabber
 import datetime
-from extensions import db
+import extensions
 from flask import redirect, request
 import json
 import models
@@ -9,6 +9,8 @@ import patterns
 import turtle_images
 import uuid
 from werkzeug.wrappers import Response
+
+db = extensions.db
 
 def show_error(error_msg: str, redirect_url=None) -> Response:
     """

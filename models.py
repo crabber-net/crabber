@@ -1,12 +1,13 @@
 from config import *
 import datetime
-from extensions import db
+import extensions
 from flask import escape, render_template_string, url_for
 import json
 from passlib.hash import sha256_crypt
 import patterns
 import utils
 
+db = extensions.db
 
 class NotFoundInDatabase(BaseException):
     pass
