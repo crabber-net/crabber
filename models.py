@@ -5,6 +5,7 @@ from flask import escape, render_template_string, url_for
 import json
 from passlib.hash import sha256_crypt
 import patterns
+from typing import Optional
 import utils
 
 db = extensions.db
@@ -324,7 +325,7 @@ class Crab(db.Model):
         """
         return bool(Like.query.filter_by(molt=molt, crab=self).all())
 
-    def has_remolted(self, molt):
+    def has_remolted(self, molt) -> Optional['Molt']:
         """ Returns the Remolt if user has remolted `molt`, otherwise None.
         """
         molt = Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).first()

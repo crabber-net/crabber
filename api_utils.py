@@ -42,6 +42,12 @@ def get_crab(crab_ID: int) -> Optional['models.Crab']:
     return crab
 
 
+def get_crab_by_username(username: str) -> Optional['models.Crab']:
+    crab = models.Crab.query \
+            .filter_by(username=username, deleted=False, banned=False).first()
+    return crab
+
+
 def get_crab_followers(crab: 'models.Crab') -> BaseQuery:
     query = models.Crab.query.filter_by(deleted=False, banned=False) \
             .join(models.following_table,
@@ -104,6 +110,22 @@ def get_molts_with_tag(crabtag: str, since=None) \
 def get_molts_from_crab(crab: 'models.Crab', since=None) -> BaseQuery:
     query = models.Molt.query \
             .filter_by(deleted=False, author=crab) \
+            .order_by(models.Molt.timestamp.desc())
+    if since:
+        query = query.filter(models.Molt.timestamp > since)
+    return query
+
+
+def get_timeline(crab: 'models.Crab', since=None) \
+        -> BaseQuery:
+    following_ids = [following.id for following in crab.following]
+    query = models.Molt.query \
+            .filter_by(deleted=False, is_reply=False) \
+            .filter(models.Molt.author.has(banned=False, deleted=False)) \
+            .filter(or_(
+                models.Molt.author.has(models.Crab.id.in_(following_ids)),
+                models.Molt.author == crab
+            )) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
