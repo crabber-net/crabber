@@ -347,10 +347,10 @@ def search():
 
         if query:
             crab_results = models.Crab.query.filter_by(deleted=False, banned=False) \
-                .filter(db.or_(models.Crab.display_name.ilike(f'%{query}%'),
-                               models.Crab.username.ilike(f'%{query}%')))
+                .filter(db.or_(models.Crab.display_name.contains(query, autoescape=True),
+                               models.Crab.username.contains(query, autoescape=True)))
             molt_results = models.Molt.query.filter_by(deleted=False, is_reply=False) \
-                .filter(models.Molt.content.ilike(f'%{query}%')) \
+                .filter(models.Molt.content.contains(query, autoescape=True)) \
                 .filter(models.Molt.author.has(deleted=False, banned=False)).order_by(models.Molt.timestamp.desc()) \
                 .paginate(page_n, MOLTS_PER_PAGE, False)
 
