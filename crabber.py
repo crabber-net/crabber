@@ -623,7 +623,8 @@ def commafy(value):
 
 @app.errorhandler(404)
 def error_404(_error_msg):
-    return render_template("404.html", current_page="404", current_user=utils.get_current_user())
+    return render_template("404.html", current_page="404",
+                           current_user=utils.get_current_user()), 404
 
 
 @app.errorhandler(413)
