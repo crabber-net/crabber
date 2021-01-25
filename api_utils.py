@@ -9,6 +9,8 @@ from typing import Any, List, Optional
 
 def expect_int(value: Any, default: int, minimum: Optional[int] = None,
                maximum: Optional[int] = None):
+    """ Conform a value of unknown type into an optionally bounded integer.
+    """
     if value:
         try:
             value = int(value)
@@ -22,33 +24,45 @@ def expect_int(value: Any, default: int, minimum: Optional[int] = None,
 
 
 def expect_timestamp(value: Any) -> Optional[datetime]:
+    """ Conform a value of unknown type into a datetime object.
+    """
     value = expect_int(value, 0)
     if value:
         value = datetime.fromtimestamp(value)
     return value or None
 
 
-def absolute_url(relative_url: str):
+def absolute_url(relative_url: str) -> Optional[str]:
+    """ Get the absolute url (minus base host) from a partial URL.
+    """
     return '/static/' + relative_url if relative_url else None
 
 
-def get_timestamp(datetime):
+def get_timestamp(datetime: datetime) -> int:
+    """ Get the UTC timestamp from a datetime object.
+    """
     return int(datetime.timestamp())
 
 
 def get_crab(crab_ID: int) -> Optional['models.Crab']:
+    """ Get a Crab by ID.
+    """
     crab = models.Crab.query \
             .filter_by(id=crab_ID, deleted=False, banned=False).first()
     return crab
 
 
 def get_crab_by_username(username: str) -> Optional['models.Crab']:
+    """ Get a Crab by username.
+    """
     crab = models.Crab.query \
             .filter_by(username=username, deleted=False, banned=False).first()
     return crab
 
 
 def get_crab_followers(crab: 'models.Crab') -> BaseQuery:
+    """ Get a Crab's followers.
+    """
     query = models.Crab.query.filter_by(deleted=False, banned=False) \
             .join(models.following_table,
                   models.following_table.c.follower_id == models.Crab.id) \
@@ -57,6 +71,8 @@ def get_crab_followers(crab: 'models.Crab') -> BaseQuery:
 
 
 def get_crab_following(crab: 'models.Crab') -> BaseQuery:
+    """ Get a Crab's following.
+    """
     query = models.Crab.query.filter_by(deleted=False, banned=False) \
             .join(models.following_table,
                   models.following_table.c.following_id == models.Crab.id) \
@@ -65,6 +81,8 @@ def get_crab_following(crab: 'models.Crab') -> BaseQuery:
 
 
 def get_molt(molt_ID: int) -> Optional['models.Molt']:
+    """ Get a Molt by ID.
+    """
     molt = models.Molt.query \
             .filter_by(id=molt_ID, deleted=False, is_remolt=False) \
             .filter(models.Molt.author.has(deleted=False, banned=False)) \
@@ -74,6 +92,8 @@ def get_molt(molt_ID: int) -> Optional['models.Molt']:
 
 def get_molt_replies(molt_ID: int) \
         -> BaseQuery:
+    """ Get the replies of a Molt by ID.
+    """
     query = models.Molt.query \
             .filter_by(deleted=False, is_reply=True, original_molt_id=molt_ID) \
             .filter(models.Molt.author.has(banned=False, deleted=False)) \
@@ -81,8 +101,10 @@ def get_molt_replies(molt_ID: int) \
     return query
 
 
-def get_molts_mentioning(username: str, since=None) \
+def get_molts_mentioning(username: str, since: Optional[int] = None) \
         -> BaseQuery:
+    """ Get the Molts that mention a username.
+    """
     query = models.Molt.query \
             .filter_by(deleted=False) \
             .filter(or_(models.Molt.raw_mentions.ilike(f'%\n{username}\n%'),
@@ -94,8 +116,10 @@ def get_molts_mentioning(username: str, since=None) \
     return query
 
 
-def get_molts_with_tag(crabtag: str, since=None) \
+def get_molts_with_tag(crabtag: str, since: Optional[int] = None) \
         -> BaseQuery:
+    """ Get Molts that use a specific Crabtag.
+    """
     query = models.Molt.query \
             .filter_by(deleted=False) \
             .filter(or_(models.Molt.raw_tags.ilike(f'%\n{crabtag}\n%'),
@@ -107,7 +131,10 @@ def get_molts_with_tag(crabtag: str, since=None) \
     return query
 
 
-def get_molts_from_crab(crab: 'models.Crab', since=None) -> BaseQuery:
+def get_molts_from_crab(crab: 'models.Crab', since: Optional[int] = None) \
+        -> BaseQuery:
+    """ Get a Crab's Molts.
+    """
     query = models.Molt.query \
             .filter_by(deleted=False, author=crab) \
             .order_by(models.Molt.timestamp.desc())
@@ -116,8 +143,10 @@ def get_molts_from_crab(crab: 'models.Crab', since=None) -> BaseQuery:
     return query
 
 
-def get_timeline(crab: 'models.Crab', since=None) \
+def get_timeline(crab: 'models.Crab', since: Optional[int] = None) \
         -> BaseQuery:
+    """ Get a Crab's timeline.
+    """
     following_ids = [following.id for following in crab.following]
     query = models.Molt.query \
             .filter_by(deleted=False, is_reply=False) \
@@ -133,6 +162,8 @@ def get_timeline(crab: 'models.Crab', since=None) \
 
 
 def crab_to_json(crab: 'models.Crab', bio: bool = False) -> dict:
+    """ Serialize a Crab object into a JSON-compatible dict.
+    """
     crab_dict = {
         "id": crab.id,
         "display_name": crab.display_name,
@@ -155,6 +186,8 @@ def crab_to_json(crab: 'models.Crab', bio: bool = False) -> dict:
 
 
 def molt_to_json(molt: 'models.Molt') -> dict:
+    """ Serialize a Molt object into a JSON-compatible dict.
+    """
     molt_json = {
         "id": molt.id,
         "author": crab_to_json(molt.author),
@@ -170,6 +203,8 @@ def molt_to_json(molt: 'models.Molt') -> dict:
 
 def query_to_json(query: BaseQuery, limit: int = 100, offset: int = 0) \
         -> dict:
+    """ Serialize a list of objects into a JSON-compatible dict.
+    """
     total_items = query.count()
     query = query.limit(limit).offset(offset)
     query_json = {
