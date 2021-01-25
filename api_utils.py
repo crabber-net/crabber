@@ -136,7 +136,7 @@ def molt_to_json(molt: 'models.Molt') -> dict:
     molt_json = {
         "id": molt.id,
         "author": crab_to_json(molt.author),
-        "text": molt.content,
+        "content": molt.content,
         "crabtags": molt.tags,
         "mentions": list(set(molt.raw_mentions.lower().splitlines())),
         "timestamp": get_timestamp(molt.timestamp),

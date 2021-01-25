@@ -2,8 +2,16 @@ import api_utils
 from config import *
 from flask import abort, Blueprint, request
 import models
+from typing import Optional
 
 API = Blueprint('REST API v1', __name__)
+
+
+def require_auth(request) -> Optional[dict]:
+    # TODO: Proper authentication
+    if request.args.get('auth'):
+        return dict(crab_id=1)
+
 
 @API.before_request
 def check_API_key():
@@ -11,6 +19,7 @@ def check_API_key():
     if not api_key:
         return abort(400, description='API key not provided.')
     # TODO: Check if API key is valid
+
 
 @API.route('/')
 def root():
@@ -86,11 +95,47 @@ def get_crab_molts(crab_ID):
         return abort(404, description='No Crab with that ID.')
 
 
-@API.route('/molts/<molt_ID>/')
+@API.route('/molts/', methods=['POST'])
+def post_molt():
+    auth = require_auth(request)
+    if auth:
+        crab = api_utils.get_crab(auth['crab_id'])
+        if crab:
+            molt_content = request.form.get('content')
+            if molt_content:
+                new_molt = crab.molt(molt_content)
+                return api_utils.molt_to_json(new_molt), 201
+            else:
+                return abort(400, description='Missing required content.')
+        else:
+            return abort(400, description='The authorized user no longer ' \
+                         'exists.')
+    else:
+        return abort(401, description='This endpoint requires authentication.')
+
+
+@API.route('/molts/<molt_ID>/', methods=['GET', 'DELETE'])
 def get_molt(molt_ID):
     molt = api_utils.get_molt(molt_ID)
     if molt:
-        return api_utils.molt_to_json(molt)
+        if request.method == 'DELETE':
+            auth = require_auth(request)
+            if auth:
+                crab = api_utils.get_crab(auth['crab_id'])
+                if crab:
+                    if molt.author is crab:
+                        molt.delete()
+                        return 'Molt successfully deleted.', 200
+                    else:
+                        return abort(400, description='The authorized user ' \
+                                     'does not own this Molt.')
+                else:
+                    return abort(400, description='The authorized user no ' \
+                                 'longer exists.')
+            else:
+                return abort(401, description='This endpoint requires authentication.')
+        else:
+            return api_utils.molt_to_json(molt)
     else:
         return abort(404, description='No Molt with that ID.')
 
