@@ -1,7 +1,6 @@
 import calendar
 from config import *
 import datetime
-from extensions import db
 from flask import Flask, render_template, request, redirect, session, jsonify
 import models
 import os
@@ -10,13 +9,35 @@ from sqlalchemy import or_
 from sqlalchemy.sql import func
 import utils
 
-app = Flask(__name__, template_folder="./templates")
-app.secret_key = 'crabs are better than birds because they can cut their wings right off'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
-db.init_app(app)
+
+def create_app():
+    app = Flask(__name__, template_folder="./templates")
+    app.secret_key = 'crabs are better than birds because they can cut their wings right off'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
+
+    register_extensions(app)
+    register_blueprints(app)
+
+    return app
+
+
+def register_extensions(app):
+    from extensions import db
+
+    db.init_app(app)
+
+
+def register_blueprints(app):
+    import crabber_api
+
+    app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
+
+
+app = create_app()
+
 
 @app.route("/", methods=("GET", "POST"))
 def index():
@@ -325,6 +346,8 @@ def search():
         ajax_content = request.args.get('ajax_content')
 
         if query:
+            from extensions import db
+
             crab_results = models.Crab.query.filter_by(deleted=False, banned=False) \
                 .filter(db.or_(models.Crab.display_name.contains(query, autoescape=True),
                                models.Crab.username.contains(query, autoescape=True)))
@@ -361,6 +384,7 @@ def stats():
     if request.method == "POST":
         return utils.common_molt_actions()
 
+    from extensions import db
     # Query follow counts for users
     sub = db.session.query(models.following_table.c.following_id, func.count(models.following_table.c.following_id).label('count')) \
         .group_by(models.following_table.c.following_id).subquery()
@@ -410,9 +434,59 @@ def stats():
 def debug():
     return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
 
+@app.route("/developer/", methods=("GET", "POST"))
+def developer():
+    current_user = utils.get_current_user()
+    access_tokens = models.AccessToken.query.filter_by(crab=current_user,
+                                                       deleted=False).all()
+    developer_keys = models.DeveloperKey.query.filter_by(crab=current_user,
+                                                         deleted=False).all()
+    if request.method == "POST":
+        action = request.form.get("user_action")
+
+        if action == 'create_developer_key':
+            if len(developer_keys) < API_MAX_DEVELOPER_KEYS:
+                models.DeveloperKey.create(current_user)
+                return utils.show_message('Created new developer key.')
+            else:
+                return utils.show_error(
+                    f'You are only allowed {API_MAX_DEVELOPER_KEYS} ' \
+                    'developer keys.')
+        elif action == 'create_access_token':
+            if len(access_tokens) < API_MAX_ACCESS_TOKENS:
+                models.AccessToken.create(current_user)
+                return utils.show_message('Created access token.')
+            else:
+                return utils.show_error(
+                    f'You are only allowed {API_MAX_ACCESS_TOKENS} ' \
+                    'access tokens.')
+        elif action == 'delete_developer_key':
+            key_id = request.form.get('developer_key_id')
+            if key_id:
+                key = models.DeveloperKey.query.filter_by(id=key_id).first()
+                if key:
+                    key.delete()
+                    return utils.show_message('Developer key deleted.')
+        elif action == 'delete_access_token':
+            key_id = request.form.get('access_token_id')
+            if key_id:
+                key = models.AccessToken.query.filter_by(id=key_id).first()
+                if key:
+                    key.delete()
+                    return utils.show_message('Access token deleted.')
+
+        # PRG pattern
+        return redirect(request.url)
+    else:
+        return render_template('developer.html',
+                               access_tokens=access_tokens,
+                               developer_keys=developer_keys,
+                               current_user=current_user)
+
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
+    from extensions import db
     if utils.get_current_user().username in ADMINS:
         if request.method == "POST":
             action = request.form.get("user_action")
@@ -598,7 +672,8 @@ def commafy(value):
 
 @app.errorhandler(404)
 def error_404(_error_msg):
-    return render_template("404.html", current_page="404", current_user=utils.get_current_user())
+    return render_template("404.html", current_page="404",
+                           current_user=utils.get_current_user()), 404
 
 
 @app.errorhandler(413)

@@ -570,11 +570,24 @@ div.mini-molt:hover {
     color: var(--primary);
 }
 
+.cool-input .delete-button {
+    background: var(--dark-less) !important;
+    border: none;
+    border-bottom: 2px solid var(--light-faded);
+    color: var(--primary) !important;
+}
+.cool-input .delete-button:hover {
+    color: var(--primary-dark) !important;
+}
+
 .cool-input input, .cool-input textarea {
     background: var(--dark-less) !important;
     border: none;
     border-bottom: 2px solid var(--light-faded);
     color: var(--light) !important;
+}
+.cool-input input:read-only {
+    color: var(--muted) !important;
 }
 .cool-input input, .cool-input textarea, .cool-input select {
     border: none;

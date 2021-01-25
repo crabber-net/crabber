@@ -1,12 +1,15 @@
 from config import *
 import datetime
-from extensions import db
+import extensions
 from flask import escape, render_template_string, url_for
 import json
 from passlib.hash import sha256_crypt
 import patterns
+import secrets
+from typing import Optional
 import utils
 
+db = extensions.db
 
 class NotFoundInDatabase(BaseException):
     pass
@@ -105,6 +108,18 @@ class Crab(db.Model):
         return self.get_true_followers()
 
     @property
+    def true_following_count(self):
+        """ Returns this Crab's following count without deleted/banned users.
+        """
+        return self.get_true_following(count=True)
+
+    @property
+    def true_follower_count(self):
+        """ Returns this Crab's follower count without deleted/banned users.
+        """
+        return self.get_true_followers(count=True)
+
+    @property
     def days_active(self):
         """ Returns number of days since user signed up.
         """
@@ -185,21 +200,27 @@ class Crab(db.Model):
         else:
             return molts.all()
 
-    def get_true_following(self):
+    def get_true_following(self, count=False):
         """ Returns this Crab's following without deleted/banned users.
         """
-        return db.session.query(Crab) \
-               .join(following_table, Crab.id==following_table.c.following_id) \
-               .filter(following_table.c.follower_id == self.id) \
-               .filter(Crab.banned == False, Crab.deleted == False).all()
+        following = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.following_id) \
+                .filter(following_table.c.follower_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        if count:
+            return following.count()
+        return following.all()
 
-    def get_true_followers(self):
+    def get_true_followers(self, count=False):
         """ Returns this Crab's followers without deleted/banned users.
         """
-        return db.session.query(Crab) \
-               .join(following_table, Crab.id==following_table.c.follower_id) \
-               .filter(following_table.c.following_id == self.id) \
-               .filter(Crab.banned == False, Crab.deleted == False).all()
+        followers = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.follower_id) \
+                .filter(following_table.c.following_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        if count:
+            return followers.count()
+        return followers.all()
 
     def award(self, title=None, trophy=None):
         """
@@ -305,7 +326,7 @@ class Crab(db.Model):
         """
         return bool(Like.query.filter_by(molt=molt, crab=self).all())
 
-    def has_remolted(self, molt):
+    def has_remolted(self, molt) -> Optional['Molt']:
         """ Returns the Remolt if user has remolted `molt`, otherwise None.
         """
         molt = Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).first()
@@ -783,3 +804,64 @@ class Trophy(db.Model):
     def __repr__(self):
         return f"<Trophy '{self.title}'>"
 
+
+class DeveloperKey(db.Model):
+    __tablename__ = 'developer_keys'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    crab = db.relationship('Crab', foreign_keys=[crab_id])
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f'<DeveloperKey (@{crab.username})>'
+
+    def delete(self):
+        self.deleted = True
+        db.session.commit()
+
+    @classmethod
+    def gen_key(cls):
+        while True:
+            key = secrets.token_hex(16)
+            if not cls.query.filter_by(key=key).count():
+                return key
+
+    @classmethod
+    def create(cls, crab):
+        key = cls.gen_key()
+        token = cls(crab=crab, key=key)
+        db.session.add(token)
+        db.session.commit()
+        return token
+
+
+class AccessToken(db.Model):
+    __tablename__ = 'access_tokens'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    crab = db.relationship('Crab', foreign_keys=[crab_id])
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f'<AccessToken (@{self.crab.username})>'
+
+    def delete(self):
+        self.deleted = True
+        db.session.commit()
+
+    @classmethod
+    def gen_key(cls):
+        while True:
+            key = secrets.token_hex(16)
+            if not cls.query.filter_by(key=key).count():
+                return key
+
+    @classmethod
+    def create(cls, crab):
+        key = cls.gen_key()
+        token = cls(crab=crab, key=key)
+        db.session.add(token)
+        db.session.commit()
+        return token
