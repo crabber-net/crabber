@@ -106,6 +106,18 @@ class Crab(db.Model):
         return self.get_true_followers()
 
     @property
+    def true_following_count(self):
+        """ Returns this Crab's following count without deleted/banned users.
+        """
+        return self.get_true_following(count=True)
+
+    @property
+    def true_follower_count(self):
+        """ Returns this Crab's follower count without deleted/banned users.
+        """
+        return self.get_true_followers(count=True)
+
+    @property
     def days_active(self):
         """ Returns number of days since user signed up.
         """
@@ -186,21 +198,27 @@ class Crab(db.Model):
         else:
             return molts.all()
 
-    def get_true_following(self):
+    def get_true_following(self, count=False):
         """ Returns this Crab's following without deleted/banned users.
         """
-        return db.session.query(Crab) \
-               .join(following_table, Crab.id==following_table.c.following_id) \
-               .filter(following_table.c.follower_id == self.id) \
-               .filter(Crab.banned == False, Crab.deleted == False).all()
+        following = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.following_id) \
+                .filter(following_table.c.follower_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        if count:
+            return following.count()
+        return following.all()
 
-    def get_true_followers(self):
+    def get_true_followers(self, count=False):
         """ Returns this Crab's followers without deleted/banned users.
         """
-        return db.session.query(Crab) \
-               .join(following_table, Crab.id==following_table.c.follower_id) \
-               .filter(following_table.c.following_id == self.id) \
-               .filter(Crab.banned == False, Crab.deleted == False).all()
+        followers = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.follower_id) \
+                .filter(following_table.c.following_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        if count:
+            return followers.count()
+        return followers.all()
 
     def award(self, title=None, trophy=None):
         """

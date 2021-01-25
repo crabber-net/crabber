@@ -24,3 +24,6 @@ ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
 BASE_URL = "http://localhost" if os.name == "nt" else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
+
+API_DEFAULT_MOLT_LIMIT = 10
+API_MAX_MOLT_LIMIT = 50
