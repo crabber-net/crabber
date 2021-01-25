@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Developer Dashboard{% endblock %}
+{% block heading %}
+    Developer Dashboard
+{% endblock %}
+
+{% block body %}
+<div class="p-2 w-100 no-h-scroll">
+    <h2 class="mb-3">What is this?</h2>
+    <p>
+        Crabber has an open-source REST API for anyone to mess around with and make cool stuff.
+        If you don't know what that is, you probably shouldn't poke around this page too much.
+        <br class="mb-2">
+        <b>Fun fact:</b> I actually started work on Crabber because I was building a Twitter bot and
+        was frustrated with their developer restrictions. I decided I'd build an intentionally
+        bad Twitter clone for laughs but got carried away and made Crabber. And here we are.
+    </p>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
+    <h2 class="mb-3">Keys and Tokens</h2>
+    <div class="p-2">
+        <div class="form-group cool-input">
+            <h3>Developer Keys</h3>
+            <p class="text-muted">These allow your application to make requests to the server.</p>
+            <form method="POST">
+                <input type="hidden" name="user_action" value="delete_developer_key">
+                {% for key in developer_keys %}
+                    <div class="input-group mb-2">
+                        <input type="text" name="developer_key" class="form-control text-muted" value="{{key.key}}" readonly aria-readonly>
+                        <div class="input-group-append">
+                            <button class="btn delete-button" name="developer_key_id" value="{{key.id}}">Delete</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </form>
+            <form method="POST">
+                <button class="btn btn-outline-primary" name="user_action" value="create_developer_key">Create new</button>
+            </form>
+        </div>
+        <div class="form-group cool-input mt-4">
+            <h3>Access Tokens</h3>
+            <p class="text-muted">These give applications permissions to make actions on your behalf. Don't share these with anyone!</p>
+            <form method="POST">
+                <input type="hidden" name="user_action" value="delete_access_token">
+                {% for token in access_tokens %}
+                    <div class="input-group mb-2">
+                        <input type="text" name="access_token" class="form-control text-muted" value="{{token.key}}" readonly aria-readonly>
+                        <div class="input-group-append">
+                            <button class="btn delete-button" name="access_token_id" value="{{token.id}}">Delete</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </form>
+            <form method="POST">
+                <button class="btn btn-outline-primary" name="user_action" value="create_access_token">Create new</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
+    <h2>Documentation</h2>
+    <p>
+        Documentation is not currently written. Remind me to update this section because I might forget.
+    </p>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 py-5 my-5 text-muted text-molt text-center"></div>
+</div>
+
+<script>
+    // Stop autofocus
+    document.querySelector("input[name='lastfm']").blur();
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+</script>
+{% endblock %}

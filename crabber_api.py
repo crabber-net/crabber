@@ -8,9 +8,12 @@ API = Blueprint('REST API v1', __name__)
 
 
 def require_auth(request) -> Optional[dict]:
-    # TODO: Proper authentication
-    if request.args.get('auth'):
-        return dict(crab_id=1)
+    access_token = request.args.get('access_token')
+    if access_token:
+        token_object = models.AccessToken.query.filter_by(key=access_token,
+                                                          deleted=False).first()
+        if token_object:
+            return dict(crab_id=token_object.crab.id)
 
 
 @API.before_request
@@ -18,7 +21,10 @@ def check_API_key():
     api_key = request.args.get('api_key')
     if not api_key:
         return abort(400, description='API key not provided.')
-    # TODO: Check if API key is valid
+    key_object = models.DeveloperKey.query.filter_by(key=api_key,
+                                                     deleted=False).first()
+    if key_object is None:
+        return abort(400, description='API key is invalid or expired.')
 
 
 @API.route('/')

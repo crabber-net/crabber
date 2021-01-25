@@ -5,6 +5,7 @@ from flask import escape, render_template_string, url_for
 import json
 from passlib.hash import sha256_crypt
 import patterns
+import secrets
 from typing import Optional
 import utils
 
@@ -803,3 +804,64 @@ class Trophy(db.Model):
     def __repr__(self):
         return f"<Trophy '{self.title}'>"
 
+
+class DeveloperKey(db.Model):
+    __tablename__ = 'developer_keys'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    crab = db.relationship('Crab', foreign_keys=[crab_id])
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f'<DeveloperKey (@{crab.username})>'
+
+    def delete(self):
+        self.deleted = True
+        db.session.commit()
+
+    @classmethod
+    def gen_key(cls):
+        while True:
+            key = secrets.token_hex(16)
+            if not cls.query.filter_by(key=key).count():
+                return key
+
+    @classmethod
+    def create(cls, crab):
+        key = cls.gen_key()
+        token = cls(crab=crab, key=key)
+        db.session.add(token)
+        db.session.commit()
+        return token
+
+
+class AccessToken(db.Model):
+    __tablename__ = 'access_tokens'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    crab = db.relationship('Crab', foreign_keys=[crab_id])
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f'<AccessToken (@{self.crab.username})>'
+
+    def delete(self):
+        self.deleted = True
+        db.session.commit()
+
+    @classmethod
+    def gen_key(cls):
+        while True:
+            key = secrets.token_hex(16)
+            if not cls.query.filter_by(key=key).count():
+                return key
+
+    @classmethod
+    def create(cls, crab):
+        key = cls.gen_key()
+        token = cls(crab=crab, key=key)
+        db.session.add(token)
+        db.session.commit()
+        return token

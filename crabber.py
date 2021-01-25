@@ -434,6 +434,55 @@ def stats():
 def debug():
     return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
 
+@app.route("/developer/", methods=("GET", "POST"))
+def developer():
+    current_user = utils.get_current_user()
+    access_tokens = models.AccessToken.query.filter_by(crab=current_user,
+                                                       deleted=False).all()
+    developer_keys = models.DeveloperKey.query.filter_by(crab=current_user,
+                                                         deleted=False).all()
+    if request.method == "POST":
+        action = request.form.get("user_action")
+
+        if action == 'create_developer_key':
+            if len(developer_keys) < API_MAX_DEVELOPER_KEYS:
+                models.DeveloperKey.create(current_user)
+                return utils.show_message('Created new developer key.')
+            else:
+                return utils.show_error(
+                    f'You are only allowed {API_MAX_DEVELOPER_KEYS} ' \
+                    'developer keys.')
+        elif action == 'create_access_token':
+            if len(access_tokens) < API_MAX_ACCESS_TOKENS:
+                models.AccessToken.create(current_user)
+                return utils.show_message('Created access token.')
+            else:
+                return utils.show_error(
+                    f'You are only allowed {API_MAX_ACCESS_TOKENS} ' \
+                    'access tokens.')
+        elif action == 'delete_developer_key':
+            key_id = request.form.get('developer_key_id')
+            if key_id:
+                key = models.DeveloperKey.query.filter_by(id=key_id).first()
+                if key:
+                    key.delete()
+                    return utils.show_message('Developer key deleted.')
+        elif action == 'delete_access_token':
+            key_id = request.form.get('access_token_id')
+            if key_id:
+                key = models.AccessToken.query.filter_by(id=key_id).first()
+                if key:
+                    key.delete()
+                    return utils.show_message('Access token deleted.')
+
+        # PRG pattern
+        return redirect(request.url)
+    else:
+        return render_template('developer.html',
+                               access_tokens=access_tokens,
+                               developer_keys=developer_keys,
+                               current_user=current_user)
+
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
