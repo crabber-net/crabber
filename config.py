@@ -25,5 +25,7 @@ RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # 
 BASE_URL = "http://localhost" if os.name == "nt" else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
 
+API_DEFAULT_CRAB_LIMIT = 10
+API_MAX_CRAB_LIMIT = 50
 API_DEFAULT_MOLT_LIMIT = 10
 API_MAX_MOLT_LIMIT = 50

@@ -346,6 +346,8 @@ def search():
         ajax_content = request.args.get('ajax_content')
 
         if query:
+            from extensions import db
+
             crab_results = models.Crab.query.filter_by(deleted=False, banned=False) \
                 .filter(db.or_(models.Crab.display_name.contains(query, autoescape=True),
                                models.Crab.username.contains(query, autoescape=True)))
@@ -382,6 +384,7 @@ def stats():
     if request.method == "POST":
         return utils.common_molt_actions()
 
+    from extensions import db
     # Query follow counts for users
     sub = db.session.query(models.following_table.c.following_id, func.count(models.following_table.c.following_id).label('count')) \
         .group_by(models.following_table.c.following_id).subquery()
@@ -434,6 +437,7 @@ def debug():
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
+    from extensions import db
     if utils.get_current_user().username in ADMINS:
         if request.method == "POST":
             action = request.form.get("user_action")
