@@ -7,6 +7,12 @@ from typing import Optional
 API = Blueprint('REST API v1', __name__)
 
 
+def get_api_key():
+    """ A key function for use by flask_limiter.
+    """
+    return request.args.get('api_key')
+
+
 def require_auth(request) -> Optional[dict]:
     access_token = request.args.get('access_token')
     if access_token:

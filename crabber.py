@@ -2,6 +2,8 @@ import calendar
 from config import *
 import datetime
 from flask import Flask, render_template, request, redirect, session, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import models
 import os
 import patterns
@@ -33,6 +35,13 @@ def register_extensions(app):
 def register_blueprints(app):
     import crabber_api
 
+    # Rate-limit API
+    limiter = Limiter(app, key_func=crabber_api.get_api_key)
+    limiter.limit(f'{API_RATE_LIMIT_SECOND}/second;'
+                  f'{API_RATE_LIMIT_MINUTE}/minute;'
+                  f'{API_RATE_LIMIT_HOUR}/hour')(crabber_api.API)
+
+    # Register API V1 blueprint
     app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
 
 
