@@ -165,8 +165,15 @@ def post_molt():
         if crab:
             molt_content = request.form.get('content')
             if molt_content:
-                new_molt = crab.molt(molt_content)
-                return api_utils.molt_to_json(new_molt), 201
+                if len(molt_content) <= MOLT_CHAR_LIMIT:
+                    new_molt = crab.molt(molt_content)
+                    return api_utils.molt_to_json(new_molt), 201
+                else:
+                    return abort(
+                        400,
+                        description='Molt length must be less than or equal ' \
+                        f'to {MOLT_CHAR_LIMIT} characters.'
+                    )
             else:
                 return abort(400, description='Missing required content.')
         else:
