@@ -247,7 +247,7 @@ def common_molt_actions() -> Response:
                 location = location.strip()
 
             # Bio JSON assembly
-            new_bio = dict()
+            new_bio = target_user.bio
             for key, value in request.form.items():
                 if "bio." in key:
                     if value.strip():
