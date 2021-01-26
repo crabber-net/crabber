@@ -38,6 +38,15 @@ def root():
     return 'Congrats. You\'ve taken your first step into a larger world.'
 
 
+@API.route('/authenticate/')
+def authenticate():
+    auth = require_auth(request)
+    if auth:
+        return api_utils.crab_to_json(api_utils.get_crab(auth['crab_id']))
+    else:
+        return abort(401, description='This endpoint requires authentication.')
+
+
 @API.route('/crabs/<crab_ID>/')
 def get_crab(crab_ID):
     crab = api_utils.get_crab(crab_ID)
