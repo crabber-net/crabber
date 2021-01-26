@@ -395,7 +395,9 @@ div.mini-molt:hover {
     position: absolute;
     top: 0;
 }
-
+.mini-molt-content {
+    overflow-wrap: anywhere;
+}
 .mini-molt-crop-square {
     /* Constant aspect ratio hack */
     height: 0px;
