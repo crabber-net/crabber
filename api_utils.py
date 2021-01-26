@@ -56,7 +56,8 @@ def get_crab_by_username(username: str) -> Optional['models.Crab']:
     """ Get a Crab by username.
     """
     crab = models.Crab.query \
-            .filter_by(username=username, deleted=False, banned=False).first()
+            .filter(models.Crab.username.ilike(username)) \
+            .filter_by(deleted=False, banned=False).first()
     return crab
 
 
