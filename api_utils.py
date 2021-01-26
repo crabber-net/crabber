@@ -172,13 +172,13 @@ def crab_to_json(crab: 'models.Crab', bio: bool = False) -> dict:
         "avatar": absolute_url(crab.avatar),
         "followers": crab.true_follower_count,
         "following": crab.true_following_count,
+        "register_time": get_timestamp(crab.register_time)
     }
     if bio:
         raw_bio = json.loads(crab.raw_bio)
         crab_bio = {
             "description": crab.description,
             "location": crab.location,
-            "register_time": get_timestamp(crab.register_time),
             **raw_bio
         }
         crab_dict['bio'] = crab_bio
