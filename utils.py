@@ -155,10 +155,7 @@ def common_molt_actions() -> Response:
                 img = request.files['molt-media']
                 if img.filename != '':
                     if img and allowed_file(img.filename):
-                        filename = str(uuid.uuid4()) + ".jpg"
-                        location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
-                        turtle_images.prep_and_save(img, location)
-                        img_attachment = "img/user_uploads/" + filename
+                        img_attachment = upload_image(img)
             new_molt = get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
             return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
         else:
@@ -362,3 +359,11 @@ def localize(dt: datetime.datetime) -> datetime.datetime:
     if new_dt.month in range(4, 11) or (new_dt.month == 3 and new_dt.day >= 8):
         new_dt += datetime.timedelta(hours=1)
     return new_dt
+
+def upload_image(image_file):
+    """ Saves image file and returns new location.
+    """
+    filename = str(uuid.uuid4()) + '.jpg'
+    location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
+    turtle_images.prep_and_save(image_file, location)
+    return 'img/user_uploads/' + filename

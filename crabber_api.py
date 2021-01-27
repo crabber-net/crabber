@@ -3,6 +3,7 @@ from config import *
 from flask import abort, Blueprint, request
 import models
 from typing import Optional
+import utils
 
 API = Blueprint('REST API v1', __name__)
 
@@ -106,13 +107,22 @@ def unfollow_crab(crab_ID):
         return abort(404, description='No Crab with that ID.')
 
 
-@API.route('/crabs/<crab_ID>/bio/')
-def get_crab_bio(crab_ID):
+@API.route('/crabs/<crab_ID>/bio/', methods=['GET', 'POST'])
+def crab_bio(crab_ID):
     crab = api_utils.get_crab(crab_ID)
     if crab:
-        return api_utils.crab_to_json(crab, bio=True)
+        if request.method == 'GET':
+            return api_utils.crab_to_json(crab, bio=True)
+        elif request.method == 'POST':
+            new_bio = {key: value for key, value in request.form.items()
+                       if key in ('age', 'description', 'emoji', 'jam',
+                                  'location', 'obsession', 'pronouns',
+                                  'quote', 'remember')}
+            crab.update_bio(new_bio)
+            return api_utils.crab_to_json(crab, bio=True)
     else:
         return abort(404, description='No Crab with that ID.')
+
 
 @API.route('/crabs/<crab_ID>/followers/')
 def get_crab_followers(crab_ID):
@@ -173,9 +183,28 @@ def post_molt():
         crab = api_utils.get_crab(auth['crab_id'])
         if crab:
             molt_content = request.form.get('content')
+            molt_image_link = request.form.get('image')
+            molt_image = request.files.get('image')
+            image_verified = False
+
+            if molt_image_link:
+                return abort(400,
+                             'Images must be submitted as files, not text.')
+            if molt_image:
+                if molt_image.filename != '':
+                    if molt_image and utils.allowed_file(molt_image.filename):
+                        image_verified = True
+                    else:
+                        return abort(400, 'There was a problem with the uploaded image.')
+                else:
+                    return abort(400, 'Image filename is blank. Aborting.')
             if molt_content:
                 if len(molt_content) <= MOLT_CHAR_LIMIT:
-                    new_molt = crab.molt(molt_content)
+                    if image_verified:
+                        molt_image = utils.upload_image(molt_image)
+                        new_molt = crab.molt(molt_content, image=molt_image)
+                    else:
+                        new_molt = crab.molt(molt_content)
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(
@@ -227,8 +256,28 @@ def reply_to_molt(molt_ID):
             crab = api_utils.get_crab(auth['crab_id'])
             if crab:
                 molt_content = request.form.get('content')
+                molt_image_link = request.form.get('image')
+                molt_image = request.files.get('image')
+                image_verified = False
+
+                if molt_image_link:
+                    return abort(400,
+                                 'Images must be submitted as files, not text.')
+                if molt_image:
+                    if molt_image.filename != '':
+                        if molt_image and utils.allowed_file(molt_image.filename):
+                            image_verified = True
+                        else:
+                            return abort(400, 'There was a problem with the uploaded image.')
+                    else:
+                        return abort(400, 'Image filename is blank. Aborting.')
                 if molt_content:
-                    new_molt = molt.reply(crab, molt_content)
+                    if image_verified:
+                        molt_image = utils.upload_image(molt_image)
+                        new_molt = molt.reply(crab, molt_content,
+                                              image=molt_image)
+                    else:
+                        new_molt = molt.reply(crab, molt_content)
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(400, description='Missing required content.')

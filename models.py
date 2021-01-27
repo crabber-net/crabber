@@ -130,7 +130,7 @@ class Crab(db.Model):
         """ Returns amount of trophies user has earned.
         """
         return len(self.trophies)
-    
+
     @property
     def unread_notifications(self):
         """
@@ -144,6 +144,14 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def update_bio(self, updates: dict):
+        """ Update bio with keys from `new_bio`.
+        """
+        new_bio = json.loads(self.raw_bio)
+        new_bio.update(updates)
+        self.raw_bio = json.dumps(new_bio)
+        db.session.commit()
 
     def ban(self):
         """ Banish this user from the site.
@@ -598,7 +606,7 @@ class Molt(db.Model):
         """
         self.reports += 1
         db.session.commit()
-        
+
     def edit(self, new_content):
         """ Change Molt content to `new_content`.
         """
