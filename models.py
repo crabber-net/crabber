@@ -148,8 +148,14 @@ class Crab(db.Model):
     def update_bio(self, updates: dict):
         """ Update bio with keys from `new_bio`.
         """
+        # Load bio JSON from string
         new_bio = json.loads(self.raw_bio)
+        # Update bio with new values
         new_bio.update(updates)
+        # Remove empty fields
+        new_bio = {k: v for k, v in new_bio.items()
+                   if (str(v.strip()) if v is not None else v)}
+        # Convert bio back to JSON string and update in database
         self.raw_bio = json.dumps(new_bio)
         db.session.commit()
 

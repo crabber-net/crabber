@@ -117,7 +117,8 @@ def crab_bio(crab_ID):
             new_bio = {key: value for key, value in request.form.items()
                        if key in ('age', 'description', 'emoji', 'jam',
                                   'location', 'obsession', 'pronouns',
-                                  'quote', 'remember')}
+                                  'quote', 'remember')
+                       and value}
             crab.update_bio(new_bio)
             return api_utils.crab_to_json(crab, bio=True)
     else:
