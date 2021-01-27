@@ -203,6 +203,8 @@ def post_molt():
                 if len(molt_content) <= MOLT_CHAR_LIMIT:
                     if image_verified:
                         molt_image = utils.upload_image(molt_image)
+                        if molt_image is None:
+                            return abort(400, 'Image is corrupted.')
                         new_molt = crab.molt(molt_content, image=molt_image)
                     else:
                         new_molt = crab.molt(molt_content)

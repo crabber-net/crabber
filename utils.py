@@ -156,6 +156,11 @@ def common_molt_actions() -> Response:
                 if img.filename != '':
                     if img and allowed_file(img.filename):
                         img_attachment = upload_image(img)
+                        if img_attachment is None:
+                            return show_error('The image you\'re attempting ' \
+                                              'to upload is either corrupted ' \
+                                              'or not a valid image file.')
+
             new_molt = get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
             return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
         else:
@@ -365,5 +370,8 @@ def upload_image(image_file):
     """
     filename = str(uuid.uuid4()) + '.jpg'
     location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
-    turtle_images.prep_and_save(image_file, location)
-    return 'img/user_uploads/' + filename
+    try:
+        turtle_images.prep_and_save(image_file, location)
+        return 'img/user_uploads/' + filename
+    except turtle_images.UnidentifiedImageError:
+        return None
