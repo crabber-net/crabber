@@ -197,7 +197,9 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "mentions": list(set(molt.raw_mentions.lower().splitlines())),
         "timestamp": get_timestamp(molt.timestamp),
         "replying_to": molt.original_molt_id if molt.is_reply else None,
-        "image": absolute_url(molt.image)
+        "image": absolute_url(molt.image),
+        "likes": len(molt.true_likes),
+        "remolts": len(molt.true_remolts)
     }
     return molt_json
 
