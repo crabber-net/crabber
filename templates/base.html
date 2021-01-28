@@ -6,7 +6,8 @@
     {% block head %}
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} | Crabber</title>
-    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/svg+xml">
+    <link rel="alternate icon" href="{{url_for('static', filename='img/favicon.png')}}">
 
     <!-- Mobile web app -->
     <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
