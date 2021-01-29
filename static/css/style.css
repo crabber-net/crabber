@@ -309,6 +309,8 @@ div.mini-molt {
     /* position: relative; */
     font-size: 13px;
     transition: ease-in-out 200ms;
+    /* This has to be visible for the pop-ups to work */
+    overflow: visible;
 }
 div.mini-molt:hover {
     background-color: var(--dark-less);
@@ -396,10 +398,13 @@ div.mini-molt:hover {
     top: 0;
 }
 .mini-molt-text-box {
-    overflow: hidden;
+    /* This has to be visible for the pop-ups to work */
+    overflow: visible;
 }
 .mini-molt-content {
     overflow-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
 }
 .mini-molt-crop-square {
     /* Constant aspect ratio hack */
@@ -1294,8 +1299,4 @@ table#user-info th {
 }
 .mini-molt.trophy {
 	overflow: hidden;
-}
-
-#loaded-molts {
-    overflow-x: hidden;
 }
