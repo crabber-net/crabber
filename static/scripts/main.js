@@ -162,6 +162,9 @@ function removeImg(closeBtn) {
     // Clear image input
     form.find('.custom-file-input').val("");
 
+    // Re-evaluate submit button status
+    updateCounter.call(form.find('textarea'));
+
     // Hide image preview, hide close button, and show image picker
     imgPreview.addClass("d-none");
     $(closeBtn).addClass("d-none");
@@ -169,7 +172,7 @@ function removeImg(closeBtn) {
 }
 
 function subMolt(form) {
-    if (form['molt_content'].value) {
+    if (form['molt_content'].value || form['molt-media'].value) {
         $(form).find('button strong').text('Uploading...');
         $(form).attr("disabled", "");
         return true;
@@ -189,13 +192,22 @@ function loadingIcon(e) {
 
 // Character counter stuff ///////////////////////////////////////////////////////////
 function updateCounter() {
-    var charLimit = 240; 
-    let textarea = $(this);
-    let counter = textarea.parents("form").find(".mini-character-counter");
+    var form = $(this).parents('form');
+    var charLimit = 240;
+    let textarea = form.find('textarea');
+    let counter = form.find(".mini-character-counter");
     counter.text(charLimit - textarea.val().length);
 
     // Enable/disable submit button
-    textarea.parents("form").find("button").attr("disabled", textarea.val().length == 0);
+    let submitEnabled = moltFormHasContent(form);
+    form.find("button").attr("disabled", !submitEnabled);
+}
+
+function moltFormHasContent(form) {
+    let textarea = form.find('textarea');
+    let imageForm = form.find("input[type=file]");
+
+    return !(textarea.val().length == 0 && imageForm.get(0) ? imageForm.val().length == 0 : false);
 }
 
 // Scroll-back button stuff //////////////////////////////////////////////////////////

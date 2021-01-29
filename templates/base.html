@@ -229,7 +229,7 @@
                                 <form action={{location}} method="POST" enctype="multipart/form-data" onsubmit="return subMolt(this);">
                                     <div class="mini-compose-textarea">
                                         <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
-                                            placeholder="How are you feeling?"></textarea required>
+                                            placeholder="How are you feeling?"></textarea>
                                         <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <img class="img-preview w-100 rounded-media"></img>
                                         </div>
@@ -286,7 +286,7 @@
                                 <form action={{location}} method="POST" enctype="multipart/form-data" onsubmit="return subMolt(this);">
                                     <div class="mini-compose-reply-textarea">
                                         <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
-                                            placeholder="Remember to be kind"></textarea required>
+                                            placeholder="Remember to be kind"></textarea>
                                         <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <img class="img-preview w-100 rounded-media"></img>
                                         </div>
@@ -343,7 +343,7 @@
                                 <form action={{location}} method="POST" enctype="multipart/form-data" onsubmit="return subMolt(this);">
                                     <div class="mini-compose-reply-textarea">
                                         <textarea id="edit-content" name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
-                                            placeholder="Remember to be kind"></textarea required>
+                                            placeholder="Remember to be kind"></textarea>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
                                         <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
@@ -421,7 +421,7 @@
         })
 
         // Update character count
-        $(".mini-compose-textarea textarea, .mini-compose-reply-textarea textarea").each(function(index, el) {
+        $(".mini-compose-textarea textarea, .mini-compose-reply-textarea textarea, .mini-molt-text-box input[type=file]").each(function(index, el) {
             // Bind change event to function
             $(el).on("input propertychange", updateCounter);
             // Run on init (in case of text being previously filled)

@@ -3,6 +3,7 @@ import crabber
 import datetime
 import extensions
 from flask import redirect, request
+from sqlalchemy import func
 import json
 import models
 import patterns
@@ -76,7 +77,9 @@ def validate_username(username: str) -> bool:
     :param username: Username to validate
     :return: Whether it's been taken
     """
-    return not models.Crab.query.filter_by(deleted=False).filter(models.Crab.username.like(username)).all()
+    return not models.Crab.query.filter_by(deleted=False) \
+            .filter(func.lower(models.Crab.username) == func.lower(username)) \
+            .count()
 
 
 def validate_email(email: str) -> bool:
@@ -147,8 +150,8 @@ def common_molt_actions() -> Response:
         return show_error("There was an error uploading your image")
 
     # Submit new molt
-    elif action == "submit_molt":
-        if request.form.get('molt_content'):
+    elif action in ('submit_molt', 'submit_reply_molt'):
+        if request.form.get('molt_content') or request.files.get('molt-media'):
             img_attachment = None
             # Handle uploaded images
             if request.files.get("molt-media"):
@@ -161,10 +164,30 @@ def common_molt_actions() -> Response:
                                               'to upload is either corrupted ' \
                                               'or not a valid image file.')
 
-            new_molt = get_current_user().molt(request.form.get('molt_content'), image=img_attachment)
-            return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
+            if action == 'submit_molt':
+                new_molt = get_current_user().molt(
+                    request.form.get('molt_content'),
+                    image=img_attachment
+                )
+                return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
+            elif action == 'submit_reply_molt':
+                target_molt = models.Molt.query \
+                        .filter_by(id=molt_id, deleted=False) \
+                        .filter(models.Molt.author.has(deleted=False,
+                                                       banned=False)) \
+                        .first()
+                if target_molt:
+                    reply = target_molt.reply(
+                        get_current_user(),
+                        request.form.get('molt_content'),
+                        image=img_attachment
+                    )
+                    return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
+                else:
+                    return show_error('The Molt you\'re attempting to reply to '
+                                      'no longer exists.')
         else:
-            return show_error("Molts cannot be devoid of text")
+            return show_error('Molts require either text or an image.')
 
     elif action == "follow":
         target_user = models.Crab.query.filter_by(id=request.form.get('target_user')).first()
@@ -173,22 +196,6 @@ def common_molt_actions() -> Response:
     elif action == "unfollow":
         target_user = models.Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().unfollow(target_user)
-
-    elif action == "submit_reply_molt":
-        target_molt = models.Molt.query.filter_by(id=molt_id).first()
-        if request.form.get('molt_content'):
-            img_attachment = None
-            # Handle uploaded images
-            if request.files.get("molt-media"):
-                img = request.files['molt-media']
-                if img.filename != '':
-                    if img and allowed_file(img.filename):
-                        filename = str(uuid.uuid4()) + os.path.splitext(img.filename)[1]
-                        location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
-                        img.save(location)
-                        img_attachment = "img/user_uploads/" + filename
-            reply = target_molt.reply(get_current_user(), request.form.get('molt_content'), image=img_attachment)
-            return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
 
     elif action == "submit_molt_edit":
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
@@ -270,21 +277,26 @@ def common_molt_actions() -> Response:
         new_email = request.form.get('email').strip()
         new_username = request.form.get('username').strip()
         if validate_email(new_email) or target_user.email == new_email:
-            if validate_username(new_username) or target_user.username == new_username:
+            if validate_username(new_username) \
+            or target_user.username == new_username:
                 if len(new_username) in range(4, 32):
                     if patterns.username.fullmatch(new_username):
                         target_user.email = new_email
                         target_user.username = new_username
                         db.session.commit()
-                        return show_message("Changes saved.")
+                        return show_message('Changes saved.')
                     else:
-                        return show_error("Username must only contain letters, numbers, and underscores")
+                        return show_error('Username must only contain letters, '
+                                          'numbers, and underscores')
                 else:
-                    return show_error("Username must be at least 4 characters and less than 32")
+                    return show_error('Username must be at least 4 characters '
+                                      'and less than 32')
             else:
-                return show_error("That username is taken")
+                return show_error('That username is taken')
         else:
-            return show_error("An account with that email address already exists")
+            return show_error(
+                'An account with that email address already exists'
+            )
 
     elif action == "update_general_settings":
         target_user = get_current_user()
