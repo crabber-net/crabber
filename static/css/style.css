@@ -396,7 +396,7 @@ div.mini-molt:hover {
     top: 0;
 }
 .mini-molt-text-box {
-    overflow: visible;
+    overflow: hidden;
 }
 .mini-molt-content {
     overflow-wrap: break-word;
@@ -1294,4 +1294,8 @@ table#user-info th {
 }
 .mini-molt.trophy {
 	overflow: hidden;
+}
+
+#loaded-molts {
+    overflow-x: hidden;
 }
