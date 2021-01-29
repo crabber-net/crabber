@@ -48,6 +48,11 @@ def register_blueprints(app):
 app = create_app()
 
 
+@app.route('/robots.txt')
+def robots():
+    return 'We <3 robots!'
+
+
 @app.route("/", methods=("GET", "POST"))
 def index():
     # Handle forms and redirect to clear post data on browser
