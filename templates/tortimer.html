@@ -72,7 +72,9 @@
             Reports:
             <strong>{{molt.reports}}</strong>
         </div>
-        {% include "molt.html" %}
+        {% with always_show=true %}
+            {% include "molt.html" %}
+        {% endwith %}
         <div class="border-bottom border-dark p-2">
             <form method="POST" onsubmit="return confirm('Are you sure?')">
                 <input type="hidden" name="target" value="molt">
@@ -117,7 +119,9 @@
             Reports:
             <strong>{{molt.reports}}</strong>
         </div>
-        {% include "molt.html" %}
+        {% with always_show=true %}
+            {% include "molt.html" %}
+        {% endwith %}
         <div class="border-bottom border-dark p-2">
             <form method="POST" onsubmit="return confirm('Are you sure?')">
                 <input type="hidden" name="target" value="molt">

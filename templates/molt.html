@@ -27,6 +27,11 @@
 
 {% set is_deleted = molt.deleted %}
 {% set is_banned = molt.author.banned %}
+{% if always_show %}
+    {% set is_deleted = false %}
+    {% set is_banned = false %}
+{% endif %}
+
 
 <div class="mini-molt {{'border-bottom' if not hide_border else ''}} border-dark px-3 py-2 {{'mb-2' if show_replies else ''}} d-flex flex-row absolute-container">
     {% if is_deleted %}
