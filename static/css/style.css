@@ -403,7 +403,7 @@ div.mini-molt:hover {
 }
 .mini-molt-content {
     overflow-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
     overflow: hidden;
 }
 .mini-molt-crop-square {
