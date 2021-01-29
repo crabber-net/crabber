@@ -17,7 +17,7 @@
         <form action={{location}} method="POST" enctype="multipart/form-data" onsubmit="return subMolt(this);">
             <div class="mini-compose-textarea">
                 <textarea name="molt_content" maxlength="{{MOLT_CHAR_LIMIT}}" rows="5" class="my-2 w-100"
-                    placeholder="{{placeholder}}" onfocus="$(this).parents('.mini-compose-box').addClass('focused')" required></textarea>
+                    placeholder="{{placeholder}}" onfocus="expandMoltBox(this);" required></textarea>
                 <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                     <img class="img-preview w-100 rounded-media"></img>
                 </div>
@@ -47,3 +47,11 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('.mini-compose-box').length) {
+            collapseMoltBox();
+        }
+    });
+</script>

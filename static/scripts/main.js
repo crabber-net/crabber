@@ -251,3 +251,12 @@ function replaceMolt(elem, text) {
 function expandImage(url) {
     $('#image_modal .image-modal-body').css('background-image', `url("${url}")`);
 }
+
+function expandMoltBox() {
+    $('.mini-compose-box').addClass('focused');
+}
+function collapseMoltBox() {
+    composeBox = $('.mini-compose-box')
+    if (!moltFormHasContent(composeBox.find('form')))
+        composeBox.removeClass('focused');
+}
