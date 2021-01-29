@@ -103,11 +103,7 @@
                         onClick="if (confirm('Are you sure you want to un-remolt this?')) {
                         this.parentNode.submit();$(this).parents('div.mini-molt').remove();}"
                     {% else %}
-                        {% if molt.author.id != current_user.id %}
-                            onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
-                        {% else %}
-                            onClick="alert('Don\'t remolt your own stuff!');"
-                        {% endif %}
+                        onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
                     {% endif %}>
                     <span class="mini-molt-action-icon" data-width="20" data-height="20" data-jam="repeat"></span>
                 </div>
