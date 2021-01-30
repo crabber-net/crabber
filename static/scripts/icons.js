@@ -1,4 +1,3 @@
-iterations = 0;
 function loadIcons() {
     // Finds and replaces all jam-icon <span> elements with SVG images.
 
@@ -9,7 +8,6 @@ function loadIcons() {
         $.ajax({
             url: `/static/img/jam-icons/${iconID}.svg`,
             success: function(data) {
-                iterations += 1;
                 let svg = $(data.children);
                 svg.attr('width', iconSpan.data('width'));
                 svg.attr('height', iconSpan.data('height'));
@@ -19,5 +17,4 @@ function loadIcons() {
             }
         });
     });
-    console.log('Iterations', iterations);
 }
