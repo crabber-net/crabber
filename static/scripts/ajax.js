@@ -38,7 +38,7 @@ function loadHTML(url) {
             }
 
             // Refresh Jam Icons
-            $("#content-body").append('<script src="https://unpkg.com/jam-icons/js/jam.min.js"></script>')
+            loadIcons();
         },
         error: function() {
             // Failed to load page, navigating directly.
