@@ -1,0 +1,106 @@
+{% set hexID = uuid() %}
+{% set endpoint = endpoint or location %}
+{% set section = section or 'true' %}
+{% set page = page or 1 %}
+
+<!-- Content loading indicator -->
+<div id="{{hexID}}-loading" class="content-loading-indicator">
+    {% if slow_connection %}
+    <svg xmlns="http://www.w3.org/2000/svg" width="963.625" height="629.032" viewBox="0 0 963.625 629.032">
+        <path id="claw_2" data-name="claw 2" class="cls-1" d="M979.339,278.832a121.009,121.009,0,0,1-90.236,93.48c-0.089-.23-0.188-0.457-0.279-0.687a234.619,234.619,0,0,1-155,119.608c0.108,2.91.175,5.83,0.175,8.767a233.571,233.571,0,0,1-13.16,77.506,183.9,183.9,0,0,1,196.483,72.747,277.844,277.844,0,0,0-192.879-13.776,172.376,172.376,0,0,1,88.69,121.45,260.675,260.675,0,0,0-160.645-87.458,116.841,116.841,0,0,1,54.142,104.212A176.325,176.325,0,0,0,613.538,692.3q-7.012,9.54-13.654,19.361a234.427,234.427,0,0,1-199.768,0q-6.63-9.828-13.654-19.361a176.33,176.33,0,0,0-93.1,82.406,116.843,116.843,0,0,1,54.1-104.224,260.67,260.67,0,0,0-160.579,87.44,172.363,172.363,0,0,1,88.7-121.436A277.843,277.843,0,0,0,82.677,650.253,183.894,183.894,0,0,1,279.16,577.506,233.571,233.571,0,0,1,266,500c0-2.937.066-5.857,0.174-8.768a234.617,234.617,0,0,1-155-119.607c-0.091.23-.19,0.457-0.279,0.687A121.032,121.032,0,0,1,86.643,145.648,134.56,134.56,0,0,0,61.9,211.041c-1.105,11.237-.692,24.582,2.1,40.072C70.435,286.86,86.969,309.237,96,315c7.226,4.611,17.547,8.524,32.379,9.452a78.061,78.061,0,0,0,33.308-5.24c0.112,0.187.229,0.372,0.342,0.559a90.119,90.119,0,0,0,47.916-80.2,91,91,0,0,1-24.546,114.4,353.361,353.361,0,0,0,91.027,83.038,455.361,455.361,0,0,1,65.457-30.11A43,43,0,0,0,423,387c0-.541-0.021-1.078-0.041-1.614a461.8,461.8,0,0,1,154.077.171c-0.015.48-.036,0.959-0.036,1.443a43,43,0,0,0,80.959,20.2,455.3,455.3,0,0,1,65.143,30.1,353.354,353.354,0,0,0,91.5-83.336,91,91,0,0,1-24.546-114.4,90.119,90.119,0,0,0,47.916,80.2c0.113-.187.23-0.372,0.342-0.559a78.061,78.061,0,0,0,33.308,5.24c14.832-.928,25.153-4.841,32.379-9.452,9.031-5.763,25.565-28.14,32-63.887,2.79-15.49,3.2-28.836,2.1-40.074a134.55,134.55,0,0,0-24.743-65.391A121.045,121.045,0,0,1,979.339,278.832ZM619.5,423A34.5,34.5,0,1,1,654,388.5,34.5,34.5,0,0,1,619.5,423Zm-239,0A34.5,34.5,0,1,1,415,388.5,34.5,34.5,0,0,1,380.5,423Z" transform="translate(-18.188 -145.656)"/>
+    </svg>
+    {% else %}
+    <!-- Animated logo -->
+    <img src="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+    {% endif %}
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+</div>
+<div id="{{hexID}}-failure" class="content-loading-failed d-none">
+    <a href="javascript:loadContent();">failed to load content :(<br>click to try again.</a>
+</div>
+
+<!-- Ajax request information -->
+<meta name="{{hexID}}-page-number" content={{page}}>
+<meta name="{{hexID}}-endpoint" content={{endpoint}}>
+<meta name="{{hexID}}-title" content={{title}}>
+
+<div id="{{hexID}}-loaded-content"></div>
+
+<!-- Load timeline content -->
+<script>
+    // Jinja-determined
+    var endpoint_{{hexID}} = '{{endpoint}}';
+    var pageTitle_{{hexID}} = '{{title}}';
+
+    // Derived
+    var loadedContent_{{hexID}} = $('#{{hexID}}-loaded-content');
+    var loadingIndicator_{{hexID}} = $('#{{hexID}}-loading');
+    var loadingFailureIndicator_{{hexID}} = $('#{{hexID}}-failure');
+
+    // Ajax history handler
+    window.onpopstate = function(e) {
+        if(e.state) {
+            loadedContent_{{hexID}}.empty();
+            loadedContent_{{hexID}}.append(e.state);
+        }
+    };
+
+    function pageNumber_{{hexID}}(page=null) {
+        if (page === null) {
+            page = parseInt($('meta[name="{{hexID}}-page-number"]').attr('content'));
+        }
+        else {
+            parseInt($('meta[name="{{hexID}}-page-number"]').attr('content', page));
+        }
+        return page;
+    }
+
+    function insertBodyHTML_{{hexID}}(data) {
+        // Update location string
+        let newLocation = new URL(window.location);
+        newLocation.searchParams.set(
+            '{{section}}-p',
+            pageNumber_{{hexID}}()
+        );
+
+        window.history.pushState(
+            data,
+            pageTitle_{{hexID}},
+            newLocation.href
+        );
+        loadedContent_{{hexID}}.append(data);
+        loadingIndicator_{{hexID}}.addClass('d-none');
+    }
+
+    function contentLoadError_{{hexID}}() {
+        loadingFailureIndicator_{{hexID}}.removeClass('d-none');
+        loadingIndicator_{{hexID}}.addClass('d-none');
+    }
+
+    function loadContent_{{hexID}}(page=null) {
+        page = pageNumber_{{hexID}}(page);
+
+        // Clear loaded content if any
+        loadedContent_{{hexID}}.empty();
+
+        // Display loading indicator
+        loadingIndicator_{{hexID}}.removeClass('d-none');
+        loadingFailureIndicator_{{hexID}}.addClass('d-none');
+
+        // Make request
+        $.ajax({
+            url: endpoint_{{hexID}},
+            type: 'GET',
+            data: {
+                'ajax_section': '{{section}}',
+                '{{section}}-p': page,
+                'hex_ID': '{{hexID}}'
+            },
+            success: insertBodyHTML_{{hexID}},
+            error: contentLoadError_{{hexID}}
+        });
+    }
+
+    loadContent_{{hexID}}();
+</script>
