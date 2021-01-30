@@ -12,21 +12,45 @@
     <div class="notif-indent ml-5 mr-2 w-100">
         <div class="notif-icon-row">
             {% if notif.type == "other" %}
-                <span class="notif-icon notif-other" data-width="26" data-height="26" data-jam="bell-f"></span>
+
+                <svg class="notif-icon notif-other" width="26" height="26" data-jam="bell-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#bell-f"></use>
+                </svg>
             {% elif notif.type == "trophy" %}
-                <span class="notif-icon notif-trophy" data-width="26" data-height="26" data-jam="medal-f"></span>
+
+                <svg class="notif-icon notif-trophy" width="26" height="26" data-jam="medal-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#medal-f"></use>
+                </svg>
             {% elif notif.type == "mention" %}
-                <span class="notif-icon notif-mention" data-width="26" data-height="26" data-jam="message-writing-f"></span>
+
+                <svg class="notif-icon notif-mention" width="26" height="26" data-jam="message-writing-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#message-writing-f"></use>
+                </svg>
             {% elif notif.type == "like" %}
-                <span class="notif-icon notif-like" data-width="26" data-height="26" data-jam="heart-f"></span>
+
+                <svg class="notif-icon notif-like" width="26" height="26" data-jam="heart-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#heart-f"></use>
+                </svg>
             {% elif notif.type == "reply" %}
-                <span class="notif-icon notif-reply" data-width="26" data-height="26" data-jam="message-f"></span>
+
+                <svg class="notif-icon notif-reply" width="26" height="26" data-jam="message-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#message-f"></use>
+                </svg>
             {% elif notif.type == "remolt" %}
-                <span class="notif-icon notif-remolt" data-width="26" data-height="26" data-jam="repeat"></span>
+
+                <svg class="notif-icon notif-remolt" width="26" height="26" data-jam="repeat">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#repeat"></use>
+                </svg>
             {% elif notif.type == "follow" %}
-                <span class="notif-icon notif-follow" data-width="26" data-height="26" data-jam="plus"></span>
+
+                <svg class="notif-icon notif-follow" width="26" height="26" data-jam="plus">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#plus"></use>
+                </svg>
             {% elif notif.type == "unfollow" %}
-                <span class="notif-icon notif-unfollow" data-width="26" data-height="26" data-jam="skull-f"></span>
+
+                <svg class="notif-icon notif-unfollow" width="26" height="26" data-jam="skull-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#skull-f"></use>
+                </svg>
             {% endif %}
             {% if notif.type != "other" and notif.type != "trophy" %}
                 <a href="/user/{{notif.sender.username}}" class="zindex-front">

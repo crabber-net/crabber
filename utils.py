@@ -7,6 +7,7 @@ from sqlalchemy import func
 import json
 import models
 import patterns
+import random
 import turtle_images
 import uuid
 from werkzeug.wrappers import Response
@@ -387,3 +388,12 @@ def upload_image(image_file):
         return 'img/user_uploads/' + filename
     except turtle_images.UnidentifiedImageError:
         return None
+
+
+def uuid(digits=6):
+    """ An insecure unique identifier to disambiguate multiple instances of
+        automatically generated content on a single page.
+    """
+    hex_chars = '0123456789ABCDEF'
+    hex_digits = [random.choice(hex_chars) for _ in range(digits)]
+    return ''.join(hex_digits)

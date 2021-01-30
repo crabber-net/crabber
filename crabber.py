@@ -257,9 +257,9 @@ def user(username):
         elif this_user.banned:
             return render_template('not-found.html', current_user=utils.get_current_user(), message='This user has been banned.')
         else:
-            m_page_n = request.args.get('mp', 1, type=int)
-            r_page_n = request.args.get('rp', 1, type=int)
-            l_page_n = request.args.get('lp', 1, type=int)
+            m_page_n = request.args.get('molts-p', 1, type=int)
+            r_page_n = request.args.get('replies-p', 1, type=int)
+            l_page_n = request.args.get('likes-p', 1, type=int)
             molts = models.Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
                 models.Molt.timestamp.desc()).paginate(m_page_n, MOLTS_PER_PAGE, False)
             replies = models.Molt.query.filter_by(author=this_user, deleted=False, is_reply=True) \
@@ -278,11 +278,19 @@ def user(username):
                         current_tab=current_tab, replies=replies
                     )
                 return jsonify(blocks)
+            elif request.args.get('ajax_section'):
+                section = request.args.get('ajax_section')
+                hex_ID = request.args.get('hex_ID')
+                return render_template(f'profile-ajax-tab-{section}.html',
+                                       current_page=("own-profile" if this_user == utils.get_current_user() else ""),
+                                       molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,
+                                       current_tab=current_tab, replies=replies, hexID=hex_ID)
             else:
                 return render_template('profile.html',
                                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                                       molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,
-                                       current_tab=current_tab, replies=replies)
+                                       current_user=utils.get_current_user(), this_user=this_user,
+                                       current_tab=current_tab, m_page_n=m_page_n,
+                                       r_page_n=r_page_n, l_page_n=l_page_n)
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
@@ -676,7 +684,8 @@ def inject_global_vars():
                 localize=utils.localize,
                 server_start=SERVER_START,
                 current_year=now.utcnow().year,
-                error=error, msg=msg, location=location)
+                error=error, msg=msg, location=location,
+                uuid=utils.uuid)
 
 
 @app.template_filter()

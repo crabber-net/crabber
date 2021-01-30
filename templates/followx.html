@@ -3,7 +3,9 @@
 {% block heading %}
     <div class="row">
         <div class="col-2 col-lg-1 clickable" onclick="location.href='/user/{{this_user.username}}'">
-            <span class="text-primary heading-back-arrow" data-width="24" data-height="24" data-jam="arrow-left"></span>
+            <svg class="text-primary heading-back-arrow" width="24" height="24" data-jam="arrow-left">
+                <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-left"></use>
+            </svg>
         </div>
         <div class="col px-0">
             {{this_user.display_name}}<br><small class="text-muted">@{{this_user.username}}</small>

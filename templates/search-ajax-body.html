@@ -28,7 +28,7 @@
     <div class="content-loading-failed d-none">
         <a href="javascript:loadContent();">failed to load content :(<br>click to try again.</a>
     </div>
-    
+
     <!-- Display search results here once loaded -->
     <div id="search-results">
         <!-- Pre-search quote -->
@@ -90,7 +90,7 @@
 
         loadContent(query, 1);
     }
-    
+
     // Fetch search results from server and display them
     function loadContent(query=null, page=null) {
         if (query === null) {
@@ -125,7 +125,7 @@
     // Do Ajax request on load if query is set
     if ($('meta[name="query"]').attr("content")) {
         loadContent();
-    } 
+    }
     // Create history state to fall back on
     else {
         window.history.pushState({'html': $("#search-results").html(), 'query': null, 'page': 1}, "Search | Crabber", '/search');

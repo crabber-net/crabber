@@ -53,7 +53,7 @@
 
         // Update scrobble count
         $("#lastfm-scrobble-count").text(totalScrobbles);
-        
+
         // Reveal last played/currently playing
         $("#lastfm-now-playing").removeClass("d-none");
         // Reveal scrobble count
@@ -67,7 +67,7 @@
 
         // Update loved count
         $("#lastfm-loved-count").text(lovedTracks);
-        
+
         // Reveal loved count
         $("#lastfm-loved").removeClass("d-none");
     }
@@ -89,7 +89,10 @@
     <div class="profile-box-banner" {{macros.expand_img() if current_page != "own-profile" else ""}}>
         {% if current_page == "own-profile" %}
             <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
-                <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
+
+                <svg class="text-light" width="46" height="46" data-jam="camera-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
+                </svg>
             </div>
         {% endif %}
         <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
@@ -98,10 +101,13 @@
         <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{macros.expand_img() if current_page != "own-profile" else ""}}>
             {% if current_page == "own-profile" %}
             <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
-                <span class="text-light" data-width="46" data-height="46" data-jam="camera-f"></span>
+
+                <svg class="text-light" width="46" height="46" data-jam="camera-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
+                </svg>
             </div>
             {% endif %}
-            <div class="rounded-circle profile-picture shadow-expand" 
+            <div class="rounded-circle profile-picture shadow-expand"
                 style="background-image: url('{{url_for('static', filename=this_user.avatar)}}');"
                 src="{{url_for('static', filename=this_user.avatar)}}"></div>
         </div>
@@ -133,7 +139,7 @@
             {% endif %}
         </div>
         <div class="profile-box-names mt-2">
-            <strong class="profile-box-display-name" 
+            <strong class="profile-box-display-name"
                 {% if current_page == "own-profile" %}
                     onkeypress="return (this.innerText.length <= 32)" contentEditable
                 {% endif %}>
@@ -157,12 +163,18 @@
         </div>
         <div class="profile-box-join-date text-muted mt-1">
             <div class="d-inline-block mr-2" id="join-date">
-                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="calendar-f"></span>
+
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar-f"></use>
+                </svg>
                 Joined {{localize(this_user.register_time).strftime('%B %Y')}}
             </div>
             {% if this_user.location %}
             <div class="d-inline-block mr-2" id="user-location">
-                <span class="mini-molt-action-icon pb-1" data-width="16" data-height="20" data-jam="map-marker-f"></span>
+
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker-f"></use>
+                </svg>
                 {{this_user.location}}
             </div>
             {% endif %}
@@ -181,18 +193,21 @@
         </div>
         <div class="profile-box-following mt-1">
             <a class="text-inherit" href="/user/{{this_user.username}}/following">
-            <div class="d-inline mr-2"><strong>{{this_user.true_following|length}}</strong> 
+            <div class="d-inline mr-2"><strong>{{this_user.true_following|length}}</strong>
                 <span class="text-muted">Following</span></div></a>
             <a class="text-inherit" href="/user/{{this_user.username}}/followers">
             <div class="d-inline mr-2"><strong>{{this_user.true_followers|length}}</strong>
                 <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
         </div>
-        
+
         <!-- SHELL Section -->
         <div class="shell p-1 mt-1 mb-0 jumbotron" id="shell-dropdown">
             <!-- Shell toggle -->
             <button id="shell-toggle" class="btn btn-trans pl-0 w-100 text-left">
-                <span class="shell-toggle-chevron" data-width="24" data-height="24" data-jam="chevron-right"></span>
+
+                <svg class="shell-toggle-chevron" width="24" height="24" data-jam="chevron-right">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+                </svg>
                 Full bio
             </button>
 
@@ -250,7 +265,10 @@
                             {% if this_user.following | length > 0 %}
                                 {{"%.1f"|format(this_user.followers | length / this_user.following | length)}}
                             {% else %}
-                                <span class="" data-width="16" data-height="16" data-jam="infinite"></span>
+
+                            <svg class="" width="16" height="16" data-jam="infinite">
+                                <use href="{{url_for('static', filename='img/sprites.svg')}}#infinite"></use>
+                            </svg>
                             {% endif %}
                         </strong> follower/following ratio</li>
                     </ul>
@@ -290,94 +308,23 @@
 
 <!-- All molts live here! -->
 <div id="molts" class="{{ 'd-none' if current_tab != 'molts' else '' }}">
-    
-    {% if this_user.pinned %}
-        <!-- Pinned Molt -->
-        {% with molt=this_user.pinned, is_pin=True %}
-            <div class="border-bottom border-dark border-thicc">
-                {% include "molt.html" %}
-            </div>
-        {% endwith %}
-    {% endif %}
-
-    {% for molt in molts.items %}
-        {% with thread=true, show_replies_from=molt.author, depth_limit=3 %}
-            {% include "molt.html" %}
-        {% endwith %}
-    {% else %}
-        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user does not have any molts 🤔</div>
-    {% endfor %}
-    {% if molts.has_next or molts.has_prev %}
-        <nav aria-label="Page navigation buttons" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item {{'' if molts.has_prev else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, mp=molts.prev_num)}}" tabindex="-1">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
-                    </a>
-                </li>
-                <li class="page-item {{'' if molts.has_prev else 'disabled'}}"><a class="page-link" href="{{url_for('user', username=this_user.username)}}">Home</a></li>
-                <li class="page-item {{'' if molts.has_next else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, mp=molts.next_num)}}">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
+    {% with section='molts', page=m_page_n %}
+        {% include 'generic-ajax-loader.html' %}
+    {% endwith %}
 </div>
 
 <!-- All replies live here! -->
 <div id="replies" class="{{ 'd-none' if current_tab != 'replies' else '' }}">
-    {% for molt in replies.items %}
-        {% include "molt.html" %}
-    {% else %}
-        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not replied to anything</div>
-    {% endfor %}
-    {% if replies.has_next or replies.has_prev %}
-        <nav aria-label="Page navigation buttons" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item {{'' if replies.has_prev else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, rp=replies.prev_num, tab='replies')}}" tabindex="-1">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
-                    </a>
-                </li>
-                <li class="page-item {{'' if replies.has_prev else 'disabled'}}"><a class="page-link" href="{{url_for('user', username=this_user.username, tab='replies')}}">Home</a></li>
-                <li class="page-item {{'' if replies.has_next else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, rp=replies.next_num, tab='replies')}}">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
+    {% with section='replies', page=r_page_n %}
+        {% include 'generic-ajax-loader.html' %}
+    {% endwith %}
 </div>
 
 <!-- All likes live here! -->
 <div id="likes" class="{{ 'd-none' if current_tab != 'likes' else ''}}">
-    {% for like in likes.items %}
-        {% with molt = like.molt %}
-            {% include "molt.html" %}
-        {% endwith %}
-    {% else %}
-        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user has not liked any molts... 💔</div>
-    {% endfor %}
-        {% if likes.has_next or likes.has_prev %}
-        <nav aria-label="Page navigation buttons" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item {{'' if likes.has_prev else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, lp=likes.prev_num, tab='likes')}}" tabindex="-1">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
-                    </a>
-                </li>
-                <li class="page-item {{'' if likes.has_prev else 'disabled'}}"><a class="page-link" href="{{url_for('user', username=this_user.username, tab='likes')}}">Home</a></li>
-                <li class="page-item {{'' if likes.has_next else 'disabled'}}">
-                    <a class="page-link h-100 p-0" href="{{url_for('user', username=this_user.username, lp=likes.next_num, tab='likes')}}">
-                        <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    {% endif %}
+    {% with section='likes', page=r_page_n %}
+        {% include 'generic-ajax-loader.html' %}
+    {% endwith %}
 </div>
 
 <!-- All trophies live here! -->
@@ -460,9 +407,9 @@
         tabs.forEach(tabName => {
             $(`#${tabName}-btn`).removeClass("active");
             $(`#${tabName}`).addClass("d-none");
-            
+
         });
-        
+
         // Switch active button
         $(`#${tab}-btn`).addClass("active");
         // Switch tab

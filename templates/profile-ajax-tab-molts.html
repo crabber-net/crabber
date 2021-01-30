@@ -1,0 +1,39 @@
+{% if this_user.pinned %}
+    <!-- Pinned Molt -->
+    {% with molt=this_user.pinned, is_pin=True %}
+        <div class="border-bottom border-dark border-thicc">
+            {% include "molt.html" %}
+        </div>
+    {% endwith %}
+{% endif %}
+
+{% for molt in molts.items %}
+    {% with thread=true, show_replies_from=molt.author, depth_limit=3 %}
+        {% include "molt.html" %}
+    {% endwith %}
+{% else %}
+    <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user does not have any molts 🤔</div>
+{% endfor %}
+{% if molts.has_next or molts.has_prev %}
+    <nav aria-label="Page navigation buttons" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item {{'' if molts.has_prev else 'disabled'}}">
+                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.prev_num}});" tabindex="-1">
+
+                    <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+                    </svg>
+                </a>
+            </li>
+            <li class="page-item {{'' if molts.has_prev else 'disabled'}}"><a class="page-link" href="javascript:loadContent_{{hexID}}(1);">Home</a></li>
+            <li class="page-item {{'' if molts.has_next else 'disabled'}}">
+                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.next_num}});">
+
+                    <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+                    </svg>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
