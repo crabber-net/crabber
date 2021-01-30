@@ -32,18 +32,18 @@
                             accept="image/x-png,image/jpeg">
                         <label class="custom-file-label" for="inputGroupFile03">
 
-<svg class="file-btn" width="28" height="28" data-jam="picture">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
-</svg>
+                            <svg class="file-btn" width="28" height="28" data-jam="picture">
+                                <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
+                            </svg>
                         </label>
                     </div>
                 </div>
 
                 <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
 
-<svg width="28" height="28" data-jam="close-rectangle">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
-</svg>
+                    <svg width="28" height="28" data-jam="close-rectangle">
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
+                    </svg>
                 </div>
 
                 <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>

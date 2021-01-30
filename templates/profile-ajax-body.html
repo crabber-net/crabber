@@ -90,9 +90,9 @@
         {% if current_page == "own-profile" %}
             <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
 
-<svg class="text-light" width="46" height="46" data-jam="camera-f">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
-</svg>
+                <svg class="text-light" width="46" height="46" data-jam="camera-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
+                </svg>
             </div>
         {% endif %}
         <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
@@ -102,9 +102,9 @@
             {% if current_page == "own-profile" %}
             <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
 
-<svg class="text-light" width="46" height="46" data-jam="camera-f">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
-</svg>
+                <svg class="text-light" width="46" height="46" data-jam="camera-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
+                </svg>
             </div>
             {% endif %}
             <div class="rounded-circle profile-picture shadow-expand"
@@ -164,17 +164,17 @@
         <div class="profile-box-join-date text-muted mt-1">
             <div class="d-inline-block mr-2" id="join-date">
 
-<svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar-f">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar-f"></use>
-</svg>
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar-f"></use>
+                </svg>
                 Joined {{localize(this_user.register_time).strftime('%B %Y')}}
             </div>
             {% if this_user.location %}
             <div class="d-inline-block mr-2" id="user-location">
 
-<svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker-f">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker-f"></use>
-</svg>
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker-f"></use>
+                </svg>
                 {{this_user.location}}
             </div>
             {% endif %}
@@ -205,9 +205,9 @@
             <!-- Shell toggle -->
             <button id="shell-toggle" class="btn btn-trans pl-0 w-100 text-left">
 
-<svg class="shell-toggle-chevron" width="24" height="24" data-jam="chevron-right">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
-</svg>
+                <svg class="shell-toggle-chevron" width="24" height="24" data-jam="chevron-right">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+                </svg>
                 Full bio
             </button>
 
@@ -266,9 +266,9 @@
                                 {{"%.1f"|format(this_user.followers | length / this_user.following | length)}}
                             {% else %}
 
-<svg class="" width="16" height="16" data-jam="infinite">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#infinite"></use>
-</svg>
+                            <svg class="" width="16" height="16" data-jam="infinite">
+                                <use href="{{url_for('static', filename='img/sprites.svg')}}#infinite"></use>
+                            </svg>
                             {% endif %}
                         </strong> follower/following ratio</li>
                     </ul>

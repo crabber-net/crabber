@@ -25,9 +25,9 @@
                 <li class="page-item {{'' if molt_results.has_prev else 'disabled'}}">
                     <a class="page-link h-100 p-0" href="javascript:loadContent('{{query}}', {{molt_results.prev_num}});" tabindex="-1">
 
-<svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
-</svg>
+                        <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+                        </svg>
                     </a>
                 </li>
                 <li class="page-item {{'' if page_n > 1 else 'disabled'}}">
@@ -36,9 +36,9 @@
                 <li class="page-item {{'' if molt_results.has_next else 'disabled'}}">
                     <a class="page-link h-100 p-0" href="javascript:loadContent('{{query}}', {{molt_results.next_num}});">
 
-<svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
-    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
-</svg>
+                        <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+                        </svg>
                     </a>
                 </li>
             </ul>
