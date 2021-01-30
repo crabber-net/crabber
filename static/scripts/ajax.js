@@ -36,9 +36,6 @@ function loadHTML(url) {
             if (!oldPageButton.is(loadingIcon.parent())) {
                 oldPageButton.children('.btn-icon:not(.btn-icon-f):not(.loading-icon)').removeClass('d-none');
             }
-
-            // Refresh Jam Icons
-            loadIcons();
         },
         error: function() {
             // Failed to load page, navigating directly.
