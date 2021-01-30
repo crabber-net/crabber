@@ -1,4 +1,4 @@
-function loadIcons() {
+function _loadIcons() {
     // Finds and replaces all jam-icon <span> elements with SVG images.
 
     $('span[data-jam]').each(function() {

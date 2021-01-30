@@ -96,9 +96,15 @@
                     id="nav-active"
                     {% endif %}
                     >
-                        <span class="btn-icon {{"d-none" if current_page == "home" else ""}}" data-width="28" data-height="28" data-jam="home"></span>
-                        <span class="btn-icon {{"" if current_page == "home" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="home-f"></span>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28" data-jam="refresh"></span>
+                        <svg class="btn-icon {{"d-none" if current_page == "home" else ""}}" width="28" height="28" data-jam="home">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#home">
+                        </svg>
+                        <svg class="btn-icon {{"" if current_page == "home" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="home-f">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#home-f">
+                        </svg>
+                        <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh">
+                        </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Home</strong>
                     </button>
                 </form>
@@ -109,10 +115,18 @@
                         {% if current_page == "wild-west" %}
                             id="nav-active"
                         {% endif %}>
-                        <span class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" data-width="28" data-height="28" data-jam="cactus"></span>
-                        <span class="btn-icon {{"" if current_page == "wild-west" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="cactus-f"></span>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+
+<svg class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" width="28" height="28" data-jam="cactus">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#cactus"></use>
+</svg>
+
+<svg class="btn-icon {{"" if current_page == "wild-west" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="cactus-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#cactus-f"></use>
+</svg>
+
+<svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
                     </button>
                 </form>
@@ -123,11 +137,19 @@
                     {% if current_page == "notifications" %}
                         id="nav-active"
                     {% endif %}>
-                        <span class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" data-width="28" data-height="28" data-jam="bell"></span>
-                        <span class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="bell-f"></span>
+
+<svg class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" width="28" height="28" data-jam="bell">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#bell"></use>
+</svg>
+
+<svg class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="bell-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#bell-f"></use>
+</svg>
                         <span class="notif-badge {{"" if current_user.unread_notifications else "d-none"}}">{{current_user.unread_notifications}}</span>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+
+<svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
                 </form>
@@ -136,10 +158,18 @@
                 <form onsubmit="loadingIcon(this);" action="/search">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 position-relative"
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
-                        <span class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" data-width="28" data-height="28" data-jam="search"></span>
-                        <span class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="search"></span>
-                        <span class="btn-icon loading-icon d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+
+<svg class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" width="28" height="28" data-jam="search">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#search"></use>
+</svg>
+
+<svg class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="search">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#search"></use>
+</svg>
+
+<svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Search</strong>
                     </button>
                 </form>
@@ -161,7 +191,10 @@
 
                 <!-- Molt button -->
                 <button type="button" class="btn btn-primary rounded-pill w-md-75 mt-4" id="molt-btn" data-toggle="modal" data-target="#compose_modal">
-                    <span class="btn-icon d-lg-none" data-width="28" data-height="28" data-jam="write"></span>
+
+<svg class="btn-icon d-lg-none" width="28" height="28" data-jam="write">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#write"></use>
+</svg>
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
 
@@ -171,10 +204,18 @@
                     {% if current_page == "stats" %}
                         id="nav-active"
                     {% endif %}>
-                        <span class="btn-icon text-muted {{"d-none" if current_page == "stats" else ""}}" data-width="28" data-height="28" data-jam="dashboard"></span>
-                        <span class="btn-icon text-muted {{"" if current_page == "stats" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="dashboard-f"></span>
-                        <span class="btn-icon loading-icon loading-icon-center d-none" data-width="28" data-height="28"
-                            data-jam="refresh"></span>
+
+<svg class="btn-icon text-muted {{"d-none" if current_page == "stats" else ""}}" width="28" height="28" data-jam="dashboard">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#dashboard"></use>
+</svg>
+
+<svg class="btn-icon text-muted {{"" if current_page == "stats" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="dashboard-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#dashboard-f"></use>
+</svg>
+
+<svg class="btn-icon loading-icon loading-icon-center d-none" width="28" height="28" data-jam="refresh">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Stats</strong>
                     </button>
                 </form>
@@ -185,10 +226,18 @@
                     {% if current_page == "settings" %}
                         id="nav-active"
                     {% endif %}>
-                        <span class="btn-icon text-muted {{"d-none" if current_page == "settings" else ""}}" data-width="28" data-height="28" data-jam="cog"></span>
-                        <span class="btn-icon text-muted {{"" if current_page == "settings" else "d-none"}} btn-icon-f" data-width="28" data-height="28" data-jam="cog-f"></span>
-                        <span class="btn-icon loading-icon loading-icon-center d-none" data-width="28" data-height="28"
-                            data-jam="cog"></span>
+
+<svg class="btn-icon text-muted {{"d-none" if current_page == "settings" else ""}}" width="28" height="28" data-jam="cog">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#cog"></use>
+</svg>
+
+<svg class="btn-icon text-muted {{"" if current_page == "settings" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="cog-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#cog-f"></use>
+</svg>
+
+<svg class="btn-icon loading-icon loading-icon-center d-none" width="28" height="28" data-jam="cog">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#cog"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
                     </button>
                 </form>
@@ -196,7 +245,10 @@
                 <!-- Logout button -->
                 <form onsubmit="return confirm('Are you sure you want to log out?')" action="/logout">
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs">
-                        <span class="btn-icon text-muted" data-width="28" data-height="28" data-jam="log-out"></span>
+
+<svg class="btn-icon text-muted" width="28" height="28" data-jam="log-out">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#log-out"></use>
+</svg>
                         <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
                     </button>
                 </form>
@@ -243,13 +295,19 @@
                                                     aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
                                                     accept="image/x-png,image/jpeg">
                                                 <label class="custom-file-label" for="inputGroupFile01">
-                                                    <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+
+<svg class="file-btn" width="28" height="28" data-jam="picture">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
+</svg>
                                                 </label>
                                             </div>
                                         </div>
 
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
-                                            <span data-width="28" data-height="28" data-jam="close-rectangle"></span>
+
+<svg width="28" height="28" data-jam="close-rectangle">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
+</svg>
                                         </div>
 
                                         <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
@@ -301,13 +359,19 @@
                                                     aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
                                                     accept="image/x-png,image/jpeg">
                                                 <label class="custom-file-label" for="inputGroupFile02">
-                                                    <span class="file-btn" data-width="28" data-height="28" data-jam="picture"></span>
+
+<svg class="file-btn" width="28" height="28" data-jam="picture">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
+</svg>
                                                 </label>
                                             </div>
                                         </div>
 
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
-                                            <span data-width="28" data-height="28" data-jam="close-rectangle"></span>
+
+<svg width="28" height="28" data-jam="close-rectangle">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
+</svg>
                                         </div>
 
                                         <span class="mini-character-counter text-muted my-auto mr-3 d-none">{{MOLT_CHAR_LIMIT}}</span>
@@ -380,7 +444,10 @@
                         <h6 class="m-1 absolute-container">
                             <strong>{% block heading %}{% endblock %}</strong>
                             <div class="absolute-middle-right scroll-back" onclick="scrollToTop();">
-                                <span class="btn-icon" data-width="28" data-height="28" data-jam="arrow-up"></span>
+
+<svg class="btn-icon" width="28" height="28" data-jam="arrow-up">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-up"></use>
+</svg>
                             </div>
                         </h6>
                     </div>

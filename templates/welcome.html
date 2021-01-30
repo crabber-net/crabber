@@ -10,7 +10,10 @@
     <!-- Login button -->
     <a class="text-primary absolute-top-right m-3 m-lg-5 zindex-1" id="molt-btn" href="/login">
         <strong class="">Log in</strong>
-        <span class="" data-width="16" data-height="16" data-jam="arrow-right"></span>
+
+<svg class="" width="16" height="16" data-jam="arrow-right">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-right"></use>
+</svg>
     </a>
 
     <!-- Sales pitch -->
@@ -22,7 +25,10 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-                            <span class="btn-icon" data-width="64" data-height="64" data-jam="write-f"></span>
+
+<svg class="btn-icon" width="64" height="64" data-jam="write-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#write-f"></use>
+</svg>
                         </div>
                         <div class="col">
                             <h5>Typo-free</h5>
@@ -36,7 +42,10 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-                            <span class="btn-icon" data-width="64" data-height="64" data-jam="terminal"></span>
+
+<svg class="btn-icon" width="64" height="64" data-jam="terminal">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#terminal"></use>
+</svg>
                         </div>
                         <div class="col">
                             <h5>Open API</h5>
@@ -50,7 +59,10 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-                            <span class="btn-icon" data-width="64" data-height="64" data-jam="eye-close-f"></span>
+
+<svg class="btn-icon" width="64" height="64" data-jam="eye-close-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#eye-close-f"></use>
+</svg>
                         </div>
                         <div class="col">
                             <h5>Full privacy</h5>
@@ -64,7 +76,10 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-                            <span class="btn-icon rainbow" data-width="64" data-height="64" data-jam="heart-f"></span>
+
+<svg class="btn-icon rainbow" width="64" height="64" data-jam="heart-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#heart-f"></use>
+</svg>
                             <img src="{{url_for('static', filename='img/rainbow_heart.svg')}}" class="p-0 icon-overlap h-center" height="64" width="64" alt="">
                         </div>
                         <div class="col">
@@ -89,6 +104,6 @@
 
             <!-- Spacer -->
             <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
-        </div> 
+        </div>
     </div>
 {% endblock %}

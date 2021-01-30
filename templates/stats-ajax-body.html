@@ -32,12 +32,12 @@
         <div class="king-profile row flex-row absolute-container">
             <div class="col-auto">
                 <img class="profile-crown" src="{{url_for('static', filename='img/crown.svg')}}" alt="golden crown">
-                <div class="rounded-circle profile-picture" 
+                <div class="rounded-circle profile-picture"
                     style="background-image: url('{{url_for('static', filename=king.avatar)}}');"
                     src="{{url_for('static', filename=king.avatar)}}">
                 </div>
             </div>
-            
+
             <div class="col">
                 <div class="profile-box-names mt-2">
                     <h2 class="king-display-name">
@@ -68,14 +68,17 @@
         <div class="king-profile row flex-row absolute-container">
             <div class="col-auto">
                 <div class="avatar-badge">
-                    <span class="avatar-badge-icon" data-width="20" data-height="20" data-jam="clock-f"></span>
+
+<svg class="avatar-badge-icon" width="20" height="20" data-jam="clock-f">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#clock-f"></use>
+</svg>
                 </div>
-                <div class="rounded-circle profile-picture" 
+                <div class="rounded-circle profile-picture"
                     style="background-image: url('{{url_for('static', filename=baby.avatar)}}');"
                     src="{{url_for('static', filename=baby.avatar)}}">
                 </div>
             </div>
-            
+
             <div class="col">
                 <div class="profile-box-names mt-2">
                     <h2 class="king-display-name">

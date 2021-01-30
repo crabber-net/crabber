@@ -51,13 +51,19 @@
         <ul class="pagination justify-content-center">
             <li class="page-item {{'' if crabs.has_prev else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pc=crabs.prev_num)}}" tabindex="-1">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+</svg>
                 </a>
             </li>
             <li class="page-item {{'' if crab_page_n > 1 else 'disabled'}}"><a class="page-link" href="/tortimer">Home</a></li>
             <li class="page-item {{'' if crabs.has_next else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pc=crabs.next_num)}}">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+</svg>
                 </a>
             </li>
         </ul>
@@ -96,13 +102,19 @@
         <ul class="pagination justify-content-center">
             <li class="page-item {{'' if molts.has_prev else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.prev_num)}}" tabindex="-1">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+</svg>
                 </a>
             </li>
             <li class="page-item {{'' if molt_page_n > 1 else 'disabled'}}"><a class="page-link" href="/tortimer">Home</a></li>
             <li class="page-item {{'' if molts.has_next else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.next_num)}}">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+</svg>
                 </a>
             </li>
         </ul>
@@ -143,13 +155,19 @@
         <ul class="pagination justify-content-center">
             <li class="page-item {{'' if molts.has_prev else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.prev_num)}}" tabindex="-1">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-left"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+</svg>
                 </a>
             </li>
             <li class="page-item {{'' if molt_page_n > 1 else 'disabled'}}"><a class="page-link" href="/tortimer">Home</a></li>
             <li class="page-item {{'' if molts.has_next else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="{{url_for('tortimer', pm=molts.next_num)}}">
-                    <span class="absolute-center" data-width="24" data-height="24" data-jam="chevron-right"></span>
+
+<svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+    <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+</svg>
                 </a>
             </li>
         </ul>
@@ -163,9 +181,9 @@
         tabs.forEach(tabName => {
             $(`#${tabName}-btn`).removeClass("active");
             $(`#${tabName}`).addClass("d-none");
-            
+
         });
-        
+
         // Switch active button
         $(`#${tab}-btn`).addClass("active");
         // Switch tab
