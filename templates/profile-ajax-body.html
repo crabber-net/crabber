@@ -308,21 +308,21 @@
 
 <!-- All molts live here! -->
 <div id="molts" class="{{ 'd-none' if current_tab != 'molts' else '' }}">
-    {% with section='molts', page=m_page_n %}
+    {% with section='molts', page=m_page_n, autoload=(current_tab == 'molts') %}
         {% include 'generic-ajax-loader.html' %}
     {% endwith %}
 </div>
 
 <!-- All replies live here! -->
 <div id="replies" class="{{ 'd-none' if current_tab != 'replies' else '' }}">
-    {% with section='replies', page=r_page_n %}
+    {% with section='replies', page=r_page_n, autoload=(current_tab == 'replies') %}
         {% include 'generic-ajax-loader.html' %}
     {% endwith %}
 </div>
 
 <!-- All likes live here! -->
 <div id="likes" class="{{ 'd-none' if current_tab != 'likes' else ''}}">
-    {% with section='likes', page=r_page_n %}
+    {% with section='likes', page=r_page_n, autoload=(current_tab == 'likes') %}
         {% include 'generic-ajax-loader.html' %}
     {% endwith %}
 </div>
@@ -414,6 +414,17 @@
         $(`#${tab}-btn`).addClass("active");
         // Switch tab
         $(`#${tab}`).removeClass("d-none");
+        // Load content if necessary
+        let loadStatus = $(`#${tab} meta[name=${tab}-load-status]`).attr('content');
+        if (loadStatus == 'false') {
+            let loadFunc = $(`#${tab} meta[name=${tab}-load-func]`).attr('content');
+            window[loadFunc]();
+        }
+
+        // Update tab parameter in location/history
+        let newLocation = new URL(window.location);
+        newLocation.searchParams.set('tab', tab);
+        window.history.pushState({}, '', newLocation.href);
     }
 
     // Display save button when a change is made

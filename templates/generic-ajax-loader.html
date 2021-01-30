@@ -2,6 +2,7 @@
 {% set endpoint = endpoint or location %}
 {% set section = section or 'true' %}
 {% set page = page or 1 %}
+{% set autoload = autoload if autoload is not none else True %}
 
 <!-- Content loading indicator -->
 <div id="{{hexID}}-loading" class="content-loading-indicator">
@@ -22,8 +23,10 @@
 
 <!-- Ajax request information -->
 <meta name="{{hexID}}-page-number" content={{page}}>
-<meta name="{{hexID}}-endpoint" content={{endpoint}}>
-<meta name="{{hexID}}-title" content={{title}}>
+<meta name="{{hexID}}-endpoint" content="{{endpoint}}">
+<meta name="{{hexID}}-title" content="{{title}}">
+<meta name="{{section}}-load-func" content="loadContent_{{hexID}}">
+<meta name="{{section}}-load-status" content=false>
 
 <div id="{{hexID}}-loaded-content"></div>
 
@@ -37,6 +40,7 @@
     var loadedContent_{{hexID}} = $('#{{hexID}}-loaded-content');
     var loadingIndicator_{{hexID}} = $('#{{hexID}}-loading');
     var loadingFailureIndicator_{{hexID}} = $('#{{hexID}}-failure');
+    var loadStatus_{{hexID}} = $('meta[name={{section}}-load-status]');
 
     // Ajax history handler
     window.onpopstate = function(e) {
@@ -71,6 +75,7 @@
         );
         loadedContent_{{hexID}}.append(data);
         loadingIndicator_{{hexID}}.addClass('d-none');
+        loadStatus_{{hexID}}.attr('content', true);
         loadIcons();
     }
 
@@ -103,5 +108,7 @@
         });
     }
 
+    {% if autoload %}
     loadContent_{{hexID}}();
+    {% endif %}
 </script>
