@@ -390,7 +390,7 @@ def upload_image(image_file):
         return None
 
 
-def uuid(digits=6):
+def hexID(digits=6):
     """ An insecure unique identifier to disambiguate multiple instances of
         automatically generated content on a single page.
     """
