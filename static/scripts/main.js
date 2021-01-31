@@ -260,3 +260,18 @@ function collapseMoltBox() {
     if (!moltFormHasContent(composeBox.find('form')))
         composeBox.removeClass('focused');
 }
+
+function attachCharacterCounters() {
+    // Counter is hidden by default so if Javascript breaks or is blocked the user doesn't see it in a broken state
+    $(".mini-character-counter").each(function(index, el) {
+        $(el).removeClass("d-none");
+    })
+
+    // Update character count
+    $(".mini-compose-textarea textarea, .mini-compose-reply-textarea textarea, .mini-molt-text-box input[type=file]").each(function(index, el) {
+        // Bind change event to function
+        $(el).on("input propertychange", updateCounter);
+        // Run on init (in case of text being previously filled)
+        updateCounter.call(el);
+    })
+}
