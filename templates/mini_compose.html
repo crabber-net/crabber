@@ -55,6 +55,8 @@
 </div>
 
 <script>
+    attachCharacterCounters();
+
     updateCounter.call($('.mini-compose-box textarea'));
     $(document).on('click', function(event) {
         if (!$(event.target).closest('.mini-compose-box').length) {
