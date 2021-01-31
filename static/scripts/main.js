@@ -36,8 +36,8 @@ function GetData(request_type, data, callback, error_callback=null) {
 }
 
 function toggleLike(e) {
-    let empty_heart = $(e).children(".jam")[0];
-    let filled_heart = $(e).children(".jam")[1];
+    let empty_heart = $(e).children("svg")[0];
+    let filled_heart = $(e).children("svg")[1];
     let counter = $(e).children("span").get(0);
 
     let updateLikeCounter = function(amount) {
