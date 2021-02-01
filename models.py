@@ -373,6 +373,8 @@ class Crab(db.Model):
         """
         kwargs["password"] = Crab.hash_pass(kwargs["password"])
         new_crab = Crab(**kwargs)
+        crabatar_img = utils.make_crabatar(new_crab.username)
+        new_crab.avatar = crabatar_img
         db.session.add(new_crab)
         db.session.commit()
         return new_crab
