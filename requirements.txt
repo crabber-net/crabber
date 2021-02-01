@@ -1,7 +1,7 @@
 cairocffi==1.2.0
 cffi==1.14.4
 click==7.1.2
-crabatar==1.0.1
+crabatar==1.0.2
 Flask==1.1.2
 Flask-Limiter==1.4
 Flask-SQLAlchemy==2.4.4
