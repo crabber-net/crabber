@@ -1,4 +1,5 @@
 from config import *
+from crabatar import Crabatar
 import crabber
 import datetime
 import extensions
@@ -397,3 +398,8 @@ def hexID(digits=6):
     hex_chars = '0123456789ABCDEF'
     hex_digits = [random.choice(hex_chars) for _ in range(digits)]
     return ''.join(hex_digits)
+
+
+def make_crabatar(username: str):
+    crabatar = Crabatar(username)
+    return upload_image(crabatar.get_avatar_bytes(format='JPEG'))
