@@ -81,7 +81,12 @@ def index():
             return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
                                 molts=molts, current_user=utils.get_current_user())
     else:
-        return render_template('welcome.html', current_user=utils.get_current_user(), fullwidth=True, hide_sidebar=True)
+        featured_molt = models.Molt.query.filter_by(id=FEATURED_MOLT_ID).first()
+        featured_user = models.Crab.query.filter_by(username=FEATURED_CRAB_USERNAME).first()
+        return render_template('welcome.html', featured_molt=featured_molt,
+                               current_user=utils.get_current_user(),
+                               featured_user=featured_user, fullwidth=True,
+                               current_page='welcome', hide_sidebar=True)
 
 
 @app.route("/wild/", methods=("GET", "POST"))

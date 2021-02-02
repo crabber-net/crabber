@@ -7,6 +7,15 @@
     #main-panel {
         max-width: none;
     }
+
+    /* Welcome page */
+    .image-spacer {
+        background-size: 20rem !important;
+        animation-duration: 2s !important;
+    }
+    .scroll-destination-mobile {
+        scroll-snap-align: start;
+    }
 }
 /* Large devices and larger */
 @media (min-width: 992px) {
@@ -27,6 +36,17 @@
     }
     .scroll-back.active {
         transform: rotate(0deg);
+    }
+
+    /* Welcome page */
+    .demo-sales-pitch p {
+        width: 75%;
+    }
+    .text-lg-right.demo-sales-pitch p {
+        float: right;
+    }
+    .scroll-destination {
+        scroll-snap-align: start;
     }
 }
 
@@ -112,6 +132,14 @@
     }
     100% {
         transform: rotate(-90deg) scale(1.1);
+    }
+}
+@keyframes background-scroll {
+    from {
+        background-position: 0px 0px;
+    }
+    to {
+        background-position: 5rem -10rem;
     }
 }
 
@@ -225,6 +253,10 @@
     scrollbar-width: thin;
     scrollbar-color: var(--dark-lesserest) var(--dark-less);
     -webkit-overflow-scrolling: touch;
+}
+
+.container-fluid {
+    padding: 0;
 }
 
 #content-body::-webkit-scrollbar-track,
@@ -939,6 +971,7 @@ body, .master-container {
 }
 
 .header-cover {
+    margin-top: 4rem;
 	width: 100%;
 	max-width: 70em;
 }
@@ -1030,7 +1063,7 @@ div.feature:hover .icon-overlap {
 
 table#user-info th {
     color: var(--primary);
-    width: 8rem;
+    width: 10rem;
 }
 
 
@@ -1299,4 +1332,68 @@ table#user-info th {
 }
 .mini-molt.trophy {
 	overflow: hidden;
+}
+
+.image-spacer {
+    position: relative;
+
+    height: 10rem;
+    width: 100vw;
+
+    left: 50%;
+    margin: 7rem 0;
+    margin-left: -50vw;
+
+    background-color: var(--dark);
+    background-image: url('/static/img/welcome_tile.png');
+    background-size: 40rem;
+    background-repeat: repeat;
+
+    animation-name: background-scroll;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+#welcome-header {
+    position: fixed;
+    left: 0;
+    z-index: 100;
+
+    width: 100%;
+    height: 4rem;
+
+    margin: 0;
+    padding: 0.5rem;
+
+    background-color: var(--dark-less);
+}
+#welcome-header .btn {
+    display: inline;
+}
+
+/* Crabberpedia */
+.wikipedia {
+    background: white;
+    color: black;
+    font-family: sans-serif;
+}
+.wikipedia h1 {
+    font-family: 'Linux Libertine','Georgia','Times',serif;
+    border-bottom: 1px solid gray;
+}
+
+.vertical-line {
+    height: 5rem;
+    width: 50%;
+
+    float: left;
+    margin: auto;
+
+    border-right: 3px dotted var(--border-dark);
+}
+
+.scroll-snap {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 5rem;
 }
