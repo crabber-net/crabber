@@ -685,7 +685,7 @@ def inject_global_vars():
                 server_start=SERVER_START,
                 current_year=now.utcnow().year,
                 error=error, msg=msg, location=location,
-                uuid=utils.hexID)
+                uuid=utils.hexID, referrer=request.referrer)
 
 
 @app.template_filter()
