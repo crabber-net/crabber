@@ -225,7 +225,15 @@ def signupsuccess():
 def settings():
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
-        return utils.common_molt_actions()
+        # Handle style preferences
+        if request.form.get('user_action') == 'style_settings':
+            session['light_mode'] = request.form.get('light_mode') == 'on'
+            session['comicsans_mode'] = request.form.get('comicsans_mode') == 'on'
+            print(session.get('light_mode'))
+            return 'Preferences updated.'
+        # Everything else
+        else:
+            return utils.common_molt_actions()
 
     # Display page
     elif session.get('current_user') is not None:
@@ -678,14 +686,18 @@ def inject_global_vars():
     msg = request.args.get("msg")
     location = request.path
     now = datetime.datetime.utcnow()
-    return dict(MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
-                TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
-                IS_WINDOWS=os.name == "nt",
-                localize=utils.localize,
-                server_start=SERVER_START,
-                current_year=now.utcnow().year,
-                error=error, msg=msg, location=location,
-                uuid=utils.hexID, referrer=request.referrer)
+    return dict(
+        MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
+        TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
+        IS_WINDOWS=os.name == "nt",
+        localize=utils.localize,
+        server_start=SERVER_START,
+        current_year=now.utcnow().year,
+        error=error, msg=msg, location=location,
+        uuid=utils.hexID, referrer=request.referrer,
+        light_mode=session.get('light_mode', False),
+        comicsans_mode=session.get('comicsans_mode', False)
+    )
 
 
 @app.template_filter()

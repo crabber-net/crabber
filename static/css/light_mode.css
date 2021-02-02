@@ -10,8 +10,8 @@
     --light-faded: rgb(80, 83, 83);
     --light-faded-less: rgb(105, 114, 117);
     --light-faded-more: #babcc2 !important;
-    --dark: rgb(243, 243, 243);
-    --dark-less: rgb(230, 230, 230);
+    --dark: rgb(250, 250, 250);
+    --dark-less: rgb(240, 240, 240);
     --dark-lesser: rgb(208, 210, 212);
     --dark-lesserest: rgb(186, 188, 192);
     --dark-less-more: rgb(230, 230, 230);
@@ -29,9 +29,13 @@
     border-color: var(--border-dark) !important;
 }
 
-.btn.btn-primary{
+.btn.btn-primary {
     color: var(--dark);
+    fill: var(--dark);
     border: none;
+}
+.btn.btn-primary .btn-icon {
+    fill: var(--dark);
 }
 
 .text-light {
@@ -49,4 +53,17 @@
 
 .logo {
     fill: var(--primary);
+}
+
+.btn-secondary:hover {
+    fill: black;
+    color: black;
+}
+
+.follows-you {
+    background: #d1d1d1;
+}
+
+.user-count {
+    color: var(--dark);
 }

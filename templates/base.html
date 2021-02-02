@@ -32,8 +32,9 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?version={{server_start}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}?version={{server_start}}">
-    <!-- Light mode -->
-    <link rel="stylesheet" disabled="true" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
+    <!-- Cursed modes -->
+    <link rel="stylesheet" {{'disabled' if not light_mode}} id="light-mode-css" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
+    <link rel="stylesheet" {{'disabled' if not comicsans_mode}} id="comicsans-mode-css" href="{{ url_for('static', filename='css/comicsans_mode.css') }}?version={{server_start}}">
 
     <meta name="last-refresh" content="{{TIMESTAMP}}">
     {% block ext_head %}{% endblock %}

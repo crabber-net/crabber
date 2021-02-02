@@ -275,3 +275,14 @@ function attachCharacterCounters() {
         updateCounter.call(el);
     })
 }
+
+function updateStylePreferences(form) {
+    // Submit form to server for saving
+    SubForm(form);
+
+    // Handle changes locally
+    let lightMode = $(form.light_mode).is(':checked');
+    $('#light-mode-css').attr('disabled', !lightMode);
+    let comicsansMode = $(form.comicsans_mode).is(':checked');
+    $('#comicsans-mode-css').attr('disabled', !comicsansMode);
+}
