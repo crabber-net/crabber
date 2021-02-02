@@ -262,7 +262,7 @@
     /* Nav button labels */
     height: 28px;
     /* display: inline-block !important; */
-    vertical-align: bottom;
+    vertical-align: text-top;
 }
 
 #nav-panel button {
