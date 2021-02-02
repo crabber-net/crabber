@@ -1263,8 +1263,16 @@ table#user-info th {
     white-space: nowrap;
 }
 
-.king-display-name .verified {
-    vertical-align: bottom;
+.king-display-name a {
+    height: 100%;
+    position: relative;
+}
+.king-display-name svg.verified {
+    top: 0;
+    bottom: 0;
+    left: 0.25rem;
+    margin: auto;
+    position: absolute;
 }
 
 .king-profile .follow-count {
