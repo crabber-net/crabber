@@ -590,6 +590,7 @@ class Molt(db.Model):
         """ Return first reply Molt from a crab that `crab` follows if it exists.
         """
         following_ids = [followed.id for followed in crab.true_following]
+        following_ids.append(crab.id)
         reply = Molt.query.filter_by(is_reply=True, original_molt=self,
                                      deleted=False) \
                 .filter(Molt.author.has(deleted=False, banned=False)) \
