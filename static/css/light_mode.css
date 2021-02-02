@@ -12,7 +12,7 @@
     --light-faded-more: #babcc2 !important;
     --dark: rgb(250, 250, 250);
     --dark-less: rgb(240, 240, 240);
-    --dark-lesser: rgb(208, 210, 212);
+    --dark-lesser: rgb(233, 233, 233);
     --dark-lesserest: rgb(186, 188, 192);
     --dark-less-more: rgb(230, 230, 230);
     --border-dark: #dddddd;
@@ -66,4 +66,9 @@
 
 .user-count {
     color: var(--dark);
+}
+
+.notif-badge {
+    color: var(--dark);
+    border-color: var(--light);
 }
