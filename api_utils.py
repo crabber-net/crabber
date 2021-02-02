@@ -91,7 +91,7 @@ def get_molt(molt_ID: int) -> Optional['models.Molt']:
     return molt
 
 
-def get_molt_replies(molt_ID: int) \
+def get_molt_replies(molt_ID: int, since: Optional[int] = None) \
         -> BaseQuery:
     """ Get the replies of a Molt by ID.
     """
@@ -99,6 +99,8 @@ def get_molt_replies(molt_ID: int) \
             .filter_by(deleted=False, is_reply=True, original_molt_id=molt_ID) \
             .filter(models.Molt.author.has(banned=False, deleted=False)) \
             .order_by(models.Molt.timestamp.desc())
+    if since:
+        query = query.filter(models.Molt.timestamp > since)
     return query
 
 

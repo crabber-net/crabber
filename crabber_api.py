@@ -376,8 +376,9 @@ def get_molt_replies(molt_ID):
                                  minimum=0, maximum=API_MAX_MOLT_LIMIT)
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
+    since = api_utils.expect_timestamp(request.args.get('since'))
 
-    replies = api_utils.get_molt_replies(molt_ID)
+    replies = api_utils.get_molt_replies(molt_ID, since=since)
     replies_json = api_utils.query_to_json(replies, limit=limit, offset=offset)
     return replies_json
 
