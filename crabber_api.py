@@ -167,10 +167,12 @@ def get_crab_molts(crab_ID):
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
     since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
 
     crab = api_utils.get_crab(crab_ID)
     if crab:
-        molts = api_utils.get_molts_from_crab(crab, since=since)
+        molts = api_utils.get_molts_from_crab(crab, since=since,
+                                              since_id=since_id)
         molts_json = api_utils.query_to_json(molts, limit=limit, offset=offset)
         return molts_json
     else:
@@ -377,8 +379,10 @@ def get_molt_replies(molt_ID):
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
     since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
 
-    replies = api_utils.get_molt_replies(molt_ID, since=since)
+    replies = api_utils.get_molt_replies(molt_ID, since=since,
+                                         since_id=since_id)
     replies_json = api_utils.query_to_json(replies, limit=limit, offset=offset)
     return replies_json
 
@@ -391,8 +395,26 @@ def get_molts_mentioning(username):
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
     since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
 
-    molts = api_utils.get_molts_mentioning(username, since=since)
+    molts = api_utils.get_molts_mentioning(username, since=since,
+                                           since_id=since_id)
+    molts_json = api_utils.query_to_json(molts, limit=limit, offset=offset)
+    return molts_json
+
+
+@API.route('/molts/replying/<username>/')
+def get_molts_replying(username):
+    limit = request.args.get('limit')
+    limit = api_utils.expect_int(limit, default=API_DEFAULT_MOLT_LIMIT,
+                                 minimum=0, maximum=API_MAX_MOLT_LIMIT)
+    offset = request.args.get('offset')
+    offset = api_utils.expect_int(offset, default=0, minimum=0)
+    since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
+
+    molts = api_utils.get_molts_replying_to(username, since=since,
+                                            since_id=since_id)
     molts_json = api_utils.query_to_json(molts, limit=limit, offset=offset)
     return molts_json
 
@@ -405,8 +427,10 @@ def get_crabtag(crabtag):
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
     since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
 
-    molts = api_utils.get_molts_with_tag(crabtag, since=since)
+    molts = api_utils.get_molts_with_tag(crabtag, since=since,
+                                         since_id=since_id)
     molts_json = api_utils.query_to_json(molts, limit=limit, offset=offset)
     return molts_json
 
@@ -419,10 +443,12 @@ def get_timeline(username):
     offset = request.args.get('offset')
     offset = api_utils.expect_int(offset, default=0, minimum=0)
     since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
 
     crab = api_utils.get_crab_by_username(username)
     if crab:
-        molts = api_utils.get_timeline(crab, since=since)
+        molts = api_utils.get_timeline(crab, since=since,
+                                       since_id=since_id)
         molts_json = api_utils.query_to_json(molts, limit=limit, offset=offset)
         return molts_json
     else:

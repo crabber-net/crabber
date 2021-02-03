@@ -91,7 +91,8 @@ def get_molt(molt_ID: int) -> Optional['models.Molt']:
     return molt
 
 
-def get_molt_replies(molt_ID: int, since: Optional[int] = None) \
+def get_molt_replies(molt_ID: int, since: Optional[int] = None,
+                     since_id: Optional[int] = None) \
         -> BaseQuery:
     """ Get the replies of a Molt by ID.
     """
@@ -101,10 +102,13 @@ def get_molt_replies(molt_ID: int, since: Optional[int] = None) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
     return query
 
 
-def get_molts_mentioning(username: str, since: Optional[int] = None) \
+def get_molts_mentioning(username: str, since: Optional[int] = None,
+                         since_id: Optional[int] = None) \
         -> BaseQuery:
     """ Get the Molts that mention a username.
     """
@@ -116,10 +120,32 @@ def get_molts_mentioning(username: str, since: Optional[int] = None) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
     return query
 
 
-def get_molts_with_tag(crabtag: str, since: Optional[int] = None) \
+def get_molts_replying_to(username: str, since: Optional[int] = None,
+                          since_id: Optional[int] = None) \
+        -> BaseQuery:
+    """ Get the Molts that reply to a Molt authored by `username`.
+    """
+    target_crab = get_crab_by_username(username)
+    query = models.Molt.query \
+            .filter_by(deleted=False, is_reply=True) \
+            .filter(models.Molt.original_molt.has(author=target_crab)) \
+            .filter(models.Molt.author.has(banned=False, deleted=False)) \
+            .order_by(models.Molt.timestamp.desc())
+    if since:
+        query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
+    return query
+
+
+
+def get_molts_with_tag(crabtag: str, since: Optional[int] = None,
+                       since_id: Optional[int] = None) \
         -> BaseQuery:
     """ Get Molts that use a specific Crabtag.
     """
@@ -131,10 +157,13 @@ def get_molts_with_tag(crabtag: str, since: Optional[int] = None) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
     return query
 
 
-def get_molts_from_crab(crab: 'models.Crab', since: Optional[int] = None) \
+def get_molts_from_crab(crab: 'models.Crab', since: Optional[int] = None,
+                        since_id: Optional[int] = None) \
         -> BaseQuery:
     """ Get a Crab's Molts.
     """
@@ -143,10 +172,13 @@ def get_molts_from_crab(crab: 'models.Crab', since: Optional[int] = None) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
     return query
 
 
-def get_timeline(crab: 'models.Crab', since: Optional[int] = None) \
+def get_timeline(crab: 'models.Crab', since: Optional[int] = None,
+                 since_id: Optional[int] = None) \
         -> BaseQuery:
     """ Get a Crab's timeline.
     """
@@ -161,6 +193,8 @@ def get_timeline(crab: 'models.Crab', since: Optional[int] = None) \
             .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
     return query
 
 
