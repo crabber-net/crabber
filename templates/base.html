@@ -69,7 +69,7 @@
     {% endblock %}
 </head>
 <body class="bg-dark text-light">
-    <div class="container-fluid vh-100 master-container">
+    <div class="container-fluid {{'p-0' if current_page == 'welcome'}} vh-100 master-container">
         <div class="row h-100 justify-content-{{ "center" if hide_sidebar and not fullwidth else "start" }}">
             {% if not hide_sidebar %}
             <!-- Nav Panel -->

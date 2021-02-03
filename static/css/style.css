@@ -260,10 +260,6 @@
     -webkit-overflow-scrolling: touch;
 }
 
-.container-fluid {
-    padding: 0;
-}
-
 #content-body::-webkit-scrollbar-track,
 .scrollbox::-webkit-scrollbar-track,
 .cool-scroll::-webkit-scrollbar-track
