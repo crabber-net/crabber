@@ -16,10 +16,11 @@
     --dark-lesserest: rgb(186, 188, 192);
     --dark-less-more: rgb(230, 230, 230);
     --border-dark: #dddddd;
-    --border-darker: #dddbdb;
+    --border-darker: rgba(0, 0, 0, 0.01);
     --secondary: #399de6;
     --tertiary: #39e683;
     --quad: #1D3557;
+    --neue-card: white;
 
     --muted: #535557;
 ;
