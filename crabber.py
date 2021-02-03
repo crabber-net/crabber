@@ -717,7 +717,7 @@ def error_404(_error_msg):
 
 
 @app.errorhandler(413)
-def file_to_big(_e):
+def file_too_big(_e):
     return utils.show_error("Image must be smaller than 5 megabytes.")
 
 
