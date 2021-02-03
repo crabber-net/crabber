@@ -473,7 +473,11 @@ div.mini-molt:hover {
     background: none;
     color: inherit;
     border: none;
-    resize: none;;
+    resize: none;
+}
+
+.mini-compose-box textarea, .mini-compose-textarea textarea {
+    outline: none;
 }
 
 .box-shadow {
