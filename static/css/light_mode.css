@@ -73,3 +73,7 @@
     color: var(--dark);
     border-color: var(--light);
 }
+
+.avatar-edit-button svg, .banner-edit-button svg {
+    fill: var(--dark) !important;
+}
