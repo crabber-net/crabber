@@ -196,6 +196,11 @@
     margin: 0;
     padding: 0;
 }
+.fit-content {
+    display: block;
+    width: max-content;
+    height: min-content;
+}
 /*///////////////////////////////////////////////////*/
 /* ASPECT RATIO HELPERS /////////////////////////////*/
 .force-square {

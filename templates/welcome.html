@@ -109,10 +109,16 @@
                 </div>
 
                 <!-- Molt sample -->
-                <div id="demo-molts" class="col p-3 order-3 order-lg-1 bg-dark-less rounded-media">
-                    {% with molt=featured_molt, static=True, hide_border=True %}
-                        {% include 'molt.html' %}
-                    {% endwith %}
+                <div id="demo-molts" class="col p-3 order-3 order-lg-1 bg-dark-less rounded-media absolute-container">
+                    {% if featured_molt %}
+                        {% with molt=featured_molt, static=True, hide_border=True %}
+                            {% include 'molt.html' %}
+                        {% endwith %}
+                    {% else %}
+                        <small class="text-muted absolute-center fit-content">
+                            No featured Molt. The admin can change this in 'config.py'.
+                        </small>
+                    {% endif %}
                 </div>
                 <div class="w-100 order-2 d-lg-none"></div>
                 <div id="demo-molts-explanation" class="col p-3 order-1 order-lg-2 row align-items-center">
@@ -145,34 +151,40 @@
                     </div>
                 </div>
                 <div class="w-100 order-5 d-lg-none"></div>
-                <div id="demo-bio" class="col p-3 order-6 bg-dark-less rounded-media">
-                    {% with this_user=featured_user %}
-                        <div class="rounded bg-dark-less p-3">
-                            <table id="user-info">
-                                {% set bio_names = {'age': 'Age',
-                                'pronouns': 'Pronouns',
-                                'quote': 'Quote',
-                                'jam': 'My jam',
-                                'obsession': 'Latest obsession',
-                                'remember': 'Remember when',
-                                'emoji': 'Favorite emoji'} %}
-                                {% for key, value in this_user.bio.items() %}
-                                    <tr>
-                                        <th>{{bio_names[key]}}</th>
-                                        <td>{{value}}</td>
-                                    </tr>
-                                {% else %}
-                                    <p class="text-muted">This user hasn't filled out their bio 😦</p>
-                                {% endfor %}
-                            </table>
-                        </div>
-                        <small class="float-right text-muted">
-                            profile courtesy of
-                            <a href="/user/{{this_user.username}}">
-                                @{{this_user.username}}
-                            </a>
+                <div id="demo-bio" class="col p-3 order-6 bg-dark-less rounded-media absolute-container">
+                    {% if featured_user %}
+                        {% with this_user=featured_user %}
+                            <div class="rounded bg-dark-less p-3">
+                                <table id="user-info">
+                                    {% set bio_names = {'age': 'Age',
+                                    'pronouns': 'Pronouns',
+                                    'quote': 'Quote',
+                                    'jam': 'My jam',
+                                    'obsession': 'Latest obsession',
+                                    'remember': 'Remember when',
+                                    'emoji': 'Favorite emoji'} %}
+                                    {% for key, value in this_user.bio.items() %}
+                                        <tr>
+                                            <th>{{bio_names[key]}}</th>
+                                            <td>{{value}}</td>
+                                        </tr>
+                                    {% else %}
+                                        <p class="text-muted">This user hasn't filled out their bio 😦</p>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <small class="float-right text-muted">
+                                profile courtesy of
+                                <a href="/user/{{this_user.username}}">
+                                    @{{this_user.username}}
+                                </a>
+                            </small>
+                        {% endwith %}
+                    {% else %}
+                        <small class="text-muted absolute-center fit-content">
+                            No featured user. The admin can change this in 'config.py'.
                         </small>
-                    {% endwith %}
+                    {% endif %}
                 </div>
 
                 <div class="w-100 order-7 my-5 absolute-container scroll-destination">
