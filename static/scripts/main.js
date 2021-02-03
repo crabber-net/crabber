@@ -1,5 +1,5 @@
 // AJAX Form Submit
-function SubForm(form, url=null) {
+function SubForm(form, url=null, success=null) {
     if (url == null) {
         url = document.location.pathname;
         if (!url.endsWith('/'))
@@ -9,6 +9,7 @@ function SubForm(form, url=null) {
         url: url,
         type: 'post',
         data: $(form).serialize(),
+        success: success,
         error: function () {
             console.warn("Failed to submit form to server;");
         },
@@ -257,8 +258,12 @@ function expandMoltBox() {
 }
 function collapseMoltBox() {
     composeBox = $('.mini-compose-box')
-    if (!moltFormHasContent(composeBox.find('form')))
-        composeBox.removeClass('focused');
+    if (composeBox.get(0) == undefined)
+        $(document).off('click');
+    else {
+        if (!moltFormHasContent(composeBox.find('form')))
+            composeBox.removeClass('focused');
+    }
 }
 
 function attachCharacterCounters() {

@@ -6,7 +6,7 @@ import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
-from typing import Optional
+from typing import Any, Optional
 import utils
 
 db = extensions.db
@@ -60,6 +60,7 @@ class Crab(db.Model):
     likes = db.relationship('Like')
 
     pinned_molt_id = db.Column(db.Integer, nullable=True)
+    _preferences = db.Column('preferences', db.String, nullable=False, default='{}')
 
     def __repr__(self):
         return f"<Crab '@{self.username}'>"
@@ -144,6 +145,21 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def get_preference(self, key: str, default: Optional[Any] = None):
+        """ Gets key from user's preferences.
+        """
+        preferences_dict = json.loads(self._preferences)
+        return preferences_dict.get(key, default)
+
+    def set_preference(self, key: str, value: Any):
+        """ Sets a value in user's preferences.
+        """
+        preferences_dict = json.loads(self._preferences)
+        preferences_dict[key] = value
+        self._preferences = json.dumps(preferences_dict)
+        db.session.commit()
+
 
     def update_bio(self, updates: dict):
         """ Update bio with keys from `new_bio`.

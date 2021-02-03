@@ -231,10 +231,14 @@ def settings():
     if request.method == "POST":
         # Handle style preferences
         if request.form.get('user_action') == 'style_settings':
-            session['light_mode'] = request.form.get('light_mode') == 'on'
-            session['comicsans_mode'] = request.form.get('comicsans_mode') == 'on'
-            print(session.get('light_mode'))
-            return 'Preferences updated.'
+            current_user = utils.get_current_user()
+
+            light_mode = request.form.get('light_mode') == 'on'
+            comicsans_mode = request.form.get('comicsans_mode') == 'on'
+
+            current_user.set_preference('light_mode', light_mode)
+            current_user.set_preference('comicsans_mode', comicsans_mode)
+            return 'Saved preferences.', 200
         # Everything else
         else:
             return utils.common_molt_actions()
@@ -686,6 +690,12 @@ def api_v0(action):
 # GLOBAL FLASK VARIABLES GO HERE
 @app.context_processor
 def inject_global_vars():
+    current_user = utils.get_current_user()
+    if current_user:
+        light_mode = current_user.get_preference('light_mode', False)
+        comicsans_mode = current_user.get_preference('comicsans_mode', False)
+    else:
+        light_mode = comicsans_mode = False
     error = request.args.get("error")
     msg = request.args.get("msg")
     location = request.path
@@ -699,8 +709,7 @@ def inject_global_vars():
         current_year=now.utcnow().year,
         error=error, msg=msg, location=location,
         uuid=utils.hexID, referrer=request.referrer,
-        light_mode=session.get('light_mode', False),
-        comicsans_mode=session.get('comicsans_mode', False)
+        light_mode=light_mode, comicsans_mode=comicsans_mode,
     )
 
 
