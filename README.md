@@ -30,7 +30,7 @@ python initialize_database.py
 ```
 4. Add any site administrators to `admins.cfg` via their usernames
 ```bash
-printf "\nUSERNAME1\nUSERNAME2" >> admins.cfg
+vim admins.cfg  # The only Crab-approved text editor
 ```
 
 ## Running
