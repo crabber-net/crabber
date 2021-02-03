@@ -477,7 +477,7 @@ div.mini-molt:hover {
 }
 
 .mini-compose-box textarea, .mini-compose-textarea textarea,
-.mini-compose-reply-textarea textarea {
+.mini-compose-reply-textarea textarea, .mini-compose-box input {
     outline: none;
 }
 
