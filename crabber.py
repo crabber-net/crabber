@@ -3,7 +3,6 @@ from config import *
 import datetime
 from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import models
 import os
 import patterns
