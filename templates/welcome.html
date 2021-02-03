@@ -3,29 +3,38 @@
 {% block heading %} Welcome to Crabber {% endblock %}
 
 {% block fullpage %}
+    <!-- join/login header -->
+    <div id="welcome-header" class="row justify-content-between justify-content-lg-end align-items-center">
+        <div class="col-auto">
+            <button type="button" class="h-center btn btn-primary rounded-pill"
+                                  id="molt-btn" onclick="location.href='/signup'">
+                <strong class="">Join Crabber</strong>
+            </button>
+        </div>
+        <div class="col-auto">
+            <a class="text-muted float-right" id="molt-btn" href="/login">
+                <strong>or log in</strong>
+                <svg width="16" height="16" data-jam="arrow-right">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-right"></use>
+                </svg>
+            </a>
+        </div>
+    </div>
+
     <!-- Large crabber logo / header -->
     <img src="{{url_for('static', filename='img/crabber_header.svg')}}" alt="Large crabber header"
         class="header-cover mb-4">
 
-    <!-- Login button -->
-    <a class="text-primary absolute-top-right m-3 m-lg-5 zindex-1" id="molt-btn" href="/login">
-        <strong class="">Log in</strong>
-
-        <svg class="" width="16" height="16" data-jam="arrow-right">
-            <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-right"></use>
-        </svg>
-    </a>
-
     <!-- Sales pitch -->
-    <div class="d-flex flex w-100 justify-content-center">
+    <div class="d-flex flex w-100 justify-content-center scroll-destination">
         <div class="w-75">
-            <h2 class="text-light-darker-er mt-lg-4 pb-3">Crabber is an open-source micro-blogging platform powered by crabs.</h2>
+            <h2 class="text-light-darker mt-lg-4 pb-3">Crabber is an open-source micro-blogging platform powered by crabs.</h2>
+
             <!-- Feature list-->
-            <div id="feature-showcase" class="mt-4 row row-cols-1 row-cols-lg-2">
+            <div id="feature-showcase" class="mt-4 row row-cols-1 row-cols-lg-2 scroll-destination-mobile">
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-
                             <svg class="btn-icon" width="64" height="64" data-jam="write-f">
                                 <use href="{{url_for('static', filename='img/sprites.svg')}}#write-f"></use>
                             </svg>
@@ -33,7 +42,7 @@
                         <div class="col">
                             <h5>Typo-free</h5>
                             <p class="text-light-darker">
-                                On Crabber you can edit your posts for up to five minutes after they're published. <em>It's not that hard, Twitter.</em>
+                                On Crabber you can edit your posts for up to five minutes after they're published. <em>(It's not that hard, Twitter.)</em>
                             </p>
                         </div>
                     </div>
@@ -42,7 +51,6 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-
                             <svg class="btn-icon" width="64" height="64" data-jam="terminal">
                                 <use href="{{url_for('static', filename='img/sprites.svg')}}#terminal"></use>
                             </svg>
@@ -59,7 +67,6 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-
                             <svg class="btn-icon" width="64" height="64" data-jam="eye-close-f">
                                 <use href="{{url_for('static', filename='img/sprites.svg')}}#eye-close-f"></use>
                             </svg>
@@ -76,7 +83,6 @@
                 <div class="col">
                     <div class="feature row">
                         <div class="col-auto">
-
                             <svg class="btn-icon rainbow" width="64" height="64" data-jam="heart-f">
                                 <use href="{{url_for('static', filename='img/sprites.svg')}}#heart-f"></use>
                             </svg>
@@ -85,25 +91,135 @@
                         <div class="col">
                             <h5>Friendly</h5>
                             <p class="text-light-darker">
-                                We accept everyone regardless of how they want to identify. Hateful or intolerant speech is not welcome here, and we enforce that.
+                                We encourage a welcoming environment and do not tolerate harassment or targeted misinformation.
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="w-100 justify-content-center row row-cols-1 mt-4">
-                <h5 class="mt-4 text-center text-light-darker">Sound good? Come join us among the Crabs!</h5>
+            <!-- Image spacer -->
+            <div class="d-inline-block image-spacer mb-lg-0"></div>
+
+
+            <!-- Content samples -->
+            <div id="demo-section" class="row">
+                <div class="w-100 my-5 d-none d-lg-block absolute-container scroll-destination">
+                    <div class="vertical-line"></div>
+                </div>
+
+                <!-- Molt sample -->
+                <div id="demo-molts" class="col p-3 order-3 order-lg-1 bg-dark-less rounded-media">
+                    {% with molt=featured_molt, static=True, hide_border=True %}
+                        {% include 'molt.html' %}
+                    {% endwith %}
+                </div>
+                <div class="w-100 order-2 d-lg-none"></div>
+                <div id="demo-molts-explanation" class="col p-3 order-1 order-lg-2 row align-items-center">
+                    <div class="w-100 text-lg-right demo-sales-pitch scroll-destination-mobile">
+                        <h3>
+                            Top-tier <span class="text-primary">hipster cred.</span>
+                        </h3>
+                        <p>
+                            Oh, you use Twitter? That's so 2006.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-100 order-4 my-5 absolute-container scroll-destination">
+                    <div class="vertical-line d-none d-lg-block"></div>
+                </div>
+
+                <!-- Profile bio sample -->
+                <div id="demo-bio-explanation" class="col p-3 order-4 row align-items-center">
+                    <div class="w-100 pr-lg-4 demo-sales-pitch scroll-destination-mobile">
+                        <h3>
+                            Show <span class="text-primary">the world</span> who you are.
+                        </h3>
+                        <p>
+                        Most social networks have sterilized their user pages.
+                        They give you a profile picture, short bio, and that's
+                        it.  Crabber wants to give people a chance to show off
+                        how cool they really are.
+                        </p>
+                    </div>
+                </div>
+                <div class="w-100 order-5 d-lg-none"></div>
+                <div id="demo-bio" class="col p-3 order-6 bg-dark-less rounded-media">
+                    {% with this_user=featured_user %}
+                        <div class="rounded bg-dark-less p-3">
+                            <table id="user-info">
+                                {% set bio_names = {'age': 'Age',
+                                'pronouns': 'Pronouns',
+                                'quote': 'Quote',
+                                'jam': 'My jam',
+                                'obsession': 'Latest obsession',
+                                'remember': 'Remember when',
+                                'emoji': 'Favorite emoji'} %}
+                                {% for key, value in this_user.bio.items() %}
+                                    <tr>
+                                        <th>{{bio_names[key]}}</th>
+                                        <td>{{value}}</td>
+                                    </tr>
+                                {% else %}
+                                    <p class="text-muted">This user hasn't filled out their bio 😦</p>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        <small class="float-right text-muted">
+                            profile courtesy of
+                            <a href="/user/{{this_user.username}}">
+                                @{{this_user.username}}
+                            </a>
+                        </small>
+                    {% endwith %}
+                </div>
+
+                <div class="w-100 order-7 my-5 absolute-container scroll-destination">
+                    <div class="vertical-line d-none d-lg-block"></div>
+                </div>
+
+                <!-- Convergent Evolution -->
+                <div id="demo-evolution" class="col p-3 order-10 order-lg-8 wikipedia rounded-media">
+                    <h1>Carcinisation</h1>
+                    <p>From Crabberpedia, the free encyclopedia</p>
+                    <p>
+                    <b>Carcinisation</b> (or <b>carcinization</b>) is an example of <a href="javascript:void(0);" title="Convergent evolution">convergent evolution</a> in which a <a href="javascript:void(0);" title="Crustacean">crustacean</a> <a href="javascript:void(0);" title="Evolution">evolves</a> into a <a href="javascript:void(0);" title="Crab">crab</a>-like form from a non-crab-like form.
+                    </p>
+                </div>
+                <div class="w-100 order-9 d-lg-none"></div>
+                <div id="demo-evolution-explanation" class="col p-3 order-8 order-lg-10 row align-items-center">
+                    <div class="w-100 text-lg-right demo-sales-pitch scroll-destination-mobile">
+                        <h3>
+                            Supported by <span class="text-primary">science.</span>
+                        </h3>
+                        <p>
+                        Fact: You and everyone you love will eventually become
+                        a crab.
+                        <abbr title="Except for everything that doesn't evolve into crabs.">
+                            No exceptions.
+                        </abbr>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Section spacer -->
+            <div class="d-inline-block w-100 my-3 scroll-destination"></div>
+
+            <div class="w-100 justify-content-center row row-cols-1 mx-0 my-5 scroll-destination-mobile">
+                <h5 class="mt-4 text-center text-light-darker">Sound good? Come join us among the Crabs.</h5>
                 <div class="d-block mt-2">
                     <button type="button" class="h-center btn btn-primary rounded-pill w-md-75 mt-lg-2" id="molt-btn"
                         onclick="location.href='/signup'">
-                        <strong class="">Join Crabber</strong>
+                        <h3 class="text-light m-0 py-2 px-4">Join Crabber</h3>
                     </button>
                 </div>
             </div>
 
             <!-- Spacer -->
-            <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+            <div class="d-inline-block w-100 my-5 d-lg-none text-muted text-molt text-center"></div>
         </div>
     </div>
 {% endblock %}

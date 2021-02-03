@@ -1,5 +1,6 @@
 import datetime
 import os
+import platform
 from typing import List, Set
 
 
@@ -13,6 +14,9 @@ def load_usernames_from_file(filename: str) -> List[str]:
         return [username.strip() for username in f.read().strip().splitlines()]
 
 
+# Check if running on production server or local development
+is_debug_server = platform.node() != 'crabbyboi'
+
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 MOLT_CHAR_LIMIT: int = 240
 MOLTS_PER_PAGE: int = 20
@@ -22,8 +26,10 @@ ADMINS: List[str] = load_usernames_from_file("admins")  # Users allowed to acces
 UPLOAD_FOLDER: str = os.path.join(BASE_PATH, 'static/img/user_uploads')
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
-BASE_URL = "http://localhost" if os.name == "nt" else "https://crabber.net"
+BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
+FEATURED_MOLT_ID = 1
+FEATURED_CRAB_USERNAME = 'jake'
 
 API_DEFAULT_CRAB_LIMIT = 10
 API_MAX_CRAB_LIMIT = 50
