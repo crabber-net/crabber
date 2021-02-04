@@ -9,7 +9,7 @@ A Twitter clone for crabby people.
 
 [Visit the official live site at crabber.net](https://crabber.net/)
 ---
-![screenshot of crabber.net](https://i.imgur.com/3Mu5lCi.png)
+p![screenshot of crabber.net](https://i.imgur.com/3Mu5lCi.png)](https://crabber.net/)
 
 ## Installation
 
@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ```
 3. Setup the database  
 ```bash
-python initialize_database.py
+python scripts/initialize_database.py
 ```
 4. Add any site administrators to `admins.cfg` via their usernames
 ```bash
