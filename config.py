@@ -1,7 +1,7 @@
 import datetime
 import os
 import platform
-from typing import List, Set
+from typing import Dict, List, Set
 
 
 def load_usernames_from_file(filename: str) -> List[str]:
@@ -13,6 +13,16 @@ def load_usernames_from_file(filename: str) -> List[str]:
     with open(f"{os.path.join(BASE_PATH, filename)}.cfg", "r") as f:
         return [username.strip() for username in f.read().strip().splitlines()]
 
+def load_banners() -> Dict[str, str]:
+    banner_path = os.path.join(BASE_PATH, 'static', 'img', 'banners')
+    banner_files = [os.path.join(banner_path, file)
+                    for file in os.listdir(banner_path)
+                    if os.path.splitext(file)[-1].lower() in ('.mp4', '.webm')]
+    # Create dict of {banner name: banner path}
+    banners = {os.path.splitext(os.path.basename(file))[0]:
+               os.path.relpath(file, start='static')
+               for file in banner_files}
+    return banners
 
 # Check if running on production server or local development
 is_debug_server = platform.node() != 'crabbyboi'
@@ -30,6 +40,8 @@ BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
 FEATURED_MOLT_ID = 1
 FEATURED_CRAB_USERNAME = 'jake'
+ANIMATED_BANNERS = load_banners()
+print(f'{ANIMATED_BANNERS=}')
 
 API_DEFAULT_CRAB_LIMIT = 10
 API_MAX_CRAB_LIMIT = 50
