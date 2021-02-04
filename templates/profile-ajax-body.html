@@ -380,10 +380,42 @@
                 <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <strong>Upload new banner</strong>
+                <strong>Choose new banner</strong>
             </div>
             <div class="modal-body">
+                <strong class="border-bottom border-dark">Pick from animated banners</strong>
+
+                <!-- Preset banner form -->
+                <form class="mb-2">
+                    <div class="animated-banners row px-3 pt-2">
+                    {% for banner_name, banner_img in animated_banners.items() %}
+                        <div class="banner-radio col d-inline-block">
+                            <input type="radio" id="banner-{{banner_name}}" name="animated-banner" value="{{banner_name}}"/>
+                            <label for="banner-{{banner_name}}">
+                                <video class="row rounded" loop>
+                                    <source src="{{url_for('static', filename=banner_img)}}" type="video/mp4">
+                                </video>
+                                <span class="row">
+                                    {{banner_name}}
+                                </span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                    <script>
+                        $('.banner-radio input').bind('input propertychange', function() {
+                            let video = $(this).siblings('label').find('video').get(0);
+                            if (this.checked)
+                                video.play();
+                            else
+                                video.pause();
+                        });
+                    </script>
+                    </div>
+                </form>
+
+                <strong class="border-bottom border-dark">Upload banner</strong>
                 <p class="text-muted">Recommended size: 1500x500</p>
+
                 <!-- Banner upload form -->
                 <form method="POST" enctype="multipart/form-data" class="d-flex flex-row justify-content-between">
                     <input type="hidden" name="user_action" value="change_banner">

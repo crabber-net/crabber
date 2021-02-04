@@ -1786,3 +1786,23 @@ table#user-info th {
   animation: glitch-anim 2.5s infinite linear alternate-reverse;
 }
 
+.banner-radio {
+    width: 5rem;
+}
+.banner-radio input {
+    display: none;
+}
+.banner-radio label {
+    cursor: pointer;
+}
+.banner-radio label video {
+    height: 5rem;
+    width: 5rem;
+    object-fit: cover;
+}
+.banner-radio input:checked + label video {
+    border: 4px solid var(--secondary);
+}
+.banner-radio label span {
+    justify-content: center;
+}

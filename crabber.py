@@ -291,7 +291,8 @@ def user(username):
                         current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                         molts=molts, current_user=utils.get_current_user(),
                         this_user=this_user, likes=likes,
-                        current_tab=current_tab, replies=replies
+                        current_tab=current_tab, replies=replies,
+                        animated_banners=ANIMATED_BANNERS
                     )
                 return jsonify(blocks)
             elif request.args.get('ajax_section'):
@@ -306,7 +307,8 @@ def user(username):
                                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                        current_user=utils.get_current_user(), this_user=this_user,
                                        current_tab=current_tab, m_page_n=m_page_n,
-                                       r_page_n=r_page_n, l_page_n=l_page_n)
+                                       r_page_n=r_page_n, l_page_n=l_page_n,
+                                       animated_banners=ANIMATED_BANNERS)
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
