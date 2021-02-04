@@ -1327,7 +1327,7 @@ table#user-info th {
 
 .molt-dropdown {
     background: var(--dark-less);
-    border: solid var(--border-dark) 1px;
+    border: none;
 }
 .molt-dropdown .dropdown-item {
     color: var(--light);

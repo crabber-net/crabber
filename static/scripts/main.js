@@ -96,6 +96,9 @@ function prepareReply(molt_id, author_username, author_name) {
     $("#reply-to").attr("href", "/user/" + author_username)
     // Update form reply-to ID
     $("#reply-molt-id").val(molt_id)
+
+    // Show reply modal
+    $('#compose_reply_modal').modal('show');
 }
 
 function prepareEdit(molt_id) {
@@ -105,6 +108,9 @@ function prepareEdit(molt_id) {
     $("#edit-molt-id").val(molt_id)
     // Update character counter
     updateCounter.call($('#edit_molt_modal textarea'));
+
+    // Show edit modal
+    $('#edit_molt_modal').modal('show');
 }
 
 // Set notification badge to 'unread_count'
@@ -239,8 +245,42 @@ function scrollToTop() {
     contentBody.get(0).scroll({top: 0, behavior: 'smooth'});
 }
 
-function toggleDropdown(dropdownID) {
-    $(`#${dropdownID}`).dropdown('toggle');
+function toggleDropdown(el) {
+    let moltDropdown = $(el).siblings('.molt-dropdown');
+
+    // Dropdown is active
+    if (moltDropdown.hasClass('show')) {
+        // jQuery hide dropdown
+        moltDropdown.dropdown('hide');
+        // Trigger custom hide event
+        moltDropdown.trigger('hide');
+    }
+    // Dropdown is hidden
+    else {
+        moltDropdown.dropdown('show');
+        let popper = new Popper(el, moltDropdown, {placement: 'bottom'});
+
+        // Close dropdown when elsewhere is clicked
+        var clickHandler = function(event) {
+            console.log('fired');
+            if (!$(event.target).closest(moltDropdown).length
+                && !$(event.target).closest(el).length) {
+                // jQuery hide dropdown
+                moltDropdown.dropdown('hide');
+                // Trigger custom hide event
+                moltDropdown.trigger('hide');
+            }
+        }
+
+        $(document).bind('click', clickHandler);
+
+        // Destroy popper when done
+        $(moltDropdown).one('hide', function() {
+            popper.destroy();
+            popper = null;
+            $(document).unbind('click', clickHandler);
+        })
+    }
 }
 
 function replaceMolt(elem, text) {
@@ -251,6 +291,7 @@ function replaceMolt(elem, text) {
 
 function expandImage(url) {
     $('#image_modal .image-modal-body').css('background-image', `url("${url}")`);
+    $('#image_modal').modal('show');
 }
 
 function expandMoltBox() {
@@ -290,4 +331,8 @@ function updateStylePreferences(form) {
     $('#light-mode-css').attr('disabled', !lightMode);
     let comicsansMode = $(form.comicsans_mode).is(':checked');
     $('#comicsans-mode-css').attr('disabled', !comicsansMode);
+}
+
+function toggleModal(selector) {
+    $(selector).modal('toggle');
 }

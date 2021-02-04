@@ -77,3 +77,7 @@
 .avatar-edit-button svg, .banner-edit-button svg {
     fill: var(--dark) !important;
 }
+
+.molt-dropdown .dropdown-item:hover {
+    background: var(--dark);
+}

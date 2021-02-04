@@ -63,7 +63,7 @@
             <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
                 <input type="hidden" name="user_action" value="reply_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
+                <div class="mini-molt-action reply rounded-circle zindex-front"
                     onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="message">
@@ -112,14 +112,14 @@
                 <!-- DROPDOWN BUTTON -->
                 <div class="dropdown">
                     <span class="zindex-front mini-molt-action reply" href="#" role="button" id="dropdownMenuLink"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
 
                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="more-horizontal">
                             <use href="{{url_for('static', filename='img/sprites.svg')}}#more-horizontal"></use>
                         </svg>
                     </span>
                     {% if current_user %}
-                        <div class="molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <!-- DELETE BUTTON -->
                             {% if molt.author == current_user %}
                                 <form class="dropdown-item clickable" method="POST">

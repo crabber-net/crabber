@@ -64,9 +64,9 @@
             {% endif %}
         </div>
         <div class="mini-molt-actions d-flex flex-row border-dark border-bottom justify-content-start w-100 py-2 mb-0">
-            <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_remolts_modal">
+            <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_remolts_modal');">
                 <span class="text-light font-weight-bold">{{molt.true_remolts|length}}</span> Remolt{{'' if (molt.true_remolts|length) == 1 else 's'}}</a>
-            <a href="javascript:void(0);" class="text-muted mr-3" data-toggle="modal" data-target="#molt_likes_modal">
+            <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_likes_modal');">
                 <span id="likes-number" class="text-light font-weight-bold">{{molt.true_likes|length}}</span>
                 <span id="likes-text">Like{{'' if (molt.true_likes|length) == 1 else 's'}}</span>
             </a>
@@ -79,7 +79,7 @@
             <form>
                 <input type="hidden" name="user_action" value="reply_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action edit rounded-circle zindex-front" data-toggle="modal" data-target="#edit_molt_modal"
+                <div class="mini-molt-action edit rounded-circle zindex-front"
                     onclick="prepareEdit('{{molt.id}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
@@ -92,7 +92,7 @@
             <form>
                 <input type="hidden" name="user_action" value="reply_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                <div class="mini-molt-action reply rounded-circle zindex-front" data-toggle="modal" data-target="#compose_reply_modal"
+                <div class="mini-molt-action reply rounded-circle zindex-front"
                     onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="20" height="20" data-jam="message">
@@ -141,14 +141,14 @@
             <!-- DROPDOWN BUTTON -->
             <div class="dropdown">
                 <span class="zindex-front mini-molt-action reply" href="#" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="more-horizontal">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}#more-horizontal"></use>
                     </svg>
                 </span>
                 {% if current_user %}
-                    <div class="molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <!-- DELETE BUTTON -->
                         {% if molt.author == current_user %}
                             <form class="dropdown-item clickable" method="POST">

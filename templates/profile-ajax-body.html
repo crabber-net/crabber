@@ -88,7 +88,7 @@
 <div class="profile-box border-bottom border-dark">
     <div class="profile-box-banner" {{macros.expand_img() if current_page != "own-profile" else ""}}>
         {% if current_page == "own-profile" %}
-            <div class="banner-edit-button clickable w-100 h-100 absolute-top" data-toggle="modal" data-target="#banner_modal">
+            <div class="banner-edit-button clickable w-100 h-100 absolute-top" onclick="toggleModal('#banner_modal');">
 
                 <svg class="text-light" width="46" height="46" data-jam="camera-f">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
@@ -100,7 +100,7 @@
     <div class="profile-box-bio px-2 pt-2">
         <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{macros.expand_img() if current_page != "own-profile" else ""}}>
             {% if current_page == "own-profile" %}
-            <div class="avatar-edit-button clickable w-100 h-100 zindex-front" data-toggle="modal" data-target="#avatar_modal">
+            <div class="avatar-edit-button clickable w-100 h-100 zindex-front" onclick="toggleModal('#avatar_modal');">
 
                 <svg class="text-light" width="46" height="46" data-jam="camera-f">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}#camera-f"></use>
