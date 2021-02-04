@@ -626,7 +626,8 @@ def api_v0(action):
             if target_user:
                 if target_user.verify_password(password):
                     if content:
-                        new_molt = target_user.molt(content)
+                        new_molt = target_user.molt(content,
+                                                    source='Crabber API')
                         return jsonify(new_molt.dict())
                     else:
                         return "No content provided", 400
@@ -648,7 +649,9 @@ def api_v0(action):
                 if target_user.verify_password(password):
                     if content:
                         if original_molt:
-                            new_molt = original_molt.reply(target_user, content)
+                            new_molt = original_molt.reply(target_user,
+                                                           content,
+                                                           source='Crabber API')
                             return jsonify(new_molt.dict())
                         else:
                             return "No molt found with that ID", 400
