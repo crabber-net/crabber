@@ -327,6 +327,7 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """ Create and publish new Molt.
         """
+        kwargs['source'] = kwargs.get('source', 'Crabber Web App')
         new_molt = Molt(author=self, content=content[:MOLT_CHAR_LIMIT], **kwargs)
         db.session.add(new_molt)
         for user in new_molt.mentions:
@@ -423,6 +424,7 @@ class Molt(db.Model):
     raw_tags = db.Column(db.String, nullable=False,
                          server_default="")
     image = db.Column(db.String(1024), nullable=True)
+    source = db.Column(db.String)
 
     # Moderation/flagging
     reports = db.Column(db.Integer, nullable=False, default=0)

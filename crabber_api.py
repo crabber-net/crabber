@@ -207,9 +207,10 @@ def post_molt():
                         molt_image = utils.upload_image(molt_image)
                         if molt_image is None:
                             return abort(400, 'Image is corrupted.')
-                        new_molt = crab.molt(molt_content, image=molt_image)
+                        new_molt = crab.molt(molt_content, image=molt_image,
+                                             source='Crabber API')
                     else:
-                        new_molt = crab.molt(molt_content)
+                        new_molt = crab.molt(molt_content, source='Crabber API')
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(
@@ -280,9 +281,11 @@ def reply_to_molt(molt_ID):
                     if image_verified:
                         molt_image = utils.upload_image(molt_image)
                         new_molt = molt.reply(crab, molt_content,
-                                              image=molt_image)
+                                              image=molt_image,
+                                              source='Crabber API')
                     else:
-                        new_molt = molt.reply(crab, molt_content)
+                        new_molt = molt.reply(crab, molt_content,
+                                              source='Crabber API')
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(400, description='Missing required content.')
