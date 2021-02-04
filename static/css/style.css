@@ -1785,4 +1785,6 @@ table#user-info th {
   clip: rect(85px, 550px, 140px, 0);
   animation: glitch-anim 2.5s infinite linear alternate-reverse;
 }
-
+#molt-source {
+    text-decoration: none;
+}

@@ -60,7 +60,7 @@
             <!-- 11:30 AM · Apr 9, 2020 -->
             {{localize(molt.timestamp).strftime("%#I:%M %p · %b %e, %Y") if IS_WINDOWS else localize(molt.timestamp).strftime("%-I:%M %p · %b %e, %Y")}}
             {% if molt.source %}
-                · {{molt.source}}
+                · <abbr id="molt-source" title="This shows how this Molt was posted.">{{molt.source}}</abbr>
             {% endif %}
             {% if molt.edited %}
             &mdash; This molt has been edited
