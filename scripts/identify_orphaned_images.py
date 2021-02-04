@@ -21,10 +21,12 @@ images = [os.path.join(user_upload_path, image)
 
 # Filter by images unless --all flag is provided
 if '--all' not in sys.argv:
-    images = filter(lambda file: os.path.splitext(file)[1].lower() in ('.png',
-                                                                       '.jpg',
-                                                                       '.jpeg'),
-                    images)
+    images = list(
+        filter(lambda file: os.path.splitext(file)[1].lower() in ('.png',
+                                                                  '.jpg',
+                                                                  '.jpeg'),
+               images)
+    )
 
 # Find all Molt images
 for molt in Molt.query.filter(Molt.image != None):
