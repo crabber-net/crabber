@@ -9,7 +9,7 @@ A Twitter clone for crabby people.
 
 [Visit the official live site at crabber.net](https://crabber.net/)
 ---
-p![screenshot of crabber.net](https://i.imgur.com/3Mu5lCi.png)](https://crabber.net/)
+[![screenshot of crabber.net](https://i.imgur.com/3Mu5lCi.png)](https://crabber.net/)
 
 ## Installation
 
