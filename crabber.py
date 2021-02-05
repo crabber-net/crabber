@@ -724,10 +724,10 @@ def inject_global_vars():
 
 
 @app.template_filter()
-def pluralize(value: Iterable, grammar: Tuple[str, str] = ('', 's')):
+def pluralize(collection: Iterable, grammar: Tuple[str, str] = ('', 's')):
     """ Returns singular or plural string depending on length of collection.
     """
-    return grammar[len(value) != 1]
+    return grammar[len(collection) != 1]
 
 @app.template_filter()
 def commafy(value):
@@ -735,6 +735,16 @@ def commafy(value):
     """
     return format(int(value), ',d')
 
+@app.template_filter()
+def pretty_url(url, length=35):
+    """ Returns a prettier/simplified version of a URL.
+    """
+    match = patterns.pretty_url.match(url)
+    if match:
+        url = match.group(1)
+    if len(url) > length:
+        url = f'{url[:length - 3]}...'
+    return url
 
 @app.errorhandler(404)
 def error_404(_error_msg):

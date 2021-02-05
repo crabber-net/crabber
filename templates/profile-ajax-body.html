@@ -94,13 +94,7 @@
             {{this_user.description}}
         </div>
         <div class="profile-box-join-date text-muted mt-1">
-            <div class="d-inline-block mr-2" id="join-date">
-
-                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar"></use>
-                </svg>
-                Joined {{localize(this_user.register_time).strftime('%B %Y')}}
-            </div>
+            <!-- Location -->
             {% if this_user.location %}
             <div class="d-inline-block mr-2" id="user-location">
 
@@ -110,11 +104,32 @@
                 {{this_user.location}}
             </div>
             {% endif %}
+
+            <!-- Website -->
+            {% if this_user.website %}
+            <div class="d-inline-block mr-2" id="user-website">
+
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#link"></use>
+                </svg>
+                <a href="{{this_user.website}}">{{this_user.website|pretty_url}}</a>
+            </div>
+            {% endif %}
+
+            <!-- Crabber Birthday -->
+            <div class="d-inline-block mr-2" id="join-date">
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar"></use>
+                </svg>
+                Joined {{localize(this_user.register_time).strftime('%B %Y')}}
+            </div>
+
+            <!-- Last.fm -->
             {% if this_user.lastfm %}
                 <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
                     <img class="lastfm-logo" class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
                     <!-- Now Playing -->
-                    <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none">
+                    <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none" target="_blank" rel="nofollow">
                         <span id="lastfm-status">now playing</span>
                         <strong class="italic" id="lastfm-artist"><em></em></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
                     </a>

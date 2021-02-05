@@ -12,6 +12,13 @@
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
         </div>
 
+        <!-- Description -->
+        <div class="form-group cool-input">
+            <label for="description">About me</label>
+            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
+            required aria-required>{{current_user.description.strip()}}</textarea>
+        </div>
+
         <!-- Location -->
         <div class="form-group cool-input">
             <label for="location">Location <span class="text-muted">(optional)</span></label>
@@ -19,11 +26,11 @@
                 placeholder="Planet Earth, The Solar System" value="{{current_user.location if current_user.location else ""}}">
         </div>
 
-        <!-- Description -->
+        <!-- Website -->
         <div class="form-group cool-input">
-            <label for="description">About me</label>
-            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
-            required aria-required>{{current_user.description.strip()}}</textarea>
+            <label for="website">Website <span class="text-muted">(optional)</span></label>
+            <input type="text" name="website" class="form-control" id="website"
+                placeholder="https://onlycrabs.com/bigred" value="{{current_user.website if current_user.website else ""}}">
         </div>
 
         <!-- Bio -->

@@ -37,6 +37,7 @@ class Crab(db.Model):
     raw_bio = db.Column(db.String, nullable=False,
                         server_default='{}')
     location = db.Column(db.String, nullable=True)
+    website = db.Column(db.String, nullable=True)
     verified = db.Column(db.Boolean, nullable=False,
                          default=False)
     avatar = db.Column(db.String(140), nullable=False,
@@ -180,6 +181,7 @@ class Crab(db.Model):
         """
         self.description = updates.get('description') or self.description
         self.location = updates.get('location') or self.location
+        self.website = updates.get('website') or self.website
 
         valid_keys = ('age', 'emoji', 'jam', 'obsession', 'pronouns', 'quote',
                       'remember')

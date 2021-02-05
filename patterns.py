@@ -20,3 +20,6 @@ ext_md_link = re.compile(
     r'\[([^\]\(\)]+)\]\((http[^\]\(\)]+)\)')
 timezone = re.compile(
     r'^-?(1[0-2]|0[0-9]).\d{2}$')
+pretty_url = re.compile(
+    r'(?:https?://)?(?:www\.)?((?:(?:[\w_-]+\.?)+/?)+)'
+)
