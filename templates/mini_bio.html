@@ -31,14 +31,16 @@
             {% endif %}
             <br><span class="mini-molt-username zindex-front"
                 style="position: relative;top: -.1em;">@{{crab.username}}
-                {% if current_user in crab.following %}
+                {% if current_user in crab.following and not hide_description %}
                     <small class="follows-you">Follows you</small>
                 {% endif %}
             </span>
         </div>
-        <div class="mini-molt-content">
-            <p class="mb-2">{{crab.description}}</p>
-        </div>
+        {% if not hide_description %}
+            <div class="mini-molt-content">
+                <p class="mb-2">{{crab.description}}</p>
+            </div>
+        {% endif %}
     </div>
     <!-- User page link -->
     <a href="/user/{{crab.username}}" class="absolute-fill"></a>

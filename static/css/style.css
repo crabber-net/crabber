@@ -1788,3 +1788,61 @@ table#user-info th {
 #molt-source {
     text-decoration: none;
 }
+
+#add-panel .search-box {
+    background-color: var(--dark-lesser);
+    margin-bottom: 2rem;
+}
+#add-panel .search-box svg {
+    height: 100%;
+
+    fill: var(--placeholder);
+}
+#add-panel .search-box:focus-within {
+    background-color: var(--dark);
+
+    box-shadow: var(--primary) 0px 0px 0px 1px;
+}
+#add-panel .search-box:focus-within svg {
+    fill: var(--primary);
+}
+
+.panel {
+    margin-top: 1rem;
+    padding: 1rem;
+    padding-top: 0;
+
+    background-color: var(--dark-less);
+
+    border-radius: 1rem;
+}
+.panel .panel-title {
+    padding: 0.75rem 0;
+
+    font-size: 19px;
+    font-weight: 800;
+
+    border-bottom: 1px solid var(--border-dark);
+}
+
+.panel#trending a {
+    text-decoration: none !important;
+}
+.trending-tag {
+    margin: 0.25rem 0;
+    padding: 0.25rem;
+
+    border-radius: 0.25rem;
+}
+.trending-tag:hover {
+    background-color: var(--dark-less-more);
+}
+.trending-tag span {
+    color: var(--light);
+
+    font-size: 15px;
+    font-weight: bold;
+}
+.panel#trending p.nothing {
+    margin: 0.75rem 0 0.1rem 0;
+}

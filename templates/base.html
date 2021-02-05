@@ -70,10 +70,10 @@
 </head>
 <body class="bg-dark text-light">
     <div class="container-fluid {{'p-0' if current_page == 'welcome'}} vh-100 master-container">
-        <div class="row h-100 justify-content-{{ "center" if hide_sidebar and not fullwidth else "start" }}">
+        <div class="row h-100 justify-content-center">
             {% if not hide_sidebar %}
             <!-- Nav Panel -->
-            <div class="col-2 col-lg-3 col-xl-2 offset-lg-1 offset-xl-2 p-1" id="nav-panel">
+            <div class="col-2 col-lg-3 p-1" id="nav-panel">
                 <!-- Logo -->
                 <svg class="mt-2 d-block mx-auto d-lg-inline mx-lg-0 logo clickable"
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 963.625 629.032"
@@ -255,13 +255,6 @@
                         <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
                     </button>
                 </form>
-
-                <!-- Copyright footer -->
-                <div id="nav-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
-                    <small>&copy; Copyright {{current_year}}, Crabber</small>
-                    <br>
-                    <small>Crabber is open source. <a href="https://github.com/jakeledoux/crabber">Fork on GitHub</a>.</small>
-                </div>
             {% endif %}
             </div>
 
@@ -470,6 +463,65 @@
                 <div class="scrollbox {{'scroll-snap' if current_page == 'welcome'}}">
                     {% block fullpage %} {% endblock %}
                 </div>
+            {% endif %}
+
+            {% if not hide_sidebar %}
+            <!-- Additional Panel -->
+            <div class="d-none d-lg-block col-2 col-xl-3 ml-2 p-1" id="add-panel">
+                <!-- Search bar -->
+                <form action="/search/" method="GET">
+                    <div class="rounded-pill search-box mini-compose-box px-3 p-2 d-flex flex-row">
+                        <svg class="mr-2" width="28" height="28" data-jam="search">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}#search">
+                        </svg>
+                        <input class="w-100 mr-2" type="text" name="q" placeholder="Search Crabber" required>
+                    </div>
+                </form>
+
+                {% if current_user %}
+                {% with recommended_crabs=current_user.get_recommended_crabs() %}
+                    {% if recommended_crabs %}
+                    <!-- Who to follow -->
+                    <div class="panel" id="recommended-crabs">
+                        <div class="panel-title">
+                            <span>Who to follow</span>
+                        </div>
+                        {% for crab in recommended_crabs %}
+                            {% with hide_description = True, hide_border = loop.last %}
+                                {% include 'mini_bio.html' %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+                {% endif %}
+
+                <!-- Trending Crabtags -->
+                <div class="panel" id="trending">
+                    <div class="panel-title">
+                        <span>Trending</span>
+                    </div>
+                    {% for tag in trending_crabtags %}
+                        <a href="/crabtag/{{tag}}">
+                            <div class="trending-tag">
+                                <span>%{{tag}}</span>
+                            </div>
+                        </a>
+                    {% else %}
+                        <p class="text-muted nothing">
+                        Nothing right now.
+                        </p>
+                    {% endfor %}
+                </div>
+
+
+                <!-- Copyright footer -->
+                <div id="nav-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
+                    <small>&copy; Copyright {{current_year}}, Crabber</small>
+                    <br>
+                    <small>Crabber is open source. <a href="https://github.com/jakeledoux/crabber">Fork on GitHub</a>.</small>
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>

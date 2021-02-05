@@ -403,3 +403,8 @@ def hexID(digits=6):
 def make_crabatar(username: str):
     crabatar = Crabatar(username)
     return upload_image(crabatar.get_avatar_bytes(format='JPEG'))
+
+
+def get_trending_crabtags():
+    # TODO
+    return list()

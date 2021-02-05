@@ -6,6 +6,7 @@ import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
+from sqlalchemy import func, text
 from typing import Any, Optional
 import utils
 
@@ -160,6 +161,19 @@ class Crab(db.Model):
         self._preferences = json.dumps(preferences_dict)
         db.session.commit()
 
+    def get_recommended_crabs(self, limit=3):
+        following_ids = db.session.query(Crab.id) \
+                .join(following_table, Crab.id==following_table.c.following_id) \
+                .filter(following_table.c.follower_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        recommended = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.following_id) \
+                .filter(following_table.c.follower_id.in_(following_ids)) \
+                .filter(following_table.c.following_id.notin_(following_ids)) \
+                .filter(Crab.banned == False, Crab.deleted == False) \
+                .filter(Crab.id != self.id)
+
+        return recommended.limit(limit).all()
 
     def update_bio(self, updates: dict):
         """ Update bio with keys from `new_bio`.
