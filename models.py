@@ -456,6 +456,10 @@ class Molt(db.Model):
     image = db.Column(db.String(1024), nullable=True)
     source = db.Column(db.String)
 
+    # Analytical data
+    browser = db.Column(db.String)
+    platform = db.Column(db.String)
+
     # Moderation/flagging
     reports = db.Column(db.Integer, nullable=False, default=0)
     approved = db.Column(db.Boolean, nullable=False, default=False)
