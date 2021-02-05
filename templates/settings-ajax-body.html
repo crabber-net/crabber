@@ -4,12 +4,19 @@
         <input type="hidden" name="user_action" value="update_description" autofocus>
         <input type="hidden" name="page" value="settings">
         <input type="hidden" name="user_id" value="{{current_user.id}}">
-    
+
         <!-- Display name -->
         <div class="form-group cool-input">
             <label for="displayName">Display name</label>
             <input type="text" name="display_name" class="form-control" id="displayName"
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group cool-input">
+            <label for="description">About me</label>
+            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
+            required aria-required>{{current_user.description.strip()}}</textarea>
         </div>
 
         <!-- Location -->
@@ -18,12 +25,12 @@
             <input type="text" name="location" class="form-control" id="location"
                 placeholder="Planet Earth, The Solar System" value="{{current_user.location if current_user.location else ""}}">
         </div>
-    
-        <!-- Description -->
+
+        <!-- Website -->
         <div class="form-group cool-input">
-            <label for="description">About me</label>
-            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you." 
-            required aria-required>{{current_user.description.strip()}}</textarea>
+            <label for="website">Website <span class="text-muted">(optional)</span></label>
+            <input type="text" name="website" class="form-control" id="website"
+                placeholder="https://onlycrabs.com/bigred" value="{{current_user.website if current_user.website else ""}}">
         </div>
 
         <!-- Bio -->
@@ -32,7 +39,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Age</label>
             </div>
-            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42" 
+            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42"
                 {% if current_user.bio.get("age", "?") != "?" %}value="{{current_user.bio.get("age")}}"{% endif %}
                 >
         </div>
@@ -40,7 +47,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Pronouns</label>
             </div>
-            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them" 
+            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them"
                 {% if current_user.bio.get("pronouns", "?") != "?" %}value="{{current_user.bio.get("pronouns")}}"{% endif %}
                 >
         </div>
@@ -48,7 +55,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Quote</label>
             </div>
-            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster." 
+            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster."
                 {% if current_user.bio.get("quote", "?") != "?" %}value="{{current_user.bio.get("quote")}}"{% endif %}
                 >
         </div>
@@ -56,7 +63,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">My jam</label>
             </div>
-            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way" 
+            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way"
                 {% if current_user.bio.get("jam", "?") != "?" %}value="{{current_user.bio.get("jam")}}"{% endif %}
                 >
         </div>
@@ -64,7 +71,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Latest obsession</label>
             </div>
-            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi" 
+            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi"
                 {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
                 >
         </div>
@@ -72,7 +79,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Remember when</label>
             </div>
-            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?" 
+            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?"
                 {% if current_user.bio.get("remember", "?") != "?" %}value="{{current_user.bio.get("remember")}}"{% endif %}
                 >
         </div>
@@ -80,16 +87,16 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Favorite emoji</label>
             </div>
-            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)" 
+            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)"
                 {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
                 >
         </div>
-    
+
         <!-- Submit button -->
         <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
         <div class="clearfix"></div>
     </form>
-    
+
     <!-- Section border -->
     <hr class="border-dark mb-3 mt-4">
 
@@ -100,7 +107,7 @@
         <!-- Email address -->
         <div class="form-group cool-input">
             <label for="exampleInputEmail1">Email address</label>
-            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" 
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
                 placeholder="Please enter an email address" value="{{current_user.email}}" required aria-required>
         </div>
 
@@ -127,7 +134,7 @@
     <h2 class="mb-3">Misc</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_general_settings">
-        
+
         <!-- Timezone dropdown -->
         <div class="form-group">
             <label for="timezone">Timezone</label>

@@ -254,8 +254,11 @@ def common_molt_actions() -> Response:
             disp_name = request.form.get('display_name').strip()
             desc = request.form.get('description').strip()
             location = request.form.get('location')
+            website = request.form.get('website')
             if location:
                 location = location.strip()
+            if website:
+                website = website.strip()
 
             # Bio JSON assembly
             new_bio = target_user.bio
@@ -269,6 +272,10 @@ def common_molt_actions() -> Response:
             current_user.description = desc
             if location:
                 current_user.location = location
+            if website:
+                if not website.startswith('http'):
+                    website = 'http://' + website
+                current_user.website = website
             current_user.raw_bio = json.dumps(new_bio)
             db.session.commit()
             if request.form.get('page') == "settings":

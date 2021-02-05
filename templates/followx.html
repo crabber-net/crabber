@@ -2,7 +2,7 @@
 {% block title %}{{this_user.display_name}}'s following{% endblock %}
 {% block heading %}
     <div class="row">
-        <div class="col-2 col-lg-1 clickable" onclick="location.href='{{referrer or '/user/{}'.format(this_user.username)}}'">
+        <div class="col-2 col-lg-1 clickable" onclick="location.href='/user/{{this_user.username}}'">
             <svg class="text-primary heading-back-arrow" width="24" height="24" data-jam="arrow-left">
                 <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-left"></use>
             </svg>
@@ -17,35 +17,47 @@
 <!-- Profile bio box -->
 <div class="profile-box border-bottom border-dark">
     <div class="row mx-0">
-        <div id="followers-btn" class="profile-box-category mt-2 col {{"active" if tab == "followers" else ""}}" onclick="location.href='/user/{{this_user.username}}/followers';">
+        <div id="followers-you-know-btn" class="profile-box-category pt-1 col {{"active" if tab == "followers_you_know" else ""}}" onclick="location.href='/user/{{this_user.username}}/followers_you_know';">
+            <div class="py-2"><strong class="d-inline-block w-100 text-center">Followers you know</strong></div>
+        </div>
+        <div id="followers-btn" class="profile-box-category pt-1 col {{"active" if tab == "followers" else ""}}" onclick="location.href='/user/{{this_user.username}}/followers';">
             <div class="py-2"><strong class="d-inline-block w-100 text-center">Followers</strong></div>
         </div>
-        <div id="following-btn" class="profile-box-category mt-2 col {{"active" if tab == "following" else ""}}" onclick="location.href='/user/{{this_user.username}}/following';">
+        <div id="following-btn" class="profile-box-category pt-1 col {{"active" if tab == "following" else ""}}" onclick="location.href='/user/{{this_user.username}}/following';">
             <div class="py-2"><strong class="d-inline-block w-100 text-center">Following</strong></div>
         </div>
     </div>
 </div>
 
-{% if tab == "followers" %}
-<!-- All molts live here! -->
+<!-- Followers you know -->
+{% if tab == "followers_you_know" %}
+<div id="followers_you_know">
+    {% for crab in followx %}
+        {% include "mini_bio.html" %}
+    {% else %}
+        <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">You don't follow any of this user's followers.</div>
+    {% endfor %}
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+</div>
+
+<!-- Followers -->
+{% elif tab == "followers" %}
 <div id="followers">
     {% for crab in followx %}
-        {% with hide_border=loop.last %}
-            {% include "mini_bio.html" %}
-        {% endwith %}
+        {% include "mini_bio.html" %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't have any followers 😢</div>
     {% endfor %}
     <!-- Spacer -->
     <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 </div>
+
+<!-- Following -->
 {% elif tab == "following" %}
-<!-- All likes live here! -->
 <div id="following">
     {% for crab in followx %}
-        {% with hide_border=loop.last %}
-            {% include "mini_bio.html" %}
-        {% endwith %}
+        {% include "mini_bio.html" %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't follow anyone</div>
     {% endfor %}

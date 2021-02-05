@@ -53,11 +53,14 @@
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-4 -1 24 24" id="medal-f">
     <path d="M4 17.502c.307.2.699.26 1.067.133l2.536-.864a1.23 1.23 0 01.794 0l2.536.864c.368.126.76.067 1.067-.133v3.894l-4-1.358-4 1.358v-3.894zm3.677-2.37l-2.062.703a1 1 0 01-1.222-.51L3.388 13.26a1 1 0 00-.43-.447l-2-1.06a1 1 0 01-.485-1.181l.71-2.273a1 1 0 000-.596L.473 5.43a1 1 0 01.486-1.182l1.999-1.06a1 1 0 00.43-.446L4.393.674A1 1 0 015.615.165l2.062.703a1 1 0 00.646 0l2.062-.703a1 1 0 011.222.51l1.005 2.066a1 1 0 00.43.447l2 1.06a1 1 0 01.485 1.181l-.71 2.273a1 1 0 000 .596l.71 2.273a1 1 0 01-.486 1.182l-1.999 1.06a1 1 0 00-.43.446l-1.005 2.067a1 1 0 01-1.222.509l-2.062-.703a1 1 0 00-.646 0zM8 5a1 1 0 00-1 1v4a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
   </symbol>
-  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -1.5 24 24" id="map-marker-f">
-    <path d="M7 20.565c-4.667-6.09-7-10.423-7-13a7 7 0 1114 0c0 2.577-2.333 6.91-7 13zm0-9a4 4 0 100-8 4 4 0 000 8z"></path>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -2 24 24" id="map-marker">
+    <path d="M12 7A5 5 0 102 7c0 1.726 1.66 5.031 5 9.653 3.34-4.622 5-7.927 5-9.653zM7 20C2.333 13.91 0 9.577 0 7a7 7 0 1114 0c0 2.577-2.333 6.91-7 13zm0-9a4 4 0 110-8 4 4 0 010 8zm0-2a2 2 0 100-4 2 2 0 000 4z"></path>
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -3 24 24" id="log-out">
     <path d="M3.414 7.828h5.642a1 1 0 110 2H3.414l1.122 1.122a1 1 0 11-1.415 1.414L.293 9.536a.997.997 0 010-1.415L3.12 5.293a1 1 0 011.415 1.414L3.414 7.828zM13 0a1 1 0 011 1v16a1 1 0 01-2 0V1a1 1 0 011-1z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-3 -3 24 24" id="link">
+    <path d="M3.19 9.345a.97.97 0 011.37 0 .966.966 0 010 1.367l-2.055 2.052a1.932 1.932 0 000 2.735 1.94 1.94 0 002.74 0l4.794-4.787a.966.966 0 000-1.367.966.966 0 010-1.368.97.97 0 011.37 0 2.898 2.898 0 010 4.103l-4.795 4.787a3.879 3.879 0 01-5.48 0 3.864 3.864 0 010-5.47L3.19 9.344zm11.62-.69a.97.97 0 01-1.37 0 .966.966 0 010-1.367l2.055-2.052a1.932 1.932 0 000-2.735 1.94 1.94 0 00-2.74 0L7.962 7.288a.966.966 0 000 1.367.966.966 0 010 1.368.97.97 0 01-1.37 0 2.898 2.898 0 010-4.103l4.795-4.787a3.879 3.879 0 015.48 0 3.864 3.864 0 010 5.47L14.81 8.656z"></path>
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -6.5 24 24" id="infinite">
     <path d="M5.5 9a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM11 5.5a3.5 3.5 0 10.668-2.057 6.483 6.483 0 00-1.001-1.887A5.5 5.5 0 1110 8.663 5.5 5.5 0 1111 5.5z"></path>
@@ -107,8 +110,8 @@
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -4 24 24" id="camera-f">
     <path d="M4.126 3C4.57 1.275 6.136 0 8 0h4a4.002 4.002 0 013.874 3H16a4 4 0 014 4v5a4 4 0 01-4 4H4a4 4 0 01-4-4V7a4 4 0 014-4h.126zM10 13a4 4 0 100-8 4 4 0 000 8zm6-5a1 1 0 100-2 1 1 0 000 2zm-6 3a2 2 0 110-4 2 2 0 010 4z"></path>
   </symbol>
-  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -2.5 24 24" id="calendar-f">
-    <path d="M3 3v2a2 2 0 104 0V3h6v2a2 2 0 104 0V3a3 3 0 013 3v2H0V6a3 3 0 013-3zm17 7v6a3 3 0 01-3 3H3a3 3 0 01-3-3v-6h20zM15 0a1 1 0 011 1v4a1 1 0 01-2 0V1a1 1 0 011-1zM5 0a1 1 0 011 1v4a1 1 0 11-2 0V1a1 1 0 011-1z"></path>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -3 24 24" id="calendar">
+    <path d="M18 7V5a1 1 0 00-1-1h-1v1a1 1 0 01-2 0V4H6v1a1 1 0 11-2 0V4H3a1 1 0 00-1 1v2h16zm0 2H2v6a1 1 0 001 1h14a1 1 0 001-1V9zm-2-7h1a3 3 0 013 3v10a3 3 0 01-3 3H3a3 3 0 01-3-3V5a3 3 0 013-3h1V1a1 1 0 112 0v1h8V1a1 1 0 012 0v1z"></path>
   </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -2 24 24" id="cactus">
     <path d="M20 6.5V14h-6v6H6v-4H0V8.5a2.5 2.5 0 015 0V11h1V4a4 4 0 017.988-.314V9H15V6.5a2.5 2.5 0 115 0zM8 18h4v-6h6V6.5a.5.5 0 10-1 0V11h-5V4a2 2 0 10-4 0v9H3V8.5a.5.5 0 00-1 0V14h6v4zm2-9a1 1 0 011 1v6a1 1 0 01-2 0v-6a1 1 0 011-1zm0-5a1 1 0 011 1v2a1 1 0 01-2 0V5a1 1 0 011-1z"></path>

@@ -8,6 +8,7 @@ import os
 import patterns
 from sqlalchemy import or_
 from sqlalchemy.sql import func
+from typing import Iterable, Tuple
 import utils
 
 
@@ -321,10 +322,16 @@ def user_following(username, tab):
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
         elif this_user.banned:
-            return render_template('not-found.html', current_user=utils.get_current_user(), 
+            return render_template('not-found.html', current_user=utils.get_current_user(),
                                    message='This user has been banned.')
         else:
-            followx = this_user.true_following if tab == "ing" else this_user.true_followers
+            followx = None
+            if tab == 'ing':
+                followx = this_user.true_following
+            elif tab == 'ers':
+                followx = this_user.true_followers
+            elif tab == 'ers_you_know':
+                followx = utils.get_current_user().get_mutuals_for(this_user)
             return render_template('followx.html',
                                    current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                    followx=followx,
@@ -718,9 +725,27 @@ def inject_global_vars():
 
 
 @app.template_filter()
+def pluralize(collection: Iterable, grammar: Tuple[str, str] = ('', 's')):
+    """ Returns singular or plural string depending on length of collection.
+    """
+    return grammar[len(collection) != 1]
+
+@app.template_filter()
 def commafy(value):
+    """ Returns string of value with commas seperating the thousands places.
+    """
     return format(int(value), ',d')
 
+@app.template_filter()
+def pretty_url(url, length=35):
+    """ Returns a prettier/simplified version of a URL.
+    """
+    match = patterns.pretty_url.match(url)
+    if match:
+        url = match.group(1)
+    if len(url) > length:
+        url = f'{url[:length - 3]}...'
+    return url
 
 @app.errorhandler(404)
 def error_404(_error_msg):

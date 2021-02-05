@@ -1,0 +1,5 @@
+Improvement:
+    Add right column on large-enough displays
+    Move copyright footer to right column
+Bug:
+    Referrer = current page after form submit/etc.

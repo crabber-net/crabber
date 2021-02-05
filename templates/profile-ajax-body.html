@@ -1,77 +1,6 @@
 {% import "macros.jinja" as macros %}
 
 <script>
-    function getNowPlaying(username) {
-        let api_key = "7d46cfc3d2c68c0f50504b7a09516898";
-        $.ajax({
-            url: "https://ws.audioscrobbler.com/2.0/",
-            data: {
-                'method': 'user.getrecenttracks',
-                'user': username,
-                'limit': 1,
-                'api_key': api_key,
-                'format': 'json'
-            },
-            success: updateLastfm,
-            error: function(data) {
-                $(".lastfm-loading em").text("failed to load last.fm");
-                console.warn(data);
-            }
-        })
-        $.ajax({
-            url: "https://ws.audioscrobbler.com/2.0/",
-            data: {
-                'method': 'user.getLovedTracks',
-                'user': username,
-                'limit': 1,
-                'api_key': api_key,
-                'format': 'json'
-            },
-            success: updateLastfmLoved,
-            error: function(data) {
-                $("#loved-loading em").text("failed to load loved tracks");
-                console.warn(data);
-            }
-        })
-    }
-
-    function updateLastfm(data) {
-        var currentTrack = data.recenttracks.track[0];
-        var totalScrobbles = parseInt(data.recenttracks['@attr'].total).toLocaleString();
-
-        // Currently playing or last played
-        if (!(currentTrack["@attr"] && currentTrack["@attr"].nowplaying)) {
-            $("#lastfm-status").text("last played");
-        }
-        // Hide loading message
-        $(".lastfm-loading").addClass("d-none");
-
-        // Update track info
-        // append ' em' to selector to make it italic
-        $("#lastfm-artist").text(currentTrack.artist["#text"]);
-        $("#lastfm-track").text(currentTrack.name);
-
-        // Update scrobble count
-        $("#lastfm-scrobble-count").text(totalScrobbles);
-
-        // Reveal last played/currently playing
-        $("#lastfm-now-playing").removeClass("d-none");
-        // Reveal scrobble count
-        $("#lastfm-scrobbles").removeClass("d-none");
-    }
-    function updateLastfmLoved(data) {
-        var lovedTracks = parseInt(data.lovedtracks['@attr'].total).toLocaleString();
-
-        // Hide loading message
-        $("#loved-loading").addClass("d-none");
-
-        // Update loved count
-        $("#lastfm-loved-count").text(lovedTracks);
-
-        // Reveal loved count
-        $("#lastfm-loved").removeClass("d-none");
-    }
-
     $(function () {
         // Enable tooltips
         $('[data-toggle="tooltip"]').tooltip();
@@ -121,9 +50,12 @@
                 <form method="POST">
                     <input type="hidden" name="target_user" value="{{this_user.id}}">
                     {% if not current_user in this_user.followers %}
-                        <button name="user_action" value="follow" type="submit" class="btn btn-primary rounded-pill"><strong>Follow</strong></button>
+                        <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn"><strong>Follow</strong></button>
                     {% else %}
-                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill"><strong>Unfollow</strong></button>
+                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill unfollow-btn">
+                            <strong class="default-text">Following</strong>
+                            <strong class="hover-text">Unfollow</strong>
+                        </button>
                     {% endif %}
                 </form>
             {% else %}
@@ -162,27 +94,42 @@
             {{this_user.description}}
         </div>
         <div class="profile-box-join-date text-muted mt-1">
-            <div class="d-inline-block mr-2" id="join-date">
-
-                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar-f">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar-f"></use>
-                </svg>
-                Joined {{localize(this_user.register_time).strftime('%B %Y')}}
-            </div>
+            <!-- Location -->
             {% if this_user.location %}
             <div class="d-inline-block mr-2" id="user-location">
 
-                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker-f">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker-f"></use>
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker"></use>
                 </svg>
                 {{this_user.location}}
             </div>
             {% endif %}
+
+            <!-- Website -->
+            {% if this_user.website %}
+            <div class="d-inline-block mr-2" id="user-website">
+
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#link"></use>
+                </svg>
+                <a href="{{this_user.website}}">{{this_user.website|pretty_url}}</a>
+            </div>
+            {% endif %}
+
+            <!-- Crabber Birthday -->
+            <div class="d-inline-block mr-2" id="join-date">
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar"></use>
+                </svg>
+                Joined {{localize(this_user.register_time).strftime('%B %Y')}}
+            </div>
+
+            <!-- Last.fm -->
             {% if this_user.lastfm %}
                 <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
                     <img class="lastfm-logo" class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
                     <!-- Now Playing -->
-                    <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none">
+                    <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none" target="_blank" rel="nofollow">
                         <span id="lastfm-status">now playing</span>
                         <strong class="italic" id="lastfm-artist"><em></em></strong> &mdash; <strong id="lastfm-track"><em></em></strong>
                     </a>
@@ -198,6 +145,41 @@
             <a class="text-inherit" href="/user/{{this_user.username}}/followers">
             <div class="d-inline mr-2"><strong>{{this_user.true_followers|length}}</strong>
                 <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
+
+            <!-- "Followers you know" section -->
+            {% if current_user %}
+                {% if current_user != this_user %}
+                    <div class="following-mutuals text-muted mt-2">
+                        <a class="text-muted" href="/user/{{this_user.username}}/followers_you_know">
+                            {% with mutuals=current_user.get_mutuals_for(this_user) %}
+                            {% if mutuals %}
+                                {% with featured_mutuals=mutuals[:3], other_mutuals=mutuals[3:] %}
+                                    <div class="featured-mutuals mr-2">
+                                        {% for mutual in featured_mutuals %}
+                                        <div class="featured-mutual-avatar"
+                                             style="background-image: url('{{url_for('static', filename=mutual.avatar)}}');"
+                                             src="{{url_for('static', filename=this_user.avatar)}}">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <span>Followed by</span>
+                                    {% for mutual in featured_mutuals %}
+                                        <span>
+                                            {{mutual.display_name}}{{',' if not loop.last or other_mutuals}}
+                                        <span>
+                                    {% endfor %}
+                                    {% if other_mutuals %}
+                                        <span>
+                                            and {{other_mutuals|length}} other{{other_mutuals|pluralize}} you follow.
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                            {% endwith %}
+                        </a>
+                    </div>
+                {% endif %}
+            {% endif %}
         </div>
 
         <!-- SHELL Section -->
