@@ -101,13 +101,13 @@
                     {% endif %}
                     >
                         <svg class="btn-icon {{"d-none" if current_page == "home" else ""}}" width="28" height="28" data-jam="home">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#home">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#home">
                         </svg>
                         <svg class="btn-icon {{"" if current_page == "home" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="home-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#home-f">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#home-f">
                         </svg>
                         <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh">
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Home</strong>
                     </button>
@@ -121,15 +121,15 @@
                         {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" width="28" height="28" data-jam="cactus">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#cactus"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#cactus"></use>
                         </svg>
 
                         <svg class="btn-icon {{"" if current_page == "wild-west" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="cactus-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#cactus-f"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#cactus-f"></use>
                         </svg>
 
                         <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
                     </button>
@@ -143,16 +143,16 @@
                     {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" width="28" height="28" data-jam="bell">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#bell"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bell"></use>
                         </svg>
 
                         <svg class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="bell-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#bell-f"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bell-f"></use>
                         </svg>
                         <span class="notif-badge {{"" if current_user.unread_notifications else "d-none"}}">{{current_user.unread_notifications}}</span>
 
                         <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Notifications</strong>
                     </button>
@@ -164,15 +164,15 @@
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" width="28" height="28" data-jam="search">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#search"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#search"></use>
                         </svg>
 
                         <svg class="btn-icon {{"" if current_page == "notifications" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="search">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#search"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#search"></use>
                         </svg>
 
                         <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Search</strong>
                     </button>
@@ -197,7 +197,7 @@
                 <button type="button" class="btn btn-primary rounded-pill w-md-75 mt-4" id="molt-btn" onclick="toggleModal('#compose_modal');">
 
                     <svg class="btn-icon d-lg-none" width="28" height="28" data-jam="write">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#write"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#write"></use>
                     </svg>
                     <strong class="d-none d-lg-inline-block">Molt</strong>
                 </button>
@@ -210,15 +210,15 @@
                     {% endif %}>
 
                         <svg class="btn-icon text-muted {{"d-none" if current_page == "stats" else ""}}" width="28" height="28" data-jam="dashboard">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#dashboard"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#dashboard"></use>
                         </svg>
 
                         <svg class="btn-icon text-muted {{"" if current_page == "stats" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="dashboard-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#dashboard-f"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#dashboard-f"></use>
                         </svg>
 
                         <svg class="btn-icon loading-icon loading-icon-center d-none" width="28" height="28" data-jam="refresh">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#refresh"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Stats</strong>
                     </button>
@@ -232,15 +232,15 @@
                     {% endif %}>
 
                         <svg class="btn-icon text-muted {{"d-none" if current_page == "settings" else ""}}" width="28" height="28" data-jam="cog">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#cog"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#cog"></use>
                         </svg>
 
                         <svg class="btn-icon text-muted {{"" if current_page == "settings" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="cog-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#cog-f"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#cog-f"></use>
                         </svg>
 
                         <svg class="btn-icon loading-icon loading-icon-center d-none" width="28" height="28" data-jam="cog">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#cog"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#cog"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Settings</strong>
                     </button>
@@ -251,7 +251,7 @@
                     <button type="submit" class="btn btn-secondary rounded-pill mt-2 extra-navs">
 
                         <svg class="btn-icon text-muted" width="28" height="28" data-jam="log-out">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#log-out"></use>
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#log-out"></use>
                         </svg>
                         <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
                     </button>
@@ -294,7 +294,7 @@
                                                 <label class="custom-file-label" for="inputGroupFile01">
 
                                                     <svg class="file-btn" width="28" height="28" data-jam="picture">
-                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
+                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
                                                     </svg>
                                                 </label>
                                             </div>
@@ -303,7 +303,7 @@
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
 
                                             <svg width="28" height="28" data-jam="close-rectangle">
-                                                <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
+                                                <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#close-rectangle"></use>
                                             </svg>
                                         </div>
 
@@ -358,7 +358,7 @@
                                                 <label class="custom-file-label" for="inputGroupFile02">
 
                                                     <svg class="file-btn" width="28" height="28" data-jam="picture">
-                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}#picture"></use>
+                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
                                                     </svg>
                                                 </label>
                                             </div>
@@ -367,7 +367,7 @@
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
 
                                             <svg width="28" height="28" data-jam="close-rectangle">
-                                                <use href="{{url_for('static', filename='img/sprites.svg')}}#close-rectangle"></use>
+                                                <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#close-rectangle"></use>
                                             </svg>
                                         </div>
 
@@ -443,7 +443,7 @@
                             <div class="absolute-middle-right scroll-back" onclick="scrollToTop();">
 
                                 <svg class="btn-icon" width="28" height="28" data-jam="arrow-up">
-                                    <use href="{{url_for('static', filename='img/sprites.svg')}}#arrow-up"></use>
+                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#arrow-up"></use>
                                 </svg>
                             </div>
                         </h6>
@@ -473,7 +473,7 @@
                 <form action="/search/" method="GET">
                     <div class="rounded-pill search-box mini-compose-box px-3 p-2 d-flex flex-row">
                         <svg class="mr-2" width="28" height="28" data-jam="search">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}#search">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#search">
                         </svg>
                         <input class="w-100 mr-2" type="text" name="q" placeholder="Search Crabber" required>
                     </div>

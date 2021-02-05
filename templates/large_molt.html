@@ -20,7 +20,7 @@
             <small class="mini-molt-remolt text-muted zindex-front">
 
                 <svg class="mini-molt-action-icon remolt-icon" width="12" height="12" data-jam="repeat">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#repeat"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                 </svg>
                 <a href="/user/{{remolt_shell.author.username}}">{{remolt_shell.author.display_name}}</a> Remolted</small>
             {% endif %}
@@ -29,7 +29,7 @@
             <small class="mini-molt-remolt text-muted zindex-front">
 
                 <svg class="mini-molt-action-icon remolt-icon" width="12" height="12" data-jam="message">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#message"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                 </svg>
                 replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
                     {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}}
@@ -86,7 +86,7 @@
                     onclick="prepareEdit('{{molt.id}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#pencil"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
                     </svg>
                 </div>
             </form>
@@ -99,7 +99,7 @@
                     onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="20" height="20" data-jam="message">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#message"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                     </svg>
                 </div>
             </form>
@@ -122,7 +122,7 @@
                     {% endif %}>
 
                     <svg class="mini-molt-action-icon" width="20" height="20" data-jam="repeat">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#repeat"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                     </svg>
                 </div>
             </form>
@@ -133,11 +133,11 @@
                 <div class="mini-molt-action like zindex-front" onClick="SubForm(this.parentNode);toggleLike(this);">
 
                     <svg class="mini-molt-action-icon {{"d-none" if current_user.has_liked(molt) else ""}}" width="20" height="20" data-jam="heart">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#heart"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart"></use>
                     </svg>
 
                     <svg class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" width="20" height="20" data-jam="heart-f">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#heart-f"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart-f"></use>
                     </svg>
                 </div>
             </form>
@@ -147,7 +147,7 @@
                     onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="more-horizontal">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#more-horizontal"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#more-horizontal"></use>
                     </svg>
                 </span>
                 {% if current_user %}
@@ -161,7 +161,7 @@
                                     this.parentNode.submit();$(this).parents('div.mini-molt').remove();}">
 
                                     <svg width="16" height="16" data-jam="trash">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}#trash"></use>
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#trash"></use>
                                     </svg>
                                     Delete Molt
                                 </div>
@@ -175,7 +175,7 @@
                                     this.parentNode.submit();$(this).parents('div.mini-molt').remove();}">
 
                                     <svg width="16" height="16" data-jam="trash">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}#trash"></use>
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#trash"></use>
                                     </svg>
                                     Delete Re-Molt
                                 </div>
@@ -190,7 +190,7 @@
                                     SubForm(this.parentNode);replaceMolt(this, 'You have reported this Molt.');}">
 
                                     <svg width="16" height="16" data-jam="flag">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}#flag"></use>
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#flag"></use>
                                     </svg>
                                     Report Molt
                                 </div>
