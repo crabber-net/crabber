@@ -50,9 +50,12 @@
                 <form method="POST">
                     <input type="hidden" name="target_user" value="{{this_user.id}}">
                     {% if not current_user in this_user.followers %}
-                        <button name="user_action" value="follow" type="submit" class="btn btn-primary rounded-pill"><strong>Follow</strong></button>
+                        <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn"><strong>Follow</strong></button>
                     {% else %}
-                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill"><strong>Unfollow</strong></button>
+                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill unfollow-btn">
+                            <strong class="default-text">Following</strong>
+                            <strong class="hover-text">Unfollow</strong>
+                        </button>
                     {% endif %}
                 </form>
             {% else %}

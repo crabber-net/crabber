@@ -1788,3 +1788,62 @@ table#user-info th {
 #molt-source {
     text-decoration: none;
 }
+
+/* Only underline spans in anchor (to avoid underlined leading whitespace) */
+.following-mutuals a {
+    text-decoration: none;
+}
+.following-mutuals a:hover span {
+    text-decoration: underline;
+}
+.featured-mutuals {
+    display: inline-block;
+
+    height: 18px;
+
+    vertical-align: top;
+}
+.featured-mutual-avatar {
+    position: relative;
+    display: inline-block;
+
+    width: 18px;
+    height: 18px;
+
+    border-radius: 18px;
+    box-shadow: var(--dark) 0px 0px 0px 1px;
+
+    background-size: cover;
+}
+/* Overlap avatars */
+.featured-mutual-avatar:not(:first-child) {
+    margin-left: -10px;
+}
+/* Reverse z-index order */
+.featured-mutual-avatar:nth-child(1) {
+    z-index: 4;
+}
+.featured-mutual-avatar:nth-child(2) {
+    z-index: 3;
+}
+.featured-mutual-avatar:nth-child(3) {
+    z-index: 2;
+}
+
+/* Change button text on hover */
+.btn .hover-text {
+    display: none;
+}
+.btn:hover .hover-text {
+    display: unset;
+}
+.btn:hover .default-text {
+    display: none;
+}
+
+.follow-btn {
+    width: 5em;
+}
+.unfollow-btn {
+    width: 7em;
+}

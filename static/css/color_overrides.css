@@ -56,6 +56,26 @@
     box-shadow: 0 0 0 .2rem var(--primary-faded) !important;
 }
 
+.btn-outline-primary {
+    border-color: var(--primary-dark);
+    color: var(--primary-dark);
+}
+.btn-outline-primary:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.btn-outline-primary:not(:disabled):not(.disabled):hover {
+    background-color: var(--primary-faded);
+    border-color: var(--primary-dark);
+    color: var(--primary-dark);
+}
+.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled):focus, .btn-primary:disabled {
+    background-color: var(--primary-faded-less);
+    border-color: var(--primary-darker);
+    color: var(--primary-darker);
+    box-shadow: 0 0 0 .2rem var(--primary-faded) !important;
+}
+
 .text-primary {
     color: var(--primary) !important;
     fill: var(--primary) !important
