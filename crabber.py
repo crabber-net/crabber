@@ -8,6 +8,7 @@ import os
 import patterns
 from sqlalchemy import or_
 from sqlalchemy.sql import func
+from typing import Iterable, Tuple
 import utils
 
 
@@ -717,7 +718,15 @@ def inject_global_vars():
 
 
 @app.template_filter()
+def pluralize(value: Iterable, grammar: Tuple[str, str] = ('', 's')):
+    """ Returns singular or plural string depending on length of collection.
+    """
+    return grammar[len(value) != 1]
+
+@app.template_filter()
 def commafy(value):
+    """ Returns string of value with commas seperating the thousands places.
+    """
     return format(int(value), ',d')
 
 
