@@ -21,7 +21,7 @@
                 <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.prev_num}});" tabindex="-1">
 
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-left"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-left"></use>
                     </svg>
                 </a>
             </li>
@@ -30,7 +30,7 @@
                 <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.next_num}});">
 
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}#chevron-right"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-right"></use>
                     </svg>
                 </a>
             </li>
