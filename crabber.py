@@ -322,10 +322,16 @@ def user_following(username, tab):
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
         elif this_user.banned:
-            return render_template('not-found.html', current_user=utils.get_current_user(), 
+            return render_template('not-found.html', current_user=utils.get_current_user(),
                                    message='This user has been banned.')
         else:
-            followx = this_user.true_following if tab == "ing" else this_user.true_followers
+            followx = None
+            if tab == 'ing':
+                followx = this_user.true_following
+            elif tab == 'ers':
+                followx = this_user.true_followers
+            elif tab == 'ers_you_know':
+                followx = utils.get_current_user().get_mutuals_for(this_user)
             return render_template('followx.html',
                                    current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                    followx=followx,

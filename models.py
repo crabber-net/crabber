@@ -146,6 +146,20 @@ class Crab(db.Model):
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
 
+    def get_mutuals_for(self, crab: 'Crab'):
+        """ Returns a list of people you follow who also follow `crab`.
+        """
+        self_following = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.following_id) \
+                .filter(following_table.c.follower_id == self.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        crab_followers = db.session.query(Crab) \
+                .join(following_table, Crab.id==following_table.c.follower_id) \
+                .filter(following_table.c.following_id == crab.id) \
+                .filter(Crab.banned == False, Crab.deleted == False)
+        return self_following.intersect(crab_followers).all()
+
+
     def get_preference(self, key: str, default: Optional[Any] = None):
         """ Gets key from user's preferences.
         """
@@ -290,7 +304,7 @@ class Crab(db.Model):
     def follow(self, crab):
         """ Adds user to `crab`'s following.
         """
-        if crab not in self.following:
+        if crab not in self.following and crab is not self:
             self.following.append(crab)
 
             # Create follow notification
@@ -313,7 +327,7 @@ class Crab(db.Model):
     def unfollow(self, crab):
         """ Removers user from `crab`'s following.
         """
-        if crab in self.following:
+        if crab in self.following and crab is not self:
             self.following.remove(crab)
             crab.notify(sender=self, type="unfollow")
             db.session.commit()
