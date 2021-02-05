@@ -515,6 +515,17 @@
                     {% endfor %}
                 </div>
 
+                {% if is_debug_server %}
+                <!-- Debug -->
+                <div class="panel" id="trending">
+                    <div class="panel-title">
+                        <span>Debug Panel</span>
+                    </div>
+                    <div class="panel-content">
+                        {{request.user_agent}}
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Copyright footer -->
                 <div id="nav-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
