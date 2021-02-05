@@ -46,7 +46,7 @@ function loadHTML(url) {
 }
 
 $(function() {
-    $('#nav-panel form').submit(function() {
+    $('#nav-panel form:not(.no-ajax)').submit(function() {
         loadHTML(this.action);
         return false;
     });
