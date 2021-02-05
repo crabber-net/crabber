@@ -96,16 +96,16 @@
         <div class="profile-box-join-date text-muted mt-1">
             <div class="d-inline-block mr-2" id="join-date">
 
-                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar-f">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar-f"></use>
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#calendar"></use>
                 </svg>
                 Joined {{localize(this_user.register_time).strftime('%B %Y')}}
             </div>
             {% if this_user.location %}
             <div class="d-inline-block mr-2" id="user-location">
 
-                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker-f">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker-f"></use>
+                <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}#map-marker"></use>
                 </svg>
                 {{this_user.location}}
             </div>
