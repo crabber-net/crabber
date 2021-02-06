@@ -36,6 +36,9 @@ function loadHTML(url) {
             if (!oldPageButton.is(loadingIcon.parent())) {
                 oldPageButton.children('.btn-icon:not(.btn-icon-f):not(.loading-icon)').removeClass('d-none');
             }
+
+            // Update last-refresh meta tag (for new molt indicators)
+            $(`meta[name='last-refresh']`).attr('content', Date.now().toString().substr(0, 10));
         },
         error: function() {
             // Failed to load page, navigating directly.
