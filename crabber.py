@@ -8,7 +8,7 @@ import os
 import patterns
 from sqlalchemy import or_
 from sqlalchemy.sql import func
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Union
 import utils
 
 
@@ -726,10 +726,11 @@ def inject_global_vars():
 
 
 @app.template_filter()
-def pluralize(collection: Iterable, grammar: Tuple[str, str] = ('', 's')):
-    """ Returns singular or plural string depending on length of collection.
+def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ('', 's')):
+    """ Returns singular or plural string depending on length/value of `value`.
     """
-    return grammar[len(collection) != 1]
+    count = value if isinstance(value, int) else len(value)
+    return grammar[count != 1]
 
 @app.template_filter()
 def commafy(value):
