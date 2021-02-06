@@ -372,8 +372,6 @@ class Crab(db.Model):
         new_molt = Molt(author=self, content=content[:config.MOLT_CHAR_LIMIT],
                         **kwargs)
         db.session.add(new_molt)
-        for user in new_molt.mentions:
-            user.notify(sender=self, type="mention", molt=new_molt)
 
         # Check if awards are applicable:
         if len(self.molts) == 1:
@@ -498,14 +496,7 @@ class Molt(db.Model):
     # Custom initialization required to process tags and mentions
     def __init__(self, **kwargs):
         super(Molt, self).__init__(**kwargs)
-        for tag in patterns.tag.findall(self.content):
-            if self.raw_tags is None:
-                self.raw_tags = ""
-            self.raw_tags += tag + "\n"
-        for user in patterns.mention.findall(self.content):
-            if self.raw_mentions is None:
-                self.raw_mentions = ""
-            self.raw_mentions += user + "\n"
+        self.evaluate_contents()
 
     def __repr__(self):
         return f"<Molt by '@{self.author.username}'>"
@@ -566,6 +557,28 @@ class Molt(db.Model):
         """ Property wrapper for `Molt.get_pretty_age`.
         """
         return utils.get_pretty_age(self.timestamp)
+
+    def evaluate_contents(self):
+        """ Evaluates Crabtags and Mentions in Molt. This should be called
+            whenever content is changed.
+        """
+        # Parse all tags
+        for tag in patterns.tag.findall(self.content):
+            if self.raw_tags is None:
+                self.raw_tags = ""
+            self.raw_tags += tag + "\n"
+
+        # Parse all mentions
+        for user in patterns.mention.findall(self.content):
+            if self.raw_mentions is None:
+                self.raw_mentions = ""
+            self.raw_mentions += user + "\n"
+
+        # Notify mentioned users
+        for user in self.mentions:
+            user.notify(sender=self.author, type="mention", molt=self)
+
+        db.session.commit()
 
     def approve(self):
         """ Approve Molt so it doesn't show in reports page.
@@ -725,6 +738,8 @@ class Molt(db.Model):
         """
         self.content = new_content
         self.edited = True
+        # Re-evaluate mentions and tags
+        self.evaluate_contents()
         db.session.commit()
 
     def like(self, crab):
