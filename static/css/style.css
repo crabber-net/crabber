@@ -1912,6 +1912,12 @@ table#user-info th {
     padding-right: 0 !important;
 }
 
+a:visited.text-primary {
+    color: var(--primary) !important;
+}
 a:hover.text-primary {
     color: var(--primary-dark) !important;
+}
+a:active.text-primary {
+    color: var(--primary-darker) !important;
 }
