@@ -1907,3 +1907,7 @@ table#user-info th {
 .unfollow-btn {
     width: 7em;
 }
+#recommended-crabs .mini-bio {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
