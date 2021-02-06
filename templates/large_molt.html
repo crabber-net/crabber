@@ -68,10 +68,10 @@
         </div>
         <div class="mini-molt-actions d-flex flex-row border-dark border-bottom justify-content-start w-100 py-2 mb-0">
             <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_remolts_modal');">
-                <span class="text-light font-weight-bold">{{molt.true_remolts|length}}</span> Remolt{{'' if (molt.true_remolts|length) == 1 else 's'}}</a>
+                <span class="text-light font-weight-bold">{{molt.remolt_count}}</span> Remolt{{molt.remolt_count | pluralize}}</a>
             <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_likes_modal');">
-                <span id="likes-number" class="text-light font-weight-bold">{{molt.true_likes|length}}</span>
-                <span id="likes-text">Like{{'' if (molt.true_likes|length) == 1 else 's'}}</span>
+                <span id="likes-number" class="text-light font-weight-bold">{{molt.like_count}}</span>
+                <span id="likes-text">Like{{molt.like_count | pluralize}}</span>
             </a>
         </div>
 
@@ -216,7 +216,7 @@
                 <strong>Remolted by</strong>
             </div>
             <div class="modal-body row m-1 w-100 d-block">
-                {% for remolt in molt.true_remolts %}
+                {% for remolt in molt.remolts %}
                     {% with crab = remolt.author, hide_border=loop.last %}
                         {% include "mini_bio.html" %}
                     {% endwith %}
@@ -239,7 +239,7 @@
                 <strong>Liked by</strong>
             </div>
             <div class="modal-body row m-1 w-100 d-block">
-                {% for like in molt.true_likes %}
+                {% for like in molt.likes %}
                     {% with crab = like.crab, hide_border=loop.last %}
                         {% include "mini_bio.html" %}
                     {% endwith %}
