@@ -1,4 +1,4 @@
-from config import *
+import config
 import datetime
 import extensions
 from flask import escape, render_template_string, url_for
@@ -6,25 +6,28 @@ import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
-from sqlalchemy import func, text
 from typing import Any, Optional
 import utils
 
 db = extensions.db
+
 
 class NotFoundInDatabase(BaseException):
     pass
 
 
 # This stores unidirectional follower-followee relationships
-following_table = db.Table('following',
-                           db.Column('id', db.Integer, primary_key=True),
-                           db.Column('follower_id', db.Integer, db.ForeignKey('crab.id')),
-                           db.Column('following_id', db.Integer, db.ForeignKey('crab.id')))
+following_table = db.Table(
+    'following',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('follower_id', db.Integer, db.ForeignKey('crab.id')),
+    db.Column('following_id', db.Integer, db.ForeignKey('crab.id'))
+)
 
 
 class Crab(db.Model):
-    """ Crab object is the what stores user data. Users are referred to as crabs. Create new with `Crab.create_new`.
+    """ Crab object is the what stores user data. Users are referred to as
+        crabs. Create new with `Crab.create_new`.
     """
     id = db.Column(db.Integer, primary_key=True)
 
@@ -34,7 +37,7 @@ class Crab(db.Model):
     display_name = db.Column(db.String(32), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     description = db.Column(db.String(140), nullable=False,
-                    server_default="This user has no description.")
+                            server_default="This user has no description.")
     raw_bio = db.Column(db.String, nullable=False,
                         server_default='{}')
     location = db.Column(db.String, nullable=True)
@@ -54,15 +57,18 @@ class Crab(db.Model):
 
     # Dynamic relationships
     molts = db.relationship('Molt', back_populates='author')
-    following = db.relationship('Crab',
-                                secondary=following_table,
-                                primaryjoin=id == following_table.c.follower_id,
-                                secondaryjoin=id == following_table.c.following_id,
-                                backref=db.backref('followers'))
+    following = db.relationship(
+        'Crab',
+        secondary=following_table,
+        primaryjoin=id == following_table.c.follower_id,
+        secondaryjoin=id == following_table.c.following_id,
+        backref=db.backref('followers')
+    )
     likes = db.relationship('Like')
 
     pinned_molt_id = db.Column(db.Integer, nullable=True)
-    _preferences = db.Column('preferences', db.String, nullable=False, default='{}')
+    _preferences = db.Column('preferences', db.String,
+                             nullable=False, default='{}')
 
     def __repr__(self):
         return f"<Crab '@{self.username}'>"
@@ -152,15 +158,14 @@ class Crab(db.Model):
         """ Returns a list of people you follow who also follow `crab`.
         """
         self_following = db.session.query(Crab) \
-                .join(following_table, Crab.id==following_table.c.following_id) \
-                .filter(following_table.c.follower_id == self.id) \
-                .filter(Crab.banned == False, Crab.deleted == False)
+            .join(following_table, Crab.id == following_table.c.following_id) \
+            .filter(following_table.c.follower_id == self.id) \
+            .filter(not Crab.banned, not Crab.deleted)
         crab_followers = db.session.query(Crab) \
-                .join(following_table, Crab.id==following_table.c.follower_id) \
-                .filter(following_table.c.following_id == crab.id) \
-                .filter(Crab.banned == False, Crab.deleted == False)
+            .join(following_table, Crab.id == following_table.c.follower_id) \
+            .filter(following_table.c.following_id == crab.id) \
+            .filter(not Crab.banned, not Crab.deleted)
         return self_following.intersect(crab_followers).all()
-
 
     def get_preference(self, key: str, default: Optional[Any] = None):
         """ Gets key from user's preferences.
@@ -178,15 +183,15 @@ class Crab(db.Model):
 
     def get_recommended_crabs(self, limit=3):
         following_ids = db.session.query(Crab.id) \
-                .join(following_table, Crab.id==following_table.c.following_id) \
-                .filter(following_table.c.follower_id == self.id) \
-                .filter(Crab.banned == False, Crab.deleted == False)
+            .join(following_table, Crab.id == following_table.c.following_id) \
+            .filter(following_table.c.follower_id == self.id) \
+            .filter(not Crab.banned, not Crab.deleted)
         recommended = db.session.query(Crab) \
-                .join(following_table, Crab.id==following_table.c.following_id) \
-                .filter(following_table.c.follower_id.in_(following_ids)) \
-                .filter(following_table.c.following_id.notin_(following_ids)) \
-                .filter(Crab.banned == False, Crab.deleted == False) \
-                .filter(Crab.id != self.id)
+            .join(following_table, Crab.id == following_table.c.following_id) \
+            .filter(following_table.c.follower_id.in_(following_ids)) \
+            .filter(following_table.c.following_id.notin_(following_ids)) \
+            .filter(not Crab.banned, not Crab.deleted) \
+            .filter(Crab.id != self.id)
 
         return recommended.limit(limit).all()
 
@@ -241,29 +246,33 @@ class Crab(db.Model):
     def get_notifications(self, paginated=False, page=1):
         """ Return all valid notifications for user.
         """
-        notifs = Notification.query.filter_by(recipient=self).order_by(Notification.timestamp.desc())
+        notifs = Notification.query.filter_by(recipient=self) \
+            .order_by(Notification.timestamp.desc())
         if paginated:
-            return notifs.paginate(page, NOTIFS_PER_PAGE, False)
+            return notifs.paginate(page, config.NOTIFS_PER_PAGE, False)
         else:
             return notifs.all()
 
     def get_true_likes(self, paginated=False, page=1):
         """ Returns all molts the user has liked that are still available.
         """
-        likes = Like.query.filter_by(crab=self).filter(Like.molt.has(deleted=False)) \
-            .filter(Like.molt.has(Molt.author.has(banned=False, deleted=False))) \
+        likes = Like.query.filter_by(crab=self) \
+            .filter(Like.molt.has(deleted=False)) \
+            .filter(Like.molt.has(Molt.author.has(banned=False,
+                                                  deleted=False))) \
             .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
         if paginated:
-            return likes.paginate(page, MOLTS_PER_PAGE, False)
+            return likes.paginate(page, config.MOLTS_PER_PAGE, False)
         else:
             return likes.all()
 
     def get_true_molts(self, paginated=False, page=1):
         """ Returns all molts the user has published that are still available.
         """
-        molts = Molt.query.filter_by(author=self).filter_by(deleted=False).order_by(Molt.timestamp.desc())
+        molts = Molt.query.filter_by(author=self, deleted=False) \
+            .order_by(Molt.timestamp.desc())
         if paginated:
-            return molts.paginate(page, MOLTS_PER_PAGE, False)
+            return molts.paginate(page, config.MOLTS_PER_PAGE, False)
         else:
             return molts.all()
 
@@ -271,9 +280,9 @@ class Crab(db.Model):
         """ Returns this Crab's following without deleted/banned users.
         """
         following = db.session.query(Crab) \
-                .join(following_table, Crab.id==following_table.c.following_id) \
-                .filter(following_table.c.follower_id == self.id) \
-                .filter(Crab.banned == False, Crab.deleted == False)
+            .join(following_table, Crab.id == following_table.c.following_id) \
+            .filter(following_table.c.follower_id == self.id) \
+            .filter(not Crab.banned, not Crab.deleted)
         if count:
             return following.count()
         return following.all()
@@ -282,30 +291,32 @@ class Crab(db.Model):
         """ Returns this Crab's followers without deleted/banned users.
         """
         followers = db.session.query(Crab) \
-                .join(following_table, Crab.id==following_table.c.follower_id) \
-                .filter(following_table.c.following_id == self.id) \
-                .filter(Crab.banned == False, Crab.deleted == False)
+            .join(following_table, Crab.id == following_table.c.follower_id) \
+            .filter(following_table.c.following_id == self.id) \
+            .filter(not Crab.banned, not Crab.deleted)
         if count:
             return followers.count()
         return followers.all()
 
     def award(self, title=None, trophy=None):
-        """
-        Award user trophy. Pass either a trophy object to `trophy`, or the title to `title`. Not both. Not neither.
-        :param trophy: Trophy object to award
-        :param title: Title of trophy to award
-        :return: Trophy case
+        """ Award user trophy by object or by title.
+
+            :param trophy: Trophy object to award
+            :param title: Title of trophy to award
+            :return: Trophy case
         """
 
         if trophy is None and title is None:
-            raise TypeError("You must specify one of either trophy object or trophy title.")
+            raise TypeError("You must specify one of either trophy object or "
+                            "trophy title.")
 
-        # Use title instead of object
+        # Query trophy by title
         if trophy is None:
-            trophy = Trophy.query.filter_by(title=title).first()
-
-        if trophy is None:
-            raise NotFoundInDatabase(f"Trophy with title: '{title}' not found.")
+            trophy_query = Trophy.query.filter_by(title=title)
+            if trophy_query.count() == 0:
+                raise NotFoundInDatabase(f"Trophy with title: '{title}' not"
+                                         "found.")
+            trophy = trophy_query.first()
 
         # Check trophy hasn't already been awarded to user
         if not TrophyCase.query.filter_by(owner=self, trophy=trophy).count():
@@ -358,7 +369,8 @@ class Crab(db.Model):
         """ Create and publish new Molt.
         """
         kwargs['source'] = kwargs.get('source', 'Crabber Web App')
-        new_molt = Molt(author=self, content=content[:MOLT_CHAR_LIMIT], **kwargs)
+        new_molt = Molt(author=self, content=content[:config.MOLT_CHAR_LIMIT],
+                        **kwargs)
         db.session.add(new_molt)
         for user in new_molt.mentions:
             user.notify(sender=self, type="mention", molt=new_molt)
@@ -386,8 +398,9 @@ class Crab(db.Model):
     def is_following(self, crab):
         """ Returns True if user is following `crab`.
         """
-        return db.session.query(following_table).filter((following_table.c.follower_id == self.id) &
-                                                        (following_table.c.following_id == crab.id))
+        return db.session.query(following_table) \
+            .filter((following_table.c.follower_id == self.id) &
+                    (following_table.c.following_id == crab.id))
 
     def has_liked(self, molt):
         """ Returns True if user has liked `molt`.
@@ -397,22 +410,27 @@ class Crab(db.Model):
     def has_remolted(self, molt) -> Optional['Molt']:
         """ Returns the Remolt if user has remolted `molt`, otherwise None.
         """
-        molt = Molt.query.filter_by(is_remolt=True, original_molt=molt, author=self, deleted=False).first()
+        molt = Molt.query.filter_by(is_remolt=True, original_molt=molt,
+                                    author=self, deleted=False).first()
         return molt
 
     def notify(self, **kwargs):
         """ Create notification for user.
         """
-        if kwargs.get("sender") is self:
-            return "Declined notification on grounds of sender being recipient."
-        if kwargs.get("molt"):
-            if Notification.query.filter_by(recipient=self, sender=kwargs.get('sender'),
-                                            type=kwargs.get('type'), molt=kwargs.get('molt')).first():
-                return "Declined notification on grounds of duplication."
-        new_notif = Notification(recipient=self, **kwargs)
-        db.session.add(new_notif)
-        db.session.commit()
-        return new_notif
+        if kwargs.get("sender") is not self:
+            if kwargs.get("molt"):
+                # Check for duplicates
+                duplicate_notification = Notification.query.filter_by(
+                        recipient=self,
+                        sender=kwargs.get('sender'),
+                        type=kwargs.get('type'),
+                        molt=kwargs.get('molt')
+                )
+                if not duplicate_notification.count():
+                    new_notif = Notification(recipient=self, **kwargs)
+                    db.session.add(new_notif)
+                    db.session.commit()
+                    return new_notif
 
     @staticmethod
     def create_new(**kwargs):
@@ -468,7 +486,8 @@ class Molt(db.Model):
     is_remolt = db.Column(db.Boolean, nullable=False, default=False)
     is_reply = db.Column(db.Boolean, nullable=False, default=False)
     original_molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'))
-    original_molt = db.relationship('Molt', remote_side=[id], backref='remolts')
+    original_molt = db.relationship('Molt', remote_side=[id],
+                                    backref='remolts')
 
     # Dynamic relationships
     # replies
@@ -493,10 +512,10 @@ class Molt(db.Model):
 
     @property
     def editable(self) -> bool:
+        """ Returns true if molt is recent enough to edit.
         """
-        Returns true if molt is recent enough to edit.
-        """
-        return (datetime.datetime.utcnow() - self.timestamp).total_seconds() < MINUTES_EDITABLE * 60
+        return (datetime.datetime.utcnow() - self.timestamp).total_seconds() \
+            < config.MINUTES_EDITABLE * 60
 
     @property
     def tags(self):
@@ -506,12 +525,12 @@ class Molt(db.Model):
 
     @property
     def mentions(self):
-        """ Return all mentions contained within Molt.
+        """ Return list of Crabs mentioned in Molt.
         """
         if self.raw_mentions:
-            return Crab.query.filter(Crab.username.in_(self.raw_mentions.splitlines())).all()
-        else:
-            return list()
+            mention_list = self.raw_mentions.splitlines()
+            return Crab.query.filter(Crab.username.in_(mention_list)).all()
+        return list()
 
     @property
     def pretty_date(self):
@@ -523,21 +542,24 @@ class Molt(db.Model):
     def replies(self):
         """ List all currently valid Molts that reply to this Molt.
         """
-        return Molt.query.filter_by(is_reply=True, original_molt=self, deleted=False) \
+        return Molt.query \
+            .filter_by(is_reply=True, original_molt=self, deleted=False) \
             .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_remolts(self):
         """ List all currently valid remolts of Molt.
         """
-        return Molt.query.filter_by(is_remolt=True, original_molt=self, deleted=False) \
+        return Molt.query \
+            .filter_by(is_remolt=True, original_molt=self, deleted=False) \
             .filter(Molt.author.has(banned=False, deleted=False)).all()
 
     @property
     def true_likes(self):
         """ List all currently valid likes of Molt.
         """
-        return Like.query.filter_by(molt=self).filter(Like.crab.has(deleted=False, banned=False)).all()
+        return Like.query.filter_by(molt=self) \
+            .filter(Like.crab.has(deleted=False, banned=False)).all()
 
     @property
     def pretty_age(self):
@@ -560,36 +582,44 @@ class Molt(db.Model):
             db.session.commit()
 
     def rich_content(self, full_size_media=False):
-        """ Return HTML-formatted content of Molt with embeds, media, tags, and etc.
+        """ Return Molt content (including embeds, tags, and mentions)
+            rasterized as HTML.
         """
         # Escape/sanitize user submitted content
         new_content = str(escape(self.content))
 
-        # Convert youtube link to embedded iframe
+        # Render youtube link to embedded iframe
         if patterns.youtube.search(new_content):
-            youtube_embed = render_template_string(("{% with video='" +
-                                                    patterns.youtube.search(new_content).group(1) +
-                                                    "' %}{% include 'youtube.html' %}{% endwith %}"))
+            youtube_id = patterns.youtube.search(new_content).group(1)
+            youtube_embed = render_template_string(
+                f'{{% with video="{youtube_id}" %}}'
+                '   {% include "youtube.html" %}'
+                '{% endwith %}'
+            )
             new_content = patterns.youtube.sub('', new_content)
         else:
             youtube_embed = "<!-- no valid youtube links found -->"
 
-        # Convert giphy link to embedded iframe
+        # Render giphy link to embedded iframe
         if patterns.giphy.search(new_content):
-            giphy_embed = render_template_string(("{% with giphy_id='" +
-                                                  patterns.giphy.search(new_content).group(1) +
-                                                  "' %}{% include 'giphy.html' %}{% endwith %}"),
-                                                 full_size_media=full_size_media)
+            giphy_id = patterns.giphy.search(new_content).group(1)
+            giphy_embed = render_template_string(
+                f'{{% with giphy_id="{giphy_id}" %}}'
+                '   {% include "giphy.html" %}'
+                '{% endwith %}',
+                full_size_media=full_size_media)
             new_content = patterns.giphy.sub('', new_content)
         else:
             giphy_embed = "<!-- no valid giphy links found -->"
 
-        # Convert giphy link to embedded iframe
+        # Render external image link to external_img macro
         if patterns.ext_img.search(new_content):
-            ext_img_embed = render_template_string(("{% with link='" +
-                                                    patterns.ext_img.search(new_content).group(1) +
-                                                    "' %}{% include 'external_img.html' %}{% endwith %}"),
-                                                   full_size_media=full_size_media)
+            image_link = patterns.ext_img.search(new_content).group(1)
+            ext_img_embed = render_template_string(
+                f'{{% with link="{image_link}" %}}'
+                '  {% include "external_img.html" %}'
+                '{% endwith %}',
+                full_size_media=full_size_media)
             new_content = patterns.ext_img.sub('', new_content)
         else:
             ext_img_embed = "<!-- no valid external image links found -->"
@@ -597,11 +627,12 @@ class Molt(db.Model):
         # Convert spotify link to embedded iframe
         if patterns.spotify.search(new_content):
             results = patterns.spotify.search(new_content)
-            spotify_embed = render_template_string(("{% with link=('" +
-                                                    results.group(2) +
-                                                    "', '" +
-                                                    results.group(3) +
-                                                    "') %}{% include 'spotify.html' %}{% endwith %}"))
+            spotify_link = results.group(2)
+            spotify_embed = render_template_string(
+                f'{{% with link="{spotify_link}" %}}'
+                '   {% include "spotify.html" %}'
+                '{% endwith %}'
+            )
             new_content = patterns.spotify.sub('', new_content)
         else:
             spotify_embed = "<!-- no valid spotify links found -->"
@@ -617,54 +648,69 @@ class Molt(db.Model):
         # Convert crabtags into anchor tags
         new_content = Molt.label_crabtags(new_content)
 
-        return new_content + giphy_embed + ext_img_embed + youtube_embed + spotify_embed
+        return new_content + giphy_embed + ext_img_embed + youtube_embed  \
+            + spotify_embed
 
     def dict(self):
         """ Serialize Molt into dictionary.
         """
-        return {"molt": {"author": {"id": self.author.id,
-                                    "username": self.author.username,
-                                    "display_name": self.author.display_name},
-                         "content": self.content,
-                         "rich_content": self.rich_content(),
-                         "likes": [like.id for like in self.true_likes],
-                         "remolts": [remolt.id for remolt in self.true_remolts],
-                         "image": (BASE_URL + url_for('static', filename=self.image)) if self.image else None,
-                         "id": self.id,
-                         "timestamp": round(self.timestamp.timestamp())}}
+        return {
+            "molt": {
+                "author": {
+                    "id": self.author.id,
+                    "username": self.author.username,
+                    "display_name": self.author.display_name
+                },
+                "content": self.content,
+                "rich_content": self.rich_content(),
+                "likes": [like.id for like in self.true_likes],
+                "remolts": [remolt.id for remolt in self.true_remolts],
+                "image": None if self.image is None
+                else config.BASE_URL + url_for('static', filename=self.image),
+                "id": self.id,
+                "timestamp": round(self.timestamp.timestamp())
+            }
+        }
 
     def get_reply_from(self, crab):
         """ Return first reply Molt from `crab` if it exists.
         """
-        reply = Molt.query.filter_by(is_reply=True, original_molt=self, author=crab, deleted=False).order_by(Molt.timestamp).first()
+        reply = Molt.query.filter_by(is_reply=True, original_molt=self,
+                                     author=crab, deleted=False) \
+            .order_by(Molt.timestamp).first()
         return reply
 
     def get_reply_from_following(self, crab):
-        """ Return first reply Molt from a crab that `crab` follows if it exists.
+        """ Return first reply Molt from a crab that `crab` follows if it
+            exists.
         """
         following_ids = [followed.id for followed in crab.true_following]
         following_ids.append(crab.id)
         reply = Molt.query.filter_by(is_reply=True, original_molt=self,
                                      deleted=False) \
-                .filter(Molt.author.has(deleted=False, banned=False)) \
-                .join(Molt.author).filter(Crab.id.in_(following_ids)) \
-                .order_by(Molt.timestamp).first()
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .join(Molt.author).filter(Crab.id.in_(following_ids)) \
+            .order_by(Molt.timestamp).first()
         return reply
 
     def remolt(self, crab, comment="", **kwargs):
         """ Remolt Molt as `crab` with optional `comment`.
         """
-        # Already remolted
-        if Molt.query.filter_by(is_remolt=True, original_molt=self, author=crab, deleted=False).first():
-            return "Remolt declined on grounds of duplication."
-        new_remolt = crab.molt(comment, is_remolt=True, original_molt=self, **kwargs)
-        self.author.notify(sender=crab, type="remolt", molt=new_remolt)
-        return new_remolt
+        # Check if already remolted
+        duplicate_remolt = Molt.query.filter_by(is_remolt=True,
+                                                original_molt=self,
+                                                author=crab, deleted=False)
+        if not duplicate_remolt.count():
+            new_remolt = crab.molt(comment, is_remolt=True, original_molt=self,
+                                   **kwargs)
+            self.author.notify(sender=crab, type="remolt", molt=new_remolt)
+            return new_remolt
 
     def reply(self, crab, comment, **kwargs):
         """ Reply to Molt as `crab`.
         """
-        new_reply = crab.molt(comment, is_reply=True, original_molt=self, **kwargs)
+        new_reply = crab.molt(comment, is_reply=True, original_molt=self,
+                              **kwargs)
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
 
@@ -728,11 +774,15 @@ class Molt(db.Model):
         if match:
             start, end = match.span()
             url = match.group(1)
-            output = "".join([output[:start],
-                              f'<a href="{url}" class="no-onclick mention zindex-front" target="_blank">',
-                              url if len(url) <= max_len else url[:max_len - 3] + '...',
-                              '</a>',
-                              Molt.label_links(output[end:])])
+            displayed_url = url if len(url) <= max_len \
+                else url[:max_len - 3] + '...'
+            output = (
+                output[:start],
+                f'<a href="{url}" class="no-onclick mention zindex-front" \
+                target="_blank">{displayed_url}</a>',
+                Molt.label_links(output[end:])
+            )
+            output = ''.join(output)
         return output
 
     @staticmethod
@@ -743,11 +793,14 @@ class Molt(db.Model):
         match = patterns.ext_md_link.search(output)
         if match:
             start, end = match.span()
-            output = "".join([output[:start],
-                              f'<a href="{match.group(2)}" class="no-onclick mention zindex-front" target="_blank">',
-                              match.group(1),
-                              '</a>',
-                              Molt.label_md_links(output[end:])])
+            url_name = match.group(1),
+            output = [
+                output[:start],
+                f'<a href="{match.group(2)}" class="no-onclick mention \
+                zindex-front" target="_blank">{url_name}</a>',
+                Molt.label_md_links(output[end:])
+            ]
+            output = ''.join(output)
         return output
 
     @staticmethod
@@ -758,17 +811,19 @@ class Molt(db.Model):
         match = patterns.mention.search(output)
         if match:
             start, end = match.span()
-            username_str = output[start : end].strip("@ \t\n")
-            username = Crab.query.filter_by(deleted=False, banned=False).filter(Crab.username.ilike(username_str)).first()
+            username_str = output[start:end].strip("@ \t\n")
+            username = Crab.query.filter_by(deleted=False, banned=False) \
+                .filter(Crab.username.ilike(username_str)).first()
             if username:
-                output = "".join([output[:start],
-                                f'<a href="/user/{match.group(1)}" class="no-onclick mention zindex-front">',
-                                output[start:end],
-                                '</a>',
-                                Molt.label_mentions(output[end:])])
+                output = [
+                    output[:start],
+                    f'<a href="/user/{match.group(1)}" class="no-onclick \
+                    mention zindex-front">{output[start:end]}</a>',
+                    Molt.label_mentions(output[end:])
+                ]
+                output = ''.join(output)
             else:
-                output = "".join([output[:end],
-                                Molt.label_mentions(output[end:])])
+                output = output[:end] + Molt.label_mentions(output[end:])
         return output
 
     @staticmethod
@@ -779,11 +834,13 @@ class Molt(db.Model):
         match = patterns.tag.search(output)
         if match:
             start, end = match.span()
-            output = "".join([output[:start],
-                              f'<a href="/crabtag/{match.group(1)}" class="no-onclick crabtag zindex-front">',
-                              output[start:end],
-                              '</a>',
-                              Molt.label_crabtags(output[end:])])
+            output = [
+                output[:start],
+                f'<a href="/crabtag/{match.group(1)}" class="no-onclick \
+                crabtag zindex-front">{output[start:end]}</a>',
+                Molt.label_crabtags(output[end:])
+            ]
+            output = ''.join(output)
         return output
 
 
@@ -806,8 +863,12 @@ class Notification(db.Model):
     # Crab receiving notif
     recipient_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                              nullable=False)
-    recipient = db.relationship('Crab', backref=db.backref('notifications', order_by='Notification.timestamp.desc()'),
-                                foreign_keys=[recipient_id])
+    recipient = db.relationship(
+        'Crab',
+        backref=db.backref('notifications',
+                           order_by='Notification.timestamp.desc()'),
+        foreign_keys=[recipient_id]
+    )
     # Crab responsible for notif
     sender_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                           nullable=True)
@@ -831,7 +892,7 @@ class Notification(db.Model):
     link = db.Column(db.String(140), nullable=True)
 
     def __repr__(self):
-        return f"<Notification | '{self.type}' | for '@{self.recipient.username}'>"
+        return f"<Notification | '{self.type}' | '@{self.recipient.username}'>"
 
     @property
     def pretty_date(self):
@@ -852,8 +913,12 @@ class TrophyCase(db.Model):
     # Crab who owns trophy
     owner_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                          nullable=False)
-    owner = db.relationship('Crab', backref=db.backref('trophies', order_by='TrophyCase.timestamp.desc()'),
-                            foreign_keys=[owner_id])
+    owner = db.relationship(
+        'Crab',
+        backref=db.backref('trophies',
+                           order_by='TrophyCase.timestamp.desc()'),
+        foreign_keys=[owner_id]
+    )
     # Trophy in question
     trophy_id = db.Column(db.Integer, db.ForeignKey('trophy.id'),
                           nullable=False)
@@ -863,7 +928,8 @@ class TrophyCase(db.Model):
                           default=datetime.datetime.utcnow)
 
     def __repr__(self):
-        return f"<TrophyCase | '{self.trophy.title}' | '@{self.owner.username}'>"
+        return f"<TrophyCase | '{self.trophy.title}' | " \
+               f"'@{self.owner.username}'>"
 
 
 # Stores each type of trophy
@@ -874,7 +940,8 @@ class Trophy(db.Model):
     # Medium description of what it's for
     description = db.Column(db.String(240), nullable=False)
     # Image to display as an icon
-    image = db.Column(db.String(240), nullable=False, default="img/default_trophy.png")
+    image = db.Column(db.String(240), nullable=False,
+                      default="img/default_trophy.png")
 
     def __repr__(self):
         return f"<Trophy '{self.title}'>"
@@ -889,7 +956,7 @@ class DeveloperKey(db.Model):
     deleted = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
-        return f'<DeveloperKey (@{crab.username})>'
+        return f'<DeveloperKey (@{self.crab.username})>'
 
     def delete(self):
         self.deleted = True
