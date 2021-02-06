@@ -180,7 +180,7 @@ function removeImg(closeBtn) {
 
 function subMolt(form) {
     if (form['molt_content'].value || form['molt-media'].value) {
-        $(form).find('button strong').text('Uploading...');
+        $(form).find('button strong').text('Posting...');
         $(form).attr("disabled", "");
         return true;
     }
