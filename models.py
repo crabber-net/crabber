@@ -1224,10 +1224,12 @@ class Crabtag(db.Model):
             func.count(crabtag_table.c.molt_id).label('uses')
         ) \
             .join(crabtag_table, crabtag_table.c.tag_id == Crabtag.id) \
+            .join(Molt, crabtag_table.c.molt_id == Molt.id) \
+            .filter(Molt.deleted == False, Molt.author.has(banned=False,
+                                                           deleted=False)) \
             .group_by(crabtag_table.c.tag_id).order_by(desc('uses'))
         if since_date:
             most_popular = most_popular \
-                .join(Molt, crabtag_table.c.molt_id == Molt.id) \
                 .filter(Molt.timestamp > since_date)
         return most_popular
 
