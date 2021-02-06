@@ -415,6 +415,7 @@ class Crab(db.Model):
     def notify(self, **kwargs):
         """ Create notification for user.
         """
+        is_duplicate = False
         if kwargs.get("sender") is not self:
             if kwargs.get("molt"):
                 # Check for duplicates
@@ -424,11 +425,13 @@ class Crab(db.Model):
                         type=kwargs.get('type'),
                         molt=kwargs.get('molt')
                 )
-                if not duplicate_notification.count():
-                    new_notif = Notification(recipient=self, **kwargs)
-                    db.session.add(new_notif)
-                    db.session.commit()
-                    return new_notif
+                if duplicate_notification.count():
+                    is_duplicate = True
+            if not is_duplicate:
+                new_notif = Notification(recipient=self, **kwargs)
+                db.session.add(new_notif)
+                db.session.commit()
+                return new_notif
 
     @staticmethod
     def create_new(**kwargs):
