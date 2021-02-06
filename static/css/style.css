@@ -1186,6 +1186,7 @@ body, .master-container {
     border-bottom-color: var(--dark-less);
 }
 .tooltip-inner {
+    color: var(--light);
     background-color: var(--dark-less);
 }
 
