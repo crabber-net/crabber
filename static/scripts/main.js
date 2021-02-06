@@ -77,9 +77,14 @@ function toggleFollow(e) {
     if (e.form.user_action.value == "unfollow") {
         e.form.user_action.value = "follow";
         $(e).find('strong').text('Follow');
+        $(e).removeClass('btn-primary');
+        $(e).addClass('btn-outline-primary');
     } else {
         e.form.user_action.value = "unfollow";
-        $(e).find('strong').text('Unfollow');
+        $(e).find('strong.default-text').text('Following');
+        $(e).find('strong.hover-text').text('Unfollow');
+        $(e).removeClass('btn-outline-primary');
+        $(e).addClass('btn-primary');
     }
 }
 
