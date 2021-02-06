@@ -2,10 +2,12 @@ import config
 import datetime
 import extensions
 from flask import escape, render_template_string, url_for
+from flask_sqlalchemy import BaseQuery
 import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
+from sqlalchemy import desc, func
 from typing import Any, Optional
 import utils
 
@@ -22,6 +24,14 @@ following_table = db.Table(
     db.Column('id', db.Integer, primary_key=True),
     db.Column('follower_id', db.Integer, db.ForeignKey('crab.id')),
     db.Column('following_id', db.Integer, db.ForeignKey('crab.id'))
+)
+
+# This links Molts to Crabtags in a many-to-many relationship
+crabtag_table = db.Table(
+    'crabtag_links',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('molt_id', db.Integer, db.ForeignKey('molt.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('crabtag.id'))
 )
 
 
@@ -469,6 +479,9 @@ class Molt(db.Model):
     image = db.Column(db.String(1024), nullable=True)
     source = db.Column(db.String)
 
+    # Tag links
+    tags = db.relationship('Crabtag', secondary=crabtag_table)
+
     # Analytical data
     browser = db.Column(db.String)
     platform = db.Column(db.String)
@@ -504,12 +517,6 @@ class Molt(db.Model):
         """
         return (datetime.datetime.utcnow() - self.timestamp).total_seconds() \
             < config.MINUTES_EDITABLE * 60
-
-    @property
-    def tags(self):
-        """ Return list of tags contained withing Molt.
-        """
-        return self.raw_tags.splitlines()
 
     @property
     def mentions(self):
@@ -563,9 +570,18 @@ class Molt(db.Model):
         """
         # Parse all tags
         for tag in patterns.tag.findall(self.content):
+            # Update raw_tags to include all new tags
             if self.raw_tags is None:
                 self.raw_tags = ""
             self.raw_tags += tag + "\n"
+
+            # Update tags relationship to include all new tags
+            self.tags.append(Crabtag.get(tag))
+
+        # Remove dead tags
+        for crabtag in self.tags:
+            if crabtag.name not in self.raw_tags.split():
+                self.tags.remove(crabtag)
 
         # Parse all mentions
         for user in patterns.mention.findall(self.content):
@@ -1027,3 +1043,44 @@ class AccessToken(db.Model):
         db.session.add(token)
         db.session.commit()
         return token
+
+
+class Crabtag(db.Model):
+    __tablename__ = 'crabtag'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+
+    molts = db.relationship('Molt', secondary=crabtag_table)
+
+    def __repr__(self):
+        return f'<Crabtag \'%{self.name}\'>'
+
+    @staticmethod
+    def query_most_popular(since_date: Optional[datetime.datetime] = None) \
+            -> BaseQuery:
+        """ Returns a query of (tag: Crabtag, count: int) ordered by count
+            descending.
+        """
+        most_popular = db.session.query(
+            Crabtag,
+            func.count(crabtag_table.c.molt_id).label('uses')
+        ) \
+            .join(crabtag_table, crabtag_table.c.tag_id == Crabtag.id) \
+            .group_by(crabtag_table.c.tag_id).order_by(desc('uses'))
+        if since_date:
+            most_popular = most_popular \
+                .join(Molt, crabtag_table.c.molt_id==Molt.id) \
+                .filter(Molt.timestamp > since_date)
+        return most_popular
+
+    @classmethod
+    def get(cls, name: str) -> 'Crabtag':
+        """ Gets Crabtag by name and creates new ones where necessary.
+        """
+        crabtag = cls.query.filter_by(name=name.lower()).first()
+        if crabtag is None:
+            crabtag = cls(name=name.lower())
+            db.session.add(crabtag)
+            db.session.commit()
+        return crabtag
