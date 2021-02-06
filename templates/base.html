@@ -507,10 +507,13 @@
                     <div class="panel-title">
                         <span>Trending</span>
                     </div>
-                    {% for tag in trending_crabtags %}
-                        <a href="/crabtag/{{tag}}">
+                    {% for tag, uses in trending_crabtags %}
+                        <a href="/crabtag/{{tag.name}}">
                             <div class="trending-tag">
-                                <span>%{{tag}}</span>
+                                <span>%{{tag.name}}</span>
+                                <small class="text-muted">
+                                    Used {{uses}} time{{uses|pluralize}} recently.
+                                </small>
                             </div>
                         </a>
                     {% else %}

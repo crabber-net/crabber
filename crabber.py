@@ -720,7 +720,7 @@ def inject_global_vars():
         error=error, msg=msg, location=location,
         uuid=utils.hexID, referrer=request.referrer,
         light_mode=light_mode, comicsans_mode=comicsans_mode,
-        trending_crabtags=utils.get_trending_crabtags(),
+        trending_crabtags=models.Crabtag.get_trending(),
         is_debug_server=is_debug_server
     )
 

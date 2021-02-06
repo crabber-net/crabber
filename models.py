@@ -8,7 +8,7 @@ from passlib.hash import sha256_crypt
 import patterns
 import secrets
 from sqlalchemy import desc, func
-from typing import Any, Optional
+from typing import Any, List, Optional, Tuple
 import utils
 
 db = extensions.db
@@ -1073,6 +1073,18 @@ class Crabtag(db.Model):
                 .join(Molt, crabtag_table.c.molt_id==Molt.id) \
                 .filter(Molt.timestamp > since_date)
         return most_popular
+
+    @staticmethod
+    def get_trending(limit: int = 3) -> List[Tuple['Crabtag', int]]:
+        """ Return most popular Crabtags of the last week.
+
+            :param limit: Number of results to return.
+        """
+        # Get date of 7 days ago
+        since_date = datetime.datetime.utcnow() - datetime.timedelta(7)
+
+        return Crabtag.query_most_popular(since_date=since_date) \
+                .limit(limit).all()
 
     @classmethod
     def get(cls, name: str) -> 'Crabtag':

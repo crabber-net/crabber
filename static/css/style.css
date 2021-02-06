@@ -1838,6 +1838,8 @@ table#user-info th {
     background-color: var(--dark-less-more);
 }
 .trending-tag span {
+    display: block;
+
     color: var(--light);
 
     font-size: 15px;
