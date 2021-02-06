@@ -39,32 +39,6 @@ def show_message(misc_msg: str, redirect_url=None) -> Response:
     return redirect(f"{target_url}?msg={misc_msg}")
 
 
-def get_pretty_age(dt: datetime.datetime) -> str:
-    """
-    Converts datetime to pretty twitter-esque age string.
-    :param dt:
-    :return: Age string
-    """
-    now: datetime.datetime = datetime.datetime.utcnow()
-    delta = now - dt
-
-    if delta.total_seconds() < 60:  # Less than a minute
-        # Return number of seconds
-        return f"{round(delta.seconds)}s"
-    elif delta.total_seconds() / 60 < 60:  # Less than an hour
-        # Return number of minutes
-        return f"{round(delta.seconds / 60)}m"
-    elif delta.seconds / 60 / 60 < 24 and delta.days == 0:  # Less than a day
-        # Return number of hours
-        return f"{round(delta.seconds / 60 / 60)}h"
-    elif dt.year == now.year:  # Same year as now
-        # Return day and month
-        return localize(dt).strftime("%b %e")
-    else:
-        # Return day month, year
-        return localize(dt).strftime("%b %e, %Y")
-
-
 def get_current_user():
     """
     Retrieves the object of the currently logged-in user by ID.
