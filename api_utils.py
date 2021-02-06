@@ -151,8 +151,8 @@ def get_molts_with_tag(crabtag: str, since: Optional[int] = None,
     """
     query = models.Molt.query \
             .filter_by(deleted=False) \
-            .filter(or_(models.Molt.raw_tags.ilike(f'%\n{crabtag}\n%'),
-                        models.Molt.raw_tags.ilike(f'{crabtag}\n%'))) \
+            .join(models.Molt.tags) \
+            .filter(models.Crabtag.name == crabtag.lower()) \
             .filter(models.Molt.author.has(banned=False, deleted=False)) \
             .order_by(models.Molt.timestamp.desc())
     if since:
@@ -229,7 +229,7 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "id": molt.id,
         "author": crab_to_json(molt.author),
         "content": molt.content,
-        "crabtags": molt.tags,
+        "crabtags": [tag.name for tag in molt.tags],
         "mentions": list(set(molt.raw_mentions.lower().splitlines())),
         "timestamp": get_timestamp(molt.timestamp),
         "replying_to": molt.original_molt_id if molt.is_reply else None,
