@@ -372,12 +372,6 @@ class Crab(db.Model):
         new_molt = Molt(author=self, content=content[:config.MOLT_CHAR_LIMIT],
                         **kwargs)
         db.session.add(new_molt)
-
-        # Check if awards are applicable:
-        if len(self.molts) == 1:
-            self.award(title="Baby Crab")
-        if "420" in new_molt.tags:
-            self.award(title="Pineapple Express")
         db.session.commit()
         return new_molt
 
@@ -561,9 +555,11 @@ class Molt(db.Model):
         """
         return utils.get_pretty_age(self.timestamp)
 
-    def evaluate_contents(self):
+    def evaluate_contents(self, notify: bool = True):
         """ Evaluates Crabtags and Mentions in Molt. This should be called
             whenever content is changed.
+
+            :param notify: Whether to notify users who are mentioned.
         """
         # Parse all tags
         for tag in patterns.tag.findall(self.content):
@@ -580,6 +576,12 @@ class Molt(db.Model):
         # Notify mentioned users
         for user in self.mentions:
             user.notify(sender=self.author, type="mention", molt=self)
+
+        # Award trophies where applicable:
+        if len(self.author.molts) == 1:
+            self.author.award(title="Baby Crab")
+        if "420" in self.tags:
+            self.author.award(title="Pineapple Express")
 
         db.session.commit()
 
