@@ -200,13 +200,15 @@ function loadingIcon(e) {
 // Character counter stuff ///////////////////////////////////////////////////////////
 function updateCounter() {
     var form = $(this).parents('form');
-    var charLimit = 240;
+    var charLimit = 280;
     let textarea = form.find('textarea');
     let counter = form.find(".mini-character-counter");
-    counter.text(charLimit - textarea.val().length);
+
+    let currentLen = textarea.val().length;
+    counter.text(charLimit - currentLen);
 
     // Enable/disable submit button
-    let submitEnabled = moltFormHasContent(form);
+    let submitEnabled = moltFormHasContent(form) && currentLen < charLimit;
     form.find("button").attr("disabled", !submitEnabled);
 }
 

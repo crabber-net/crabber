@@ -18,7 +18,7 @@ def load_usernames_from_file(filename: str) -> List[str]:
 is_debug_server = platform.node() != 'crabbyboi'
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-MOLT_CHAR_LIMIT: int = 240
+MOLT_CHAR_LIMIT: int = 280
 MOLTS_PER_PAGE: int = 20
 NOTIFS_PER_PAGE: int = 20
 MINUTES_EDITABLE: int = 5
