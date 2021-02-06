@@ -1,7 +1,7 @@
 <!-- The compose box lives here! -->
 {% include "mini_compose.html" %}
 
-<div id="new-molt-indicator" class="p-2 border-bottom border-dark clickable hoverable-light d-none" 
+<div id="new-molt-indicator" class="p-2 border-bottom border-dark clickable hoverable-light d-none text-primary text-center"
     onclick="javascript:loadContent();$(this).addClass('d-none');$(`meta[name='last-refresh']`).attr('content', Date.now().toString().substr(0, 10));">
     <strong id="new-molt-counter"></strong> new molt<span id="new-molt-s">s</span> <span class="text-muted">(click to refresh)</span>
 </div>
