@@ -66,15 +66,15 @@ class Crab(db.Model):
     banned = db.Column(db.Boolean, nullable=False, default=False)
 
     # Dynamic relationships
-    molts = db.relationship('Molt', back_populates='author')
-    following = db.relationship(
+    _molts = db.relationship('Molt', back_populates='author')
+    _following = db.relationship(
         'Crab',
         secondary=following_table,
         primaryjoin=id == following_table.c.follower_id,
         secondaryjoin=id == following_table.c.following_id,
-        backref=db.backref('followers')
+        backref=db.backref('_followers')
     )
-    likes = db.relationship('Like')
+    _likes = db.relationship('Like')
 
     pinned_molt_id = db.Column(db.Integer, nullable=True)
     _preferences = db.Column('preferences', db.String,
@@ -97,46 +97,68 @@ class Crab(db.Model):
         return datetime.timedelta(hours=float(self.timezone))
 
     @property
-    def true_likes(self):
+    def likes(self):
         """ Returns all molts the user has liked that are still available.
         """
-        return self.get_true_likes()
+        return self.query_likes().all()
 
     @property
-    def true_molts(self):
+    def like_count(self):
+        """ Returns number of molts the user has liked that are still
+            available.
+        """
+        return self.query_likes().count()
+
+    @property
+    def molts(self):
         """ Returns all molts the user has published that are still available.
         """
-        return self.get_true_molts()
+        return self.query_molts().all()
 
     @property
-    def true_molts_count(self):
-        """ Returns count of molts the user has published that are still available.
+    def molts_count(self):
+        """ Returns number of molts the user has published that are still
+            available.
         """
-        return len(self.true_molts)
+        return self.query_molts().count()
 
     @property
-    def true_following(self):
+    def replies(self):
+        """ Returns all replies the user has published that are still
+            available.
+        """
+        return self.query_replies().all()
+
+    @property
+    def reply_count(self):
+        """ Returns number of replies the user has published that are still
+            available.
+        """
+        return self.query_replies().count()
+
+    @property
+    def following(self) -> List['Crab']:
         """ Returns this Crab's following without deleted/banned users.
         """
-        return self.get_true_following()
+        return self.query_following().all()
 
     @property
-    def true_followers(self):
+    def followers(self) -> List['Crab']:
         """ Returns this Crab's followers without deleted/banned users.
         """
-        return self.get_true_followers()
+        return self.query_followers().all()
 
     @property
-    def true_following_count(self):
+    def following_count(self):
         """ Returns this Crab's following count without deleted/banned users.
         """
-        return self.get_true_following(count=True)
+        return self.query_following().count()
 
     @property
-    def true_follower_count(self):
+    def follower_count(self):
         """ Returns this Crab's follower count without deleted/banned users.
         """
-        return self.get_true_followers(count=True)
+        return self.query_followers().count()
 
     @property
     def days_active(self):
@@ -170,11 +192,11 @@ class Crab(db.Model):
         self_following = db.session.query(Crab) \
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id == self.id) \
-            .filter(not Crab.banned, not Crab.deleted)
+            .filter(Crab.banned == False, Crab.deleted == False)
         crab_followers = db.session.query(Crab) \
             .join(following_table, Crab.id == following_table.c.follower_id) \
             .filter(following_table.c.following_id == crab.id) \
-            .filter(not Crab.banned, not Crab.deleted)
+            .filter(Crab.banned == False, Crab.deleted == False)
         return self_following.intersect(crab_followers).all()
 
     def get_preference(self, key: str, default: Optional[Any] = None):
@@ -195,12 +217,12 @@ class Crab(db.Model):
         following_ids = db.session.query(Crab.id) \
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id == self.id) \
-            .filter(not Crab.banned, not Crab.deleted)
+            .filter(Crab.banned == False, Crab.deleted == False)
         recommended = db.session.query(Crab) \
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id.in_(following_ids)) \
             .filter(following_table.c.following_id.notin_(following_ids)) \
-            .filter(not Crab.banned, not Crab.deleted) \
+            .filter(Crab.banned == False, Crab.deleted == False) \
             .filter(Crab.id != self.id)
 
         return recommended.limit(limit).all()
@@ -263,51 +285,6 @@ class Crab(db.Model):
         else:
             return notifs.all()
 
-    def get_true_likes(self, paginated=False, page=1):
-        """ Returns all molts the user has liked that are still available.
-        """
-        likes = Like.query.filter_by(crab=self) \
-            .filter(Like.molt.has(deleted=False)) \
-            .filter(Like.molt.has(Molt.author.has(banned=False,
-                                                  deleted=False))) \
-            .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
-        if paginated:
-            return likes.paginate(page, config.MOLTS_PER_PAGE, False)
-        else:
-            return likes.all()
-
-    def get_true_molts(self, paginated=False, page=1):
-        """ Returns all molts the user has published that are still available.
-        """
-        molts = Molt.query.filter_by(author=self, deleted=False) \
-            .order_by(Molt.timestamp.desc())
-        if paginated:
-            return molts.paginate(page, config.MOLTS_PER_PAGE, False)
-        else:
-            return molts.all()
-
-    def get_true_following(self, count=False):
-        """ Returns this Crab's following without deleted/banned users.
-        """
-        following = db.session.query(Crab) \
-            .join(following_table, Crab.id == following_table.c.following_id) \
-            .filter(following_table.c.follower_id == self.id) \
-            .filter(not Crab.banned, not Crab.deleted)
-        if count:
-            return following.count()
-        return following.all()
-
-    def get_true_followers(self, count=False):
-        """ Returns this Crab's followers without deleted/banned users.
-        """
-        followers = db.session.query(Crab) \
-            .join(following_table, Crab.id == following_table.c.follower_id) \
-            .filter(following_table.c.following_id == self.id) \
-            .filter(not Crab.banned, not Crab.deleted)
-        if count:
-            return followers.count()
-        return followers.all()
-
     def award(self, title=None, trophy=None):
         """ Award user trophy by object or by title.
 
@@ -341,8 +318,8 @@ class Crab(db.Model):
     def follow(self, crab):
         """ Adds user to `crab`'s following.
         """
-        if crab not in self.following and crab is not self:
-            self.following.append(crab)
+        if crab not in self._following and crab is not self:
+            self._following.append(crab)
 
             # Create follow notification
             crab.notify(sender=self, type="follow")
@@ -364,8 +341,8 @@ class Crab(db.Model):
     def unfollow(self, crab):
         """ Removers user from `crab`'s following.
         """
-        if crab in self.following and crab is not self:
-            self.following.remove(crab)
+        if crab in self._following and crab is not self:
+            self._following.remove(crab)
             crab.notify(sender=self, type="unfollow")
             db.session.commit()
 
@@ -437,18 +414,101 @@ class Crab(db.Model):
                 db.session.commit()
                 return new_notif
 
-    @staticmethod
-    def create_new(**kwargs):
-        """ Create new user. See `Crab.__init__` for arguments.
+    # Query methods
+
+    def query_following(self) -> BaseQuery:
+        """ Returns this Crab's following without deleted/banned users.
         """
-        kwargs["password"] = Crab.hash_pass(kwargs["password"])
-        new_crab = Crab(**kwargs)
-        if 'avatar' not in kwargs:
-            crabatar_img = utils.make_crabatar(new_crab.username)
-            new_crab.avatar = crabatar_img
-        db.session.add(new_crab)
-        db.session.commit()
-        return new_crab
+        following = db.session.query(Crab) \
+            .join(following_table, Crab.id == following_table.c.following_id) \
+            .filter(following_table.c.follower_id == self.id) \
+            .filter(Crab.banned == False, Crab.deleted == False)
+        return following
+
+    def query_followers(self) -> BaseQuery:
+        """ Returns this Crab's followers without deleted/banned users.
+        """
+        followers = db.session.query(Crab) \
+            .join(following_table, Crab.id == following_table.c.follower_id) \
+            .filter(following_table.c.following_id == self.id) \
+            .filter(Crab.banned == False, Crab.deleted == False)
+        return followers
+
+    def query_likes(self) -> BaseQuery:
+        """ Returns all molts the user has liked that are still available.
+        """
+        likes = Like.query.filter_by(crab=self) \
+            .filter(Like.molt.has(deleted=False)) \
+            .filter(Like.molt.has(Molt.author.has(banned=False,
+                                                  deleted=False))) \
+            .join(Molt, Like.molt).order_by(Molt.timestamp.desc())
+        return likes
+
+    def query_molts(self) -> BaseQuery:
+        """ Returns all molts the user has published that are still available.
+        """
+        molts = Molt.query.filter_by(author=self, deleted=False) \
+            .order_by(Molt.timestamp.desc())
+        return molts
+
+    def query_replies(self) -> BaseQuery:
+        """ Returns all replies the user has published that are still
+            available.
+        """
+        # TODO: Filter-out replies where the original molt's author is deleted
+        #       or banned.
+        molts = self.query_molts() \
+            .filter(Molt.original_molt.has(deleted=False))
+        return molts
+
+    def query_timeline(self) -> BaseQuery:
+        following_ids = [crab.id for crab in self.following] + [self.id]
+        molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
+            .filter_by(deleted=False, is_reply=False) \
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .order_by(Molt.timestamp.desc())
+        return molts
+
+    @staticmethod
+    def query_all() -> BaseQuery:
+        return Crab.query.filter_by(deleted=False, banned=False)
+
+    @staticmethod
+    def query_most_popular() -> BaseQuery:
+        followers = db.session.query(
+            following_table.c.following_id,
+            func.count(following_table.c.following_id).label('count')
+        ).group_by(following_table.c.following_id).subquery()
+
+        crabs = db.session.query(Crab, followers.c.count) \
+            .outerjoin(followers, followers.c.following_id == Crab.id) \
+            .filter(Crab.deleted == False, Crab.banned == False) \
+            .order_by(db.desc('count'))
+        return crabs
+
+    @staticmethod
+    def get_by_ID(id: int, include_invalidated: bool = False) \
+            -> Optional['Crab']:
+        crab = Crab.query.filter_by(id=id)
+        if not include_invalidated:
+            crab = crab.filter_by(deleted=False, banned=False)
+        return crab.first()
+
+    @staticmethod
+    def get_by_username(username: str, include_invalidated: bool = False) \
+            -> Optional['Crab']:
+        crab = Crab.query \
+            .filter(Crab.username.ilike(username))
+        if not include_invalidated:
+            crab = crab.filter_by(deleted=False, banned=False)
+        return crab.first()
+
+    @staticmethod
+    def search(query: str) -> BaseQuery:
+        results = Crab.query.filter_by(deleted=False, banned=False) \
+            .filter(db.or_(Crab.display_name.contains(query, autoescape=True),
+                           Crab.username.contains(query, autoescape=True)))
+        return results
 
     @staticmethod
     def hash_pass(password):
@@ -456,6 +516,19 @@ class Crab(db.Model):
         """
         new_hash = sha256_crypt.encrypt(password)
         return new_hash
+
+    @classmethod
+    def create_new(cls, **kwargs):
+        """ Create new user. See `Crab.__init__` for arguments.
+        """
+        kwargs["password"] = cls.hash_pass(kwargs["password"])
+        new_crab = cls(**kwargs)
+        if 'avatar' not in kwargs:
+            crabatar_img = utils.make_crabatar(new_crab.username)
+            new_crab.avatar = crabatar_img
+        db.session.add(new_crab)
+        db.session.commit()
+        return new_crab
 
 
 class Molt(db.Model):
@@ -466,7 +539,7 @@ class Molt(db.Model):
     # Static info
     author_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                           nullable=False)
-    author = db.relationship('Crab', back_populates='molts')
+    author = db.relationship('Crab', back_populates='_molts')
     content = db.Column(db.String(1000), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False,
                           default=datetime.datetime.utcnow)
@@ -495,12 +568,10 @@ class Molt(db.Model):
     is_reply = db.Column(db.Boolean, nullable=False, default=False)
     original_molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'))
     original_molt = db.relationship('Molt', remote_side=[id],
-                                    backref='remolts')
+                                    backref='_remolts')
 
     # Dynamic relationships
-    # replies
-    # likes
-    likes = db.relationship('Like')
+    _likes = db.relationship('Like')
     edited = db.Column(db.Boolean, nullable=False, default=False)
 
     # Custom initialization required to process tags and mentions
@@ -537,24 +608,31 @@ class Molt(db.Model):
     def replies(self):
         """ List all currently valid Molts that reply to this Molt.
         """
-        return Molt.query \
-            .filter_by(is_reply=True, original_molt=self, deleted=False) \
-            .filter(Molt.author.has(banned=False, deleted=False)).all()
+        return self.query_replies().all()
 
     @property
-    def true_remolts(self):
-        """ List all currently valid remolts of Molt.
+    def remolts(self):
+        """ Get all currently valid remolts of Molt.
         """
-        return Molt.query \
-            .filter_by(is_remolt=True, original_molt=self, deleted=False) \
-            .filter(Molt.author.has(banned=False, deleted=False)).all()
+        return Molt.query_remolts(self).all()
 
     @property
-    def true_likes(self):
+    def remolt_count(self):
+        """ Get number of currently valid remolts of Molt.
+        """
+        return Molt.query_remolts(self).count()
+
+    @property
+    def likes(self):
         """ List all currently valid likes of Molt.
         """
-        return Like.query.filter_by(molt=self) \
-            .filter(Like.crab.has(deleted=False, banned=False)).all()
+        return Molt.query_likes(self).all()
+
+    @property
+    def like_count(self):
+        """ List number of currently valid likes of Molt.
+        """
+        return Molt.query_likes(self).count()
 
     @property
     def pretty_age(self):
@@ -697,8 +775,8 @@ class Molt(db.Model):
                 },
                 "content": self.content,
                 "rich_content": self.rich_content(),
-                "likes": [like.id for like in self.true_likes],
-                "remolts": [remolt.id for remolt in self.true_remolts],
+                "likes": [like.id for like in self.likes],
+                "remolts": [remolt.id for remolt in self.remolts],
                 "image": None if self.image is None
                 else config.BASE_URL + url_for('static', filename=self.image),
                 "id": self.id,
@@ -718,7 +796,7 @@ class Molt(db.Model):
         """ Return first reply Molt from a crab that `crab` follows if it
             exists.
         """
-        following_ids = [followed.id for followed in crab.true_following]
+        following_ids = [followed.id for followed in crab.following]
         following_ids.append(crab.id)
         reply = Molt.query.filter_by(is_reply=True, original_molt=self,
                                      deleted=False) \
@@ -772,11 +850,11 @@ class Molt(db.Model):
             self.author.notify(sender=crab, type="like", molt=self)
 
             # Check if awards are applicable:
-            if self.true_likes == 10:
+            if self.like_count == 10:
                 self.author.award(title="Dopamine Hit")
-            if self.true_likes == 100:
+            if self.like_count == 100:
                 self.author.award(title="Dopamine Addict")
-            if self.true_likes == 1000:
+            if self.like_count == 1000:
                 self.author.award(title="Full on Junkie")
             db.session.commit()
             return new_like
@@ -800,6 +878,85 @@ class Molt(db.Model):
         """
         self.deleted = False
         db.session.commit()
+
+    # Query methods
+
+    def query_likes(self):
+        return Like.query.filter_by(molt=self) \
+            .filter(Like.crab.has(deleted=False, banned=False))
+
+    def query_remolts(self) -> BaseQuery:
+        return Molt.query \
+            .filter_by(is_remolt=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False))
+
+    def query_replies(self) -> BaseQuery:
+        return Molt.query \
+            .filter_by(is_reply=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False))
+
+    @staticmethod
+    def query_all() -> BaseQuery:
+        molts = Molt.query \
+            .filter_by(deleted=False, is_reply=False, is_remolt=False) \
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .order_by(Molt.timestamp.desc())
+        return molts
+
+    @staticmethod
+    def query_most_liked() -> BaseQuery:
+        molts = db.session.query(Molt, func.count(Like.id)) \
+            .join(Molt, Molt.id == Like.molt_id) \
+            .filter(Like.molt.has(deleted=False)) \
+            .filter(Like.crab.has(deleted=False)) \
+            .filter(Like.molt.has(Molt.author.has(deleted=False,
+                                                  banned=False))) \
+            .order_by(func.count(Like.id).desc()).group_by(Like.molt_id)
+        return molts
+
+    @staticmethod
+    def query_most_replied() -> BaseQuery:
+        replies = db.session.query(Molt.original_molt_id) \
+            .filter_by(is_reply=True, deleted=False) \
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .filter(Molt.original_molt.has(deleted=False)) \
+            .filter(Molt.original_molt.has(Molt.author.has(deleted=False,
+                                                           banned=False))) \
+            .group_by(Molt.original_molt_id) \
+            .order_by(func.count(Molt.id).desc()).subquery()
+        molts = Molt.query.join(replies, replies.c.original_molt_id == Molt.id)
+        return molts
+
+    @staticmethod
+    def query_with_tag(crabtag: str) -> BaseQuery:
+        molts = Molt.query \
+            .filter_by(deleted=False, is_reply=False, is_remolt=False) \
+            .join(Molt.tags) \
+            .filter(Crabtag.name == crabtag.lower()) \
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .order_by(Molt.timestamp.desc())
+        return molts
+
+    @staticmethod
+    def search(query: str) -> BaseQuery:
+        results = Molt.query.filter_by(deleted=False, is_reply=False) \
+            .filter(Molt.content.contains(query, autoescape=True)) \
+            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .order_by(Molt.timestamp.desc())
+        return results
+
+    @staticmethod
+    def get_by_ID(id: int, include_invalidated: bool = False) \
+            -> Optional['Molt']:
+        """ Get a Molt by ID.
+        """
+        molt = Molt.query \
+            .filter_by(id=id, is_remolt=False)
+        if not include_invalidated:
+            molt = molt.filter(Molt.author.has(deleted=False,
+                                               banned=False)) \
+                .filter_by(deleted=False)
+        return molt.first()
 
     @staticmethod
     def label_links(content, max_len=35):
@@ -885,10 +1042,10 @@ class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
                         nullable=False)
-    crab = db.relationship('Crab', back_populates='likes')
+    crab = db.relationship('Crab', back_populates='_likes')
     molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'),
                         nullable=False)
-    molt = db.relationship('Molt', back_populates='likes')
+    molt = db.relationship('Molt', back_populates='_likes')
 
     def __repr__(self):
         return f"<Like from '@{self.crab.username}'>"
@@ -1070,7 +1227,7 @@ class Crabtag(db.Model):
             .group_by(crabtag_table.c.tag_id).order_by(desc('uses'))
         if since_date:
             most_popular = most_popular \
-                .join(Molt, crabtag_table.c.molt_id==Molt.id) \
+                .join(Molt, crabtag_table.c.molt_id == Molt.id) \
                 .filter(Molt.timestamp > since_date)
         return most_popular
 
@@ -1084,7 +1241,7 @@ class Crabtag(db.Model):
         since_date = datetime.datetime.utcnow() - datetime.timedelta(7)
 
         return Crabtag.query_most_popular(since_date=since_date) \
-                .limit(limit).all()
+            .limit(limit).all()
 
     @classmethod
     def get(cls, name: str) -> 'Crabtag':

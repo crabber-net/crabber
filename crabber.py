@@ -6,8 +6,6 @@ from flask_limiter import Limiter
 import models
 import os
 import patterns
-from sqlalchemy import or_
-from sqlalchemy.sql import func
 from typing import Iterable, Tuple, Union
 import utils
 
@@ -63,12 +61,9 @@ def index():
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
 
-        following_ids = [crab.id for crab in utils.get_current_user().following] + [utils.get_current_user().id]
-        base_query = models.Molt.query.filter(models.Molt.author_id.in_(following_ids))
-        molts = base_query \
-            .filter_by(deleted=False, is_reply=False).filter(models.Molt.author.has(deleted=False, banned=False)) \
-            .order_by(models.Molt.timestamp.desc()) \
+        molts = utils.get_current_user().query_timeline() \
             .paginate(page_n, MOLTS_PER_PAGE, False)
+
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
@@ -79,7 +74,7 @@ def index():
             return jsonify(blocks)
         else:
             return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
-                                molts=molts, current_user=utils.get_current_user())
+                                   molts=molts, current_user=utils.get_current_user())
     else:
         featured_molt = models.Molt.query.filter_by(id=FEATURED_MOLT_ID).first()
         featured_user = models.Crab.query.filter_by(username=FEATURED_CRAB_USERNAME).first()
@@ -98,9 +93,7 @@ def wild_west():
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        molts = models.Molt.query.filter_by(deleted=False, is_reply=False, is_remolt=False) \
-            .filter(models.Molt.author.has(deleted=False, banned=False)).order_by(models.Molt.timestamp.desc()) \
-            .paginate(page_n, MOLTS_PER_PAGE, False)
+        molts = models.Molt.query_all().paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
@@ -268,7 +261,7 @@ def user(username):
     # Display page
     else:
         current_tab = request.args.get("tab", default="molts")
-        this_user = models.Crab.query.filter_by(deleted=False).filter(models.Crab.username.ilike(username)).first()
+        this_user = models.Crab.get_by_username(username)
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun='user')
         elif this_user.banned:
@@ -277,12 +270,12 @@ def user(username):
             m_page_n = request.args.get('molts-p', 1, type=int)
             r_page_n = request.args.get('replies-p', 1, type=int)
             l_page_n = request.args.get('likes-p', 1, type=int)
-            molts = models.Molt.query.filter_by(author=this_user, deleted=False, is_reply=False).order_by(
-                models.Molt.timestamp.desc()).paginate(m_page_n, MOLTS_PER_PAGE, False)
-            replies = models.Molt.query.filter_by(author=this_user, deleted=False, is_reply=True) \
-                .filter(models.Molt.original_molt.has(deleted=False)).order_by(
-                models.Molt.timestamp.desc()).paginate(r_page_n, MOLTS_PER_PAGE, False)
-            likes = this_user.get_true_likes(paginated=True, page=l_page_n)
+            molts = this_user.query_molts() \
+                .filter_by(is_reply=False) \
+                .paginate(m_page_n, MOLTS_PER_PAGE, False)
+            replies = this_user.query_replies() \
+                .paginate(r_page_n, MOLTS_PER_PAGE, False)
+            likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
 
             if request.args.get('ajax_json'):
                 blocks = dict()
@@ -318,7 +311,7 @@ def user_following(username, tab):
 
     # Display page
     elif session.get('current_user') is not None:
-        this_user = models.Crab.query.filter_by(username=username, deleted=False).first()
+        this_user = models.Crab.get_by_username(username)
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
         elif this_user.banned:
@@ -327,9 +320,9 @@ def user_following(username, tab):
         else:
             followx = None
             if tab == 'ing':
-                followx = this_user.true_following
+                followx = this_user.following
             elif tab == 'ers':
-                followx = this_user.true_followers
+                followx = this_user.followers
             elif tab == 'ers_you_know':
                 followx = utils.get_current_user().get_mutuals_for(this_user)
             return render_template('followx.html',
@@ -348,16 +341,15 @@ def molt_page(username, molt_id):
 
     # Display page
     else:
-        primary_molt = models.Molt.query.filter_by(id=molt_id).first()
+        primary_molt = models.Molt.get_by_ID(molt_id)
         ajax_content = request.args.get('ajax_content')
         if primary_molt is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
         elif primary_molt.author.banned:
-            return render_template('not-found.html', current_user=utils.get_current_user(), 
+            return render_template('not-found.html', current_user=utils.get_current_user(),
                                    message='The author of this Molt has been banned.')
         else:
-            replies = models.Molt.query.filter_by(deleted=False, is_reply=True, original_molt_id=molt_id) \
-                .order_by(models.Molt.timestamp.desc())
+            replies = primary_molt.query_replies()
             return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
                                    replies=replies, current_user=utils.get_current_user())
 
@@ -370,8 +362,7 @@ def crabtags(crabtag):
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = models.Molt.query.filter(models.Molt.raw_tags.contains((crabtag + "\n"))).filter_by(deleted=False, is_reply=False) \
-            .filter(models.Molt.author.has(deleted=False, banned=False)).order_by(models.Molt.timestamp.desc())
+        molts = models.Molt.query_with_tag(crabtag)
         return render_template('crabtag.html', current_page="crabtag",
                                molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
     else:
@@ -391,14 +382,8 @@ def search():
         ajax_content = request.args.get('ajax_content')
 
         if query:
-            from extensions import db
-
-            crab_results = models.Crab.query.filter_by(deleted=False, banned=False) \
-                .filter(db.or_(models.Crab.display_name.contains(query, autoescape=True),
-                               models.Crab.username.contains(query, autoescape=True)))
-            molt_results = models.Molt.query.filter_by(deleted=False, is_reply=False) \
-                .filter(models.Molt.content.contains(query, autoescape=True)) \
-                .filter(models.Molt.author.has(deleted=False, banned=False)).order_by(models.Molt.timestamp.desc()) \
+            crab_results = models.Crab.search(query)
+            molt_results = models.Molt.search(query) \
                 .paginate(page_n, MOLTS_PER_PAGE, False)
 
         else:
@@ -429,25 +414,13 @@ def stats():
     if request.method == "POST":
         return utils.common_molt_actions()
 
-    from extensions import db
     # Query follow counts for users
-    sub = db.session.query(models.following_table.c.following_id, func.count(models.following_table.c.following_id).label('count')) \
-        .group_by(models.following_table.c.following_id).subquery()
-    most_followed = db.session.query(models.Crab, sub.c.count).outerjoin(sub, models.Crab.id == sub.c.following_id) \
-        .order_by(db.desc('count')).filter(models.Crab.deleted == False).filter(models.Crab.banned == False).first()
-    newest_user = models.Crab.query.filter_by(deleted=False, banned=False).order_by(models.Crab.register_time.desc()).first()
+    most_followed = models.Crab.query_most_popular().first()
+    newest_user = models.Crab.query_all() \
+        .order_by(models.Crab.register_time.desc()).first()
 
-    best_molt = db.session.query(models.Like.molt_id, func.count(models.Like.id)).filter(models.Like.molt.has(deleted=False)) \
-        .filter(models.Like.crab.has(deleted=False)) \
-        .filter(models.Like.molt.has(models.Molt.author.has(deleted=False, banned=False))) \
-        .order_by(func.count(models.Like.id).desc()).group_by(models.Like.molt_id).first()
-    best_molt = models.Molt.query.filter_by(id=best_molt[0]).first(), best_molt[1]
-    talked_molt = db.session.query(models.Molt.original_molt_id).filter_by(is_reply=True, deleted=False) \
-        .filter(models.Molt.author.has(deleted=False, banned=False)).filter(models.Molt.original_molt.has(deleted=False)) \
-        .filter(models.Molt.original_molt.has(models.Molt.author.has(deleted=False, banned=False))) \
-        .group_by(models.Molt.original_molt_id) \
-        .order_by(func.count(models.Molt.id).desc()).first()
-    talked_molt = (models.Molt.query.filter_by(id=talked_molt[0]).first(),)
+    best_molt = models.Molt.query_most_liked().first()
+    talked_molt = models.Molt.query_most_replied().first()
     stats_dict = dict(users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
                       mini_stats=[
                           dict(number=models.Molt.query.count(),
@@ -475,9 +448,11 @@ def stats():
         return render_template('stats.html', current_user=utils.get_current_user(),
                                stats=stats_dict, current_page='stats')
 
+
 @app.route("/debug/")
 def debug():
     return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
+
 
 @app.route("/developer/", methods=("GET", "POST"))
 def developer():
@@ -495,7 +470,7 @@ def developer():
                 return utils.show_message('Created new developer key.')
             else:
                 return utils.show_error(
-                    f'You are only allowed {API_MAX_DEVELOPER_KEYS} ' \
+                    f'You are only allowed {API_MAX_DEVELOPER_KEYS} '
                     'developer keys.')
         elif action == 'create_access_token':
             if len(access_tokens) < API_MAX_ACCESS_TOKENS:
@@ -503,7 +478,7 @@ def developer():
                 return utils.show_message('Created access token.')
             else:
                 return utils.show_error(
-                    f'You are only allowed {API_MAX_ACCESS_TOKENS} ' \
+                    f'You are only allowed {API_MAX_ACCESS_TOKENS} '
                     'access tokens.')
         elif action == 'delete_developer_key':
             key_id = request.form.get('developer_key_id')
@@ -528,6 +503,7 @@ def developer():
                                developer_keys=developer_keys,
                                current_user=current_user)
 
+
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
@@ -547,12 +523,12 @@ def tortimer():
                 target.delete()
                 if isinstance(target, models.Crab):
                     return utils.show_message(f"Deleted @{target.username}")
-                return utils.show_message(f"Deleted Molt")
+                return utils.show_message("Deleted Molt")
             elif action == "restore":
                 target.restore()
                 if isinstance(target, models.Crab):
                     return utils.show_message(f"Restored @{target.username}")
-                return utils.show_message(f"Restored Molt")
+                return utils.show_message("Restored Molt")
             elif action == "ban":
                 target.ban()
                 return utils.show_message(f"Banned @{target.username}")
@@ -561,7 +537,7 @@ def tortimer():
                 return utils.show_message(f"Unbanned @{target.username}")
             elif action == "approve":
                 target.approve()
-                return utils.show_message(f"Approved Molt")
+                return utils.show_message("Approved Molt")
             elif action == "award":
                 if request.form.get("award_title"):
                     try:
@@ -570,7 +546,7 @@ def tortimer():
                     except models.NotFoundInDatabase:
                         return utils.show_error(f"Unable to find trophy with title: {request.form.get('award_title')}")
                 else:
-                    return utils.show_error(f"No award title found.")
+                    return utils.show_error("No award title found.")
 
             # PRG pattern
             return redirect(request.url)
@@ -600,18 +576,19 @@ def tortimer():
 def ajax_request(request_type):
     if request_type == "unread_notif":
         if request.args.get("crab_id"):
-            crab = models.Crab.query.filter_by(id=request.args.get("crab_id")).first()
+            crab = models.Crab.get_by_ID(id=request.args.get("crab_id"))
             if crab:
                 return str(crab.unread_notifications)
         return "Crab not found. Did you specify 'crab_id'?"
     if request_type == "molts_since":
         if request.args.get("timestamp"):
             if request.args.get("crab_id"):
-                crab = models.Crab.query.filter_by(id=request.args.get("crab_id")).first()
-                following_ids = [crab.id for crab in crab.following]
-                new_molts = models.Molt.query.filter(models.Molt.author_id.in_(following_ids)) \
-                    .filter_by(deleted=False, is_reply=False).filter(models.Molt.author.has(deleted=False, banned=False)) \
-                    .filter(models.Molt.timestamp > datetime.datetime.utcfromtimestamp(int(request.args.get("timestamp"))))
+                timestamp = datetime.datetime.utcfromtimestamp(
+                    int(request.args.get("timestamp"))
+                )
+                crab = models.Crab.get_by_ID(id=request.args.get("crab_id"))
+                new_molts = crab.query_timeline() \
+                    .filter(models.Molt.timestamp > timestamp)
                 return str(new_molts.count())
 
             else:
@@ -629,7 +606,7 @@ def api_v0(action):
             password = request.form.get("password")
             content = request.form.get("content")
 
-            target_user: models.Crab = models.Crab.query.filter_by(username=username).first()
+            target_user: models.Crab = models.Crab.get_by_username(username)
             if target_user:
                 if target_user.verify_password(password):
                     if content:
@@ -648,10 +625,9 @@ def api_v0(action):
             password = request.form.get("password")
             content = request.form.get("content")
             original_id = request.form.get("original_id")
-            original_molt: models.Molt = models.Molt.query.filter_by(id=original_id, deleted=False) \
-                .filter(models.Molt.author.has(deleted=False, banned=False)).first()
+            original_molt: models.Molt = models.Molt.get_by_ID(original_id)
 
-            target_user: models.Crab = models.Crab.query.filter_by(username=username).first()
+            target_user: models.Crab = models.Crab.get_by_username(username)
             if target_user:
                 if target_user.verify_password(password):
                     if content:
@@ -676,7 +652,8 @@ def api_v0(action):
             return jsonify("Test success!")
         # Get molt content
         elif action == "molt":
-            molt = models.Molt.query.filter_by(id=request.args.get("id")).first()
+            molt_id = request.args.get("id")
+            molt = models.Molt.get_by_ID(molt_id)
             if molt:
                 if molt.deleted:
                     return "Molt has been deleted", 400
@@ -732,11 +709,13 @@ def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ('', 's'))
     count = value if isinstance(value, int) else len(value)
     return grammar[count != 1]
 
+
 @app.template_filter()
 def commafy(value):
     """ Returns string of value with commas seperating the thousands places.
     """
     return format(int(value), ',d')
+
 
 @app.template_filter()
 def pretty_url(url, length=35):
@@ -748,6 +727,7 @@ def pretty_url(url, length=35):
     if len(url) > length:
         url = f'{url[:length - 3]}...'
     return url
+
 
 @app.errorhandler(404)
 def error_404(_error_msg):
@@ -764,7 +744,7 @@ def file_too_big(_e):
 def before_request():
     # Make sure cookies are still valid
     if session.get("current_user"):
-        if not models.Crab.query.filter_by(id=session.get("current_user"), deleted=False, banned=False).all():
+        if not models.Crab.get_by_ID(id=session.get("current_user")):
             # Force logout
             session["current_user"] = None
             return redirect("/login")

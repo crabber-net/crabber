@@ -207,8 +207,8 @@ def crab_to_json(crab: 'models.Crab', bio: bool = False) -> dict:
         "username": crab.username,
         "verified": crab.verified,
         "avatar": absolute_url(crab.avatar),
-        "followers": crab.true_follower_count,
-        "following": crab.true_following_count,
+        "followers": crab.follower_count,
+        "following": crab.following_count,
         "register_time": get_timestamp(crab.register_time)
     }
     if bio:
@@ -234,8 +234,8 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "timestamp": get_timestamp(molt.timestamp),
         "replying_to": molt.original_molt_id if molt.is_reply else None,
         "image": absolute_url(molt.image),
-        "likes": len(molt.true_likes),
-        "remolts": len(molt.true_remolts)
+        "likes": molt.like_count,
+        "remolts": molt.remolt_count
     }
     return molt_json
 

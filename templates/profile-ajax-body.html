@@ -140,11 +140,11 @@
         </div>
         <div class="profile-box-following mt-1">
             <a class="text-inherit" href="/user/{{this_user.username}}/following">
-            <div class="d-inline mr-2"><strong>{{this_user.true_following|length}}</strong>
+            <div class="d-inline mr-2"><strong>{{this_user.following_count}}</strong>
                 <span class="text-muted">Following</span></div></a>
             <a class="text-inherit" href="/user/{{this_user.username}}/followers">
-            <div class="d-inline mr-2"><strong>{{this_user.true_followers|length}}</strong>
-                <span class="text-muted">Follower{{"" if this_user.followers|length == 1 else "s"}}</span></a></div>
+            <div class="d-inline mr-2"><strong>{{this_user.follower_count}}</strong>
+                <span class="text-muted">Follower{{this_user.follower_count | pluralize}}</span></a></div>
 
             <!-- "Followers you know" section -->
             {% if current_user %}
@@ -221,9 +221,9 @@
                         <!-- Member duration -->
                         <li>Member for <strong class="text-primary">{{this_user.days_active | commafy}}</strong> days</li>
                         <!-- Molts published -->
-                        <li><strong class="text-primary">{{this_user.true_molts_count | commafy}}</strong> Molt{{"s" if this_user.true_molts_count != 1}} published</li>
+                        <li><strong class="text-primary">{{this_user.molts_count | commafy}}</strong> Molt{{this_user.molts_count | pluralize}} published</li>
                         <!-- Molts liked -->
-                        <li>Liked <strong class="text-primary">{{this_user.true_likes | length | commafy}}</strong> Molt{{"s" if this_user.true_likes | length != 1}}</li>
+                        <li>Liked <strong class="text-primary">{{this_user.like_count | commafy}}</strong> Molt{{this_user.like_count | pluralize}}</li>
                         {% if this_user.lastfm %}
                             <!-- Scrobble count -->
                             <li class="font-0">

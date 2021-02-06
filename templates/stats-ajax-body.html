@@ -89,7 +89,7 @@
                     </h2>
                     <p class="text-muted mb-1">
                         @{{baby.username}}
-                        <span class="follow-count px-1 ml-1">a member for <b>{{baby.days_active | commafy}}</b> day{{"s" if baby.days_active != 1}}</span>
+                        <span class="follow-count px-1 ml-1">a member for <b>{{baby.days_active | commafy}}</b> day{{baby.days_active | pluralize}}</span>
                     </p>
                 </div>
             </div>
@@ -112,7 +112,7 @@
     </div>
     {% endwith %}
 
-    {% with molt = stats['talked_molt'][0], hide_border=True %}
+    {% with molt = stats['talked_molt'], hide_border=True %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
             <h1 class="text-center" style="width: 17rem;">Talked About</h1>
