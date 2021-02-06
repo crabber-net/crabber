@@ -9,6 +9,11 @@
     <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/svg+xml">
     <link rel="alternate icon" href="{{url_for('static', filename='img/favicon.png')}}">
 
+    <!-- Search Engine Metadata -->
+    <meta name="description" content="Crabber is a friendly open-source micro-bloggin platform.">
+    <meta name="tags" content="crabber, twitter, micro-blogging, crabs, twitter alternative, open-source">
+    <meta name="author" content="{% block meta_author %}{% endblock %}">
+
     <!-- Mobile web app -->
     <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
     <meta name="apple-mobile-web-app-capable" content="yes">

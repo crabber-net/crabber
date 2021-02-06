@@ -4,6 +4,7 @@
     <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
 {% endblock %}
 {% block title %} Molt Thread {% endblock %}
+{% block meta_author %}{{molt.author.display_name}}{% endblock %}
 {% block heading %}
     {% if referrer %}
         <div class="row">
