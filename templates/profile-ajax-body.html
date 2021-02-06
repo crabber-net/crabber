@@ -112,7 +112,7 @@
                 <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#link"></use>
                 </svg>
-                <a href="{{this_user.website}}">{{this_user.website|pretty_url}}</a>
+                <a class="text-primary" href="{{this_user.website}}">{{this_user.website|pretty_url}}</a>
             </div>
             {% endif %}
 

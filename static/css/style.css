@@ -1911,3 +1911,7 @@ table#user-info th {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
+
+a:hover.text-primary {
+    color: var(--primary-dark) !important;
+}
