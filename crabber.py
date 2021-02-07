@@ -93,7 +93,8 @@ def wild_west():
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        molts = models.Molt.query_all().paginate(page_n, MOLTS_PER_PAGE, False)
+        molts = models.Molt.query_all(include_replies=False) \
+            .paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):

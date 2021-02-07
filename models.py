@@ -896,11 +896,15 @@ class Molt(db.Model):
             .filter(Molt.author.has(banned=False, deleted=False))
 
     @staticmethod
-    def query_all() -> BaseQuery:
+    def query_all(include_replies=True, include_remolts=False) -> BaseQuery:
         molts = Molt.query \
-            .filter_by(deleted=False, is_reply=False, is_remolt=False) \
+            .filter_by(deleted=False) \
             .filter(Molt.author.has(deleted=False, banned=False)) \
             .order_by(Molt.timestamp.desc())
+        if not include_replies:
+            molts = molts.filter_by(is_reply=False)
+        if not include_remolts:
+            molts = molts.filter_by(is_remolt=False)
         return molts
 
     @staticmethod
@@ -939,9 +943,7 @@ class Molt(db.Model):
 
     @staticmethod
     def query_with_tag(crabtag: Union['Crabtag', str]) -> BaseQuery:
-        molts = Molt.query \
-            .filter_by(deleted=False, is_reply=False, is_remolt=False) \
-            .join(Molt.tags)
+        molts = Molt.query_all().join(Molt.tags)
         if isinstance(crabtag, Crabtag):
             molts = molts.filter(Crabtag.name == crabtag.name)
         else:
