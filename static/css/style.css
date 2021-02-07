@@ -623,6 +623,14 @@
     overflow: hidden;
 }
 
+/* Limit panel width on massive screens */
+#nav-panel {
+    max-width: 18rem;
+}
+#add-panel {
+    max-width: 21rem;
+}
+
 #nav-panel strong {
     /* Nav button labels */
     height: 28px;
@@ -1804,6 +1812,8 @@ table#user-info th {
 }
 
 #add-panel .search-box {
+    height: 2.25rem;
+
     background-color: var(--dark-lesser);
     margin-bottom: 2rem;
 }
