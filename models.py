@@ -820,7 +820,7 @@ class Molt(db.Model):
         """
         new_reply = author.molt(comment, is_reply=True, original_molt=self,
                                 **kwargs)
-        self.author.notify(sender=crab, type="reply", molt=new_reply)
+        self.author.notify(sender=author, type="reply", molt=new_reply)
         return new_reply
 
     def report(self):
