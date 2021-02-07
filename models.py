@@ -951,6 +951,17 @@ class Molt(db.Model):
         return molts
 
     @staticmethod
+    def filter_query_by_available(query: BaseQuery) -> BaseQuery:
+        """ Filters a Molt query by available Molts.
+
+            This means Molts that are not deleted and are authored by Crabs
+            that are neither deleted or banned.
+        """
+        query = query.filter(Molt.deleted == False,
+                             Molt.author.has(deleted=False, banned=False))
+        return query
+
+    @staticmethod
     def order_query_by_likes(query: BaseQuery) -> BaseQuery:
         """ Orders a Molt query by number of likes (descending).
         """
@@ -1259,15 +1270,11 @@ class Crabtag(db.Model):
         """ Returns a query of (tag: Crabtag, count: int) ordered by count
             descending.
         """
-        most_popular = db.session.query(
-            Crabtag,
-            func.count(crabtag_table.c.molt_id).label('uses')
-        ) \
-            .join(crabtag_table, crabtag_table.c.tag_id == Crabtag.id) \
-            .join(Molt, crabtag_table.c.molt_id == Molt.id) \
-            .filter(Molt.deleted == False, Molt.author.has(banned=False,
-                                                           deleted=False)) \
-            .group_by(crabtag_table.c.tag_id).order_by(desc('uses'))
+        most_popular = Crabtag.query.join(Crabtag.molts) \
+                .group_by(Crabtag.id) \
+                .add_columns(func.count(Crabtag.id).label('uses')) \
+                .order_by(desc('uses'))
+        most_popular = Molt.filter_query_by_available(most_popular)
         if since_date:
             most_popular = most_popular \
                 .filter(Molt.timestamp > since_date)
