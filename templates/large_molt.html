@@ -38,7 +38,7 @@
             <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
                     class="mini-molt-display-name">{{molt.author.display_name}}</a>
                 {% if molt.author.verified %}
-                <a title="Verified user">{{macros.verified(17)}}</a>
+                <a title="This user is verified">{{macros.verified(17)}}</a>
                 {% endif %}<br>
                 <span class="mini-molt-username">@{{molt.author.username}}</span>
             </div>

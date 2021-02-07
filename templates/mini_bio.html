@@ -33,7 +33,7 @@
         <div class="mini-molt-credentials {{"mt-1" if is_remolt else ""}}"><a href="/user/{{crab.username}}"
                 class="mini-molt-display-name zindex-front">{{crab.display_name}}</a>
             {% if crab.verified %}
-            <a title="Verified user">{{macros.verified(17)}}</a>
+            <a title="This user is verified">{{macros.verified(17)}}</a>
             {% endif %}
             <br><span class="mini-molt-username zindex-front"
                 style="position: relative;top: -.1em;">@{{crab.username}}
