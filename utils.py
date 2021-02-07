@@ -145,7 +145,8 @@ def common_molt_actions() -> Response:
                     request.form.get('molt_content'),
                     image=img_attachment,
                     platform=request.user_agent.platform,
-                    browser=request.user_agent.browser
+                    browser=request.user_agent.browser,
+                    address=request.remote_addr
                 )
                 return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
             elif action == 'submit_reply_molt':
@@ -161,6 +162,7 @@ def common_molt_actions() -> Response:
                         image=img_attachment,
                         platform=request.user_agent.platform,
                         browser=request.user_agent.browser,
+                        address=request.remote_addr
                     )
                     return redirect(f'/user/{get_current_user().username}/status/{reply.id}')
                 else:
@@ -199,7 +201,8 @@ def common_molt_actions() -> Response:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         target_molt.remolt(get_current_user(),
                            platform=request.user_agent.platform,
-                           browser=request.user_agent.browser)
+                           browser=request.user_agent.browser,
+                           address=request.remote_addr)
 
     elif action == "report_molt" and molt_id is not None:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()

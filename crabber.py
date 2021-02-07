@@ -1,7 +1,8 @@
 import calendar
 from config import *
 import datetime
-from flask import Flask, render_template, request, redirect, session, jsonify
+from flask import abort, Flask, jsonify, render_template, request, redirect, \
+    session
 from flask_limiter import Limiter
 import models
 import os
@@ -749,6 +750,9 @@ def file_too_big(_e):
 
 @app.before_request
 def before_request():
+    # Check if remote address is banned
+    if request.remote_addr in BLACKLIST:
+        return abort(403)
     # Make sure cookies are still valid
     if session.get('current_user'):
         crab_id = session.get('current_user')

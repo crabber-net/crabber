@@ -4,14 +4,14 @@ import platform
 from typing import List, Set
 
 
-def load_usernames_from_file(filename: str) -> List[str]:
-    """
-    Load list of usernames from file.
-    :param filename: Filename without path or extension (assumes app root and cfg)
-    :return: List of usernames as they appear in file
+def load_lines_from_file(filename: str) -> List[str]:
+    """ Loads lines from file into a list of strings.
+        :param filename: Filename without path or extension (assumes app root
+         location and cfg extension)
+        :return: List of strings as they appear in file
     """
     with open(f"{os.path.join(BASE_PATH, filename)}.cfg", "r") as f:
-        return [username.strip() for username in f.read().strip().splitlines()]
+        return [line.strip() for line in f.read().strip().splitlines()]
 
 
 # Check if running on production server or local development
@@ -22,14 +22,15 @@ MOLT_CHAR_LIMIT: int = 280
 MOLTS_PER_PAGE: int = 20
 NOTIFS_PER_PAGE: int = 20
 MINUTES_EDITABLE: int = 5
-ADMINS: List[str] = load_usernames_from_file("admins")  # Users allowed to access the Tortimer page
+ADMINS: List[str] = load_lines_from_file("admins")  # Users allowed to access the Tortimer page
 UPLOAD_FOLDER: str = os.path.join(BASE_PATH, 'static/img/user_uploads')
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
-RECOMMENDED_USERS: List[str] = load_usernames_from_file("recommended_users")  # Users suggested on post-signup page
+RECOMMENDED_USERS: List[str] = load_lines_from_file("recommended_users")  # Users suggested on post-signup page
 BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
 FEATURED_MOLT_ID = 1
 FEATURED_CRAB_USERNAME = 'jake'
+BLACKLIST = load_lines_from_file('blacklist')
 
 API_DEFAULT_CRAB_LIMIT = 10
 API_MAX_CRAB_LIMIT = 50

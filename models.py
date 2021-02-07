@@ -558,6 +558,8 @@ class Molt(db.Model):
     # Analytical data
     browser = db.Column(db.String)
     platform = db.Column(db.String)
+    address = db.Column(db.String)
+    address = db.Column(db.String)
 
     # Moderation/flagging
     reports = db.Column(db.Integer, nullable=False, default=0)
