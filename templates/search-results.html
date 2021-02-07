@@ -3,7 +3,7 @@
 {% endmacro %}
 
 <!-- Tab buttons -->
-<div class="row mx-0">
+<div class="row mx-0 search-tab-buttons">
     <div id="molts-btn" class="profile-box-category col active" onclick="switchTo('molts');">
         <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>
     </div>
@@ -13,6 +13,27 @@
 </div>
 
 <div id="molts">
+    {% if crab_results.count() > 3 and molt_results.page == 1 %}
+    <div class="inline-section">
+        <div class="inline-section-body">
+            <div class="inline-section-title">
+                <span>
+                    People
+                </span>
+            </div>
+            <div class="inline-section-content">
+                {% for crab in crab_results[:3] %}
+                    {% include "mini_bio.html" %}
+                {% endfor %}
+            </div>
+            <div class="inline-section-footer" onclick="switchTo('crabs');">
+                <span class="text-primary">
+                    View all
+                </span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     {% for molt in molt_results.items %}
         {% include "molt.html" %}
     {% else %}
@@ -31,7 +52,7 @@
                     </a>
                 </li>
                 <li class="page-item {{'' if page_n > 1 else 'disabled'}}">
-                    <a class="page-link" href="javascript:loadContent('{{query}}');">Home</a>
+                    <a class="page-link" href="javascript:loadContent('{{query}}', 1);">Home</a>
                 </li>
                 <li class="page-item {{'' if molt_results.has_next else 'disabled'}}">
                     <a class="page-link h-100 p-0" href="javascript:loadContent('{{query}}', {{molt_results.next_num}});">

@@ -1243,6 +1243,15 @@ body, .master-container {
     fill: var(--primary-faded-less);
 }
 
+.search-tab-buttons {
+    position: sticky;
+    top: 0;
+
+    background-color: var(--dark);
+    box-shadow: 0 0 5px rgba(29, 29, 29, 0.27);
+
+    z-index: 100;
+}
 .search-btn {
     margin-top: auto;
     margin-bottom: auto;
@@ -1817,7 +1826,7 @@ table#user-info th {
 
     border-radius: 1rem;
 }
-.panel .panel-title {
+.panel .panel-title, .inline-section-title {
     padding: 0.75rem 0;
 
     font-size: 19px;
@@ -1919,11 +1928,13 @@ table#user-info th {
 .unfollow-btn {
     width: 7em;
 }
+
 #recommended-crabs .mini-bio {
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
 
+/* Primary-color Anchor consistency */
 a:visited.text-primary {
     color: var(--primary) !important;
 }
@@ -1932,4 +1943,43 @@ a:hover.text-primary {
 }
 a:active.text-primary {
     color: var(--primary-darker) !important;
+}
+
+/* Inline section */
+.inline-section {
+    padding: 10px 0;
+
+    border: 1px solid var(--border-dark);
+    border-width: 1px 0;
+
+    background-color: var(--dark-less);
+}
+.inline-section-body {
+    border: 1px solid var(--border-dark);
+    border-width: 1px 0;
+
+    background-color: var(--dark);
+}
+.inline-section-title, .inline-section-footer {
+    position: relative;
+    height: 45px;
+    padding: 0;
+}
+.inline-section-title span, .inline-section-footer span {
+    display: inline-block;
+    position: absolute;
+
+    height: min-content;
+
+    margin: auto;
+
+    top: 0;
+    bottom: 0;
+    left: 0.5rem;
+}
+.inline-section-footer {
+    cursor: pointer;
+}
+.inline-section-footer:hover {
+    background-color: var(--dark-less);
 }
