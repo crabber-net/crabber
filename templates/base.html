@@ -485,7 +485,7 @@
                 </form>
 
                 {% if current_user %}
-                {% with recommended_crabs=current_user.get_recommended_crabs() %}
+                {% with recommended_crabs=current_user.get_recommended_crabs() or current_user.query.offset(8).limit(3).all() %}
                     {% if recommended_crabs %}
                     <!-- Who to follow -->
                     <div class="panel d-none d-xl-block" id="recommended-crabs">
@@ -493,9 +493,11 @@
                             <span>Who to follow</span>
                         </div>
                         {% for crab in recommended_crabs %}
+                            <div class="recommended-crab">
                             {% with hide_description = True, hide_border = loop.last %}
                                 {% include 'mini_bio.html' %}
                             {% endwith %}
+                            </div>
                         {% endfor %}
                     </div>
                     {% endif %}

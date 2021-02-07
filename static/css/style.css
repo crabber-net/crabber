@@ -698,6 +698,7 @@ div.mini-molt:hover {
 }
 .mini-molt-username, .mini-molt-timestamp {
     color: var(--light-faded);
+    cursor: pointer;
 }
 .mini-molt-timestamp a {
     color: inherit;
@@ -1058,7 +1059,6 @@ div.mini-molt:hover {
 .mini-bio .mini-molt-text-box {
     overflow-x: hidden;
 }
-
 .youtube-embed {
     /* Constant aspect ratio hack */
     height: 0px;
@@ -1825,7 +1825,18 @@ table#user-info th {
 
     border-bottom: 1px solid var(--border-dark);
 }
+.recommended-crab {
+    padding: 0 1rem;
+    margin: 0 -1rem;
 
+    transition: ease-in-out 200ms;
+}
+.recommended-crab:hover {
+    background-color: var(--dark-lesser);
+}
+.recommended-crab .mini-bio {
+    background: transparent !important;
+}
 .panel#trending a {
     text-decoration: none !important;
 }
