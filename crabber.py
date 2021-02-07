@@ -264,6 +264,7 @@ def user(username):
     else:
         current_tab = request.args.get("tab", default="molts")
         this_user = models.Crab.get_by_username(username)
+        social_title = f'{this_user.display_name} on Crabber'
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun='user')
         elif this_user.banned:
@@ -302,7 +303,8 @@ def user(username):
                                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                        current_user=utils.get_current_user(), this_user=this_user,
                                        current_tab=current_tab, m_page_n=m_page_n,
-                                       r_page_n=r_page_n, l_page_n=l_page_n)
+                                       r_page_n=r_page_n, l_page_n=l_page_n,
+                                       social_title=social_title)
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
@@ -344,6 +346,7 @@ def molt_page(username, molt_id):
     # Display page
     else:
         primary_molt = models.Molt.get_by_ID(molt_id)
+        social_title = f'{primary_molt.author.display_name}\'s post on Crabber'
         ajax_content = request.args.get('ajax_content')
         if primary_molt is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
@@ -353,7 +356,8 @@ def molt_page(username, molt_id):
         else:
             replies = primary_molt.query_replies()
             return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
-                                   replies=replies, current_user=utils.get_current_user())
+                                   replies=replies, current_user=utils.get_current_user(),
+                                   social_title=social_title)
 
 
 @app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))

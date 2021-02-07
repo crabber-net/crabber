@@ -10,9 +10,19 @@
     <link rel="alternate icon" href="{{url_for('static', filename='img/favicon.png')}}">
 
     <!-- Search Engine Metadata -->
-    <meta name="description" content="Crabber is a friendly open-source micro-bloggin platform.">
-    <meta name="tags" content="crabber, twitter, micro-blogging, crabs, twitter alternative, open-source">
+    <meta name="description" content="Crabber is a friendly open-source micro-blogging platform powered by Crabs.">
+    <meta name="tags" content="crabber, twitter, micro-blogging, crabs, twitter alternative, open-source, social, social media, social network, mastodon, privacy">
     <meta name="author" content="{% block meta_author %}{% endblock %}">
+
+    <!-- Facebook Embed Metadata -->
+    <meta property="og:site_name" content="Crabber">
+    <meta property="og:title" content="{{social_title or 'Join Crabber'}}">
+    <meta property="og:description" content="Crabber is a friendly open-source micro-blogging platform powered by Crabs.">
+    <meta property="og:image" content="{{url_for('static', filename='img/crabber_banner.png')}}">
+
+    <!-- Twitter Embed Metadata -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@maxcompulsion">
 
     <!-- Mobile web app -->
     <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
