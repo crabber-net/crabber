@@ -26,10 +26,10 @@
 {% endif %}
 
 {% set is_deleted = molt.deleted %}
-{% set is_banned = molt.author.banned %}
+{% set is_unavailable = molt.author.banned or molt.author.deleted %}
 {% if always_show %}
     {% set is_deleted = false %}
-    {% set is_banned = false %}
+    {% set is_unavailable = false %}
 {% endif %}
 
 
@@ -42,13 +42,13 @@
         {% else %}
             <p class="text-muted text-center">This Molt has been deleted.</p>
         {% endif %}
-    {% elif is_banned %}
+    {% elif is_unavailable %}
         {% if is_parent %}
             <div class="border-bottom border-dark w-100">
-                <p class="text-muted text-center">The author of this Molt has been banned.</p>
+                <p class="text-muted text-center">This Molt is no longer available.</p>
             </div>
         {% else %}
-            <p class="text-muted text-center">The author of this Molt has been banned.</p>
+            <p class="text-muted text-center">This Molt is no longer available.</p>
         {% endif %}
     {% else %}
         <div class="mini-molt-profile-box {{"avatar-indent" if (is_remolt or (molt.is_reply and not thread))}} {{'mt-4' if is_pin}}">

@@ -12,6 +12,11 @@
     {% else %}
         {% if is_reply %}
             {% with molt = molt.original_molt %}
+            {% if molt.deleted %}
+                <p class="text-muted text-center">This Molt has been deleted.</p>
+            {% elif molt.author.deleted or molt.author.banned %}
+                <p class="text-muted text-center">This Molt is no longer available.</p>
+            {% else %}
             <div class="tiny-reply-context">
                 <div class="mini-molt-credentials"><a href="/user/{{molt.author.username}}" class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
                     {% if molt.author.verified %}
@@ -27,6 +32,7 @@
                     <p class="mb-2">{{molt.rich_content()|safe}}</p>
                 </div>
             </div>
+            {% endif %}
             {% endwith %}
 
             <!-- Vertical line -->
