@@ -1,10 +1,14 @@
+###############################################################################
+#                                                                             #
+#                          Crabber Terms of Service                           #
+#                                                                             #
+###############################################################################
+
+# 1. Introduction
+
 To submit content, browse this website, and otherwise make use of this service
 you must agree to the terms specified in this document. Failure to do so will
 result in a denial of service.
-
-Crabber, at this moment, does not use the user's email address for anything
-other than the sign-up and login pages. It is kept on record both for this
-purpose and for if we need to contact a user for any reason listed below.
 
 Crabber reserves the right to claim back usernames that have already been taken
 if the situation demands it. (For instance, if the president of the United
@@ -12,30 +16,74 @@ States joins the site and wants his username, we would probably allow that.) If
 your username is claimed back we will notify you, and be in touch to arrange a
 new one for you. You may be given notice in advance but this is not guaranteed.
 
+# 2. Rules
+
 Follow the rules. Breaking a rule may result in banishment. The site, its
 creator, and other moderators reserve the right to suspend or terminate your
 account at our discretion. An IP-ban or alternative action may be taken if
 deemed necessary.
 
-The basic rules are as follows:
-
-  * Respect other users.
-  * Follow the law of both your own country and of the United States.
-  * Do not reveal personal information of others. It's recommended not to
-    reveal your own, but that's up to you unless we deem it inappropriate.
-  * Hate speech is not allowed. This includes slurs, "dog whistling", and
-    otherwise hateful or slanderous behaviour.
-  * Incel, alt-right, KKK, Nazi, and other hateful ideologies are not allowed.
-    Go back to Parler and complain how this is an SJW site. We don't care.
-  * This site does not support "cancel culture". Give people the benefit of the
-    doubt and don't brigade them for their minor mistakes. People grow and this
-    site encourages that.
-
 Rules can and will be modified and/or appended. Continued usage of this site,
 its services, and content implies agreement of this document both in its
-current state and its ongoing ammendments regardless of whether you have been
-notified of said ammendments.
+current state and its ongoing amendments regardless of whether you have been
+notified of said amendments.
 
 If you see someone breaking the rules or if you feel we have omitted a rule
 that is negatively affecting your experience, please get in touch with a site
 administrator.
+
+## 2A. Rule List
+
+  1. Respect other users.
+  2. Follow the law of both your own country and of the United States.
+  3. Do not reveal personal information of others. It's recommended not to
+  4. reveal your own, but that's up to you unless we deem it inappropriate.
+  5. Hate speech is not allowed. This includes slurs, "dog whistling", and
+  6. otherwise hateful or slanderous behaviour.
+  7. Incel, alt-right, KKK, Nazi, and other hateful ideologies are not allowed.
+  8. Go back to Parler and complain how this is an SJW site. We don't care.
+  9. This site does not support "cancel culture". Give people the benefit of the
+     doubt and don't brigade them for their minor mistakes. People grow and this
+     site encourages that.
+
+# 3. Privacy
+
+Crabber cares about privacy. As such, we don't log information about our users
+unless absolutely necessary.
+
+## 3A. Types and Purposes of Data Collected
+
+In the interest of transparency we will list all the data we store regarding
+our users and the uses of said data at the time of this writing. The following
+list will omit all data deliberately submitted by the user (e.g. Molt contents,
+display name, etc.) with the exception of email addresses.
+
+  Email             Used for login verification and the case of needing to
+                    contact a user.
+  IP Address        Used to ban addresses who repeatedly create accounts that
+                    break our rules as defined in §2A.
+  Browser           Collected for analytical purposes. If you wish for this to
+                    remain private you may modify your browser's User Agent
+                    header.
+  Operating System  Collected for analytical purposes. If you wish for this to
+                    remain private you may modify your browser's User Agent
+                    header.
+
+### 3B. Duration of Storage
+
+All data collected by Crabber should be presumed to be kept indefinitely.
+"Deleting" an account through the Crabber website does not mean the data will
+be removed from our database. If you wish to have your data explicitly and
+permanently removed you may submit a request through one of our contact
+channels as defined in §4.
+
+# 4. Contacting Crabber
+
+If for any reason you need to contact a representative of Crabber you may do so
+through any of the following means.
+
+  * Send an email to: crabberwebsite@gmail.com
+  * Mention @crabber in a Molt
+
+Receiving a response from a Crabber representative is not guaranteed, however
+efforts will be made to respond to all legitimate queries.
