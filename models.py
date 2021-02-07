@@ -116,7 +116,7 @@ class Crab(db.Model):
         return self.query_molts().all()
 
     @property
-    def molts_count(self):
+    def molt_count(self):
         """ Returns number of molts the user has published that are still
             available.
         """

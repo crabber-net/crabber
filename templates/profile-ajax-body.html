@@ -221,7 +221,7 @@
                         <!-- Member duration -->
                         <li>Member for <strong class="text-primary">{{this_user.days_active | commafy}}</strong> days</li>
                         <!-- Molts published -->
-                        <li><strong class="text-primary">{{this_user.molts_count | commafy}}</strong> Molt{{this_user.molts_count | pluralize}} published</li>
+                        <li><strong class="text-primary">{{this_user.molt_count | commafy}}</strong> Molt{{this_user.molts_count | pluralize}} published</li>
                         <!-- Molts liked -->
                         <li>Liked <strong class="text-primary">{{this_user.like_count | commafy}}</strong> Molt{{this_user.like_count | pluralize}}</li>
                         {% if this_user.lastfm %}
