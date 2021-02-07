@@ -449,16 +449,13 @@ class Crab(db.Model):
         """
         molts = Molt.query.filter_by(author=self, deleted=False) \
             .order_by(Molt.timestamp.desc())
-        return molts
+        return Molt.filter_query_by_available(molts)
 
     def query_replies(self) -> BaseQuery:
         """ Returns all replies the user has published that are still
             available.
         """
-        # TODO: Filter-out replies where the original molt's author is deleted
-        #       or banned.
-        molts = self.query_molts() \
-            .filter(Molt.original_molt.has(deleted=False))
+        molts = self.query_molts()
         return molts
 
     def query_timeline(self) -> BaseQuery:
@@ -469,6 +466,17 @@ class Crab(db.Model):
             .order_by(Molt.timestamp.desc())
         return molts
 
+    @staticmethod
+    def order_query_by_followers(query: BaseQuery) -> BaseQuery:
+        """ Orders a Crab query by number of followers (descending).
+        """
+        # Ordering by None overrides previous order_by
+        query = query.outerjoin(following_table,
+                                following_table.c.following_id == Crab.id) \
+            .group_by(following_table.c.following_id) \
+            .order_by(None) \
+            .order_by(func.count(following_table.c.following_id).desc())
+        return query
     @staticmethod
     def query_all() -> BaseQuery:
         return Crab.query.filter_by(deleted=False, banned=False)
@@ -508,7 +516,7 @@ class Crab(db.Model):
         results = Crab.query.filter_by(deleted=False, banned=False) \
             .filter(db.or_(Crab.display_name.contains(query, autoescape=True),
                            Crab.username.contains(query, autoescape=True)))
-        return results
+        return Crab.order_query_by_followers(results)
 
     @staticmethod
     def hash_pass(password):
