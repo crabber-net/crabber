@@ -750,11 +750,17 @@ def file_too_big(_e):
 @app.before_request
 def before_request():
     # Make sure cookies are still valid
-    if session.get("current_user"):
-        if not models.Crab.get_by_ID(id=session.get("current_user")):
+    if session.get('current_user'):
+        crab_id = session.get('current_user')
+        if not models.Crab.get_by_ID(id=crab_id):
             # Force logout
-            session["current_user"] = None
-            return redirect("/login")
+            session['current_user'] = None
+            if models.Crab.get_by_ID(id=crab_id, include_invalidated=True) \
+               .banned:
+                return utils.show_error('The account you were logged into has '
+                                        'been banned.', '/login')
+            return utils.show_error('The account you were logged into no '
+                                    'longer exists.', '/login')
     # Persist session after browser is closed
     session.permanent = True
 
