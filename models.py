@@ -355,11 +355,7 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """ Create and publish new Molt.
         """
-        kwargs['source'] = kwargs.get('source', 'Crabber Web App')
-        new_molt = Molt(author=self, content=content[:config.MOLT_CHAR_LIMIT],
-                        **kwargs)
-        db.session.add(new_molt)
-        db.session.commit()
+        new_molt = Molt.create(author=self, content=content, **kwargs)
         return new_molt
 
     def delete(self):
@@ -584,11 +580,6 @@ class Molt(db.Model):
     _likes = db.relationship('Like')
     edited = db.Column(db.Boolean, nullable=False, default=False)
 
-    # Custom initialization required to process tags and mentions
-    def __init__(self, **kwargs):
-        super(Molt, self).__init__(**kwargs)
-        self.evaluate_contents()
-
     def __repr__(self):
         return f"<Molt by '@{self.author.username}'>"
 
@@ -656,20 +647,18 @@ class Molt(db.Model):
 
             :param notify: Whether to notify users who are mentioned.
         """
+        # Update raw_tags to include all new tags
+        if self.raw_tags is None:
+            self.raw_tags = ''
+
+        self.tags = list()
+
         # Parse all tags
         for tag in patterns.tag.findall(self.content):
-            # Update raw_tags to include all new tags
-            if self.raw_tags is None:
-                self.raw_tags = ""
-            self.raw_tags += tag + "\n"
+            self.raw_tags += tag + '\n'
 
             # Update tags relationship to include all new tags
             self.tags.append(Crabtag.get(tag))
-
-        # Remove dead tags
-        for crabtag in self.tags:
-            if crabtag.name not in self.raw_tags.split():
-                self.tags.remove(crabtag)
 
         # Parse all mentions
         for user in patterns.mention.findall(self.content):
@@ -686,8 +675,6 @@ class Molt(db.Model):
             self.author.award(title="Baby Crab")
         if "420" in self.tags:
             self.author.award(title="Pineapple Express")
-
-        db.session.commit()
 
     def approve(self):
         """ Approve Molt so it doesn't show in reports page.
@@ -828,11 +815,11 @@ class Molt(db.Model):
             self.author.notify(sender=crab, type="remolt", molt=new_remolt)
             return new_remolt
 
-    def reply(self, crab, comment, **kwargs):
-        """ Reply to Molt as `crab`.
+    def reply(self, author, comment, **kwargs):
+        """ Reply to Molt as `author`.
         """
-        new_reply = crab.molt(comment, is_reply=True, original_molt=self,
-                              **kwargs)
+        new_reply = author.molt(comment, is_reply=True, original_molt=self,
+                                **kwargs)
         self.author.notify(sender=crab, type="reply", molt=new_reply)
         return new_reply
 
@@ -1083,6 +1070,16 @@ class Molt(db.Model):
             output = ''.join(output)
         return output
 
+    @classmethod
+    def create(cls, author, content, **kwargs):
+        kwargs['source'] = kwargs.get('source', 'Crabber Web App')
+        new_molt = cls(author=author, content=content[:config.MOLT_CHAR_LIMIT],
+                       **kwargs)
+
+        new_molt.evaluate_contents()
+        db.session.add(new_molt)
+        db.session.commit()
+        return new_molt
 
 class Like(db.Model):
     __table_args__ = (db.UniqueConstraint('crab_id', 'molt_id'),)
@@ -1311,5 +1308,4 @@ class Crabtag(db.Model):
         if crabtag is None:
             crabtag = cls(name=name.lower())
             db.session.add(crabtag)
-            db.session.commit()
         return crabtag
