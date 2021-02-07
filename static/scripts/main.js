@@ -343,3 +343,14 @@ function updateStylePreferences(form) {
 function toggleModal(selector) {
     $(selector).modal('toggle');
 }
+
+function highlightKeyword(keyword, selector) {
+    /* Highlights all instances of `keyword` in elements matching `selector`.
+    */
+
+    // Unescape keyword
+    keyword = $("<div/>").html(keyword).text();
+
+    $(selector).highlight(keyword, {className: 'search-highlight'});
+}
+

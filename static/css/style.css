@@ -1987,3 +1987,11 @@ a:active.text-primary {
 .inline-section-footer:hover {
     background-color: var(--dark-less);
 }
+
+.search-highlight {
+    border-radius: 0.1rem;
+    font-weight: bold;
+    color: rgb(.2, .2, .2);
+    background-color: rgba(255, 222, 0, 0.75) !important;
+    box-shadow: rgba(255, 222, 0, 0.75) 0px 0px 0px .05rem
+}
