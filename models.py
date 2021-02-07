@@ -397,10 +397,10 @@ class Crab(db.Model):
             if kwargs.get("molt"):
                 # Check for duplicates
                 duplicate_notification = Notification.query.filter_by(
-                        recipient=self,
-                        sender=kwargs.get('sender'),
-                        type=kwargs.get('type'),
-                        molt=kwargs.get('molt')
+                    recipient=self,
+                    sender=kwargs.get('sender'),
+                    type=kwargs.get('type'),
+                    molt=kwargs.get('molt')
                 )
                 if duplicate_notification.count():
                     is_duplicate = True
@@ -473,6 +473,7 @@ class Crab(db.Model):
             .order_by(None) \
             .order_by(func.count(following_table.c.following_id).desc())
         return query
+
     @staticmethod
     def query_all() -> BaseQuery:
         return Crab.query.filter_by(deleted=False, banned=False)
@@ -1081,6 +1082,7 @@ class Molt(db.Model):
         db.session.commit()
         return new_molt
 
+
 class Like(db.Model):
     __table_args__ = (db.UniqueConstraint('crab_id', 'molt_id'),)
     id = db.Column(db.Integer, primary_key=True)
@@ -1279,9 +1281,9 @@ class Crabtag(db.Model):
             descending.
         """
         most_popular = Crabtag.query.join(Crabtag.molts) \
-                .group_by(Crabtag.id) \
-                .add_columns(func.count(Crabtag.id).label('uses')) \
-                .order_by(desc('uses'))
+            .group_by(Crabtag.id) \
+            .add_columns(func.count(Crabtag.id).label('uses')) \
+            .order_by(desc('uses'))
         most_popular = Molt.filter_query_by_available(most_popular)
         if since_date:
             most_popular = most_popular \

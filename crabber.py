@@ -106,7 +106,7 @@ def wild_west():
             return jsonify(blocks)
         else:
             return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
-                                molts=molts, current_user=utils.get_current_user())
+                                   molts=molts, current_user=utils.get_current_user())
     else:
         return redirect("/login")
 
@@ -179,9 +179,9 @@ def signup():
                         if password == confirm_password:
                             # Create user account
                             models.Crab.create_new(username=username,
-                                            email=email,
-                                            password=password,
-                                            display_name=display_name)
+                                                   email=email,
+                                                   password=password,
+                                                   display_name=display_name)
 
                             # "Log in"
                             session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
@@ -250,7 +250,7 @@ def settings():
             return jsonify(blocks)
         else:
             return render_template("settings.html", current_page="settings",
-                                current_user=utils.get_current_user())
+                                   current_user=utils.get_current_user())
 
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
