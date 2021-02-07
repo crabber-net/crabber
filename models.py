@@ -948,8 +948,7 @@ class Molt(db.Model):
             molts = molts.filter(Crabtag.name == crabtag.name)
         else:
             molts = molts.filter(Crabtag.name == crabtag.lower())
-        molts = molts.filter(Molt.author.has(deleted=False, banned=False)) \
-            .order_by(Molt.timestamp.desc())
+        molts = molts.order_by(Molt.timestamp.desc())
         return molts
 
     @staticmethod
@@ -970,7 +969,7 @@ class Molt(db.Model):
         like_counts = Molt.query_like_counts().subquery()
 
         # Ordering by None overrides previous order_by
-        query = query.join(like_counts) \
+        query = query.outerjoin(like_counts) \
             .order_by(None) \
             .order_by(desc('likes'))
         return query
