@@ -513,7 +513,7 @@
                     {% for tag, uses in trending_crabtags %}
                         <a href="/crabtag/{{tag.name}}">
                             <div class="trending-tag">
-                                <span>%{{tag.name}}</span>
+                                <span class="text-primary">%{{tag.name}}</span>
                                 <small class="text-muted">
                                     Used {{uses}} time{{uses|pluralize}} recently.
                                 </small>
