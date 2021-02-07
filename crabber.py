@@ -421,6 +421,10 @@ def stats():
 
     best_molt = models.Molt.query_most_liked().first()
     talked_molt = models.Molt.query_most_replied().first()
+    trendy_tag = models.Crabtag.query_most_popular().first()[0]
+    trendy_tag_molts = models.Molt.order_query_by_likes(
+        trendy_tag.query_molts()
+    ).limit(3).all()
     stats_dict = dict(users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
                       mini_stats=[
                           dict(number=models.Molt.query.count(),
@@ -436,7 +440,9 @@ def stats():
                       crab_king=most_followed,
                       baby_crab=newest_user,
                       best_molt=best_molt,
-                      talked_molt=talked_molt)
+                      talked_molt=talked_molt,
+                      trendy_tag=trendy_tag,
+                      trendy_tag_molts=trendy_tag_molts)
     if request.args.get('ajax_json'):
         blocks = dict()
         for block in ('title', 'heading', 'body'):

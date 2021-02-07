@@ -8,7 +8,7 @@ from passlib.hash import sha256_crypt
 import patterns
 import secrets
 from sqlalchemy import desc, func
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 import utils
 
 db = extensions.db
@@ -904,6 +904,16 @@ class Molt(db.Model):
         return molts
 
     @staticmethod
+    def query_like_counts() -> BaseQuery:
+        """ Queries molt like counts as (molt_id: int, likes: int) and orders
+            by likes descending.
+        """
+        likes = db.session.query(Like.molt_id,
+                                 func.count(Like.molt_id).label('likes')) \
+            .group_by(Like.molt_id).order_by(desc('likes'))
+        return likes
+
+    @staticmethod
     def query_most_liked() -> BaseQuery:
         molts = db.session.query(Molt, func.count(Like.id)) \
             .join(Molt, Molt.id == Like.molt_id) \
@@ -928,14 +938,29 @@ class Molt(db.Model):
         return molts
 
     @staticmethod
-    def query_with_tag(crabtag: str) -> BaseQuery:
+    def query_with_tag(crabtag: Union['Crabtag', str]) -> BaseQuery:
         molts = Molt.query \
             .filter_by(deleted=False, is_reply=False, is_remolt=False) \
-            .join(Molt.tags) \
-            .filter(Crabtag.name == crabtag.lower()) \
-            .filter(Molt.author.has(deleted=False, banned=False)) \
+            .join(Molt.tags)
+        if isinstance(crabtag, Crabtag):
+            molts = molts.filter(Crabtag.name == crabtag.name)
+        else:
+            molts = molts.filter(Crabtag.name == crabtag.lower())
+        molts = molts.filter(Molt.author.has(deleted=False, banned=False)) \
             .order_by(Molt.timestamp.desc())
         return molts
+
+    @staticmethod
+    def order_query_by_likes(query: BaseQuery) -> BaseQuery:
+        """ Orders a Molt query by number of likes (descending).
+        """
+        like_counts = Molt.query_like_counts().subquery()
+
+        # Ordering by None overrides previous order_by
+        query = query.join(like_counts) \
+            .order_by(None) \
+            .order_by(desc('likes'))
+        return query
 
     @staticmethod
     def search(query: str) -> BaseQuery:
@@ -1049,6 +1074,16 @@ class Like(db.Model):
 
     def __repr__(self):
         return f"<Like from '@{self.crab.username}'>"
+
+    @staticmethod
+    def query_all():
+        """ Queries all valid Likes (of valid Molt, Molt author, and Crab).
+        """
+        likes = Like.query.join(Like.molt) \
+            .filter(Like.crab.has(deleted=False, banned=False)) \
+            .filter(Molt.deleted == False) \
+            .filter(Molt.author.has(deleted=False, banned=False))
+        return likes
 
 
 class Notification(db.Model):
@@ -1212,6 +1247,11 @@ class Crabtag(db.Model):
 
     def __repr__(self):
         return f'<Crabtag \'%{self.name}\'>'
+
+    def query_molts(self) -> BaseQuery:
+        """ Query Molts that use this tag.
+        """
+        return Molt.query_with_tag(self)
 
     @staticmethod
     def query_most_popular(since_date: Optional[datetime.datetime] = None) \

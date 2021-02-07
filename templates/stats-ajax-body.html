@@ -105,7 +105,7 @@
             <h1 class="text-center">Best Molt</h1>
             <div class="horizontal-line"></div>
         </div>
-        <p class="text-center text-muted">The most liked molt</p>
+        <p class="text-center text-muted">The most liked Molt</p>
         <div>
             {% include 'molt.html' %}
         </div>
@@ -118,9 +118,27 @@
             <h1 class="text-center" style="width: 17rem;">Talked About</h1>
             <div class="horizontal-line"></div>
         </div>
-        <p class="text-center text-muted">The molt with the most replies</p>
+        <p class="text-center text-muted">The Molt with the most replies</p>
         <div>
             {% include 'molt.html' %}
+        </div>
+    </div>
+    {% endwith %}
+
+    {% with tag = stats['trendy_tag'], tag_molts=stats['trendy_tag_molts'], hide_border=True %}
+    <div class="crab-king mt-5 w-100">
+        <div class="crown-name absolute-container">
+            <h1 class="text-center" style="width: 17rem;">Trendy</h1>
+            <div class="horizontal-line"></div>
+        </div>
+        <p class="text-center text-muted">The most used crabtag</p>
+        <div class="trendy-tag">
+            <h2 class="text-primary text-center">%{{tag.name}}</h2>
+        </div>
+        <div class="trendy-tag-molts">
+            {% for molt in tag_molts %}
+                {% include 'molt.html' %}
+            {% endfor %}
         </div>
     </div>
     {% endwith %}

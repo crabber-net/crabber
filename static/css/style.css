@@ -1614,6 +1614,10 @@ table#user-info th {
     height: 100px;
 }
 
+.trendy-tag-molts .mini-molt {
+    border-radius: 0.5rem;
+}
+
 .avatar-badge {
     width: 30px;
     height: 30px;
