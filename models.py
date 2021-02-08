@@ -752,7 +752,6 @@ class Molt(db.Model):
         if patterns.spotify.search(new_content):
             results = patterns.spotify.search(new_content)
             spotify_link = results.group(2, 3)
-            print(f'\n\n{spotify_link=}\n\n')
             spotify_embed = render_template_string(
                 f'{{% with link={spotify_link} %}}'
                 '   {% include "spotify.html" %}'
