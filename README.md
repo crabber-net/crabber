@@ -36,6 +36,19 @@ python scripts/initialize_database.py
 ```bash
 vim admins.cfg  # The only Crab-approved text editor
 ```
+5. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
+   runs `fetch_cards.py` periodically.
+```bash
+crontab -e
+```
+This will open your crontab file in $EDITOR. If you're not sure how crontabs
+work, add this line:
+```
+* * * * * cd CRABBERDIRECTORY && venv/bin/python3 fetch_cards.py
+```
+This will run `fetch_cards.py` in your Crabber virtual environment once every
+minute. To run every five minutes change the first asterisk to `0/5`. Learn
+about crontabs if you wish to make further adjustments.
 
 ## Running
 
