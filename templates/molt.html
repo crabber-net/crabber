@@ -109,15 +109,14 @@
                     title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
         </div>
         <div class="mini-molt-content">
-            <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
-            <!-- End-users won't have any idea what this comment is referring to :) -->
             <p class="mb-2"><span class="zindex-front {{'clickable' if not static}}"
                 {% if not static %}
                     onclick="if (!window.getSelection().toString()) { location.href = '/user/{{molt.author.username}}/status/{{molt.id}}'; }"
                 {% endif %}
                 >
                 {{molt.rich_content()|safe}}
-            </span></p>
+            </span>
+            </p>
 
             {% if molt.image %}
             <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>

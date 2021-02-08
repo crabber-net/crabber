@@ -12,11 +12,15 @@
     --light-faded-less: rgb(105, 114, 117);
     --light-faded-more: #1a1c22 !important;
     --dark: rgb(10, 12, 15);
+    --dark-transparent: rgb(10, 12, 15, 0);
     --dark-less: rgb(16, 19, 24);
+    --dark-less-transparent: rgb(16, 19, 24, 0);
     --dark-lesser: rgb(18, 23, 28);
+    --dark-lesser-transparent: rgb(18, 23, 28, 0);
     --dark-lesserest: rgb(35, 41, 48);
     --dark-less-more: rgb(12, 15, 18);
     --border-dark: #343a40;
+    --border-dark-less: #454c53;
     --border-darker: rgb(21, 25, 30);
     --secondary: #399de6;
     --tertiary: #39e683;

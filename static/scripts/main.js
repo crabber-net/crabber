@@ -95,6 +95,11 @@ function clearModal() {
     $("#compose_modal").modal("hide")
 }
 
+function openNewTab(url) {
+    let win = window.open(url, '_blank');
+    win.focus();
+}
+
 function prepareReply(molt_id, author_username, author_name) {
     // Update "replying to" link
     $("#reply-to").text(author_name)

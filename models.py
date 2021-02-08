@@ -1,7 +1,7 @@
 import config
 import datetime
 import extensions
-from flask import escape, render_template_string, url_for
+from flask import escape, render_template, render_template_string, url_for
 from flask_sqlalchemy import BaseQuery
 import json
 from passlib.hash import sha256_crypt
@@ -557,6 +557,9 @@ class Molt(db.Model):
     image = db.Column(db.String(1024), nullable=True)
     source = db.Column(db.String)
 
+    card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
+    card = db.relationship('Card')
+
     # Tag links
     tags = db.relationship('Crabtag', secondary=crabtag_table)
 
@@ -667,6 +670,17 @@ class Molt(db.Model):
                 self.raw_mentions = ""
             self.raw_mentions += user + "\n"
 
+        # Parse links
+        link = patterns.ext_link.search(self.content)
+        if link:
+            url = link.group(1)
+            # Check that link doesn't match any embed types
+            if all((not pattern.match(url) for pattern in [patterns.spotify,
+                                                           patterns.youtube,
+                                                           patterns.giphy,
+                                                           patterns.ext_img])):
+                self.card = Card.get(url)
+
         # Notify mentioned users
         for user in self.mentions:
             user.notify(sender=self.author, type="mention", molt=self)
@@ -747,8 +761,12 @@ class Molt(db.Model):
         else:
             spotify_embed = "<!-- no valid spotify links found -->"
 
-        new_content = Molt.label_md_links(new_content)
-        new_content = Molt.label_links(new_content)
+        new_content, _ = Molt.label_links(new_content)
+
+        link_card = '<!-- no cards created -->'
+        if self.card:
+            if self.card.ready:
+                link_card = render_template('link-card.html', card=self.card)
 
         # Preserve newlines
         new_content = new_content.strip().replace("\n", "<br>")
@@ -759,7 +777,7 @@ class Molt(db.Model):
         new_content = Molt.label_crabtags(new_content)
 
         return new_content + giphy_embed + ext_img_embed + youtube_embed  \
-            + spotify_embed
+            + spotify_embed + link_card
 
     def dict(self):
         """ Serialize Molt into dictionary.
@@ -994,42 +1012,74 @@ class Molt(db.Model):
         return molt.first()
 
     @staticmethod
-    def label_links(content, max_len=35):
+    def label_links(content: str, max_len: int = 35,
+                    include_markdown: bool = True) \
+        -> Tuple[str, List[str]]:
         """ Replace links with HTML tags.
+
+            :param content: The text to parse.
+            :param max_len: Maximum length of visible URLs in characters.
+            :param include_markdown: Whether to parse markdown-style links
+                before unformatted ones. If markdown links are present then
+                this is necessary to avoid garbled output.
+            :returns: (new_content, list of urls found)
         """
-        output = content
+        output = content[:]
+        urls = list()
+        if include_markdown:
+            output, new_urls = Molt.label_md_links(output)
+            urls.extend(new_urls)
         match = patterns.ext_link.search(output)
         if match:
             start, end = match.span()
             url = match.group(1)
+            urls.append(url)
             displayed_url = url if len(url) <= max_len \
                 else url[:max_len - 3] + '...'
+
+            # Parse recursively before building output
+            recursive_content, recursive_urls = Molt.label_links(output[end:])
+            urls.extend(recursive_urls)
+
             output = (
                 output[:start],
                 f'<a href="{url}" class="no-onclick mention zindex-front" \
                 target="_blank">{displayed_url}</a>',
-                Molt.label_links(output[end:])
+                recursive_content
             )
             output = ''.join(output)
-        return output
+
+        return output, urls
 
     @staticmethod
-    def label_md_links(content):
+    def label_md_links(content) -> Tuple[str, List[str]]:
         """ Replace markdown links with HTML tags.
+
+            :param content: The text to parse.
+            :returns: (new_content, list of urls found)
         """
-        output = content
+        output = content[:]
+        urls = list()
         match = patterns.ext_md_link.search(output)
         if match:
             start, end = match.span()
-            url_name = match.group(1),
+            url = match.group(2)
+            urls.append(url)
+            url_name = match.group(1)
+
+            # Parse recursively before building output
+            recursive_content, recursive_urls = Molt.label_md_links(output[end:])
+            urls.extend(recursive_urls)
+
             output = [
                 output[:start],
-                f'<a href="{match.group(2)}" class="no-onclick mention \
+                f'<a href="{url}" class="no-onclick mention \
                 zindex-front" target="_blank">{url_name}</a>',
-                Molt.label_md_links(output[end:])
+                recursive_content
             ]
             output = ''.join(output)
-        return output
+
+        return output, urls
 
     @staticmethod
     def label_mentions(content):
@@ -1311,3 +1361,55 @@ class Crabtag(db.Model):
             crabtag = cls(name=name.lower())
             db.session.add(crabtag)
         return crabtag
+
+
+class Card(db.Model):
+    __tablename__ = 'card'
+
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String)
+    title = db.Column(db.String)
+    description = db.Column(db.String)
+    image = db.Column(db.String)
+    ready = db.Column(db.Boolean, default=False)
+    failed = db.Column(db.Boolean, default=False)
+
+    def __repr__(self) -> str:
+        return f'<Card {self.url!r}>'
+
+    @staticmethod
+    def format_url(url: str) -> str:
+        """ Removes unnecessary parts of URL and conforms to standard format.
+        """
+        # Strip extra bits
+        url = patterns.url_essence.match(url).group(1)
+        # Ensure trailing slash
+        if not url.endswith('/'):
+            url += '/'
+        # Ensure https
+        url = 'https://' + url
+
+        return url
+
+    # Query methods
+
+    @staticmethod
+    def query_unready() -> BaseQuery:
+        """ Queries all Cards linked to valid Molts that aren't ready.
+        """
+        cards = Molt.filter_query_by_available(
+            Card.query.join(Molt, Molt.card_id == Card.id)
+        ).filter(Molt.card).filter(Molt.card.has(ready=False, failed=False))
+        return cards
+
+    @classmethod
+    def get(cls, url: str) -> 'Card':
+        """ Gets Card by URL.
+        """
+        # Conform URL so that near-duplicates aren't created
+        url = cls.format_url(url)
+        card = cls.query.filter_by(url=url).first()
+        if card is None:
+            card = cls(url=url)
+            db.session.add(card)
+        return card

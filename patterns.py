@@ -23,3 +23,12 @@ timezone = re.compile(
 pretty_url = re.compile(
     r'(?:https?://)?(?:www\.)?((?:(?:[\w_-]+\.?)+/?)+)'
 )
+# Captures root of url (e.g. reddit.com or crabber.net)
+url_root = re.compile(
+    r'(?:https?://)?([^\s/]+)(?:\S*)'
+)
+# Captures essential part of URL (e.g. reddit.com/u/jaik_ or
+# crabber.net/timeline)
+url_essence = re.compile(
+    r'(?:https?://)?(?:www\.)?((?:(?:[\w_-]+\.?)+/?)+)'
+)

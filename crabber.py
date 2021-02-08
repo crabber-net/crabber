@@ -743,6 +743,18 @@ def pretty_url(url, length=35):
     return url
 
 
+@app.template_filter()
+def url_root(url, length=35):
+    """ Returns the root address of a URL.
+    """
+    match = patterns.url_root.match(url)
+    if match:
+        url = match.group(1)
+    if len(url) > length:
+        url = f'{url[:length - 3]}...'
+    return url
+
+
 @app.errorhandler(404)
 def error_404(_error_msg):
     return render_template("404.html", current_page="404",
