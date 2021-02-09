@@ -119,6 +119,15 @@
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-2 -2 24 24" id="cactus-f">
     <path d="M6 16H0V8.5a2.5 2.5 0 015 0V11h1V4a4 4 0 118 0v5h1V6.5a2.5 2.5 0 115 0V14h-6v6H6v-4zm4-7a1 1 0 00-1 1v6a1 1 0 002 0v-6a1 1 0 00-1-1zm0-5a1 1 0 00-1 1v2a1 1 0 102 0V5a1 1 0 00-1-1z"></path>
   </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -2 24 24" id="bookmark">
+    <path d="M3 2a1 1 0 00-1 1v15l2.978-2.717a3 3 0 014.044 0L12 18V3a1 1 0 00-1-1H3zm0-2h8a3 3 0 013 3v15a2 2 0 01-3.348 1.477L7.674 16.76a1 1 0 00-1.348 0l-2.978 2.717A2 2 0 010 18V3a3 3 0 013-3z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -2 24 24" id="bookmark-remove">
+    <path d="M3 2a1 1 0 00-1 1v15l2.978-2.717a3 3 0 014.044 0L12 18V3a1 1 0 00-1-1H3zm0-2h8a3 3 0 013 3v15a2 2 0 01-3.348 1.477L7.674 16.76a1 1 0 00-1.348 0l-2.978 2.717A2 2 0 010 18V3a3 3 0 013-3zm5.414 9l1.414 1.414a1 1 0 11-1.414 1.414L7 10.414l-1.414 1.414a1 1 0 01-1.414-1.414L5.586 9 4.172 7.586a1 1 0 111.414-1.414L7 7.586l1.414-1.414a1 1 0 111.414 1.414L8.414 9z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-5 -2 24 24" id="bookmark-f">
+    <path d="M3 0h8a3 3 0 013 3v15a2 2 0 01-3.348 1.477L7.674 16.76a1 1 0 00-1.348 0l-2.978 2.717A2 2 0 010 18V3a3 3 0 013-3z"></path>
+  </symbol>
   <symbol xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin" viewBox="-3 -2 24 24" id="bell">
     <path d="M13.666 11.782L13 11.186V6a4 4 0 10-8 0v5.186l-.666.596A6.987 6.987 0 002.29 15h13.42a6.987 6.987 0 00-2.044-3.218zM12 17a3 3 0 01-6 0H0a8.978 8.978 0 013-6.708V6a6 6 0 1112 0v4.292A8.978 8.978 0 0118 17h-6zm-3 1a1 1 0 001-1H8a1 1 0 001 1z"></path>
   </symbol>

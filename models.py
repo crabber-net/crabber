@@ -75,6 +75,7 @@ class Crab(db.Model):
         backref=db.backref('_followers')
     )
     _likes = db.relationship('Like')
+    _bookmarks = db.relationship('Bookmark')
 
     pinned_molt_id = db.Column(db.Integer, nullable=True)
     _preferences = db.Column('preferences', db.String,
@@ -97,8 +98,22 @@ class Crab(db.Model):
         return datetime.timedelta(hours=float(self.timezone))
 
     @property
+    def bookmarks(self):
+        """ Returns all bookmarks the user has where the molt is still
+            available.
+        """
+        return self.query_bookmarks().all()
+
+    @property
+    def bookmark_count(self):
+        """ Returns number of molts the user has bookmarked that are still
+            available.
+        """
+        return self.query_bookmarks().count()
+
+    @property
     def likes(self):
-        """ Returns all molts the user has liked that are still available.
+        """ Returns all likes the user has where the molt is still available.
         """
         return self.query_likes().all()
 
@@ -185,6 +200,23 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def bookmark(self, molt):
+        """ Add `molt` to bookmarks.
+        """
+        if not self.has_bookmarked(molt):
+            new_bookmark = Bookmark(crab=self, molt=molt)
+            db.session.add(new_bookmark)
+            db.session.commit()
+
+    def unbookmark(self, molt):
+        """ Remove `molt` from bookmarks.
+        """
+        bookmark = self.has_bookmarked(molt)
+        if bookmark:
+            self.bookmarks.remove(bookmark)
+            db.session.delete(bookmark)
+            db.session.commit()
 
     def get_mutuals_for(self, crab: 'Crab'):
         """ Returns a list of people you follow who also follow `crab`.
@@ -377,10 +409,15 @@ class Crab(db.Model):
             .filter((following_table.c.follower_id == self.id) &
                     (following_table.c.following_id == crab.id))
 
-    def has_liked(self, molt):
-        """ Returns True if user has liked `molt`.
+    def has_bookmarked(self, molt) -> Optional['Bookmark']:
+        """ Returns bookmark if user has bookmarked `molt`.
         """
-        return bool(Like.query.filter_by(molt=molt, crab=self).all())
+        return Bookmark.query.filter_by(molt=molt, crab=self).first()
+
+    def has_liked(self, molt) -> Optional['Like']:
+        """ Returns like if user has liked `molt`.
+        """
+        return Like.query.filter_by(molt=molt, crab=self).first()
 
     def has_remolted(self, molt) -> Optional['Molt']:
         """ Returns the Remolt if user has remolted `molt`, otherwise None.
@@ -430,8 +467,19 @@ class Crab(db.Model):
             .filter(Crab.banned == False, Crab.deleted == False)
         return followers
 
+    def query_bookmarks(self) -> BaseQuery:
+        """ Returns all bookmarks the user has where the molt is still
+            available.
+        """
+        bookmarks = Bookmark.query.filter_by(crab=self) \
+            .filter(Bookmark.molt.has(deleted=False)) \
+            .filter(Bookmark.molt.has(Molt.author.has(banned=False,
+                                                      deleted=False))) \
+            .join(Molt, Bookmark.molt).order_by(Bookmark.timestamp.desc())
+        return bookmarks
+
     def query_likes(self) -> BaseQuery:
-        """ Returns all molts the user has liked that are still available.
+        """ Returns all likes the user has where the molt is still available.
         """
         likes = Like.query.filter_by(crab=self) \
             .filter(Like.molt.has(deleted=False)) \
@@ -1439,3 +1487,32 @@ class Card(db.Model):
             card = cls(url=url)
             db.session.add(card)
         return card
+
+
+class Bookmark(db.Model):
+    __tablename__ = 'bookmark'
+    __table_args__ = (db.UniqueConstraint('crab_id', 'molt_id'),)
+
+    id = db.Column(db.Integer, primary_key=True)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
+                        nullable=False)
+    crab = db.relationship('Crab', back_populates='_bookmarks')
+    molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'),
+                        nullable=False)
+    molt = db.relationship('Molt')
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Bookmark '@{self.crab.username}'>"
+
+    @staticmethod
+    def query_all():
+        """ Queries all valid bookmarks (of valid Molt, Molt author, and Crab).
+        """
+        likes = Like.query.join(Like.molt) \
+            .filter(Like.crab.has(deleted=False, banned=False)) \
+            .filter(Molt.deleted == False) \
+            .filter(Molt.author.has(deleted=False, banned=False))
+        return likes
+

@@ -391,6 +391,34 @@ def crabtags(crabtag):
         return redirect("/login")
 
 
+@app.route("/bookmarks/", methods=("GET", "POST"))
+def bookmarks():
+    # Handle forms and redirect to clear post data on browser
+    if request.method == "POST":
+        return utils.common_molt_actions()
+
+    # Display page
+    elif session.get('current_user') is not None:
+        current_user = utils.get_current_user()
+        page_n = request.args.get('p', 1, type=int)
+        bookmarks = current_user.query_bookmarks() \
+            .paginate(page_n, MOLTS_PER_PAGE, False)
+        if request.args.get('ajax_json'):
+            blocks = dict()
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'bookmarks-ajax-{block}.html',
+                                                current_page='bookmarks',
+                                                page_n=page_n, bookmarks=bookmarks,
+                                                current_user=utils.get_current_user())
+            return jsonify(blocks)
+        else:
+            return render_template('bookmarks-content.html' if request.args.get('ajax_content') else 'bookmarks.html',
+                                   current_page='bookmarks', page_n=page_n,
+                                   bookmarks=bookmarks, current_user=utils.get_current_user())
+    else:
+        return redirect("/login")
+
+
 @app.route("/search/", methods=("GET", "POST"))
 def search():
     # Handle forms and redirect to clear post data on browser

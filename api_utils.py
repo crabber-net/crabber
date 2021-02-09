@@ -273,6 +273,10 @@ def query_to_json(query: BaseQuery, limit: int = 100, offset: int = 0) \
             molt_list = query_json.get('molts', list())
             molt_list.append(molt_to_json(item))
             query_json['molts'] = molt_list
+        elif isinstance(item, models.Bookmark):
+            molt_list = query_json.get('molts', list())
+            molt_list.append(molt_to_json(item.molt))
+            query_json['molts'] = molt_list
         elif isinstance(item, models.Crab):
             crab_list = query_json.get('crabs', list())
             crab_list.append(crab_to_json(item))

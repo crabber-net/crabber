@@ -213,6 +213,33 @@
                                     </div>
                                 </form>
                             {% endif %}
+
+                            {% if current_user.has_bookmarked(molt) %}
+                            <!-- UNBOOKMARK MOLT BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="unbookmark_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="SubForm(this.parentNode);changeContent(this, 'Bookmark has been removed.')">
+                                    <svg width="19" height="19" data-jam="bookmark-remove">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark-remove"></use>
+                                    </svg>
+                                    Remove Molt from Bookmarks
+                                </div>
+                            </form>
+                            {% else %}
+                            <!-- BOOKMARK MOLT BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="bookmark_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="SubForm(this.parentNode);changeContent(this, 'Molt has been bookmarked.')">
+                                    <svg width="19" height="19" data-jam="flag">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark"></use>
+                                    </svg>
+                                    Add Molt to Bookmarks
+                                </div>
+                            </form>
+                            {% endif %}
+
                             <!-- REPORT MOLT BUTTON -->
                             {% if molt.author != current_user %}
                                 <form class="dropdown-item clickable" method="POST">
