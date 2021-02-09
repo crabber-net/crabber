@@ -107,10 +107,10 @@
             {% endif %}
         {% endif %}
 
-        <div class="mini-molt-credentials {{"mt-1" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}} absolute-container">
+        <div class="mini-molt-credentials {{'row mx-0' if is_in_quote}} {{"mt-1" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}} absolute-container">
             {% if is_in_quote %}
                 {% if static %}
-                <a class="zindex-front d-inline-block">
+                <a class="zindex-front col">
                 {% else %}
                 <a href="/user/{{molt.author.username}}" class="zindex-front d-inline-block">
                 {% endif %}
@@ -118,7 +118,7 @@
                 </a>
             {% endif %}
 
-            <div class="mini-molt-credentials-text {{'absolute-top' if is_in_quote}}">
+            <div class="mini-molt-credentials-text {{'col pl-2' if is_in_quote}}">
                 {% if not static %}
                     <a href="/user/{{molt.author.username}}" class="mini-molt-display-name zindex-front">
                 {% else %}
@@ -163,7 +163,7 @@
         {% endif %}
 
         {% if (current_user or static) and not hide_buttons %}
-        <div class="mini-molt-actions d-flex flex-row justify-content-between w-75">
+        <div class="mini-molt-actions d-flex flex-row justify-content-between mr-md-5">
             {% if current_user %}
                 {% if molt.author == current_user and molt.editable %}
                 <!-- EDIT BUTTON -->
