@@ -205,13 +205,13 @@
                 {% endif %}
 
                 <!-- TOGGLE REMOLT DROPDOWN BUTTON -->
-                <span class="zindex-front mini-molt-action remolt {{"active-remolt" if has_remolted else ""}}" href="#" role="button" id="dropdownMenuLink"
-                    onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
+                <div class="zindex-front mini-molt-action remolt {{"active-remolt" if has_remolted else ""}}" href="#" role="button" id="dropdownMenuLink"
+                     onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
                     <svg class="mini-molt-action-icon" width="19" height="19" data-jam="repeat">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                     </svg>
                     <span class="mini-molt-action-counter ml-1">{{molt.remolt_count}}</span>
-                </span>
+                </div>
                 {% if current_user %}
                     <!-- REMOLT DROPDOWN CONTENT -->
                     <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
