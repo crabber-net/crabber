@@ -285,7 +285,6 @@ function toggleDropdown(el) {
 
         // Close dropdown when elsewhere is clicked
         var clickHandler = function(event) {
-            console.log('fired');
             if (!$(event.target).closest(moltDropdown).length
                 && !$(event.target).closest(el).length) {
                 // jQuery hide dropdown

@@ -58,9 +58,12 @@
     attachCharacterCounters();
 
     updateCounter.call($('.mini-compose-box textarea'));
-    $(document).on('click', function(event) {
+
+    closeBox = function(event) {
         if (!$(event.target).closest('.mini-compose-box').length) {
             collapseMoltBox();
+            $(document).off('click', closeBox);
         }
-    });
+    }
+    $(document).on('click', closeBox);
 </script>
