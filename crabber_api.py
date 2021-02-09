@@ -390,6 +390,23 @@ def get_molt_replies(molt_ID):
     return replies_json
 
 
+@API.route('/molts/<molt_ID>/quotes/')
+def get_molt_quotes(molt_ID):
+    limit = request.args.get('limit')
+    limit = api_utils.expect_int(limit, default=API_DEFAULT_MOLT_LIMIT,
+                                 minimum=0, maximum=API_MAX_MOLT_LIMIT)
+    offset = request.args.get('offset')
+    offset = api_utils.expect_int(offset, default=0, minimum=0)
+    since = api_utils.expect_timestamp(request.args.get('since'))
+    since_id = request.args.get('since_id')
+
+    quotes = api_utils.get_molt_quotes(molt_ID, since=since,
+                                       since_id=since_id)
+    quotes_json = api_utils.query_to_json(quotes, limit=limit, offset=offset)
+    return quotes_json
+
+
+
 @API.route('/molts/mentioning/<username>/')
 def get_molts_mentioning(username):
     limit = request.args.get('limit')

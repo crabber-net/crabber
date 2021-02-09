@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Quote Molts{% endblock %}
+{% block heading %}
+    <div class="row">
+        <div class="col-2 col-lg-1 clickable" onclick="location.href='/user/{{molt.author.username}}/status/{{molt.id}}'">
+            <svg class="text-primary heading-back-arrow" width="24" height="24" data-jam="arrow-left">
+                <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#arrow-left"></use>
+            </svg>
+        </div>
+        <div class="col px-0">
+            Quote Molts
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+{% for molt in quotes %}
+    {% include 'molt.html' %}
+{% endfor %}
+{% endblock %}

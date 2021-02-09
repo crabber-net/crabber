@@ -1,11 +1,12 @@
 {% import "macros.jinja" as macros %}
 
+{% set is_quote = molt.is_quote %}
 {% set is_remolt = molt.is_remolt %}
 {% if is_remolt %}
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
-<div class="mini-molt border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
+<div class="large-molt mini-molt border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
     <div class="row mb-3">
         <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}} pr-1 col-auto">
             <a href="/user/{{molt.author.username}}" class="zindex-front">
@@ -19,7 +20,7 @@
             <!-- Remolt indicator -->
             <small class="mini-molt-remolt text-muted zindex-front">
 
-                <svg class="mini-molt-action-icon remolt-icon" width="12" height="12" data-jam="repeat">
+                <svg class="mini-molt-action-icon remolt-icon" width="16" height="16" data-jam="repeat">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                 </svg>
                 <a href="/user/{{remolt_shell.author.username}}">{{remolt_shell.author.display_name}}</a> Remolted</small>
@@ -28,7 +29,7 @@
             <!-- Reply indicator -->
             <small class="mini-molt-remolt text-muted zindex-front">
 
-                <svg class="mini-molt-action-icon remolt-icon" width="12" height="12" data-jam="message">
+                <svg class="mini-molt-action-icon remolt-icon" width="16" height="16" data-jam="message">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                 </svg>
                 replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
@@ -45,6 +46,7 @@
         </div>
     </div>
     <div>
+        <!-- Molt content -->
         <div class="mini-molt-content large-molt-text">
             <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
             <!-- End-users won't have any idea what this comment is referring to :) -->
@@ -56,6 +58,16 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- Quoted Molt preview -->
+        {% if is_quote and not is_in_quote %}
+        <div class="quoted-molt rounded-media mb-2 zindex-front">
+            {% with molt = molt.original_molt, hide_border = True, hide_buttons = True, is_in_quote=True %}
+                {% include 'molt.html' %}
+            {% endwith %}
+        </div>
+        {% endif %}
+
         <div class="w-100 pb-2 pt-1 text-muted border-bottom border-dark">
             <!-- 11:30 AM · Apr 9, 2020 -->
             {{localize(molt.timestamp).strftime("%#I:%M %p · %b %e, %Y") if IS_WINDOWS else localize(molt.timestamp).strftime("%-I:%M %p · %b %e, %Y")}}
@@ -66,14 +78,32 @@
             &mdash; This molt has been edited
             {% endif %}
         </div>
+
+        {% if molt.remolt_count or molt.like_count %}
         <div class="mini-molt-actions d-flex flex-row border-dark border-bottom justify-content-start w-100 py-2 mb-0">
+            {% if molt.remolt_count %}
+            <!-- Remolt count -->
             <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_remolts_modal');">
-                <span class="text-light font-weight-bold">{{molt.remolt_count}}</span> Remolt{{molt.remolt_count | pluralize}}</a>
+                <span id="remolts-number" class="text-light font-weight-bold">{{molt.remolt_count}}</span>
+                <span id="remolts-text">Remolt{{molt.remolt_count | pluralize}}</span>
+            </a>
+            {% endif %}
+            {% if molt.quote_count %}
+            <!-- Remolt count -->
+            <a href="./quotes" class="text-muted mr-3">
+                <span id="quotes-number" class="text-light font-weight-bold">{{molt.quote_count}}</span>
+                <span id="quotes-text">Quote{{molt.quote_count | pluralize}}</span>
+            </a>
+            {% endif %}
+            {% if molt.like_count %}
+            <!-- Like count -->
             <a href="javascript:void(0);" class="text-muted mr-3" onclick="toggleModal('#molt_likes_modal');">
                 <span id="likes-number" class="text-light font-weight-bold">{{molt.like_count}}</span>
                 <span id="likes-text">Like{{molt.like_count | pluralize}}</span>
             </a>
+            {% endif %}
         </div>
+        {% endif %}
 
         {% if current_user %}
         <div class="mini-molt-actions d-flex flex-row border-dark justify-content-around w-100 py-2 px-4 mb-0">
@@ -91,6 +121,7 @@
                 </div>
             </form>
             {% endif %}
+
             <!-- REPLY BUTTON -->
             <form>
                 <input type="hidden" name="user_action" value="reply_molt">
@@ -103,29 +134,69 @@
                     </svg>
                 </div>
             </form>
-            <!-- REMOLT BUTTON -->
-            <form method="POST">
-                {% set has_remolted = current_user.has_remolted(molt) %}
-                {% if has_remolted %}
-                <input type="hidden" name="user_action" value="delete_molt">
-                <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                {% else %}
-                <input type="hidden" name="user_action" value="remolt_molt">
-                <input type="hidden" name="molt_id" value="{{molt.id}}">
-                {% endif %}
-                <div class="mini-molt-action remolt zindex-front {{"active-remolt" if has_remolted else ""}}"
-                    {% if has_remolted %}
-                        onClick="if (confirm('Are you sure you want to un-remolt this?')) {
-                        this.parentNode.submit();$(this).parents('div.mini-molt').remove();}"
-                    {% else %}
-                        onClick="javascript:if (confirm('Remolt this?')) {this.parentNode.submit();}"
-                    {% endif %}>
 
+            <!-- REMOLT DROPDOWN -->
+            <div class="dropdown">
+                {% if static %}
+                    {% set has_remolted = false %}
+                {% else %}
+                    {% set has_remolted = current_user.has_remolted(molt) %}
+                {% endif %}
+
+                <!-- TOGGLE REMOLT DROPDOWN BUTTON -->
+                <span class="zindex-front mini-molt-action remolt {{"active-remolt" if has_remolted else ""}}" href="#" role="button" id="dropdownMenuLink"
+                    onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
                     <svg class="mini-molt-action-icon" width="20" height="20" data-jam="repeat">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                     </svg>
-                </div>
-            </form>
+                </span>
+                {% if current_user %}
+                    <!-- REMOLT DROPDOWN CONTENT -->
+                    <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        {% if has_remolted %}
+
+                            <!-- UNDO REMOLT BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="delete_molt">
+                                <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+                                <div onClick="if (confirm('Are you sure you want to undo this Remolt?')) { this.parentNode.submit()}"
+                                     class="text-danger">
+                                    <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                    </svg>
+                                    Undo Remolt
+                                </div>
+                            </form>
+                        {% else %}
+
+                            <!-- REMOLT BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="remolt_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="if (confirm('Remolt this?')) { this.parentNode.submit()}">
+                                    <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                    </svg>
+                                    Remolt
+                                </div>
+                            </form>
+                        {% endif %}
+
+                        <!-- QUOTE-MOLT BUTTON -->
+                        <form class="dropdown-item clickable" method="POST">
+                            <input type="hidden" name="user_action" value="quote_molt">
+                            <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+                            <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                                <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
+                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
+                                </svg>
+                                Quote Molt
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+
             <!-- LIKE BUTTON -->
             <form method="POST">
                 <input type="hidden" name="user_action" value="like_molt">
@@ -141,12 +212,13 @@
                     </svg>
                 </div>
             </form>
+
             <!-- DROPDOWN BUTTON -->
             <div class="dropdown">
                 <span class="zindex-front mini-molt-action reply" href="#" role="button" id="dropdownMenuLink"
                     onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
 
-                    <svg class="mini-molt-action-icon" width="16" height="16" data-jam="more-horizontal">
+                    <svg class="mini-molt-action-icon" width="20" height="20" data-jam="more-horizontal">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#more-horizontal"></use>
                     </svg>
                 </span>
@@ -204,7 +276,7 @@
     </div>
 </div>
 
-<!-- Remolts popup -->
+<!-- Remolts modal -->
 <div class="modal fade" id="molt_remolts_modal" tabindex="-1" role="dialog" aria-labelledby="moltRemoltsModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -228,7 +300,7 @@
     </div>
 </div>
 
-<!-- Likes popup -->
+<!-- Likes modal -->
 <div class="modal fade" id="molt_likes_modal" tabindex="-1" role="dialog" aria-labelledby="moltLikesModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content bg-dark">

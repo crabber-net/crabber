@@ -42,6 +42,8 @@
     --edit-trans: rgba(223, 199, 64, 0.05);
     --pin: rgb(185, 185, 185);
     --pin-trans: rgba(185, 185, 185, 0.05);
+
+    --danger: var(--like);
 }
 
 /* Primaries */
@@ -148,4 +150,8 @@ a.text-muted-more, .text-muted-more a {
 .btn-trans:hover {
     color: var(--light-faded-less);
     fill: var(--light-faded-less);
+}
+
+.text-danger {
+    fill: var(--danger);
 }

@@ -576,6 +576,7 @@ class Molt(db.Model):
     # Remolt/reply information
     is_remolt = db.Column(db.Boolean, nullable=False, default=False)
     is_reply = db.Column(db.Boolean, nullable=False, default=False)
+    is_quote = db.Column(db.Boolean, nullable=False, default=False)
     original_molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'))
     original_molt = db.relationship('Molt', remote_side=[id],
                                     backref='_remolts')
@@ -610,10 +611,16 @@ class Molt(db.Model):
         return utils.localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
-    def replies(self):
-        """ List all currently valid Molts that reply to this Molt.
+    def quote_count(self):
+        """ Get all currently valid quotes of Molt.
         """
-        return self.query_replies().all()
+        return Molt.query_quotes(self).all()
+
+    @property
+    def quote_count(self):
+        """ Get number of currently valid quotes of Molt.
+        """
+        return Molt.query_quotes(self).count()
 
     @property
     def remolts(self):
@@ -626,6 +633,12 @@ class Molt(db.Model):
         """ Get number of currently valid remolts of Molt.
         """
         return Molt.query_remolts(self).count()
+
+    @property
+    def replies(self):
+        """ List all currently valid Molts that reply to this Molt.
+        """
+        return self.query_replies().all()
 
     @property
     def likes(self):
@@ -821,15 +834,23 @@ class Molt(db.Model):
             .order_by(Molt.timestamp).first()
         return reply
 
-    def remolt(self, crab, comment="", **kwargs):
-        """ Remolt Molt as `crab` with optional `comment`.
+    def quote(self, author, comment, **kwargs):
+        """ Quote Molt as `author`.
+        """
+        new_quote = author.molt(comment, is_quote=True, original_molt=self,
+                                **kwargs)
+        self.author.notify(sender=author, type='quote', molt=new_quote)
+        return new_quote
+
+    def remolt(self, crab, **kwargs):
+        """ Remolt Molt as `crab`.
         """
         # Check if already remolted
         duplicate_remolt = Molt.query.filter_by(is_remolt=True,
                                                 original_molt=self,
                                                 author=crab, deleted=False)
         if not duplicate_remolt.count():
-            new_remolt = crab.molt(comment, is_remolt=True, original_molt=self,
+            new_remolt = crab.molt('', is_remolt=True, original_molt=self,
                                    **kwargs)
             self.author.notify(sender=crab, type="remolt", molt=new_remolt)
             return new_remolt
@@ -900,6 +921,11 @@ class Molt(db.Model):
     def query_likes(self):
         return Like.query.filter_by(molt=self) \
             .filter(Like.crab.has(deleted=False, banned=False))
+
+    def query_quotes(self) -> BaseQuery:
+        return Molt.query \
+            .filter_by(is_quote=True, original_molt=self, deleted=False) \
+            .filter(Molt.author.has(banned=False, deleted=False))
 
     def query_remolts(self) -> BaseQuery:
         return Molt.query \
