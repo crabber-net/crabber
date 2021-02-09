@@ -190,6 +190,26 @@
                     </button>
                 </form>
 
+                <!-- Bookmark page button -->
+                <form onsubmit="loadingIcon(this);" action="/bookmarks">
+                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
+                        {% if current_page == "bookmarks" %} id="nav-active" {% endif %}>
+
+                        <svg class="btn-icon {{"d-none" if current_page == "bookmarks" else ""}}" width="28" height="28" data-jam="bookmark">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark"></use>
+                        </svg>
+
+                        <svg class="btn-icon {{"" if current_page == "bookmarks" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="bookmark-f">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark-f"></use>
+                        </svg>
+
+                        <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
+                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#refresh"></use>
+                        </svg>
+                        <strong class="d-none d-lg-inline-block ml-2">Bookmarks</strong>
+                    </button>
+                </form>
+
                 <!-- Search page button -->
                 <form onsubmit="loadingIcon(this);" action="/search">
                     <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"

@@ -142,6 +142,24 @@ def get_crab_followers(crab_ID):
     else:
         return abort(404, description='No Crab with that ID.')
 
+
+@API.route('/crabs/<crab_ID>/bookmarks/')
+def get_crab_bookmarks(crab_ID):
+    limit = request.args.get('limit')
+    limit = api_utils.expect_int(limit, default=API_DEFAULT_CRAB_LIMIT,
+                                 minimum=0, maximum=API_MAX_CRAB_LIMIT)
+    offset = request.args.get('offset')
+    offset = api_utils.expect_int(offset, default=0, minimum=0)
+
+    crab = api_utils.get_crab(crab_ID)
+    if crab:
+        bookmarks = crab.query_bookmarks()
+        bookmarks_json = api_utils.query_to_json(bookmarks)
+        return bookmarks_json
+    else:
+        return abort(404, description='No Crab with that ID.')
+
+
 @API.route('/crabs/<crab_ID>/following/')
 def get_crab_following(crab_ID):
     limit = request.args.get('limit')
@@ -158,6 +176,7 @@ def get_crab_following(crab_ID):
         return following_json
     else:
         return abort(404, description='No Crab with that ID.')
+
 
 @API.route('/crabs/<crab_ID>/molts/')
 def get_crab_molts(crab_ID):

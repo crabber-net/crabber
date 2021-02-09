@@ -227,6 +227,16 @@ def common_molt_actions() -> Response:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         target_molt.report()
 
+    elif action == "bookmark_molt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        if not get_current_user().has_bookmarked(target_molt):
+            get_current_user().bookmark(target_molt)
+
+    elif action == "unbookmark_molt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        if get_current_user().has_bookmarked(target_molt):
+            get_current_user().unbookmark(target_molt)
+
     elif action == "like_molt" and molt_id is not None:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         if get_current_user().has_liked(target_molt):

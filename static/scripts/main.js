@@ -36,6 +36,10 @@ function GetData(request_type, data, callback, error_callback=null) {
     });
 }
 
+function changeContent(el, newText) {
+    $(el).text(newText);
+}
+
 function toggleLike(e) {
     let empty_heart = $(e).children("svg")[0];
     let filled_heart = $(e).children("svg")[1];
