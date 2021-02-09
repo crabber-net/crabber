@@ -19,6 +19,14 @@
 }
 /* Large devices and larger */
 @media (min-width: 992px) {
+    #nav-panel .logo {
+        position: relative;
+
+        /* -2px to center because logo is 4px wider than nav button icons*/
+        left: calc(-0.25em - 2px);
+        margin-left: 0.75rem !important;
+    }
+
     #nav-panel button {
         width: 80%;
 
