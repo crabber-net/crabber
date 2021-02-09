@@ -727,9 +727,6 @@ div.mini-molt:hover div.mini-molt:hover {
 .mini-molt-timestamp a {
     color: inherit;
 }
-.mini-molt-actions {
-    min-width: 170px;
-}
 .mini-molt-action {
     cursor: pointer;
     color: var(--light-faded);
