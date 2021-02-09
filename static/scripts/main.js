@@ -100,6 +100,17 @@ function openNewTab(url) {
     win.focus();
 }
 
+function prepareQuote(molt_id, author_username, author_name) {
+    // Update "replying to" link
+    $("#quote-to").text(author_name)
+    $("#quote-to").attr("href", "/user/" + author_username)
+    // Update form quote-to ID
+    $("#quote-molt-id").val(molt_id)
+
+    // Show quote modal
+    $('#compose_quote_modal').modal('show');
+}
+
 function prepareReply(molt_id, author_username, author_name) {
     // Update "replying to" link
     $("#reply-to").text(author_name)

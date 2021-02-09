@@ -91,9 +91,23 @@ def get_molt(molt_ID: int) -> Optional['models.Molt']:
     return molt
 
 
+def get_molt_quotes(molt_ID: int, since: Optional[int] = None,
+                    since_id: Optional[int] = None) -> BaseQuery:
+    """ Get the replies of a Molt by ID.
+    """
+    query = models.Molt.query \
+            .filter_by(deleted=False, is_quote=True, original_molt_id=molt_ID) \
+            .filter(models.Molt.author.has(banned=False, deleted=False)) \
+            .order_by(models.Molt.timestamp.desc())
+    if since:
+        query = query.filter(models.Molt.timestamp > since)
+    if since_id:
+        query = query.filter(models.Molt.id > since_id)
+    return query
+
+
 def get_molt_replies(molt_ID: int, since: Optional[int] = None,
-                     since_id: Optional[int] = None) \
-        -> BaseQuery:
+                     since_id: Optional[int] = None) -> BaseQuery:
     """ Get the replies of a Molt by ID.
     """
     query = models.Molt.query \
@@ -235,7 +249,8 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "replying_to": molt.original_molt_id if molt.is_reply else None,
         "image": absolute_url(molt.image),
         "likes": molt.like_count,
-        "remolts": molt.remolt_count
+        "remolts": molt.remolt_count,
+        "quotes": molt.quote_count
     }
     return molt_json
 

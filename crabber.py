@@ -362,6 +362,20 @@ def molt_page(username, molt_id):
                                    social_title=social_title)
 
 
+@app.route("/user/<username>/status/<molt_id>/quotes/", methods=("GET", "POST"))
+def molt_quotes_page(username, molt_id):
+    # Handle forms and redirect to clear post data on browser
+    if request.method == "POST":
+        return utils.common_molt_actions()
+
+    # Display page
+    else:
+        primary_molt = models.Molt.get_by_ID(molt_id)
+        quotes = primary_molt.query_quotes()
+        return render_template('quotes.html', current_page="molt-page", molt=primary_molt,
+                               quotes=quotes, current_user=utils.get_current_user())
+
+
 @app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))
 def crabtags(crabtag):
     # Handle forms and redirect to clear post data on browser

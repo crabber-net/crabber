@@ -31,6 +31,11 @@
                 <svg class="notif-icon notif-like" width="26" height="26" data-jam="heart-f">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart-f"></use>
                 </svg>
+            {% elif notif.type == "quote" %}
+
+                <svg class="notif-icon notif-remolt" width="26" height="26" data-jam="message-f">
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message-f"></use>
+                </svg>
             {% elif notif.type == "reply" %}
 
                 <svg class="notif-icon notif-reply" width="26" height="26" data-jam="message-f">
@@ -92,6 +97,7 @@
                     un-followed you
                 {% else %}
                     {% if notif.type == "like" %} liked
+                    {% elif notif.type == "quote" %} quoted
                     {% elif notif.type == "reply" %} replied to
                     {% elif notif.type == "remolt" %} remolted
                     {% endif%}

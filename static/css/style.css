@@ -685,8 +685,16 @@ div.mini-molt {
     /* This has to be visible for the pop-ups to work */
     overflow: visible;
 }
+/* Quote molt */
+.quoted-molt div.mini-molt {
+    /* Preserve outer div border */
+    border-radius: inherit;
+}
 div.mini-molt:hover {
     background-color: var(--dark-less);
+}
+div.mini-molt:hover div.mini-molt:hover {
+    background-color: var(--dark-lesser);
 }
 .mini-molt-remolt {
     font-size: 11px;
@@ -757,7 +765,16 @@ div.mini-molt:hover {
 .mini-molt-action-icon {
     fill: inherit;
 }
+/* Offset reply button for weighted visual centering */
+.regular-molt .reply .mini-molt-action-icon,
+.tiny-molt .reply .mini-molt-action-icon {
+    transform: translateY(1px);
+}
 .mini-molt-action-counter {
+    font-size: 13px;
+    vertical-align: bottom;
+}
+.tiny-molt .mini-molt-action-counter {
     font-size: 11px;
 }
 .mini-molt-media-container {
@@ -868,6 +885,10 @@ div.mini-molt:hover {
 .px26 {
     height: 26px;
     width: 26px;
+}
+.px20 {
+    height: 20px;
+    width: 20px;
 }
 .profile-box-avatar img, div.profile-picture {
     background-size: cover;
@@ -2046,7 +2067,7 @@ a:active.text-primary {
 
     flex-shrink: 0;
 
-    background-color: var(--dark-lesser);
+    background-color: transparent;
     background-size: cover;
 }
 .link-card .card-content {
@@ -2073,9 +2094,17 @@ a:active.text-primary {
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
+
 .subtle-shadow {
     box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 20px;
 }
 .subtle-shadow:hover {
     box-shadow: rgba(0, 0, 0, 0.2) 5px 5px 20px;
+}
+
+.mini-molt-credentials-text.absolute-top {
+    left: 25px;
+}
+.quoted-molt {
+    border: 1px solid var(--border-dark-less);
 }

@@ -126,7 +126,7 @@ def common_molt_actions() -> Response:
         return show_error("There was an error uploading your image")
 
     # Submit new molt
-    elif action in ('submit_molt', 'submit_reply_molt'):
+    elif action in ('submit_molt', 'submit_quote_molt', 'submit_reply_molt'):
         if request.form.get('molt_content') or request.files.get('molt-media'):
             img_attachment = None
             # Handle uploaded images
@@ -149,6 +149,25 @@ def common_molt_actions() -> Response:
                     address=request.remote_addr
                 )
                 return redirect(f'/user/{get_current_user().username}/status/{new_molt.id}')
+            elif action == 'submit_quote_molt':
+                target_molt = models.Molt.query \
+                        .filter_by(id=molt_id, deleted=False) \
+                        .filter(models.Molt.author.has(deleted=False,
+                                                       banned=False)) \
+                        .first()
+                if target_molt:
+                    quote = target_molt.quote(
+                        get_current_user(),
+                        request.form.get('molt_content'),
+                        image=img_attachment,
+                        platform=request.user_agent.platform,
+                        browser=request.user_agent.browser,
+                        address=request.remote_addr
+                    )
+                    return redirect(f'/user/{get_current_user().username}/status/{quote.id}')
+                else:
+                    return show_error('The Molt you\'re attempting to quote '
+                                      'no longer exists.')
             elif action == 'submit_reply_molt':
                 target_molt = models.Molt.query \
                         .filter_by(id=molt_id, deleted=False) \
