@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block ext_head %}
+    <!-- Preload loading indicator so you never see alt-text -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+{% endblock %}
+{% block title %}
+    {% include "bookmarks-ajax-title.html" %}
+{% endblock %}
+{% block heading %}
+    {% include "bookmarks-ajax-heading.html" %}
+{% endblock %}
+
+{% block body %}
+    {% include "bookmarks-ajax-body.html" %}
+{% endblock %}
