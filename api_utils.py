@@ -246,6 +246,8 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "crabtags": [tag.name for tag in molt.tags],
         "mentions": list(set(molt.raw_mentions.lower().splitlines())),
         "timestamp": get_timestamp(molt.timestamp),
+        "edited": molt.edited,
+        "quoted_molt": molt.original_molt_id if molt.is_quote else None,
         "replying_to": molt.original_molt_id if molt.is_reply else None,
         "image": absolute_url(molt.image),
         "likes": molt.like_count,

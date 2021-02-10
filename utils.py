@@ -205,7 +205,7 @@ def common_molt_actions() -> Response:
             if target_molt.editable:
                 if new_content:
                     if new_content != target_molt.content:
-                        target_molt.edit(new_content)
+                        target_molt.edit(content=new_content)
                         return redirect(f'/user/{get_current_user().username}/status/{target_molt.id}')
                     else:
                         return show_error("No changes were made")

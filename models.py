@@ -917,14 +917,16 @@ class Molt(db.Model):
         self.reports += 1
         db.session.commit()
 
-    def edit(self, new_content):
+    def edit(self, content=None, image=None):
         """ Change Molt content to `new_content`.
         """
-        self.content = new_content
-        self.edited = True
-        # Re-evaluate mentions and tags
-        self.evaluate_contents()
-        db.session.commit()
+        if self.editable:
+            self.content = content or self.content
+            self.image = image or self.image
+            self.edited = True
+            # Re-evaluate mentions and tags
+            self.evaluate_contents()
+            db.session.commit()
 
     def like(self, crab):
         """ Like Molt as `crab`.

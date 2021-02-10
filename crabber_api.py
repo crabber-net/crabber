@@ -272,6 +272,99 @@ def get_molt(molt_ID):
         return abort(404, description='No Molt with that ID.')
 
 
+@API.route('/molts/<molt_ID>/edit/', methods=['POST'])
+def edit_molt(molt_ID):
+    molt = api_utils.get_molt(molt_ID)
+    if molt:
+        auth = require_auth(request)
+        if auth:
+            crab = api_utils.get_crab(auth['crab_id'])
+            if crab:
+                molt_content = request.form.get('content')
+                molt_image_link = request.form.get('image')
+                molt_image = request.files.get('image')
+                image_verified = False
+
+                if molt_image_link:
+                    return abort(400,
+                                 'Images must be submitted as files, not text.')
+                if molt_image:
+                    if molt_image.filename != '':
+                        if molt_image and utils.allowed_file(molt_image.filename):
+                            image_verified = True
+                        else:
+                            return abort(400, 'There was a problem with the uploaded image.')
+                    else:
+                        return abort(400, 'Image filename is blank. Aborting.')
+                if molt.editable:
+                    if image_verified:
+                        if molt.editable:
+                            molt_image = utils.upload_image(molt_image)
+                            molt.edit(content=molt_content, image=molt_image)
+                    elif molt_content:
+                        molt.edit(content=molt_content)
+                    else:
+                        return abort(400, description='Missing required content.')
+                    # Return edited Molt
+                    return api_utils.molt_to_json(molt), 201
+                else:
+                    return abort(400, description='Molt is not editable.')
+            else:
+                return abort(400, description='The authorized user no ' \
+                             'longer exists.')
+        else:
+            return abort(401, description='This endpoint requires ' \
+                         'authentication.')
+    else:
+        return abort(404, description='No Molt with that ID.')
+
+
+@API.route('/molts/<molt_ID>/quote/', methods=['POST'])
+def quote_molt(molt_ID):
+    molt = api_utils.get_molt(molt_ID)
+    if molt:
+        auth = require_auth(request)
+        if auth:
+            crab = api_utils.get_crab(auth['crab_id'])
+            if crab:
+                molt_content = request.form.get('content')
+                molt_image_link = request.form.get('image')
+                molt_image = request.files.get('image')
+                image_verified = False
+
+                if molt_image_link:
+                    return abort(400,
+                                 'Images must be submitted as files, not text.')
+                if molt_image:
+                    if molt_image.filename != '':
+                        if molt_image and utils.allowed_file(molt_image.filename):
+                            image_verified = True
+                        else:
+                            return abort(400, 'There was a problem with the uploaded image.')
+                    else:
+                        return abort(400, 'Image filename is blank. Aborting.')
+                if molt_content:
+                    if image_verified:
+                        molt_image = utils.upload_image(molt_image)
+                        new_molt = molt.quote(crab, molt_content,
+                                              image=molt_image,
+                                              source='Crabber API')
+                    else:
+                        new_molt = molt.quote(crab, molt_content,
+                                              source='Crabber API')
+                    return api_utils.molt_to_json(new_molt), 201
+                else:
+                    return abort(400, description='Missing required content.')
+            else:
+                return abort(400, description='The authorized user no ' \
+                             'longer exists.')
+        else:
+            return abort(401, description='This endpoint requires ' \
+                         'authentication.')
+    else:
+        return abort(404, description='No Molt with that ID.')
+
+
 @API.route('/molts/<molt_ID>/reply/', methods=['POST'])
 def reply_to_molt(molt_ID):
     molt = api_utils.get_molt(molt_ID)
@@ -349,6 +442,46 @@ def remolt_molt(molt_ID):
         else:
             return abort(401, description='This endpoint requires ' \
                          'authentication.')
+    else:
+        return abort(404, description='No Molt with that ID.')
+
+
+@API.route('/molts/<molt_ID>/bookmark/', methods=['POST'])
+def bookmark_molt(molt_ID):
+    molt = api_utils.get_molt(molt_ID)
+    if molt:
+        auth = require_auth(request)
+        if auth:
+            crab = api_utils.get_crab(auth['crab_id'])
+            if crab:
+                if not crab.has_bookmarked(molt):
+                    crab.bookmark(molt)
+                return 'Bookmarked Molt.', 200
+            else:
+                return abort(400, description='The authorized user no ' \
+                             'longer exists.')
+        else:
+            return abort(401, description='This endpoint requires authentication.')
+    else:
+        return abort(404, description='No Molt with that ID.')
+
+
+@API.route('/molts/<molt_ID>/unbookmark/', methods=['POST'])
+def unbookmark_molt(molt_ID):
+    molt = api_utils.get_molt(molt_ID)
+    if molt:
+        auth = require_auth(request)
+        if auth:
+            crab = api_utils.get_crab(auth['crab_id'])
+            if crab:
+                if crab.has_bookmarked(molt):
+                    crab.unbookmark(molt)
+                return 'Unbookmarked Molt.', 200
+            else:
+                return abort(400, description='The authorized user no ' \
+                             'longer exists.')
+        else:
+            return abort(401, description='This endpoint requires authentication.')
     else:
         return abort(404, description='No Molt with that ID.')
 
