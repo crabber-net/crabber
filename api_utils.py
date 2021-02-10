@@ -1,3 +1,4 @@
+import calendar
 from config import *
 from datetime import datetime
 from flask_sqlalchemy import BaseQuery
@@ -41,7 +42,7 @@ def absolute_url(relative_url: str) -> Optional[str]:
 def get_timestamp(datetime: datetime) -> int:
     """ Get the UTC timestamp from a datetime object.
     """
-    return int(datetime.timestamp())
+    return int(calendar.timegm(datetime.utctimetuple()))
 
 
 def get_crab(crab_ID: int) -> Optional['models.Crab']:
