@@ -789,6 +789,18 @@ def pretty_url(url, length=35):
 
 
 @app.template_filter()
+def pretty_age(time: Union[datetime.datetime, int]):
+    """ Converts datetime to pretty twitter-esque age string. (Wrapper for
+        `utils.get_pretty_age`.
+        :param time:
+        :return: Age string
+    """
+    if isinstance(time, int):
+        time: datetime.datetime = datetime.datetime.fromtimestamp(time)
+    return utils.get_pretty_age(time)
+
+
+@app.template_filter()
 def url_root(url, length=35):
     """ Returns the root address of a URL.
     """
