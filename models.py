@@ -8,15 +8,18 @@ from passlib.hash import sha256_crypt
 import patterns
 import secrets
 from sqlalchemy import desc, func
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
 db = extensions.db
 
-
-class NotFoundInDatabase(BaseException):
-    pass
-
+# This links Molts to Crabtags in a many-to-many relationship
+crabtag_table = db.Table(
+    'crabtag_links',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('molt_id', db.Integer, db.ForeignKey('molt.id')),
+    db.Column('tag_id', db.Integer, db.ForeignKey('crabtag.id'))
+)
 
 # This stores unidirectional follower-followee relationships
 following_table = db.Table(
@@ -26,13 +29,9 @@ following_table = db.Table(
     db.Column('following_id', db.Integer, db.ForeignKey('crab.id'))
 )
 
-# This links Molts to Crabtags in a many-to-many relationship
-crabtag_table = db.Table(
-    'crabtag_links',
-    db.Column('id', db.Integer, primary_key=True),
-    db.Column('molt_id', db.Integer, db.ForeignKey('molt.id')),
-    db.Column('tag_id', db.Integer, db.ForeignKey('crabtag.id'))
-)
+
+class NotFoundInDatabase(BaseException):
+    pass
 
 
 class Crab(db.Model):
@@ -80,6 +79,14 @@ class Crab(db.Model):
     pinned_molt_id = db.Column(db.Integer, nullable=True)
     _preferences = db.Column('preferences', db.String,
                              nullable=False, default='{}')
+
+    # Used for efficient queries in templates
+    column_dict = dict(id=id, avatar=avatar, username=username,
+                       display_name=display_name, verified=verified,
+                       deleted=deleted, banned=banned, description=description,
+                       raw_bio=raw_bio, location=location, website=website,
+                       banner=banner, register_time=register_time,
+                       timezone=timezone, lastfm=lastfm)
 
     def __repr__(self):
         return f"<Crab '@{self.username}'>"
@@ -706,6 +713,18 @@ class Molt(db.Model):
         """
         return utils.get_pretty_age(self.timestamp)
 
+    def get_author(self, column_names: Optional[Iterable[str]] = None):
+        """ Returns only necessary columns from Molt.author, which results in a
+            faster query.
+        """
+        column_names = column_names or ('id', 'username', 'display_name',
+                                        'verified', 'deleted', 'banned',
+                                        'avatar')
+        columns = (Crab.column_dict.get(col) for col in column_names)
+        author = db.session.query(*columns) \
+            .filter(Crab.id == self.author_id).first()
+        return author
+
     def evaluate_contents(self, notify: bool = True):
         """ Evaluates Crabtags and Mentions in Molt. This should be called
             whenever content is changed.
@@ -846,14 +865,20 @@ class Molt(db.Model):
                 "timestamp": round(self.timestamp.timestamp())
             }
         }
-
-    def get_reply_from(self, crab):
+    def get_reply_from(self, crab: Union[Crab, int]) -> Optional['Molt']:
         """ Return first reply Molt from `crab` if it exists.
         """
         reply = Molt.query.filter_by(is_reply=True, original_molt=self,
-                                     author=crab, deleted=False) \
-            .order_by(Molt.timestamp).first()
+                                     deleted=False)
+        if isinstance(crab, Crab):
+            reply = reply.filter_by(author=crab)
+        elif isinstance(crab, int):
+            reply = reply.filter_by(author_id=crab)
+        else:
+            return None
+        reply = reply.order_by(Molt.timestamp).first()
         return reply
+
 
     def get_reply_from_following(self, crab):
         """ Return first reply Molt from a crab that `crab` follows if it

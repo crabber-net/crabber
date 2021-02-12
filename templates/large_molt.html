@@ -1,16 +1,25 @@
 {% import "macros.jinja" as macros %}
 
+{# MOLT AUTHOR OPTIMIZATION #}
+{% set author = molt.get_author() %}
+
 {% set is_quote = molt.is_quote %}
 {% set is_remolt = molt.is_remolt %}
 {% if is_remolt %}
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
+
+{# ORIGINAL MOLT AUTHOR OPTIMIZATION #}
+{% if is_quote or molt.is_reply %}
+    {% set original_author = molt.original_molt.get_author(('id', 'username', 'display_name')) %}
+{% endif %}
+
 <div class="large-molt mini-molt border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
     <div class="row mb-3">
         <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}} pr-1 col-auto">
-            <a href="/user/{{molt.author.username}}" class="zindex-front">
-                <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
+            <a href="/user/{{author.username}}" class="zindex-front">
+                <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=author.avatar)}}');"></div>
             </a>
         </div>
         <div class="mini-molt-text-box w-100 px-2 col">
@@ -32,16 +41,16 @@
                 <svg class="mini-molt-action-icon remolt-icon" width="16" height="16" data-jam="message">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                 </svg>
-                replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
-                    {{"your" if molt.original_molt.author == current_user else molt.original_molt.author.display_name + "'s"}}
+                replying to<a href="/user/{{original_author.username}}/status/{{molt.original_molt.id}}">
+                    {{"your" if original_author.id == current_user.id else original_author.display_name + "'s"}}
                     molt</a></small>
             {% endif %}
-            <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{molt.author.username}}"
-                    class="mini-molt-display-name">{{molt.author.display_name}}</a>
-                {% if molt.author.verified %}
+            <div class="mini-molt-credentials zindex-front {{"mt-1" if (is_remolt or molt.is_reply) and not thread else ""}}"><a href="/user/{{author.username}}"
+                    class="mini-molt-display-name">{{author.display_name}}</a>
+                {% if author.verified %}
                 <a title="This user is verified">{{macros.verified(17)}}</a>
                 {% endif %}<br>
-                <span class="mini-molt-username">@{{molt.author.username}}</span>
+                <span class="mini-molt-username">@{{author.username}}</span>
             </div>
         </div>
     </div>
@@ -107,7 +116,7 @@
 
         {% if current_user %}
         <div class="mini-molt-actions d-flex flex-row border-dark justify-content-around w-100 py-2 px-4 mb-0">
-            {% if molt.author == current_user and molt.editable %}
+            {% if author.id == current_user.id and molt.editable %}
             <!-- EDIT BUTTON -->
             <form>
                 <input type="hidden" name="user_action" value="reply_molt">
@@ -127,7 +136,7 @@
                 <input type="hidden" name="user_action" value="reply_molt">
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                 <div class="mini-molt-action reply rounded-circle zindex-front"
-                    onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="20" height="20" data-jam="message">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
@@ -186,7 +195,7 @@
                         <form class="dropdown-item clickable" method="POST">
                             <input type="hidden" name="user_action" value="quote_molt">
                             <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                            <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                            <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
                                 <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
                                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
                                 </svg>
@@ -225,7 +234,7 @@
                 {% if current_user %}
                     <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <!-- DELETE BUTTON -->
-                        {% if molt.author == current_user %}
+                        {% if author.id == current_user.id %}
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="delete_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -281,7 +290,7 @@
                         {% endif %}
 
                         <!-- REPORT MOLT BUTTON -->
-                        {% if molt.author != current_user %}
+                        {% if author.id != current_user.id %}
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="report_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
