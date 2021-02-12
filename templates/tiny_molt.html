@@ -7,23 +7,27 @@
     {% set remolt_shell = molt %}
     {% set molt = molt.original_molt %}
 {% endif %}
+
+{# MOLT AUTHOR OPTIMIZATION #}
+{% set author = molt.get_author() %}
+
 <div class="tiny-molt mini-molt border border-dark tiny-rounded px-2 py-2 absolute-container">
     {% if molt.deleted %}
         <span class="text-muted w-100 d-inline-block text-center">This Molt has been deleted</span>
     {% else %}
         {% if is_reply %}
-            {% with molt = molt.original_molt %}
+            {% with molt = molt.original_molt, author = molt.get_author() %}
             {% if molt.deleted %}
                 <p class="text-muted text-center">This Molt has been deleted.</p>
-            {% elif molt.author.deleted or molt.author.banned %}
+            {% elif author.deleted or author.banned %}
                 <p class="text-muted text-center">This Molt is no longer available.</p>
             {% else %}
             <div class="tiny-reply-context">
-                <div class="mini-molt-credentials"><a href="/user/{{molt.author.username}}" class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
-                    {% if molt.author.verified %}
+                <div class="mini-molt-credentials"><a href="/user/{{author.username}}" class="mini-molt-display-name zindex-front">{{author.display_name}}</a>
+                    {% if author.verified %}
                     {{macros.verified(17)}}
                     {% endif %}
-                    <span class="mini-molt-username">@{{molt.author.username}}</span>
+                    <span class="mini-molt-username">@{{author.username}}</span>
                     <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
                             title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
                 </div>
@@ -47,12 +51,12 @@
 
 
         <div class="mini-molt-text-box w-100 h-100 d-inline">
-            <div class="mini-molt-credentials"><a href="/user/{{molt.author.username}}"
-                    class="mini-molt-display-name zindex-front">{{molt.author.display_name}}</a>
-                {% if molt.author.verified %}
+            <div class="mini-molt-credentials"><a href="/user/{{author.username}}"
+                    class="mini-molt-display-name zindex-front">{{author.display_name}}</a>
+                {% if author.verified %}
                 <a title="This user is verified">{{macros.verified(17)}}</a>
                 {% endif %}
-                <span class="mini-molt-username">@{{molt.author.username}}</span>
+                <span class="mini-molt-username">@{{author.username}}</span>
                 <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
             </div>
@@ -85,7 +89,7 @@
 
                 <!-- REPLY BUTTON -->
                 <div class="mini-molt-action reply rounded-circle zindex-front"
-                    onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="message">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
@@ -145,7 +149,7 @@
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="quote_molt">
                                 <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                                <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                                <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
                                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
                                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
                                     </svg>
@@ -185,7 +189,7 @@
                     {% if current_user %}
                         <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <!-- DELETE BUTTON -->
-                            {% if molt.author == current_user %}
+                            {% if author.id == current_user.id %}
                                 <form class="dropdown-item clickable" method="POST">
                                     <input type="hidden" name="user_action" value="delete_molt">
                                     <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -241,7 +245,7 @@
                             {% endif %}
 
                             <!-- REPORT MOLT BUTTON -->
-                            {% if molt.author != current_user %}
+                            {% if author.id != current_user.id %}
                                 <form class="dropdown-item clickable" method="POST">
                                     <input type="hidden" name="user_action" value="report_molt">
                                     <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -261,6 +265,6 @@
             </div>
         </div>
         <!-- Tweet page link -->
-        <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill"></a>
+        <a href="/user/{{author.username}}/status/{{molt.id}}" class="absolute-fill"></a>
     {% endif %}
 </div>

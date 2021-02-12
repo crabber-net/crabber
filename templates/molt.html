@@ -32,11 +32,19 @@
 
 {% set is_quote = molt.is_quote %}
 
+{# MOLT AUTHOR OPTIMIZATION #}
+{% set author = molt.get_author() %}
+
 {% set is_deleted = molt.deleted %}
-{% set is_unavailable = molt.author.banned or molt.author.deleted %}
+{% set is_unavailable = author.banned or author.deleted %}
 {% if always_show %}
     {% set is_deleted = false %}
     {% set is_unavailable = false %}
+{% endif %}
+
+{# ORIGINAL MOLT AUTHOR OPTIMIZATION #}
+{% if is_quote or molt.is_reply %}
+    {% set original_author = molt.original_molt.get_author(('id', 'username', 'display_name')) %}
 {% endif %}
 
 
@@ -62,9 +70,9 @@
         {% if static %}
         <a class="zindex-front">
         {% else %}
-        <a href="/user/{{molt.author.username}}" class="zindex-front">
+        <a href="/user/{{author.username}}" class="zindex-front">
         {% endif %}
-            <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
+            <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=author.avatar)}}');"></div>
         </a>
         {% if is_parent %}
             <div class="thread-connector">
@@ -102,8 +110,8 @@
                 <svg class="mini-molt-action-icon remolt-icon" width="12" height="12" data-jam="message">
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                 </svg>
-                replying to<a href="/user/{{molt.original_molt.author.username}}/status/{{molt.original_molt.id}}">
-                    {{"you" if molt.original_molt.author == current_user else molt.original_molt.author.display_name}}</a></small>
+                replying to<a href="/user/{{original_author.username}}/status/{{molt.original_molt.id}}">
+                    {{"you" if original_author.id == current_user.id else original_author.display_name}}</a></small>
             {% endif %}
         {% endif %}
 
@@ -112,24 +120,24 @@
                 {% if static %}
                 <a class="zindex-front col">
                 {% else %}
-                <a href="/user/{{molt.author.username}}" class="zindex-front d-inline-block">
+                <a href="/user/{{author.username}}" class="zindex-front d-inline-block">
                 {% endif %}
-                    <div class="rounded-circle px20 profile-picture" style="background-image: url('{{url_for('static', filename=molt.author.avatar)}}');"></div>
+                    <div class="rounded-circle px20 profile-picture" style="background-image: url('{{url_for('static', filename=author.avatar)}}');"></div>
                 </a>
             {% endif %}
 
             <div class="mini-molt-credentials-text {{'col pl-2' if is_in_quote}}">
                 {% if not static %}
-                    <a href="/user/{{molt.author.username}}" class="mini-molt-display-name zindex-front">
+                    <a href="/user/{{author.username}}" class="mini-molt-display-name zindex-front">
                 {% else %}
                     <a class="mini-molt-display-name zindex-front">
                 {% endif %}
-                    {{molt.author.display_name}}
+                    {{author.display_name}}
                 </a>
-                {% if molt.author.verified %}
+                {% if author.verified %}
                 <a title="This user is verified" class="zindex-front">{{macros.verified(17)}}</a>
                 {% endif %}
-                <span class="mini-molt-username zindex-front">@{{molt.author.username}}</span>
+                <span class="mini-molt-username zindex-front">@{{author.username}}</span>
                 <span class="mini-molt-timestamp zindex-front">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
             </div>
@@ -139,7 +147,7 @@
         <div class="mini-molt-content">
             <p class="mb-2"><span class="zindex-front {{'clickable' if not static}}"
                 {% if not static %}
-                    onclick="if (!window.getSelection().toString()) { location.href = '/user/{{molt.author.username}}/status/{{molt.id}}'; }"
+                    onclick="if (!window.getSelection().toString()) { location.href = '/user/{{author.username}}/status/{{molt.id}}'; }"
                 {% endif %}
                 >
                 {{molt.rich_content()|safe}}
@@ -165,7 +173,7 @@
         {% if (current_user or static) and not hide_buttons %}
         <div class="mini-molt-actions d-flex flex-row justify-content-between mr-md-5">
             {% if current_user %}
-                {% if molt.author == current_user and molt.editable %}
+                {% if author.id == current_user.id and molt.editable %}
                 <!-- EDIT BUTTON -->
                     <form>
                         <input type="hidden" name="user_action" value="reply_molt">
@@ -185,7 +193,7 @@
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                 <div class="mini-molt-action reply rounded-circle zindex-front"
                 {% if not static %}
-                    onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');"
+                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');"
                 {% endif %}
                 >
 
@@ -248,7 +256,7 @@
                         <form class="dropdown-item clickable" method="POST">
                             <input type="hidden" name="user_action" value="quote_molt">
                             <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                            <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                            <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
                                 <svg class="mini-molt-action-icon" width="19" height="19" data-jam="pencil">
                                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
                                 </svg>
@@ -298,7 +306,7 @@
                 </span>
                 {% if current_user %}
                     <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        {% if molt.author == current_user and current_page == "own-profile" %}
+                        {% if author.id == current_user.id and current_page == "own-profile" %}
                             <!-- PIN/UNPIN BUTTONS -->
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -322,7 +330,7 @@
                             </form>
                         {% endif %}
                         <!-- DELETE BUTTON -->
-                        {% if molt.author == current_user %}
+                        {% if author.id == current_user.id %}
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="delete_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -378,7 +386,7 @@
                         {% endif %}
 
                         <!-- REPORT MOLT BUTTON -->
-                        {% if molt.author != current_user %}
+                        {% if author.id != current_user.id %}
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="report_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -400,21 +408,21 @@
     </div>
     {% if not static %}
         <!-- Molt page link -->
-        <a href="/user/{{molt.author.username}}/status/{{molt.id}}" class="absolute-fill" draggable="false"></a>
+        <a href="/user/{{author.username}}/status/{{molt.id}}" class="absolute-fill" draggable="false"></a>
     {% endif %}
     {% endif %}
 </div>
 {% if show_replies %}
     {% if show_replies_from == 'following' %}
         {% with molt=molt.get_reply_from_following(current_user) %}
-            {% with thread=true, show_replies_from=molt.author, hide_border=false,
+            {% with thread=true, show_replies_from=author.id, hide_border=false,
             is_parent=false, current_depth=current_depth + 1 %}
                 {% include "molt.html" %}
             {% endwith %}
         {% endwith %}
     {% else %}
         {% with molt=molt.get_reply_from(show_replies_from) %}
-            {% with thread=true, show_replies_from=molt.author, hide_border=false,
+            {% with thread=true, show_replies_from=author.id, hide_border=false,
             is_parent=false, current_depth=current_depth + 1 %}
                 {% include "molt.html" %}
             {% endwith %}

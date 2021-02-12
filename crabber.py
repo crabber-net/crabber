@@ -62,18 +62,18 @@ def index():
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
 
-        molts = utils.get_current_user().query_timeline() \
-            .paginate(page_n, MOLTS_PER_PAGE, False)
-
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
                 blocks[block] = render_template(f'timeline-ajax-{block}.html',
                                                 current_page="home",
-                                                page_n=page_n, molts=molts,
+                                                page_n=page_n,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
+            molts = utils.get_current_user().query_timeline() \
+                .paginate(page_n, MOLTS_PER_PAGE, False)
+
             return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
                                    molts=molts, current_user=utils.get_current_user())
     else:
@@ -94,17 +94,17 @@ def wild_west():
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        molts = models.Molt.query_all(include_replies=False) \
-            .paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
                 blocks[block] = render_template(f'wild-west-ajax-{block}.html',
                                                 current_page="wild-west",
-                                                page_n=page_n, molts=molts,
+                                                page_n=page_n,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
+            molts = models.Molt.query_all(include_replies=False) \
+                .paginate(page_n, MOLTS_PER_PAGE, False)
             return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
                                    molts=molts, current_user=utils.get_current_user())
     else:
@@ -273,12 +273,6 @@ def user(username):
             m_page_n = request.args.get('molts-p', 1, type=int)
             r_page_n = request.args.get('replies-p', 1, type=int)
             l_page_n = request.args.get('likes-p', 1, type=int)
-            molts = this_user.query_molts() \
-                .filter_by(is_reply=False) \
-                .paginate(m_page_n, MOLTS_PER_PAGE, False)
-            replies = this_user.query_replies() \
-                .paginate(r_page_n, MOLTS_PER_PAGE, False)
-            likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
 
             if request.args.get('ajax_json'):
                 blocks = dict()
@@ -286,7 +280,7 @@ def user(username):
                     blocks[block] = render_template(
                         f'profile-ajax-{block}.html',
                         current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                        molts=molts, current_user=utils.get_current_user(),
+                        current_user=utils.get_current_user(),
                         this_user=this_user, likes=likes,
                         current_tab=current_tab, replies=replies
                     )
@@ -294,6 +288,18 @@ def user(username):
             elif request.args.get('ajax_section'):
                 section = request.args.get('ajax_section')
                 hex_ID = request.args.get('hex_ID')
+
+                molts = replies = likes = None
+
+                if section == 'molts':
+                    molts = this_user.query_molts() \
+                        .filter_by(is_reply=False) \
+                        .paginate(m_page_n, MOLTS_PER_PAGE, False)
+                elif section == 'replies':
+                    replies = this_user.query_replies() \
+                        .paginate(r_page_n, MOLTS_PER_PAGE, False)
+                elif section == 'likes':
+                    likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
                 return render_template(f'profile-ajax-tab-{section}.html',
                                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                        molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,
@@ -431,26 +437,23 @@ def search():
         page_n = request.args.get('p', 1, type=int)
         ajax_content = request.args.get('ajax_content')
 
-        if query:
-            crab_results = models.Crab.search(query)
-            molt_results = models.Molt.search(query) \
-                .paginate(page_n, MOLTS_PER_PAGE, False)
-
-        else:
-            molt_results = tuple()
-            crab_results = tuple()
-
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
                 blocks[block] = render_template(f'search-ajax-{block}.html',
                                                 current_page="search",
                                                 query=query, page_n=page_n,
-                                                molt_results=molt_results,
-                                                crab_results=crab_results,
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
+            if query:
+                crab_results = models.Crab.search(query)
+                molt_results = models.Molt.search(query) \
+                    .paginate(page_n, MOLTS_PER_PAGE, False)
+            else:
+                molt_results = tuple()
+                crab_results = tuple()
+
             return render_template('search-results.html' if ajax_content else 'search.html', current_page="search",
                                    query=query, page_n=page_n, molt_results=molt_results,
                                    crab_results=crab_results, current_user=utils.get_current_user())
