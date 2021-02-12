@@ -273,12 +273,6 @@ def user(username):
             m_page_n = request.args.get('molts-p', 1, type=int)
             r_page_n = request.args.get('replies-p', 1, type=int)
             l_page_n = request.args.get('likes-p', 1, type=int)
-            molts = this_user.query_molts() \
-                .filter_by(is_reply=False) \
-                .paginate(m_page_n, MOLTS_PER_PAGE, False)
-            replies = this_user.query_replies() \
-                .paginate(r_page_n, MOLTS_PER_PAGE, False)
-            likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
 
             if request.args.get('ajax_json'):
                 blocks = dict()
@@ -286,7 +280,7 @@ def user(username):
                     blocks[block] = render_template(
                         f'profile-ajax-{block}.html',
                         current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                        molts=molts, current_user=utils.get_current_user(),
+                        current_user=utils.get_current_user(),
                         this_user=this_user, likes=likes,
                         current_tab=current_tab, replies=replies
                     )
@@ -294,6 +288,18 @@ def user(username):
             elif request.args.get('ajax_section'):
                 section = request.args.get('ajax_section')
                 hex_ID = request.args.get('hex_ID')
+
+                molts = replies = likes = None
+
+                if section == 'molts':
+                    molts = this_user.query_molts() \
+                        .filter_by(is_reply=False) \
+                        .paginate(m_page_n, MOLTS_PER_PAGE, False)
+                elif section == 'replies':
+                    replies = this_user.query_replies() \
+                        .paginate(r_page_n, MOLTS_PER_PAGE, False)
+                elif section == 'likes':
+                    likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
                 return render_template(f'profile-ajax-tab-{section}.html',
                                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
                                        molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,

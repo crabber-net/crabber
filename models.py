@@ -506,7 +506,7 @@ class Crab(db.Model):
         """ Returns all replies the user has published that are still
             available.
         """
-        molts = self.query_molts()
+        molts = self.query_molts().filter_by(is_reply=True)
         return molts
 
     def query_timeline(self) -> BaseQuery:
