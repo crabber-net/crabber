@@ -172,6 +172,7 @@ function updateImgPreview(imgInput) {
 
     reader.onloadend = function() {
         // Update image preview
+        console.log(imgPreview);
         $(imgPreview).parent().removeClass("d-none");
         imgPreview.css("background-image", `url('${reader.result}')`);
         imgPreview.attr("src", reader.result);
