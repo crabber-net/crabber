@@ -12,7 +12,7 @@
         </svg>
     </div>
 
-    <div class="mt-5 p-3 stat-container" id="trophies">
+    <div class="mt-5 p-3 rounded-media neue-card neue-card-media" id="trophies">
         <div class="d-flex flex-wrap justify-content-center">
             {% for stat in stats['mini_stats'] %}
                 {% include "stat.html" %}
@@ -29,7 +29,7 @@
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted stat-explanation">The most followed active user</p>
-        <div class="king-profile row flex-row absolute-container">
+        <div class="king-profile neue-card neue-card-media p-4 row flex-row absolute-container">
             <div class="col-auto">
                 <img class="profile-crown" src="{{url_for('static', filename='img/crown.svg')}}" alt="golden crown">
                 <div class="rounded-circle profile-picture"
@@ -65,7 +65,7 @@
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted stat-explanation">Our newest member. Go say hello!</p>
-        <div class="king-profile row flex-row absolute-container">
+        <div class="king-profile neue-card neue-card-media p-4 row flex-row absolute-container">
             <div class="col-auto">
                 <div class="avatar-badge">
 
@@ -106,7 +106,7 @@
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The most liked Molt</p>
-        <div>
+        <div class="neue-card neue-card-media p-1">
             {% include 'molt.html' %}
         </div>
     </div>
@@ -119,7 +119,7 @@
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The Molt with the most replies</p>
-        <div>
+        <div class="neue-card neue-card-media p-1">
             {% include 'molt.html' %}
         </div>
     </div>
@@ -135,7 +135,7 @@
         <div class="trendy-tag">
             <h2 class="text-primary text-center">%{{tag.name}}</h2>
         </div>
-        <div class="trendy-tag-molts">
+        <div class="trendy-tag-molts neue-card neue-card-media p-1">
             {% for molt in tag_molts %}
                 {% include 'molt.html' %}
             {% endfor %}

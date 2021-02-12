@@ -704,6 +704,9 @@ div.mini-molt:hover {
 div.mini-molt:hover div.mini-molt:hover {
     background-color: var(--dark-lesser);
 }
+.neue-card div.mini-molt:hover {
+    background: none;
+}
 .mini-molt-remolt {
     font-size: 11px;
     position: relative;
@@ -1798,14 +1801,25 @@ table#user-info th {
     scroll-padding-top: 5rem;
 }
 
-.neue-card {
-    background-color: var(--neue-card);
+.neue-card, .neue-hover-card:hover {
+    background-color: var(--neue-card) !important;
 
     border-radius: .25rem;
+
+    transition-duration: 200ms;
 
     -webkit-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
     -moz-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
     box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
+}
+.neue-card:hover {
+    transform: translate(-2px, -2px);
+    -webkit-box-shadow: 24px 24px 20px 5px rgba(0, 0, 0, 0.04);
+    -moz-box-shadow: 24px 24px 20px 5px rgba(0, 0, 0, 0.04);
+    box-shadow: 24px 24px 20px 5px rgba(0, 0, 0, 0.04);
+}
+.neue-card-media {
+    border-radius: 14px;
 }
 
 .glitch-wrapper {
