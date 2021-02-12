@@ -1675,7 +1675,7 @@ table#user-info th {
 }
 .profile-crown {
 	position: absolute;
-	transform: rotate(-25deg) translate(5px, -21px);
+	transform: rotate(-32deg) translate(5px, -21px);
 	width: 50px;
 }
 
@@ -1808,9 +1808,9 @@ table#user-info th {
 
     transition-duration: 200ms;
 
-    -webkit-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
-    -moz-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
-    box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.03);
+    -moz-box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.03);
+    box-shadow: 6px 6px 16px 5px rgba(0, 0, 0, 0.03);
 }
 .neue-card:hover {
     transform: translate(-2px, -2px);
