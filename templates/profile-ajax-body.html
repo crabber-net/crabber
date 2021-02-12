@@ -1,6 +1,6 @@
 {% import "macros.jinja" as macros %}
 
-<script>
+<script async>
     $(function () {
         // Enable tooltips
         $('[data-toggle="tooltip"]').tooltip();
@@ -261,7 +261,7 @@
 
             </div>
 
-            <script>
+            <script async>
                 var shellContents = $("#shell-contents");
                 $("#shell-toggle").click(function () {
                     shellContents.toggleClass("shell-collapsed");
@@ -381,7 +381,7 @@
     </div>
 </div>
 
-<script>
+<script async>
     // Molt/Like tab controller
     function switchTo(tab) {
         var tabs = ['molts', 'replies', 'likes', 'trophies']

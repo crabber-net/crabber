@@ -77,7 +77,7 @@
     <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/lastfm.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/highlight.js') }}?version={{server_start}}"></script>
-    <script>
+    <script async>
         {% if current_user %}
             // When document loads
             $(function() {
@@ -665,7 +665,7 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
-    <script>
+    <script async>
         attachCharacterCounters();
     </script>
 </body>
