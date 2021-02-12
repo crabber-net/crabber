@@ -736,8 +736,7 @@ class Molt(db.Model):
         if link:
             url = link.group(1)
             # Check that link doesn't match any embed types
-            if all((not pattern.match(url) for pattern in [patterns.spotify,
-                                                           patterns.youtube,
+            if all((not pattern.match(url) for pattern in [patterns.youtube,
                                                            patterns.giphy,
                                                            patterns.ext_img])):
                 self.card = Card.get(url)
@@ -809,19 +808,6 @@ class Molt(db.Model):
         else:
             ext_img_embed = "<!-- no valid external image links found -->"
 
-        # Convert spotify link to embedded iframe
-        if patterns.spotify.search(new_content):
-            results = patterns.spotify.search(new_content)
-            spotify_link = results.group(2, 3)
-            spotify_embed = render_template_string(
-                f'{{% with link={spotify_link} %}}'
-                '   {% include "spotify.html" %}'
-                '{% endwith %}'
-            )
-            new_content = patterns.spotify.sub('', new_content)
-        else:
-            spotify_embed = "<!-- no valid spotify links found -->"
-
         new_content, _ = Molt.label_links(new_content)
 
         link_card = '<!-- no cards created -->'
@@ -838,7 +824,7 @@ class Molt(db.Model):
         new_content = Molt.label_crabtags(new_content)
 
         return new_content + giphy_embed + ext_img_embed + youtube_embed  \
-            + spotify_embed + link_card
+            + link_card
 
     def dict(self):
         """ Serialize Molt into dictionary.

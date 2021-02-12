@@ -6,8 +6,6 @@ tag = re.compile(
     r'(?:^|\s)(?<!\\)%([\w]{1,16})(?!\w)')
 username = re.compile(
     r'^\w+$')
-spotify = re.compile(
-    r'(https?://open\.spotify\.com/(?:embed/)?(\w+)/(\w+))(?:\S+)?')
 youtube = re.compile(
     r'(?:https?://)?(?:www.)?(?:youtube\.com/watch\?(?:[^&]+&)*v=|youtu\.be/)(\S{11})')
 giphy = re.compile(
