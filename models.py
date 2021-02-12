@@ -7,7 +7,7 @@ import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
-from sqlalchemy import desc, func
+from sqlalchemy import desc, func, or_
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -865,6 +865,7 @@ class Molt(db.Model):
                 "timestamp": round(self.timestamp.timestamp())
             }
         }
+
     def get_reply_from(self, crab: Union[Crab, int]) -> Optional['Molt']:
         """ Return first reply Molt from `crab` if it exists.
         """
@@ -884,12 +885,12 @@ class Molt(db.Model):
         """ Return first reply Molt from a crab that `crab` follows if it
             exists.
         """
-        following_ids = [followed.id for followed in crab.following]
-        following_ids.append(crab.id)
-        reply = Molt.query.filter_by(is_reply=True, original_molt=self,
-                                     deleted=False) \
-            .filter(Molt.author.has(deleted=False, banned=False)) \
-            .join(Molt.author).filter(Crab.id.in_(following_ids)) \
+        reply = Molt.query_all() \
+            .join(following_table,
+                  following_table.c.following_id == Molt.author_id) \
+            .filter(or_(following_table.c.follower_id == crab.id,
+                        Molt.author_id == crab.id)) \
+            .filter(Molt.is_reply == True, Molt.original_molt_id == self.id) \
             .order_by(Molt.timestamp).first()
         return reply
 
