@@ -31,6 +31,7 @@ SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of whe
 FEATURED_MOLT_ID = 1
 FEATURED_CRAB_USERNAME = 'jake'
 BLACKLIST = load_lines_from_file('blacklist')
+MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
 
 API_DEFAULT_CRAB_LIMIT = 10
 API_MAX_CRAB_LIMIT = 50

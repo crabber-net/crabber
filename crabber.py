@@ -46,7 +46,7 @@ def register_blueprints(app):
 
 
 app = create_app()
-mail = CrabMail('mail_conf.json')
+mail = CrabMail(MAIL_JSON)
 
 
 @app.route('/robots.txt')
