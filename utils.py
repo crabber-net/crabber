@@ -15,28 +15,43 @@ from werkzeug.wrappers import Response
 
 db = extensions.db
 
-def show_error(error_msg: str, redirect_url=None) -> Response:
+
+def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
+        -> Response:
     """
     Redirect user to current page with error message alert
     :param error_msg: Message to display to user
     :param redirect_url: Location to redirect user to. Will default to current
         location.
+    :param preserve_arguments: Whether to preserve prior url args.
     :return: Response to return to user
     """
     target_url = redirect_url or request.path
-    return redirect(f"{target_url}?error={error_msg}")
+    args = ''
+    if preserve_arguments:
+        args = '&'.join([f'{key}={value}'
+                         for key, value in request.args.items()
+                         if key != 'error'])
+    return redirect(f'{target_url}?error={error_msg}&{args}')
 
 
-def show_message(misc_msg: str, redirect_url=None) -> Response:
+def show_message(misc_msg: str, redirect_url=None, preserve_arguments=False) \
+        -> Response:
     """
     Redirect user to current page with misc message alert
     :param misc_msg: Message to display to user
     :param redirect_url: Location to redirect user to. Will default to current
         location.
+    :param preserve_arguments: Whether to preserve prior url args.
     :return: Response to return to user
     """
     target_url = redirect_url or request.path
-    return redirect(f"{target_url}?msg={misc_msg}")
+    args = ''
+    if preserve_arguments:
+        args = '&'.join([f'{key}={value}'
+                         for key, value in request.args.items()
+                         if key != 'msg'])
+    return redirect(f'{target_url}?msg={misc_msg}&{args}')
 
 
 def get_current_user():

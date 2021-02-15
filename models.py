@@ -63,6 +63,7 @@ class Crab(db.Model):
     timezone = db.Column(db.String(8), nullable=False, default="-06.00")
     lastfm = db.Column(db.String, nullable=True)
     banned = db.Column(db.Boolean, nullable=False, default=False)
+    _password_reset_token = db.Column('password_reset_token', db.String)
 
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
@@ -207,6 +208,32 @@ class Crab(db.Model):
         """ Return user's currently pinned molt. (May be None)
         """
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    def generate_password_reset_token(self):
+        new_token = dict(token=secrets.token_hex(32),
+                         timestamp=int(datetime.datetime.utcnow().timestamp()))
+        self._password_reset_token = json.dumps(new_token)
+        db.session.commit()
+        return new_token['token']
+
+    def verify_password_reset_token(self, token: str) -> bool:
+        if token and self._password_reset_token:
+            # Load from JSON
+            real_token = json.loads(self._password_reset_token)
+            # Check if expired
+            token_time = datetime.datetime.fromtimestamp(
+                real_token['timestamp']
+            )
+            elapsed_minutes = abs(
+                (token_time - datetime.datetime.utcnow()).total_seconds()
+            ) / 60
+            if elapsed_minutes < 10 and token == real_token['token']:
+                return True
+        return False
+
+    def clear_password_reset_token(self):
+        self._password_reset_token = None
+        db.session.commit()
 
     def bookmark(self, molt):
         """ Add `molt` to bookmarks.
@@ -517,6 +544,9 @@ class Crab(db.Model):
             .order_by(Molt.timestamp.desc())
         return molts
 
+    def change_password(self, password: str):
+        self.password = self.hash_pass(password)
+
     @staticmethod
     def order_query_by_followers(query: BaseQuery) -> BaseQuery:
         """ Orders a Crab query by number of followers (descending).
@@ -549,19 +579,32 @@ class Crab(db.Model):
     @staticmethod
     def get_by_ID(id: int, include_invalidated: bool = False) \
             -> Optional['Crab']:
-        crab = Crab.query.filter_by(id=id)
-        if not include_invalidated:
-            crab = crab.filter_by(deleted=False, banned=False)
-        return crab.first()
+        if id:
+            crab = Crab.query.filter_by(id=id)
+            if not include_invalidated:
+                crab = crab.filter_by(deleted=False, banned=False)
+            return crab.first()
+
+    @staticmethod
+    def get_by_email(email: str, include_invalidated: bool = False) \
+            -> Optional['Crab']:
+        if email:
+            crab = Crab.query \
+                .filter(Crab.email.ilike(email))
+            if not include_invalidated:
+                crab = crab.filter_by(deleted=False, banned=False)
+            return crab.first()
 
     @staticmethod
     def get_by_username(username: str, include_invalidated: bool = False) \
             -> Optional['Crab']:
-        crab = Crab.query \
-            .filter(Crab.username.ilike(username))
-        if not include_invalidated:
-            crab = crab.filter_by(deleted=False, banned=False)
-        return crab.first()
+        if username:
+            crab = Crab.query \
+                .filter(Crab.username.ilike(username))
+            if not include_invalidated:
+                crab = crab.filter_by(deleted=False, banned=False)
+            return crab.first()
+
 
     @staticmethod
     def search(query: str) -> BaseQuery:

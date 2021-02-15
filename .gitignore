@@ -18,3 +18,4 @@ bfg.jar
 db.json
 .flake8
 *todo.md
+mail_conf.json

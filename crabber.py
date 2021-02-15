@@ -1,5 +1,6 @@
 import calendar
 from config import *
+from crab_mail import CrabMail
 import datetime
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
     session
@@ -45,6 +46,7 @@ def register_blueprints(app):
 
 
 app = create_app()
+mail = CrabMail('mail_conf.json')
 
 
 @app.route('/robots.txt')
@@ -159,6 +161,58 @@ def login():
     else:
         login_failed = request.args.get('failed') is not None
         return render_template('login.html', current_page='login', hide_sidebar=True, login_failed=login_failed)
+
+
+@app.route("/forgotpassword/", methods=('GET', 'POST'))
+def forgot_password():
+    email_sent = False
+    if request.method == 'POST':
+        crab_email = request.form.get('email')
+        crab = models.Crab.get_by_email(crab_email)
+        token = crab.generate_password_reset_token()
+
+        # Send email
+        body = render_template('password-reset-email.html',
+                               crab=crab, token=token)
+        if mail.send_mail(crab_email, subject='Reset your password',
+                          body=body):
+            email_sent = True
+        else:
+            return show_error('There was a problem sending your email. Please '
+                              'try again.')
+    elif session.get('current_user'):
+        return redirect('/')
+    return render_template('forgot-password.html',
+                           current_page='forgot-password',
+                           hide_sidebar=True, email_sent=email_sent)
+
+
+@app.route("/resetpassword/", methods=('GET', 'POST'))
+def reset_password():
+    email = request.args.get('email')
+    token = request.args.get('token')
+    crab = models.Crab.get_by_email(email)
+    if crab:
+        if crab.verify_password_reset_token(token):
+            if request.method == 'POST':
+                new_pass = request.form.get('password')
+                confirm_pass = request.form.get('confirm-password')
+                if new_pass == confirm_pass:
+                    crab.change_password(new_pass)
+                    crab.clear_password_reset_token()
+                    return utils.show_message('Password changed successfully.',
+                                              redirect_url='/login')
+                else:
+                    return utils.show_error('Passwords do not match.',
+                                            preserve_arguments=True)
+            elif session.get('current_user'):
+                return redirect('/')
+            else:
+                return render_template('reset-password.html',
+                                       current_page='reset-password',
+                                       hide_sidebar=True)
+    return utils.show_error('Password reset link is either invalid or '
+                            'expired.', redirect_url='/login')
 
 
 @app.route("/signup/", methods=("GET", "POST"))

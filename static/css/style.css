@@ -520,6 +520,12 @@
     left: 0;
     margin: auto;
 }
+.absolute-vcenter {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
 .absolute-container {
     /* Contains absolute fill */
     position: relative;
