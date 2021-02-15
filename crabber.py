@@ -169,17 +169,22 @@ def forgot_password():
     if request.method == 'POST':
         crab_email = request.form.get('email')
         crab = models.Crab.get_by_email(crab_email)
-        token = crab.generate_password_reset_token()
+        if crab:
+            token = crab.generate_password_reset_token()
 
-        # Send email
-        body = render_template('password-reset-email.html',
-                               crab=crab, token=token)
-        if mail.send_mail(crab_email, subject='Reset your password',
-                          body=body):
-            email_sent = True
+            # Send email
+            body = render_template('password-reset-email.html',
+                                   crab=crab, token=token)
+            if mail.send_mail(crab_email, subject='Reset your password',
+                              body=body):
+                email_sent = True
+            else:
+                return show_error('There was a problem sending your email. '
+                                  'Please try again.')
         else:
-            return show_error('There was a problem sending your email. Please '
-                              'try again.')
+            # Crab not found, still displaying "email sent" for security
+            # purposes
+            email_sent = True
     elif session.get('current_user'):
         return redirect('/')
     return render_template('forgot-password.html',
