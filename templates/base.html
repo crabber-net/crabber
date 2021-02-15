@@ -25,7 +25,7 @@
     {% else %}
         {% set social_image = 'img/crabber_header.png' %}
     {% endif %}
-    <meta property="og:image" content="https://crabber.net{{url_for('static', filename=social_image)}}">
+    <meta property="og:image" content="{{BASE_URL}}{{url_for('static', filename=social_image)}}">
     {% if this_user %}
     <meta property="og:type" content="profile:{{this_user.username}}">
     {% else %}

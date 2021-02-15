@@ -1,5 +1,6 @@
 import config
 import datetime
+import email.utils
 import extensions
 from flask import escape, render_template, render_template_string, url_for
 from flask_sqlalchemy import BaseQuery
@@ -751,6 +752,19 @@ class Molt(db.Model):
         return Molt.query_likes(self).count()
 
     @property
+    def RFC_2822(self):
+        """ Returns RFC 2822-compliant post date.
+        """
+        return email.utils.format_datetime(self.timestamp)
+
+    @property
+    def href(self):
+        """ Returns a link to this Molt.
+        """
+        return f'{config.BASE_URL}/user/{self.author.username}' \
+            f'/status/{self.id}/'
+
+    @property
     def pretty_age(self):
         """ Property wrapper for `Molt.get_pretty_age`.
         """
@@ -826,6 +840,38 @@ class Molt(db.Model):
         if self.approved:
             self.approved = False
             db.session.commit()
+
+    def semantic_content(self) -> str:
+        """ Return Molt content (including embeds, tags, and mentions)
+            rasterized as semantic HTML. (For RSS feeds and other external
+            applications)
+        """
+        # Escape/sanitize user submitted content
+        new_content = str(escape(self.content))
+        new_content, _ = Molt.label_links(new_content)
+
+        # Preserve newlines
+        new_content = new_content.strip().replace("\n", "<br>")
+
+        # Convert mentions into anchor tags
+        new_content = Molt.label_mentions(new_content)
+
+        # Convert crabtags into anchor tags
+        new_content = Molt.label_crabtags(new_content)
+
+        # Add <img/>
+        if self.image:
+            new_content += (
+                f' <img src="{config.BASE_URL}/static/{self.image}"'
+                ' style="max-width: 250px;" />'
+            )
+
+        # Add link to quoted Molt
+        if self.is_quote:
+            new_content += f' <a href="{self.original_molt.href}">' \
+                f'{self.original_molt.href}</a>'
+
+        return f'<p>{new_content}</p>'
 
     def rich_content(self, full_size_media=False):
         """ Return Molt content (including embeds, tags, and mentions)

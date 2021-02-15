@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>%{{crabtag}}</title>
+        <description>Crabber feed for: %{{crabtag}}</description>
+        <link>{{BASE_URL}}/crabtag/{{crabtag}}/</link>
+        {% for molt in molts %}
+        <item>
+            <title>{{molt.content}}</title>
+            <dc:creator>@{{molt.author.username}}</dc:creator>
+            <description>
+                <![CDATA[
+                    {{molt.semantic_content()|safe}}
+                ]]>
+            </description>
+            <pubdate>{{molt.RFC_2822}}</pubdate>
+            <guid>{{molt.id}}</guid>
+            <link>{{BASE_URL}}/user/{{molt.author.username}}/status/{{molt.id}}</link>
+        </item>
+        {% endfor %}
+    </channel>
+</rss>

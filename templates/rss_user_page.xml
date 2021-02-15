@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+    <channel>
+        <title>{{crab.display_name}} / @{{crab.username}}</title>
+        <description>Crabber feed for: @{{crab.username}}</description>
+        <link>{{BASE_URL}}/user/{{crab.username}}/</link>
+        <image>
+            <title>{{crab.display_name}} / @{{crab.username}}</title>
+            <link>{{BASE_URL}}/user/{{crab.username}}/</link>
+            <url>{{BASE_URL}}{{url_for('static', filename=crab.avatar)}}</url>
+            <height>128</height>
+            <width>128</width>
+        </image>
+        {% for molt in molts %}
+        <item>
+            <title>{{molt.content}}</title>
+            <dc:creator>@{{crab.username}}</dc:creator>
+            <description>
+                <![CDATA[
+                    {{molt.semantic_content()|safe}}
+                ]]>
+            </description>
+            <pubdate>{{molt.RFC_2822}}</pubdate>
+            <guid>{{molt.id}}</guid>
+            <link>{{BASE_URL}}/user/{{crab.username}}/status/{{molt.id}}</link>
+        </item>
+        {% endfor %}
+    </channel>
+</rss>

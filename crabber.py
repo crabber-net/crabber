@@ -34,6 +34,7 @@ def register_extensions(app):
 
 def register_blueprints(app):
     import crabber_api
+    import crabber_rss
 
     # Rate-limit API
     limiter = Limiter(app, key_func=crabber_api.get_api_key)
@@ -43,6 +44,8 @@ def register_blueprints(app):
 
     # Register API V1 blueprint
     app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
+    # Register RSS blueprint
+    app.register_blueprint(crabber_rss.RSS, url_prefix='/rss')
 
 
 app = create_app()
@@ -807,6 +810,7 @@ def inject_global_vars():
     now = datetime.datetime.utcnow()
     return dict(
         MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
+        BASE_URL=BASE_URL,
         TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
         IS_WINDOWS=os.name == "nt",
         localize=utils.localize,
@@ -816,7 +820,7 @@ def inject_global_vars():
         uuid=utils.hexID, referrer=request.referrer,
         light_mode=light_mode, comicsans_mode=comicsans_mode,
         trending_crabtags=models.Crabtag.get_trending(),
-        is_debug_server=is_debug_server
+        is_debug_server=is_debug_server,
     )
 
 
