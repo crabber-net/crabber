@@ -37,12 +37,12 @@ administrator.
   1. Respect other users.
   2. Follow the law of both your own country and of the United States.
   3. Do not reveal personal information of others. It's recommended not to
-  4. reveal your own, but that's up to you unless we deem it inappropriate.
-  5. Hate speech is not allowed. This includes slurs, "dog whistling", and
-  6. otherwise hateful or slanderous behaviour.
-  7. Incel, alt-right, KKK, Nazi, and other hateful ideologies are not allowed.
-  8. Go back to Parler and complain how this is an SJW site. We don't care.
-  9. This site does not support "cancel culture". Give people the benefit of the
+     reveal your own, but that's up to you unless we deem it inappropriate.
+  4. Hate speech is not allowed. This includes slurs, "dog whistling", and
+     otherwise hateful or slanderous behaviour.
+  5. Incel, alt-right, KKK, Nazi, and other hateful ideologies are not allowed.
+     Go back to Parler and complain how this is an SJW site. We don't care.
+  6. This site does not support "cancel culture". Give people the benefit of the
      doubt and don't brigade them for their minor mistakes. People grow and this
      site encourages that.
 
@@ -59,7 +59,7 @@ list will omit all data deliberately submitted by the user (e.g. Molt contents,
 display name, etc.) with the exception of email addresses.
 
   Email             Used for login verification and the case of needing to
-                    contact a user.
+                    contact a user. (e.g. password resets)
   IP Address        Used to ban addresses who repeatedly create accounts that
                     break our rules as defined in §2A.
   Browser           Collected for analytical purposes. If you wish for this to
