@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
     <channel>
         <title>@{{crab.username}}'s Timeline</title>
         <description>Crabber timeline for: @{{crab.username}}</description>
         <link>{{BASE_URL}}/</link>
+        <atom:link href="{{BASE_URL}}/" rel="self" />
         {% for molt in molts %}
         <item>
-            <title>{{molt.content}}</title>
+            <title>{{molt.content or '(image)'}}</title>
             <dc:creator>@{{molt.author.username}}</dc:creator>
             <description>
                 <![CDATA[
                     {{molt.semantic_content()|safe}}
                 ]]>
             </description>
-            <pubdate>{{molt.RFC_2822}}</pubdate>
-            <guid>{{molt.id}}</guid>
+            <pubDate>{{molt.RFC_2822}}</pubDate>
+            <guid>{{BASE_URL}}/user/{{molt.author.username}}/status/{{molt.id}}</guid>
             <link>{{BASE_URL}}/user/{{molt.author.username}}/status/{{molt.id}}</link>
         </item>
         {% endfor %}

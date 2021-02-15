@@ -854,16 +854,15 @@ class Molt(db.Model):
         new_content = new_content.strip().replace("\n", "<br>")
 
         # Convert mentions into anchor tags
-        new_content = Molt.label_mentions(new_content)
+        new_content = Molt.label_mentions(new_content, absolute_url=True)
 
         # Convert crabtags into anchor tags
-        new_content = Molt.label_crabtags(new_content)
+        new_content = Molt.label_crabtags(new_content, absolute_url=True)
 
         # Add <img/>
         if self.image:
             new_content += (
-                f' <img src="{config.BASE_URL}/static/{self.image}"'
-                ' style="max-width: 250px;" />'
+                f' <img src="{config.BASE_URL}/static/{self.image}" />'
             )
 
         # Add link to quoted Molt
@@ -1259,11 +1258,12 @@ class Molt(db.Model):
         return output, urls
 
     @staticmethod
-    def label_mentions(content):
+    def label_mentions(content, absolute_url=False):
         """ Replace mentions with HTML links to users.
         """
         output = content
         match = patterns.mention.search(output)
+        base_url = config.BASE_URL if absolute_url else ''
         if match:
             start, end = match.span()
             username_str = output[start:end].strip("@ \t\n")
@@ -1272,8 +1272,9 @@ class Molt(db.Model):
             if username:
                 output = [
                     output[:start],
-                    f'<a href="/user/{match.group(1)}" class="no-onclick \
-                    mention zindex-front">{output[start:end]}</a>',
+                    f'<a href="{base_url}/user/{match.group(1)}" \
+                    class="no-onclick mention zindex-front"> \
+                    {output[start:end]}</a>',
                     Molt.label_mentions(output[end:])
                 ]
                 output = ''.join(output)
@@ -1282,17 +1283,19 @@ class Molt(db.Model):
         return output
 
     @staticmethod
-    def label_crabtags(content):
+    def label_crabtags(content, absolute_url=False):
         """ Replace crabtags with HTML links to crabtag exploration page.
         """
         output = content
         match = patterns.tag.search(output)
+        base_url = config.BASE_URL if absolute_url else ''
         if match:
             start, end = match.span()
             output = [
                 output[:start],
-                f'<a href="/crabtag/{match.group(1)}" class="no-onclick \
-                crabtag zindex-front">{output[start:end]}</a>',
+                f'<a href="{base_url}/crabtag/{match.group(1)}" \
+                class="no-onclick crabtag zindex-front"> \
+                {output[start:end]}</a>',
                 Molt.label_crabtags(output[end:])
             ]
             output = ''.join(output)
