@@ -239,16 +239,19 @@ def signup():
                 if len(username) in range(3, 32):
                     if patterns.username.fullmatch(username):
                         if password == confirm_password:
-                            # Create user account
-                            models.Crab.create_new(username=username,
-                                                   email=email,
-                                                   password=password,
-                                                   display_name=display_name)
+                            if password:
+                                # Create user account
+                                models.Crab.create_new(username=username,
+                                                       email=email,
+                                                       password=password,
+                                                       display_name=display_name)
 
-                            # "Log in"
-                            session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
-                            # Redirect to let the user know it succeeded
-                            return redirect("/signupsuccess")
+                                # "Log in"
+                                session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
+                                # Redirect to let the user know it succeeded
+                                return redirect("/signupsuccess")
+                            else:
+                                return redirect("/signup?failed&error_msg=Password cannot be blank")
                         else:
                             return redirect("/signup?failed&error_msg=Passwords do not match")
                     else:

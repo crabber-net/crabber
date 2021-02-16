@@ -338,6 +338,24 @@ def common_molt_actions() -> Response:
                 'An account with that email address already exists'
             )
 
+    elif action == "change_password":
+        target_user = get_current_user()
+        old_password = request.form.get('old-password')
+        new_password = request.form.get('new-password')
+        confirm_password = request.form.get('confirm-password')
+
+        if target_user.verify_password(old_password):
+            if new_password == confirm_password:
+                if new_password:
+                    target_user.change_password(new_password)
+                    return show_message('Your password has been changed.')
+                else:
+                    return show_error('Password cannot be blank.')
+            else:
+                return show_error('New passwords don\'t match.')
+        else:
+            return show_error('Incorrect current password.')
+
     elif action == "update_general_settings":
         target_user = get_current_user()
         new_timezone = request.form.get('timezone')

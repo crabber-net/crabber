@@ -128,6 +128,33 @@
         <div class="clearfix"></div>
     </form>
 
+    <form method="POST" class="p-2">
+        <input type="hidden" name="user_action" value="change_password">
+        <h3 class="mb-3">Change password</h3>
+
+        <!-- Old Pass -->
+        <div class="form-group cool-input">
+            <label for="old-password">Current password</label>
+            <input type="password" name="old-password" class="form-control" id="old-password" required aria-required>
+        </div>
+
+        <!-- New Pass -->
+        <div class="form-group cool-input">
+            <label for="new-password">New password</label>
+            <input type="password" name="new-password" class="form-control" id="new-password" required aria-required>
+        </div>
+
+        <!-- Confirm pass -->
+        <div class="form-group cool-input">
+            <label for="confirm-new-password">Confirm new password</label>
+            <input type="password" name="confirm-password" class="form-control" id="confirm-new-password" required aria-required>
+        </div>
+
+        <!-- Submit button -->
+        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Change Password</strong></button>
+        <div class="clearfix"></div>
+    </form>
+
     <!-- Section border -->
     <hr class="border-dark mb-3 mt-4">
 

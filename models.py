@@ -547,6 +547,7 @@ class Crab(db.Model):
 
     def change_password(self, password: str):
         self.password = self.hash_pass(password)
+        db.session.commit()
 
     @staticmethod
     def order_query_by_followers(query: BaseQuery) -> BaseQuery:
