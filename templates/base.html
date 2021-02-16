@@ -82,14 +82,14 @@
             // When document loads
             $(function() {
                 {% if current_page == "home" %}
-                setInterval(GetData, 5000, "molts_since", {'crab_id': {{current_user.id}}, 'timestamp': -1}, updateNewMoltIndicator);
+                setInterval(GetData, 10000, "molts_since", {'crab_id': {{current_user.id}}, 'timestamp': -1}, updateNewMoltIndicator);
                 {% endif %}
 
                 // Initial notif count update
                 GetData("unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
 
                 // Update notif count every 5 seconds
-                setInterval(GetData, 5000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
+                setInterval(GetData, 10000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
 
                 // Stop propagation of onclick to parent if child element says so
                 $('.no-onclick').click(function(event) {
