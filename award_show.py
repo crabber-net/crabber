@@ -40,3 +40,5 @@ for crab in Crab.query_all():
         if year_difference == 1:
             logger.info(f'Awarding "One Year" to @{crab.username}')
             crab.award(title='One Year')
+
+db.session.commit()
