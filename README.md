@@ -15,6 +15,25 @@ A Twitter clone for crabby people.
 ### Light Mode
 [![screenshot of crabber.net light mode](https://i.imgur.com/fge3egY.png)](https://crabber.net/)
 
+## Advantages
+
+Beyond the novelty of "twitter but crab" as Crabber user @tuna so eloquently put
+it, there *are* a number of advantages Crabber has over Twitter. Here are a few:
+
+* Completely open-source and a light codebase. If you have problems you can fix
+    those problems yourself and even host your own instance of the site.
+* The ability to edit posts for up to five minutes after they are posted.
+* A full, open REST API with an officially maintained Python client. There are
+    no paywalls or massive hoops to jump through in order to use this unlike
+    Twitter's API.
+* Much greater privacy and absolutely no tracking.
+* No sponsored posts or other advertisements (or anything else relating to
+    finance).
+* Proper rules and moderation preventing misinformation and hate speech.
+    *(Admittedly, this is simply impossible for Twitter due to its astounding
+    scale. They still lack this nonetheless.)*
+* Better user page and bio customization.
+
 ## Installation
 
 1. Clone the repo
@@ -22,13 +41,13 @@ A Twitter clone for crabby people.
 git clone https://github.com/jakeledoux/crabber.git
 cd crabber
 ```
-2. Create a python3 virtual environment and install the requirements  
+2. Create a python3 virtual environment and install the requirements
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-3. Setup the database  
+3. Setup the database
 ```bash
 python scripts/initialize_database.py
 ```
