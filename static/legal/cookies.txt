@@ -1,0 +1,33 @@
+Look, man:
+
+Cookies get such a bad rap. People here all about how bad they are and that they
+need to clear their browser, etc. Sure, cookies can be misused by some people
+but so can JavaScript and we don't need to click on a pop-up for that every time
+we visit a new website.
+
+The gist of cookies on Crabber is this:
+
+We use ONE cookie. It's called a session key. You can hit F12, go to storage,
+cookies, https://crabber.net/ and see it. That little collection of letters and
+numbers lets us keep track of what person is making what request to the website.
+When someone comes back to the site we look up their key in our file to retrieve
+two things: Is the user logged in, and if so, what account are they logged in
+to? Simple as that. Were we not to use cookies this site could simply not
+function without you having to log in EVERY TIME you load a page. That's the
+gist of the situation.
+
+There's a lot of talk about tracking people with cookies. People get the idea in
+their head that allowing a site to use cookies means that site can magically
+track them as they go about their business. Not so. The way people (Google,
+Amazon, etc.) actually track you is by having their content embedded in just
+about every site you visit. Where their content is embedded they can then check
+the cookies they own for whomever is visiting that site and see if it's someone
+they know. That's tracking.
+
+Crabber isn't embedded anywhere. Even if it was, we wouldn't care to keep a log
+of where you've been. That's Google's business. You can read our terms of
+service to see exactly what we do and don't keep track of.
+
+Don't be scared of cookies, be informed. If you don't like how sites like
+Facebook make use of them then take action on those sites. Cookies are not the
+problem, nosy people are.

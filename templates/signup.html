@@ -54,9 +54,13 @@
                 <a href="{{ url_for('static', filename='legal/tos.txt') }}" target="_blank">terms of service</a></label><br>
             <i><small class="text-muted">Seriously, this is really important. It's short, I promise.</small></i>
         </div>
-        <button type="submit" class="btn btn-primary">Let me in!</button>
+        <button type="submit" class="btn btn-primary rounded-pill">Let me in!</button>
     </form>
 
+    <div class="text-muted text-center my-5" id="cookie-footer">
+        <small>Crabber uses cookies. If you care, you can <a href="{{url_for('static', filename='legal/cookies.txt')}}">read about it here.</a></small>
+    </div>
+
     <!-- Spacer -->
-    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+    <div class="d-inline-block w-100 my-5 text-muted text-molt text-center"></div>
 {% endblock %}
