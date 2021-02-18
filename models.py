@@ -1,3 +1,4 @@
+from bleach.sanitizer import Cleaner
 import config
 import datetime
 import email.utils
@@ -1625,6 +1626,8 @@ class Bookmark(db.Model):
 
 
 class CrabHouse(db.Model):
+    # SQLAlchemy
+
     __tablename__ = 'crabhouse'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -1634,12 +1637,29 @@ class CrabHouse(db.Model):
 
     json = db.Column(db.String, server_default='{"index": ""}')
 
+    # HTML Sanitizer
+    cleaner = Cleaner(
+        tags=['a', 'area', 'b', 'br', 'div', 'em', 'h1', 'h2', 'h3', 'h4',
+              'h5', 'h6', 'i', 'img', 'li', 'map', 'ol', 'p', 's', 'span',
+              'strong', 'style', 'table', 'tbody', 'td', 'th', 'thead',
+              'tfood', 'tr', 'u', 'ul', 'blockquote', 'code', 'sup', 'sub',
+              'strike'],
+        attributes=['src', 'style', 'width', 'height', 'id', 'class'],
+        styles=['margin', 'margin-left', 'margin-top', 'margin-bottom',
+                'margin-right', 'padding', 'padding-left', 'padding-top',
+                'padding-botom', 'padding-right', 'border', 'font-size',
+                'background-color', 'color', 'font-weight', 'font-style',
+                'font-family', 'max-width', 'max-height', 'background-image',
+                'background', 'background-size', 'background-position']
+    )
+
     @property
     def pages(self) -> List[str]:
         return list(json.loads(self.json).keys())
 
     def get_page(self, page: str) -> Optional[str]:
-        return json.loads(self.json).get(page)
+        html = json.loads(self.json).get(page)
+        return self.cleaner.clean(html)
 
     def update_page(self, page: str, content: str):
         pages = json.loads(self.json)

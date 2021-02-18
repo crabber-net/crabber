@@ -4,6 +4,7 @@ html {
     background-color: lightgray;
 
     font-family: sans-serif;
+    font-size: medium;
 }
 body {
     width: 50rem;
@@ -41,13 +42,31 @@ body {
     color: white;
     text-decoration: none;
 }
+#cities-header #navbar li a:hover {
+    color: lightgray;
+    text-decoration: underline;
+}
 #cities-header #navbar li:not(:last-child):after {
     content: '|';
     padding: 0 0.5rem;
 }
 
+#cities-footer {
+    padding: 0.5rem;
+    padding-top: 2rem;
+
+    color: black;
+    background-color: lightgray;
+
+    text-align: center;
+}
+
 #body-container {
     padding: 1rem;
+    padding-top: 0;
+}
+#body-container input {
+    font-size: medium;
 }
 
 #html-editor {
@@ -55,4 +74,26 @@ body {
 
     width: 100%;
     height: 20rem;
+
+    font-family: monospace;
+    font-size: medium;
+}
+input[type="submit"].button-primary, button.button-primary {
+    background-color: var(--primary);
+    border-color: var(--primary-faded);
+
+    color: white;
+    font-size: medium;
+    font-weight: bold;
+    min-width: 5em;
+    min-height: 2em;
+    border-style: solid;
+    border-radius: 0.25em;
+}
+
+.float-right {
+    float: right;
+}
+.clearfix {
+    clear: both;
 }

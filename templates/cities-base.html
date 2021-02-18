@@ -59,6 +59,7 @@
 </head>
 
 <body>
+    <!-- Header -->
     <div id="cities-header">
         <h1>CrabberCities</h1>
         <ul id="navbar">
@@ -81,8 +82,18 @@
             </li>
         </ul>
     </div>
+
+    <!-- Main contents -->
     <div id="body-container">
         {% block body %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <div id="cities-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
+        <small class="mb-2 d-block">{{server_start|pretty_age}} since last update.</small>
+        <small>&copy; Copyright {{current_year}}, Crabber</small>
+        <br>
+        <small>Crabber is open source. <a href="https://github.com/jakeledoux/crabber">Fork on GitHub</a>.</small>
     </div>
 </body>
 </html>

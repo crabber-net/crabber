@@ -3,6 +3,14 @@
     Edit your page
 {% endblock %}
 
+{% block ext_head %}
+    <script src="{{url_for('static', filename='codemirror/lib/codemirror.js')}}"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='codemirror/lib/codemirror.css')}}">
+    <script src="{{url_for('static', filename='codemirror/mode/css/css.js')}}"></script>
+    <script src="{{url_for('static', filename='codemirror/mode/htmlmixed/htmlmixed.js')}}"></script>
+    <script src="{{url_for('static', filename='codemirror/mode/xml/xml.js')}}"></script>
+{% endblock %}
+
 {% block body %}
     <h1>Edit your CrabberCities site</h1>
     <p>Your pages</p>
@@ -31,7 +39,17 @@
     <form method="POST">
         <input type="hidden" name="user_action" value="update_html">
         <input type="hidden" name="page" value="{{page_name}}">
-        <textarea id="html-editor" name="html" placeholder="Put your HTML here.">{{ house.get_page(page_name) or '' }}</textarea>
-        <input type="submit" value="Save">
+        <textarea id="html-editor" name="html" placeholder="Put your HTML here." wrap="off">{{ house.get_page(page_name) or '' }}</textarea>
+        <input class="button-primary float-right" type="submit" value="Save">
+        <div class="clearfix"></div>
     </form>
+
+    <script>
+        <!-- Convert textarea into CodeMirror -->
+        var textArea = document.getElementById('html-editor');
+        var myCodeMirror = CodeMirror.fromTextArea(textArea, {
+            lineNumbers: true,
+            mode: "htmlmixed"
+        });
+    </script>
 {% endblock %}

@@ -30,18 +30,24 @@ def index():
 @cities.route('/me', subdomain='cities')
 def me():
     current_user = utils.get_current_user()
+
+    # User is not logged in
+    if current_user is None:
+        return redirect(f'{BASE_URL}/login')
+
     return redirect(f'http://{current_user.username}.{DOMAIN}')
 
 
 @cities.route('/edit', subdomain='cities', methods=('GET', 'POST'))
 def edit():
     current_user = utils.get_current_user()
-    crab_house = models.CrabHouse.get(current_user)
-    page_name = request.args.get('page_name', 'index')
 
     # User is not logged in
     if current_user is None:
         return redirect(f'{BASE_URL}/login')
+
+    crab_house = models.CrabHouse.get(current_user)
+    page_name = request.args.get('page_name', 'index')
 
     if request.method == 'POST':
         action = request.form.get('user_action')
