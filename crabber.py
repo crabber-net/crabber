@@ -34,6 +34,7 @@ def register_extensions(app):
 
 def register_blueprints(app):
     import crabber_api
+    import crabber_cities
     import crabber_rss
 
     # Rate-limit API
@@ -44,6 +45,8 @@ def register_blueprints(app):
 
     # Register API V1 blueprint
     app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
+    # Register crabbercities blueprint
+    app.register_blueprint(crabber_cities.cities)
     # Register RSS blueprint
     app.register_blueprint(crabber_rss.RSS, url_prefix='/rss')
 
@@ -913,4 +916,5 @@ def before_request():
 if __name__ == '__main__':
     # Start server locally.
     # If using WSGI this will not be run.
+    app.config['SERVER_NAME'] = 'localhost'
     app.run("0.0.0.0", 80, debug=True)
