@@ -14,11 +14,11 @@ import utils
 
 def create_app():
     app = Flask(__name__, template_folder="./templates")
-    app.secret_key = 'crabs are better than birds because they can cut their wings right off'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
+    app.config['SERVER_NAME'] = DOMAIN
 
     register_extensions(app)
     register_blueprints(app)
@@ -27,9 +27,14 @@ def create_app():
 
 
 def register_extensions(app):
-    from extensions import db
+    from extensions import db, sess
 
+    # Initialize flask_sqlalchemy
     db.init_app(app)
+    # Initialize flask_session
+    app.secret_key = 'all the crabs are moving to cities, you should come.'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    sess.init_app(app)
 
 
 def register_blueprints(app):
@@ -897,6 +902,7 @@ def before_request():
     # Check if remote address is banned
     if request.remote_addr in BLACKLIST:
         return abort(403)
+
     # Make sure cookies are still valid
     if session.get('current_user'):
         crab_id = session.get('current_user')
@@ -909,6 +915,7 @@ def before_request():
                                         'been banned.', '/login')
             return utils.show_error('The account you were logged into no '
                                     'longer exists.', '/login')
+
     # Persist session after browser is closed
     session.permanent = True
 
@@ -916,5 +923,4 @@ def before_request():
 if __name__ == '__main__':
     # Start server locally.
     # If using WSGI this will not be run.
-    app.config['SERVER_NAME'] = 'localhost'
     app.run("0.0.0.0", 80, debug=True)

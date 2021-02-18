@@ -1623,3 +1623,42 @@ class Bookmark(db.Model):
             .filter(Molt.author.has(deleted=False, banned=False))
         return likes
 
+
+class CrabHouse(db.Model):
+    __tablename__ = 'crabhouse'
+
+    id = db.Column(db.Integer, primary_key=True)
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'),
+                        nullable=False)
+    crab = db.relationship('Crab')
+
+    json = db.Column(db.String, server_default='{"index": ""}')
+
+    @property
+    def pages(self) -> List[str]:
+        return list(json.loads(self.json).keys())
+
+    def get_page(self, page: str) -> Optional[str]:
+        return json.loads(self.json).get(page)
+
+    def update_page(self, page: str, content: str):
+        pages = json.loads(self.json)
+        pages[page] = content
+        self.json = json.dumps(pages)
+        db.session.commit()
+
+    def delete_page(self, page: str):
+        pages = json.loads(self.json)
+        del pages[page]
+        self.json = json.dumps(pages)
+        db.session.commit()
+
+    @staticmethod
+    def get(crab: 'Crab', create_if_none=True) -> 'CrabHouse':
+        page = CrabHouse.query.filter_by(crab=crab).first()
+        if page is None and create_if_none:
+            page = CrabHouse(crab=crab)
+            db.session.add(page)
+            db.session.commit()
+
+        return page

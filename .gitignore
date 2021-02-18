@@ -20,3 +20,4 @@ db.json
 *todo.md
 mail_conf.json
 *.log
+flask_session/*

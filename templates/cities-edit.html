@@ -1,0 +1,37 @@
+{% extends 'cities-base.html' %}
+{% block title %}
+    Edit your page
+{% endblock %}
+
+{% block body %}
+    <h1>Edit your CrabberCities site</h1>
+    <p>Your pages</p>
+    <form>
+        <ul>
+            {% for page in house.pages %}
+            <li>
+                <input type="submit" name="page_name" value="{{page}}">
+            </li>
+            {% endfor %}
+            <li>
+                <input type="text" name="page_name" placeholder="Page name">
+                <input type="submit" value="Create new page">
+            </li>
+        </ul>
+    </form>
+
+    <form method="POST">
+        <input type="hidden" name="user_action" value="delete_page">
+        <input type="hidden" name="page" value="{{page_name}}">
+        <p>
+            Editing '<b>{{page_name}}</b>'
+            <input type="submit" value="Delete page">
+        </p>
+    </form>
+    <form method="POST">
+        <input type="hidden" name="user_action" value="update_html">
+        <input type="hidden" name="page" value="{{page_name}}">
+        <textarea id="html-editor" name="html" placeholder="Put your HTML here.">{{ house.get_page(page_name) or '' }}</textarea>
+        <input type="submit" value="Save">
+    </form>
+{% endblock %}
