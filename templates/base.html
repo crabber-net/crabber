@@ -583,6 +583,7 @@
             {% if not hide_sidebar %}
             <!-- Additional Panel -->
             <div class="d-none d-lg-block col-2 col-xl-3 ml-2 p-1" id="add-panel">
+                {% if current_user %}
                 <!-- Search bar -->
                 <form action="/search/" method="GET">
                     <div class="rounded-pill search-box mini-compose-box px-3 p-2 d-flex flex-row">
@@ -592,6 +593,7 @@
                         <input class="w-100 mr-2" type="text" name="q" placeholder="Search Crabber" required>
                     </div>
                 </form>
+            {% endif %}
 
                 {% if current_user %}
                 {% with recommended_crabs=current_user.get_recommended_crabs() or current_user.query.offset(8).limit(3).all() %}
@@ -613,6 +615,7 @@
                 {% endwith %}
                 {% endif %}
 
+                {% if current_user %}
                 <!-- Trending Crabtags -->
                 <div class="panel" id="trending">
                     <div class="panel-title">
@@ -633,6 +636,7 @@
                         </p>
                     {% endfor %}
                 </div>
+                {% endif %}
 
                 {% if is_debug_server %}
                 <!-- Debug -->
