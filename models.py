@@ -1659,7 +1659,10 @@ class CrabHouse(db.Model):
 
     def get_page(self, page: str) -> Optional[str]:
         html = json.loads(self.json).get(page)
-        return self.cleaner.clean(html)
+        if html:
+            return self.cleaner.clean(html)
+        else:
+            return ''
 
     def update_page(self, page: str, content: str):
         pages = json.loads(self.json)

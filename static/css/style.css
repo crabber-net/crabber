@@ -1133,6 +1133,8 @@ div.mini-molt:hover div.mini-molt:hover {
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
+
+    touch-action: manipulation;
 }
 .image-modal-body img {
     max-width: 100%;

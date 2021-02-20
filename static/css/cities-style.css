@@ -24,8 +24,8 @@ body {
     color: white;
     background-color: var(--primary);
 }
-#cities-header h1 {
-    margin: 0 0.5rem;
+#cities-header #cities-logo {
+    width: 20rem;
 }
 #cities-header #navbar {
     display: block;
@@ -75,9 +75,17 @@ body {
     width: 100%;
     height: 20rem;
 
+    margin-bottom: 1rem;
+
     font-family: monospace;
     font-size: medium;
 }
+
+.CodeMirror.cm-s-default {
+    border: solid 1px lightgray;
+    margin-bottom: 1rem;
+}
+
 input[type="submit"].button-primary, button.button-primary {
     background-color: var(--primary);
     border-color: var(--primary-faded);

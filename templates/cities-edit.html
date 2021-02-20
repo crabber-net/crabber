@@ -32,14 +32,14 @@
         <input type="hidden" name="user_action" value="delete_page">
         <input type="hidden" name="page" value="{{page_name}}">
         <p>
-            Editing '<b>{{page_name}}</b>'
+            Currently editing '<b>{{page_name}}</b>' &mdash;
             <input type="submit" value="Delete page">
         </p>
     </form>
     <form method="POST">
         <input type="hidden" name="user_action" value="update_html">
         <input type="hidden" name="page" value="{{page_name}}">
-        <textarea id="html-editor" name="html" placeholder="Put your HTML here." wrap="off">{{ house.get_page(page_name) or '' }}</textarea>
+        <textarea id="html-editor" name="html" placeholder="Put your HTML here." wrap="off">{{ house.get_page(page_name) }}</textarea>
         <input class="button-primary float-right" type="submit" value="Save">
         <div class="clearfix"></div>
     </form>
