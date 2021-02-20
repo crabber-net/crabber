@@ -14,6 +14,7 @@ import utils
 
 def create_app():
     app = Flask(__name__, template_folder="./templates")
+    app.secret_key = 'all the crabs are moving to cities, you should come.'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -27,14 +28,10 @@ def create_app():
 
 
 def register_extensions(app):
-    from extensions import db, sess
+    from extensions import db
 
     # Initialize flask_sqlalchemy
     db.init_app(app)
-    # Initialize flask_session
-    app.secret_key = 'all the crabs are moving to cities, you should come.'
-    app.config['SESSION_TYPE'] = 'filesystem'
-    sess.init_app(app)
 
 
 def register_blueprints(app):
