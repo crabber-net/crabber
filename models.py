@@ -741,6 +741,12 @@ class Molt(db.Model):
         return self.query_replies().all()
 
     @property
+    def reply_count(self):
+        """ Get number of currently valid Molts that reply to this Molt.
+        """
+        return self.query_replies().count()
+
+    @property
     def likes(self):
         """ List all currently valid likes of Molt.
         """

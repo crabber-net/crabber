@@ -253,6 +253,7 @@ def molt_to_json(molt: 'models.Molt') -> dict:
         "image": absolute_url(molt.image),
         "likes": molt.like_count,
         "remolts": molt.remolt_count,
+        "replies": molt.reply_count,
         "quotes": molt.quote_count
     }
     return molt_json
