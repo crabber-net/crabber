@@ -207,6 +207,7 @@ def post_molt():
             molt_content = request.form.get('content')
             molt_image_link = request.form.get('image')
             molt_image = request.files.get('image')
+            molt_source = request.form.get('source', 'Crabber API')
             image_verified = False
 
             if molt_image_link:
@@ -227,9 +228,9 @@ def post_molt():
                         if molt_image is None:
                             return abort(400, 'Image is corrupted.')
                         new_molt = crab.molt(molt_content, image=molt_image,
-                                             source='Crabber API')
+                                             source=molt_source)
                     else:
-                        new_molt = crab.molt(molt_content, source='Crabber API')
+                        new_molt = crab.molt(molt_content, source=molt_source)
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(
@@ -283,6 +284,7 @@ def edit_molt(molt_ID):
                 molt_content = request.form.get('content')
                 molt_image_link = request.form.get('image')
                 molt_image = request.files.get('image')
+                molt_source = request.form.get('source', 'Crabber API')
                 image_verified = False
 
                 if molt_image_link:
@@ -330,6 +332,7 @@ def quote_molt(molt_ID):
                 molt_content = request.form.get('content')
                 molt_image_link = request.form.get('image')
                 molt_image = request.files.get('image')
+                molt_source = request.form.get('source', 'Crabber API')
                 image_verified = False
 
                 if molt_image_link:
@@ -348,10 +351,10 @@ def quote_molt(molt_ID):
                         molt_image = utils.upload_image(molt_image)
                         new_molt = molt.quote(crab, molt_content,
                                               image=molt_image,
-                                              source='Crabber API')
+                                              source=molt_source)
                     else:
                         new_molt = molt.quote(crab, molt_content,
-                                              source='Crabber API')
+                                              source=molt_source)
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(400, description='Missing required content.')
@@ -376,6 +379,7 @@ def reply_to_molt(molt_ID):
                 molt_content = request.form.get('content')
                 molt_image_link = request.form.get('image')
                 molt_image = request.files.get('image')
+                molt_source = request.form.get('source', 'Crabber API')
                 image_verified = False
 
                 if molt_image_link:
@@ -394,10 +398,10 @@ def reply_to_molt(molt_ID):
                         molt_image = utils.upload_image(molt_image)
                         new_molt = molt.reply(crab, molt_content,
                                               image=molt_image,
-                                              source='Crabber API')
+                                              source=molt_source)
                     else:
                         new_molt = molt.reply(crab, molt_content,
-                                              source='Crabber API')
+                                              source=molt_source)
                     return api_utils.molt_to_json(new_molt), 201
                 else:
                     return abort(400, description='Missing required content.')
