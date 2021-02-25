@@ -16,7 +16,7 @@
         <span class="text-muted w-100 d-inline-block text-center">This Molt has been deleted</span>
     {% else %}
         {% if is_reply %}
-            {% with molt = molt.original_molt, author = molt.get_author() %}
+            {% with molt = molt.original_molt, author = molt.original_molt.get_author() %}
             {% if molt.deleted %}
                 <p class="text-muted text-center">This Molt has been deleted.</p>
             {% elif author.deleted or author.banned %}
