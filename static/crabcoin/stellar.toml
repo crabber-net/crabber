@@ -24,4 +24,4 @@ display_decimals=2
 name="Crabcoin"
 desc="A crustaceous currency developed by Crabber.net"
 is_asset_anchored=false
-image="https://crabber.net/static/img/crabcoin.png"
+image="https://crabber.net/.well-known/crabcoin.png"
