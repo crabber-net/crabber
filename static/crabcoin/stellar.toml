@@ -1,0 +1,27 @@
+ACCOUNTS=[
+    "GB7E4YXQFNX645YI5IKUFHDUVYQCSWC4WHQ5WHKIBLCSQCZ6R3IX5SXO",
+    "GAUYYWZN6Z4I3CFL745QJHTHDGNASHKGNYFXVIIYP4XEOCAJOI5LJ2XY"
+]
+VERSION="2.0.0"
+
+[DOCUMENTATION]
+ORG_NAME="Crabber"
+ORG_URL="https://crabber.net"
+ORG_LOGO="https://crabber.net/static/img/favicon.png"
+ORG_PHYSICAL_ADDRESS="Burlington, Vermont"
+ORG_OFFICIAL_EMAIL="crabberwebsite@gmail.com"
+
+[[PRINCIPALS]]
+name="Jake Ledoux"
+email="contactjakeledoux@gmail.com"
+twitter="maxcompulsion"
+github="jakeledoux"
+
+[[CURRENCIES]]
+code="CRAB"
+issuer="GAUYYWZN6Z4I3CFL745QJHTHDGNASHKGNYFXVIIYP4XEOCAJOI5LJ2XY"
+display_decimals=2
+name="Crabcoin"
+desc="A crustaceous currency developed by Crabber.net"
+is_asset_anchored=false
+image="https://crabber.net/static/img/crabcoin.png"

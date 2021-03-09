@@ -3,7 +3,7 @@ from config import *
 from crab_mail import CrabMail
 import datetime
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
-    session
+    send_from_directory, session
 from flask_limiter import Limiter
 import models
 import os
@@ -50,6 +50,11 @@ def register_blueprints(app):
 
 app = create_app()
 mail = CrabMail(MAIL_JSON)
+
+
+@app.route('/.well-known/stellar.toml')
+def crabcoin():
+    return send_from_directory('static', 'crabcoin/stellar.toml')
 
 
 @app.route('/robots.txt')
