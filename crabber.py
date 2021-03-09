@@ -54,7 +54,10 @@ mail = CrabMail(MAIL_JSON)
 
 @app.route('/.well-known/stellar.toml')
 def crabcoin():
-    return send_from_directory('static', 'crabcoin/stellar.toml')
+    resp = send_from_directory('static', 'crabcoin/stellar.toml')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return resp
 
 
 @app.route('/robots.txt')
