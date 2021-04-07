@@ -49,6 +49,6 @@ thinc==7.4.5
 toml==0.10.2
 tomlkit==0.5.11
 tqdm==4.56.0
-urllib3==1.26.3
+urllib3==1.26.4
 wasabi==0.8.2
 Werkzeug==1.0.1
