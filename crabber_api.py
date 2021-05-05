@@ -28,10 +28,21 @@ def check_API_key():
     api_key = request.args.get('api_key')
     if not api_key:
         return abort(400, description='API key not provided.')
-    key_object = models.DeveloperKey.query.filter_by(key=api_key,
-                                                     deleted=False).first()
+    key_object = models.DeveloperKey.query \
+        .filter_by(key=api_key, deleted=False) \
+        .first()
+
+    # Invalid key
     if key_object is None:
         return abort(400, description='API key is invalid or expired.')
+    # Key owner deleted
+    if key_object.crab.deleted:
+        return abort(400, description='The account to which this API key '
+                     'belongs has been deleted.')
+    # Key owner banned
+    if key_object.crab.banned:
+        return abort(400, description='The account to which this API key '
+                     'belongs has been banned.')
 
 
 @API.route('/')
