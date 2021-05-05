@@ -337,12 +337,10 @@ def user(username):
     else:
         current_tab = request.args.get("tab", default="molts")
         this_user = models.Crab.get_by_username(username)
-        social_title = f'{this_user.display_name} on Crabber'
         if this_user is None:
             return render_template('not-found.html', current_user=utils.get_current_user(), noun='user')
-        elif this_user.banned:
-            return render_template('not-found.html', current_user=utils.get_current_user(), message='This user has been banned.')
         else:
+            social_title = f'{this_user.display_name} on Crabber'
             m_page_n = request.args.get('molts-p', 1, type=int)
             r_page_n = request.args.get('replies-p', 1, type=int)
             l_page_n = request.args.get('likes-p', 1, type=int)
