@@ -203,7 +203,7 @@ class Crab(db.Model):
         :return: len of unread notifs
         """
         return Notification.query_all() \
-                .filter_by(recipient=self, read=False).count()
+            .filter_by(recipient=self, read=False).count()
 
     @property
     def pinned(self):
@@ -467,8 +467,8 @@ class Crab(db.Model):
         """
         is_duplicate = False
         if kwargs.get("sender") is not self:
+            # Check for molt duplicates
             if kwargs.get("molt"):
-                # Check for duplicates
                 duplicate_notification = Notification.query.filter_by(
                     recipient=self,
                     sender=kwargs.get('sender'),
@@ -477,6 +477,20 @@ class Crab(db.Model):
                 )
                 if duplicate_notification.count():
                     is_duplicate = True
+
+            # Check for notification spamming
+            if kwargs.get('type') in ('follow', 'unfollow'):
+                now = datetime.datetime.utcnow()
+                yesterday = now - datetime.timedelta(days=1)
+                duplicate_notification = Notification.query_all() \
+                    .filter_by(
+                        recipient=self, sender=kwargs.get('sender'),
+                        type=kwargs.get('type'), molt=kwargs.get('molt')
+                    ) \
+                    .filter(Notification.timestamp > yesterday)
+                if duplicate_notification.count():
+                    is_duplicate = True
+
             if not is_duplicate:
                 new_notif = Notification(recipient=self, **kwargs)
                 db.session.add(new_notif)
