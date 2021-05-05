@@ -202,7 +202,8 @@ class Crab(db.Model):
         Get the amount of unread notifications for this Crab
         :return: len of unread notifs
         """
-        return Notification.query.filter_by(recipient=self, read=False).count()
+        return Notification.query_all() \
+                .filter_by(recipient=self, read=False).count()
 
     @property
     def pinned(self):
@@ -345,7 +346,7 @@ class Crab(db.Model):
     def get_notifications(self, paginated=False, page=1):
         """ Return all valid notifications for user.
         """
-        notifs = Notification.query.filter_by(recipient=self) \
+        notifs = Notification.query_all().filter_by(recipient=self) \
             .order_by(Notification.timestamp.desc())
         if paginated:
             return notifs.paginate(page, config.NOTIFS_PER_PAGE, False)
@@ -1387,6 +1388,13 @@ class Notification(db.Model):
     @property
     def pretty_age(self):
         return utils.get_pretty_age(self.timestamp)
+
+    @staticmethod
+    def query_all() -> BaseQuery:
+        ''' Returns a query containing all valid notifications.
+        '''
+        return Notification.query \
+                .filter(Notification.sender.has(deleted=False, banned=False))
 
     def mark_read(self, is_read=True):
         self.read = is_read
