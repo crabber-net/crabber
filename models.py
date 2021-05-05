@@ -411,7 +411,10 @@ class Crab(db.Model):
         """
         if crab in self._following and crab is not self:
             self._following.remove(crab)
-            crab.notify(sender=self, type="unfollow")
+            #
+            # Temporarily disabled due to spamming:
+            #
+            # crab.notify(sender=self, type="unfollow")
             db.session.commit()
 
     def verify_password(self, password):
