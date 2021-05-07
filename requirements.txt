@@ -13,6 +13,7 @@ flake8==3.8.4
 Flask==1.1.2
 Flask-Limiter==1.4
 Flask-SQLAlchemy==2.4.4
+geoip2==4.1.0
 gizeh==0.1.11
 idna==2.10
 itsdangerous==1.1.0
