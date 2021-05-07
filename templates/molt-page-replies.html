@@ -1,6 +1,4 @@
-{% macro expand_img() %}
-    style="cursor: pointer;" onclick="expandImage($(this).find('img, div').attr('src'))"
-{% endmacro %}
+{% import "macros.jinja" as macros %}
 
 <!-- All replies live here! -->
 {% for reply in replies %}

@@ -1,12 +1,14 @@
+{% import "macros.jinja" as macros %}
+
 {% if full_size_media %}
 <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
-    onclick="expandImage($(this).find('img, div').attr('src'))">
+    {{macros.expand_img()}}>
     <div class="floating-media-tag">GIF</div>
     <img class="w-100 rounded-media" src="https://media.giphy.com/media/{{giphy_id}}/giphy.gif" alt="Attached image">
 </div>
 {% else %}
 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
-    onclick="expandImage($(this).find('img, div').attr('src'))">
+    {{macros.expand_img()}}>
     <div class="floating-media-tag">GIF</div>
     <div src="https://media.giphy.com/media/{{giphy_id}}/giphy.gif"
         style="background-image: url('https://media.giphy.com/media/{{giphy_id}}/giphy.gif');"

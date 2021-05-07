@@ -1,8 +1,5 @@
-{% macro expand_img() %}
-    style="cursor: pointer;" onclick="expandImage($(this).find('img, div').attr('src'))"
-{% endmacro %}
+{% import "macros.jinja" as macros %}
 
-<!-- Tab buttons -->
 <div class="row mx-0 search-tab-buttons">
     <div id="molts-btn" class="profile-box-category col active" onclick="switchTo('molts');">
         <div class="py-2"><strong class="d-inline-block w-100 text-center">Molts</strong></div>

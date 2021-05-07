@@ -1,5 +1,5 @@
 {% macro expand_img() %}
-    style="cursor: pointer;" onclick="expandImage($(this).find('img, div').attr('src'))"
+    style="cursor: pointer;" onclick="expandImage(getImageSrc(this));"
 {% endmacro %}
 
 {% macro verified(size) %}

@@ -316,6 +316,11 @@ function replaceMolt(elem, text) {
     );
 }
 
+function getImageSrc(el) {
+    return $(el).find('img[src], div[src]').attr('src');
+}
+
+
 function expandImage(url) {
     $('#image_modal .image-modal-body').css('background-image', `url("${url}")`);
     $('#image_modal').modal('show');
