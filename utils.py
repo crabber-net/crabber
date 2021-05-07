@@ -4,7 +4,6 @@ import crabber
 import datetime
 import extensions
 from flask import redirect, request
-import functools
 import geoip2.database
 from geoip2.errors import AddressNotFoundError
 from sqlalchemy import func
@@ -465,7 +464,6 @@ def make_crabatar(username: str):
     return upload_image(crabatar.get_avatar_bytes(format='JPEG'))
 
 
-@functools.cache
 def is_banned(ip_addr: str) -> bool:
     ''' Check if IP address is blacklisted or belongs to blacklisted areas.
     '''
