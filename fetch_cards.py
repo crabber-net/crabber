@@ -10,6 +10,8 @@ import os
 import requests
 from requests.exceptions import RequestException
 from typing import Optional, Tuple
+from webpreview import web_preview
+from webpreview.excepts import URLUnreachable
 
 
 class Lock:
@@ -49,7 +51,11 @@ def parse_metadata(html: str) -> Tuple[str, str, str]:
         meta_title = soup.find('meta', {'name': 'title'})
         if meta_title:
             title = meta_title.get('content', None)
-    title = title or soup.title.text
+    if not title:
+        if soup.title:
+            title = soupt.title.text
+        else:
+            return None
 
     # Get description
     description = None
@@ -88,13 +94,18 @@ with Lock('fetch-cards') as lock:
 
         for card in Card.query_unready():
             try:
-                r = requests.get(card.url, timeout=5)
-                if r.ok:
-                    metadata = parse_metadata(r.content)
+                metadata = web_preview(
+                    # Redirect Twitter to Nitter (they've started requiring
+                    # javascript... so dumb.)
+                    card.url.replace('https://twitter.com',
+                                     'https://nitter.actionsack.com'),
+                    timeout=2
+                )
+                if metadata:
                     card.title, card.description, card.image = metadata
                     card.ready = True
                     print(f'Fetched {card.url}')
-            except RequestException:
+            except URLUnreachable:
                 pass
             if not card.ready:
                 print(f'Failed to fetch {card.url}')

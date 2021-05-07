@@ -52,4 +52,5 @@ tomlkit==0.5.11
 tqdm==4.56.0
 urllib3==1.26.4
 wasabi==0.8.2
+webpreview==1.6.0
 Werkzeug==1.0.1
