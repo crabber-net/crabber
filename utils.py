@@ -16,7 +16,7 @@ import uuid
 from werkzeug.wrappers import Response
 
 db = extensions.db
-geo_reader = geoip2.database.Reader('GeoLite2-City.mmdb')
+geo_reader = geoip2.database.Reader(os.path.join(BASE_PATH, 'GeoLite2-City.mmdb'))
 
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
