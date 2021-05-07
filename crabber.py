@@ -5,6 +5,7 @@ import datetime
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
     send_from_directory, session
 from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import models
 import os
 import patterns
@@ -36,11 +37,16 @@ def register_blueprints(app):
     import crabber_api
     import crabber_rss
 
+    # Rate-limit site
+    api_limiter = Limiter(app, key_func=get_remote_address,
+                          default_limits=[f'{SITE_RATE_LIMIT_MINUTE}/minute',
+                                          f'{SITE_RATE_LIMIT_SECOND}/second'])
+
     # Rate-limit API
-    limiter = Limiter(app, key_func=crabber_api.get_api_key)
-    limiter.limit(f'{API_RATE_LIMIT_SECOND}/second;'
-                  f'{API_RATE_LIMIT_MINUTE}/minute;'
-                  f'{API_RATE_LIMIT_HOUR}/hour')(crabber_api.API)
+    api_limiter = Limiter(app, key_func=crabber_api.get_api_key)
+    api_limiter.limit(f'{API_RATE_LIMIT_SECOND}/second;'
+                      f'{API_RATE_LIMIT_MINUTE}/minute;'
+                      f'{API_RATE_LIMIT_HOUR}/hour')(crabber_api.API)
 
     # Register API V1 blueprint
     app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
