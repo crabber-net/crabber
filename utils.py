@@ -4,6 +4,8 @@ import crabber
 import datetime
 import extensions
 from flask import redirect, request
+import geoip2.database
+from geoip2.errors import AddressNotFoundError
 from sqlalchemy import func
 import json
 import models
@@ -14,6 +16,7 @@ import uuid
 from werkzeug.wrappers import Response
 
 db = extensions.db
+geo_reader = geoip2.database.Reader('GeoLite2-City.mmdb')
 
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
@@ -459,3 +462,26 @@ def hexID(digits=6):
 def make_crabatar(username: str):
     crabatar = Crabatar(username)
     return upload_image(crabatar.get_avatar_bytes(format='JPEG'))
+
+
+def is_banned(ip_addr: str) -> bool:
+    ''' Check if IP address is blacklisted or belongs to blacklisted areas.
+    '''
+    # IP blacklisted
+    if ip_addr in BLACKLIST_IP:
+        return True
+
+    try:
+        location = geo_reader.city(ip_addr)
+
+        # Postal code blacklisted
+        if location.postal.code in BLACKLIST_POST_CODE:
+            return True
+
+        # City blacklisted
+        if location.city.geoname_id in BLACKLIST_CITY_ID:
+            return True
+    except AddressNotFoundError:
+        return False
+
+    return False

@@ -894,6 +894,11 @@ def url_root(url, length=35):
     return url
 
 
+@app.errorhandler(403)
+def error_403(_error_msg):
+    return render_template('403.html'), 403
+
+
 @app.errorhandler(404)
 def error_404(_error_msg):
     return render_template("404.html", current_page="404",
@@ -908,8 +913,10 @@ def file_too_big(_e):
 @app.before_request
 def before_request():
     # Check if remote address is banned
-    if request.remote_addr in BLACKLIST:
-        return abort(403)
+    if utils.is_banned(request.remote_addr):
+        if request.endpoint != 'static':
+            return abort(403)
+
     # Make sure cookies are still valid
     if session.get('current_user'):
         crab_id = session.get('current_user')

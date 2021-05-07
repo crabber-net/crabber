@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>403 | Crabber</title>
+    <style>
+        #grid {
+            display: grid;
+            grid-template-columns: 30em 1fr;
+            height: 90vh;
+        }
+        #nedry-container {
+            position: relative;
+            height: 100%; width: 100%;
+        }
+        #nedry {
+            position: absolute;
+            margin: auto;
+            top: 0; right: 0; bottom: 0; left: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="grid">
+        <div id="text">
+            <h3>
+                Ah ah ah! (403)
+            </h3>
+            <p>
+                Your location has been blacklisted for spam. If you belive this was
+                done in error, please contact us through
+                <a href="mailto:crabberwebsite@gmail.com">
+                    crabberwebsite@gmail.com
+                </a>.
+            </p>
+        </div>
+        <div id="nedry-container">
+            <img src="{{url_for('static', filename='img/nedry.gif')}}" alt="uh uh uh!"
+                 id="nedry">
+            <audio loop id="nedry-audio">
+                <source src="{{url_for('static', filename='nedry.mp3')}}"
+                        type="audio/mp3">
+                 </source>
+            </audio>
+        </div>
+    </div>
+    <script>
+        startAudio = function() {
+            let player = document.getElementById('nedry-audio');
+            player.play();
+        }
+        document.body.addEventListener('touchstart', startAudio);
+        document.body.addEventListener('mousedown', startAudio);
+        document.body.addEventListener('keydown', startAudio);
+    </script>
+</body>
+</html>

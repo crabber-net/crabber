@@ -30,7 +30,9 @@ BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
 FEATURED_MOLT_ID = 1
 FEATURED_CRAB_USERNAME = 'jake'
-BLACKLIST = load_lines_from_file('blacklist')
+BLACKLIST_IP = load_lines_from_file('blacklist-ip')
+BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
+BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
 MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
 
 SITE_RATE_LIMIT_MINUTE = 200
