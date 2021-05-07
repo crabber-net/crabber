@@ -21,10 +21,10 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
 
-    register_extensions(app)
+    limiter = register_extensions(app)
     register_blueprints(app)
 
-    return app
+    return app, limiter
 
 
 def register_extensions(app):
@@ -38,9 +38,11 @@ def register_blueprints(app):
     import crabber_rss
 
     # Rate-limit site
-    api_limiter = Limiter(app, key_func=get_remote_address,
-                          default_limits=[f'{SITE_RATE_LIMIT_MINUTE}/minute',
-                                          f'{SITE_RATE_LIMIT_SECOND}/second'])
+    limiter = Limiter(app, key_func=get_remote_address,
+                      default_limits=[f'{SITE_RATE_LIMIT_MINUTE}/minute',
+                                      f'{SITE_RATE_LIMIT_SECOND}/second'])
+    # Exempt API from site-limits
+    limiter.exempt(crabber_api.API)
 
     # Rate-limit API
     api_limiter = Limiter(app, key_func=crabber_api.get_api_key)
@@ -54,7 +56,7 @@ def register_blueprints(app):
     app.register_blueprint(crabber_rss.RSS, url_prefix='/rss')
 
 
-app = create_app()
+app, limiter = create_app()
 mail = CrabMail(MAIL_JSON)
 
 
@@ -586,7 +588,9 @@ def stats():
 
 
 @app.route("/debug/")
-def debug():
+@app.route("/admin/")
+@app.route("/secret/")
+def secret():
     return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
 
 
