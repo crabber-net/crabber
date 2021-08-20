@@ -14,7 +14,7 @@
         </image>
         {% for molt in molts %}
         <item>
-            <title>{{molt.content or '(image)'}}</title>
+            <title>Molt from {{molt.author.display_name}}</title>
             <dc:creator>@{{crab.username}}</dc:creator>
             <description>
                 <![CDATA[
