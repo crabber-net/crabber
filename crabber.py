@@ -471,9 +471,21 @@ def crabtags(crabtag):
 
     # Display page
     elif session.get('current_user') is not None:
-        molts = models.Molt.query_with_tag(crabtag)
-        return render_template('crabtag.html', current_page="crabtag",
-                               molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
+        page_n = request.args.get('p', 1, type=int)
+        if request.args.get('ajax_json'):
+            blocks = dict()
+            for block in ('title', 'heading', 'body'):
+                blocks[block] = render_template(f'crabtag-ajax-{block}.html',
+                                                current_page="crabtag",
+                                                crabtag=crabtag,
+                                                page_n=page_n,
+                                                current_user=utils.get_current_user())
+            return jsonify(blocks)
+        else:
+            molts = models.Molt.query_with_tag(crabtag) \
+                    .paginate(page_n, MOLTS_PER_PAGE, False)
+            return render_template('crabtag-content.html' if request.args.get("ajax_content") else 'crabtag.html', current_page="crabtag", page_n=page_n,
+                                   molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
     else:
         return redirect("/login")
 

@@ -1,10 +1,15 @@
 {% extends "base.html" %}
-{% block title %} Exploring %{{crabtag}} {% endblock %}
-{% block heading %} Exploring <a href="/crabtag/{{crabtag}}" class="crabtag">%{{crabtag}}</a> molts{% endblock %}
+{% block ext_head %}
+    <!-- Preload loading indicator so you never see alt-text -->
+    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+{% endblock %}
+{% block title %}
+    {% include "crabtag-ajax-title.html" %}
+{% endblock %}
+{% block heading %}
+    {% include "crabtag-ajax-heading.html" %}
+{% endblock %}
 
 {% block body %}
-    <!-- All molts live here! -->
-    {% for molt in molts %}
-        {% include "molt.html" %}
-    {% endfor %}
+    {% include "crabtag-ajax-body.html" %}
 {% endblock %}
