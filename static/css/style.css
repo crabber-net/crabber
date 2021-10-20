@@ -1,3 +1,25 @@
+/* Load OpenDyslexic typeface */
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("/static/fonts/OpenDyslexic-Regular.otf") format("opentype");
+}
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("/static/fonts/OpenDyslexic-Bold.otf") format("opentype");
+    font-weight: bold;
+}
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("/static/fonts/OpenDyslexic-Italic.otf") format("opentype");
+    font-style: italic, oblique;
+}
+@font-face {
+    font-family: "OpenDyslexic";
+    src: url("/static/fonts/OpenDyslexic-BoldItalic.otf") format("opentype");
+    font-weight: bold;
+    font-style: italic, oblique;
+}
+
 /* Medium devices and smaller */
 @media (max-width: 992px) {
     /* Nav collapse */
