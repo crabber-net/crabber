@@ -1,10 +1,12 @@
+<!-- Pinned Molt -->
 {% if this_user.pinned %}
-    <!-- Pinned Molt -->
-    {% with molt=this_user.pinned, is_pin=True %}
-        <div class="border-bottom border-dark border-thicc">
-            {% include "molt.html" %}
-        </div>
-    {% endwith %}
+    {% if not this_user.pinned.deleted %}
+        {% with molt=this_user.pinned, is_pin=True %}
+            <div class="border-bottom border-dark border-thicc">
+                {% include "molt.html" %}
+            </div>
+        {% endwith %}
+    {% endif %}
 {% endif %}
 
 {% for molt in molts.items %}
