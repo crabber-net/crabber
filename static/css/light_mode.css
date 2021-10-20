@@ -45,6 +45,18 @@
 }
 
 .btn.btn-secondary:active strong {
+    color: var(--dark-lesser);
+}
+
+.btn.btn-secondary strong {
+    color: var(--dark-less);
+}
+
+#nav-panel .btn.btn-secondary strong {
+    color: var(--light);
+}
+
+#nav-panel .btn.btn-secondary:active strong {
     color: var(--primary-dark);
 }
 

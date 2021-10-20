@@ -30,6 +30,12 @@ following_table = db.Table(
     db.Column('following_id', db.Integer, db.ForeignKey('crab.id'))
 )
 
+blocking_table = db.Table(
+    'blocking',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('blocker_id', db.Integer, db.ForeignKey('crab.id')),
+    db.Column('blocked_id', db.Integer, db.ForeignKey('crab.id'))
+)
 
 class NotFoundInDatabase(BaseException):
     pass
@@ -74,6 +80,13 @@ class Crab(db.Model):
         primaryjoin=id == following_table.c.follower_id,
         secondaryjoin=id == following_table.c.following_id,
         backref=db.backref('_followers')
+    )
+    _blocked = db.relationship(
+        'Crab',
+        secondary=blocking_table,
+        primaryjoin=id == blocking_table.c.blocker_id,
+        secondaryjoin=id == blocking_table.c.blocked_id,
+        backref=db.backref('_blockers')
     )
     _likes = db.relationship('Like')
     _bookmarks = db.relationship('Bookmark')
@@ -159,6 +172,19 @@ class Crab(db.Model):
             available.
         """
         return self.query_replies().count()
+
+    @property
+    def blocked(self) -> List['Crab']:
+        """ Returns this Crab's blocked Crabs without deleted/banned users.
+        """
+        return self.query_blocked().all()
+
+    @property
+    def blockers(self) -> List['Crab']:
+        """ Returns Crabs that have blocked this Crab without deleted/banned
+            users.
+        """
+        return self.query_blockers().all()
 
     @property
     def following(self) -> List['Crab']:
@@ -383,6 +409,22 @@ class Crab(db.Model):
             db.session.commit()
             return new_trophy
 
+    def block(self, crab):
+        """ Add `crab` to this Crab's block users.
+        """
+        if crab not in self._blocked and crab is not self:
+            self.unfollow(crab)
+            crab.unfollow(self)
+            self._blocked.append(crab)
+            db.session.commit()
+
+    def unblock(self, crab):
+        """ Removes `crab` from this Crab's block users.
+        """
+        if crab in self._blocked and crab is not self:
+            self._blocked.remove(crab)
+            db.session.commit()
+
     def follow(self, crab):
         """ Adds user to `crab`'s following.
         """
@@ -407,7 +449,7 @@ class Crab(db.Model):
             db.session.commit()
 
     def unfollow(self, crab):
-        """ Removers user from `crab`'s following.
+        """ Removes user from `crab`'s following.
         """
         if crab in self._following and crab is not self:
             self._following.remove(crab)
@@ -441,12 +483,26 @@ class Crab(db.Model):
         self.deleted = False
         db.session.commit()
 
+    def is_blocking(self, crab):
+        """ Returns True if user has blocked `crab`.
+        """
+        return db.session.query(blocking_table) \
+            .filter((blocking_table.c.blocker_id == self.id) &
+                    (blocking_table.c.blocked_id == crab.id)).count()
+
+    def is_blocked_by(self, crab):
+        """ Returns True if user has been blocked by `crab`.
+        """
+        return db.session.query(blocking_table) \
+            .filter((blocking_table.c.blocked_id == self.id) &
+                    (blocking_table.c.blocker_id == crab.id)).count()
+
     def is_following(self, crab):
         """ Returns True if user is following `crab`.
         """
         return db.session.query(following_table) \
             .filter((following_table.c.follower_id == self.id) &
-                    (following_table.c.following_id == crab.id))
+                    (following_table.c.following_id == crab.id)).count()
 
     def has_bookmarked(self, molt) -> Optional['Bookmark']:
         """ Returns bookmark if user has bookmarked `molt`.
@@ -470,6 +526,11 @@ class Crab(db.Model):
         """
         is_duplicate = False
         if kwargs.get("sender") is not self:
+            # Don't notify if either user is blocked
+            if (sender := kwargs.get("sender")) is not None:
+                if self.is_blocked_by(sender) or self.is_blocking(sender):
+                    return None
+
             # Check for molt duplicates
             if kwargs.get("molt"):
                 duplicate_notification = Notification.query.filter_by(
@@ -501,6 +562,25 @@ class Crab(db.Model):
                 return new_notif
 
     # Query methods
+
+    def query_blocked(self) -> BaseQuery:
+        """ Returns this Crab's blocked Crabs without deleted/banned users.
+        """
+        blocked = db.session.query(Crab) \
+            .join(blocking_table, Crab.id == blocking_table.c.blocked_id) \
+            .filter(blocking_table.c.blocker_id == self.id) \
+            .filter(Crab.banned == False, Crab.deleted == False)
+        return blocked
+
+    def query_blockers(self) -> BaseQuery:
+        """ Returns Crabs that have blocked this Crab without deleted/banned
+            users.
+        """
+        blockers = db.session.query(Crab) \
+            .join(blocking_table, Crab.id == blocking_table.c.blocker_id) \
+            .filter(blocking_table.c.blocked_id == self.id) \
+            .filter(Crab.banned == False, Crab.deleted == False)
+        return blockers
 
     def query_following(self) -> BaseQuery:
         """ Returns this Crab's following without deleted/banned users.
@@ -561,11 +641,34 @@ class Crab(db.Model):
             .filter_by(deleted=False, is_reply=False) \
             .filter(Molt.author.has(deleted=False, banned=False)) \
             .order_by(Molt.timestamp.desc())
+        molts = self.filter_molt_query_by_not_blocked(molts)
         return molts
 
     def change_password(self, password: str):
         self.password = self.hash_pass(password)
         db.session.commit()
+
+    def filter_molt_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
+        """ Filters a Molt query by authors who have not blocked/been blocked
+            by this user.
+        """
+        blocker_ids = [crab.id for crab in self.blockers]
+        blocked_ids = [crab.id for crab in self.blocked]
+        query = query \
+            .filter(Molt.author_id.notin_(blocker_ids)) \
+            .filter(Molt.author_id.notin_(blocked_ids))
+        return query
+
+    def filter_user_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
+        """ Filters a Crab query by users who have not blocked/been blocked by
+            this user.
+        """
+        blocker_ids = [crab.id for crab in self.blockers]
+        blocked_ids = [crab.id for crab in self.blocked]
+        query = query \
+            .filter(Crab.id.notin_(blocker_ids)) \
+            .filter(Crab.id.notin_(blocked_ids))
+        return query
 
     @staticmethod
     def order_query_by_followers(query: BaseQuery) -> BaseQuery:

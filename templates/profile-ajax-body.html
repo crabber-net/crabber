@@ -49,14 +49,31 @@
             {% elif this_user != current_user %}
                 <form method="POST">
                     <input type="hidden" name="target_user" value="{{this_user.id}}">
-                    {% if not current_user in this_user.followers %}
-                        <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn"><strong>Follow</strong></button>
-                    {% else %}
-                        <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill unfollow-btn">
-                            <strong class="default-text">Following</strong>
-                            <strong class="hover-text">Unfollow</strong>
-                        </button>
-                    {% endif %}
+
+                    <!-- Block/Unblock button -->
+                    <div class="d-inline-block block-section">
+                        {% if not current_user in this_user.blockers%}
+                            <button name="user_action" value="block" type="submit" class="btn btn-outline-secondary rounded-pill block-btn"><strong>Block</strong></button>
+                        {% else %}
+                            <button name="user_action" value="unblock" type="submit" class="btn btn-secondary rounded-pill unblock-btn">
+                                <strong class="default-text">Blocked</strong>
+                                <strong class="hover-text">Unblock</strong>
+                            </button>
+                        {% endif %}
+                    </div>
+                    <!-- Follow/Unfollow button -->
+                    <div class="d-inline-block ml-1 follow-section">
+                        {% if not current_user in this_user.blockers %}
+                            {% if not current_user in this_user.followers %}
+                                <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn"><strong>Follow</strong></button>
+                            {% else %}
+                                <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill unfollow-btn">
+                                    <strong class="default-text">Following</strong>
+                                    <strong class="hover-text">Unfollow</strong>
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
                 </form>
             {% else %}
             <form method="POST" onsubmit="savedescription();">

@@ -1,3 +1,5 @@
+run
+*.mmdb
 *.vim
 *venv
 *.swp

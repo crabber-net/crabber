@@ -2010,6 +2010,13 @@ table#user-info th {
     display: none;
 }
 
+.block-btn {
+    width: 5em;
+}
+.unblock-btn {
+    width: 7em;
+}
+
 .follow-btn {
     width: 5em;
 }

@@ -33,7 +33,9 @@
 {% if tab == "followers_you_know" %}
 <div id="followers_you_know">
     {% for crab in followx %}
-        {% include "mini_bio.html" %}
+        {% if current_user not in crab.blocked %}
+            {% include "mini_bio.html" %}
+        {% endif %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">You don't follow any of this user's followers.</div>
     {% endfor %}
@@ -45,7 +47,9 @@
 {% elif tab == "followers" %}
 <div id="followers">
     {% for crab in followx %}
-        {% include "mini_bio.html" %}
+        {% if current_user not in crab.blocked %}
+            {% include "mini_bio.html" %}
+        {% endif %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't have any followers 😢</div>
     {% endfor %}
@@ -57,7 +61,9 @@
 {% elif tab == "following" %}
 <div id="following">
     {% for crab in followx %}
-        {% include "mini_bio.html" %}
+        {% if current_user not in crab.blocked %}
+            {% include "mini_bio.html" %}
+        {% endif %}
     {% else %}
         <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">This user doesn't follow anyone</div>
     {% endfor %}

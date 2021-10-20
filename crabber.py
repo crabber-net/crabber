@@ -124,8 +124,9 @@ def wild_west():
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
-            molts = models.Molt.query_all(include_replies=False) \
-                .paginate(page_n, MOLTS_PER_PAGE, False)
+            molts = models.Molt.query_all(include_replies=False)
+            molts = utils.get_current_user().filter_molt_query_by_not_blocked(molts)
+            molts = molts.paginate(page_n, MOLTS_PER_PAGE, False)
             return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
                                    molts=molts, current_user=utils.get_current_user())
     else:
@@ -345,10 +346,11 @@ def user(username):
 
     # Display page
     else:
+        current_user = utils.get_current_user()
         current_tab = request.args.get("tab", default="molts")
         this_user = models.Crab.get_by_username(username)
-        if this_user is None:
-            return render_template('not-found.html', current_user=utils.get_current_user(), noun='user')
+        if this_user is None or this_user.is_blocking(current_user):
+            return render_template('not-found.html', current_user=current_user, noun='user')
         else:
             social_title = f'{this_user.display_name} on Crabber'
             m_page_n = request.args.get('molts-p', 1, type=int)
@@ -360,8 +362,8 @@ def user(username):
                 for block in ('title', 'heading', 'body'):
                     blocks[block] = render_template(
                         f'profile-ajax-{block}.html',
-                        current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                        current_user=utils.get_current_user(),
+                        current_page=("own-profile" if this_user == current_user else ""),
+                        current_user=current_user,
                         this_user=this_user, likes=likes,
                         current_tab=current_tab, replies=replies
                     )
@@ -382,13 +384,13 @@ def user(username):
                 elif section == 'likes':
                     likes = this_user.query_likes().paginate(l_page_n, MOLTS_PER_PAGE)
                 return render_template(f'profile-ajax-tab-{section}.html',
-                                       current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                                       molts=molts, current_user=utils.get_current_user(), this_user=this_user, likes=likes,
+                                       current_page=("own-profile" if this_user == current_user else ""),
+                                       molts=molts, current_user=current_user, this_user=this_user, likes=likes,
                                        current_tab=current_tab, replies=replies, hexID=hex_ID)
             else:
                 return render_template('profile.html',
-                                       current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                                       current_user=utils.get_current_user(), this_user=this_user,
+                                       current_page=("own-profile" if this_user == current_user else ""),
+                                       current_user=current_user, this_user=this_user,
                                        current_tab=current_tab, m_page_n=m_page_n,
                                        r_page_n=r_page_n, l_page_n=l_page_n,
                                        social_title=social_title)
@@ -434,7 +436,10 @@ def molt_page(username, molt_id):
     else:
         primary_molt = models.Molt.get_by_ID(molt_id)
         ajax_content = request.args.get('ajax_content')
-        if primary_molt is None:
+        current_user = utils.get_current_user()
+        if primary_molt is None \
+            or primary_molt.author.is_blocking(current_user) \
+            or primary_molt.author.is_blocked_by(current_user):
             social_title = f'Unavailable Post'
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
         elif primary_molt.author.banned:
@@ -482,8 +487,9 @@ def crabtags(crabtag):
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
-            molts = models.Molt.query_with_tag(crabtag) \
-                    .paginate(page_n, MOLTS_PER_PAGE, False)
+            molts = models.Molt.query_with_tag(crabtag)
+            molts = utils.get_current_user().filter_molt_query_by_not_blocked(molts)
+            molts = molts.paginate(page_n, MOLTS_PER_PAGE, False)
             return render_template('crabtag-content.html' if request.args.get("ajax_content") else 'crabtag.html', current_page="crabtag", page_n=page_n,
                                    molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
     else:
@@ -500,8 +506,9 @@ def bookmarks():
     elif session.get('current_user') is not None:
         current_user = utils.get_current_user()
         page_n = request.args.get('p', 1, type=int)
-        bookmarks = current_user.query_bookmarks() \
-            .paginate(page_n, MOLTS_PER_PAGE, False)
+        bookmarks = current_user.query_bookmarks()
+        bookmarks = utils.get_current_user().filter_molt_query_by_not_blocked(bookmarks)
+        bookmarks = bookmarks.paginate(page_n, MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
@@ -541,8 +548,10 @@ def search():
         else:
             if query:
                 crab_results = models.Crab.search(query)
-                molt_results = models.Molt.search(query) \
-                    .paginate(page_n, MOLTS_PER_PAGE, False)
+                crab_results = utils.get_current_user().filter_user_query_by_not_blocked(crab_results)
+                molt_results = models.Molt.search(query)
+                molt_results = utils.get_current_user().filter_molt_query_by_not_blocked(molt_results)
+                molt_results = molt_results.paginate(page_n, MOLTS_PER_PAGE, False)
             else:
                 molt_results = tuple()
                 crab_results = tuple()
@@ -561,16 +570,24 @@ def stats():
         return utils.common_molt_actions()
 
     # Query follow counts for users
-    most_followed = models.Crab.query_most_popular().first()
+    most_followed = models.Crab.query_most_popular()
+    most_followed = utils.get_current_user().filter_user_query_by_not_blocked(most_followed)
+    most_followed = most_followed.first()
     newest_user = models.Crab.query_all() \
-        .order_by(models.Crab.register_time.desc()).first()
+        .order_by(models.Crab.register_time.desc())
+    newest_user = utils.get_current_user().filter_user_query_by_not_blocked(newest_user)
+    newest_user = newest_user.first()
 
-    best_molt = models.Molt.query_most_liked().first()
-    talked_molt = models.Molt.query_most_replied().first()
+    best_molt = models.Molt.query_most_liked()
+    best_molt = utils.get_current_user().filter_molt_query_by_not_blocked(best_molt)
+    best_molt = best_molt.first()
+    talked_molt = models.Molt.query_most_replied()
+    talked_molt = utils.get_current_user().filter_molt_query_by_not_blocked(talked_molt)
+    talked_molt = talked_molt.first()
     trendy_tag = models.Crabtag.query_most_popular().first()[0]
-    trendy_tag_molts = models.Molt.order_query_by_likes(
-        trendy_tag.query_molts()
-    ).limit(3).all()
+    trendy_tag_molts = models.Molt.order_query_by_likes(trendy_tag.query_molts())
+    trendy_tag_molts = utils.get_current_user().filter_molt_query_by_not_blocked(trendy_tag_molts)
+    trendy_tag_molts = trendy_tag_molts.limit(3).all()
     stats_dict = dict(users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
                       mini_stats=[
                           dict(number=models.Molt.query.count(),
