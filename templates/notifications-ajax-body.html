@@ -1,9 +1,6 @@
 <!-- All molts live here! -->
 {% for notif in notifications.items %}
     {% include "notif.html" %}
-    {% if not notif.read %}
-        {{ "" if notif.mark_read() else ""}}
-    {% endif %}
 {% else %}
     <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">Notifications will appear here. Get out there and make a splash!</div>
 {% endfor %}

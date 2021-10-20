@@ -143,6 +143,7 @@ def notifications():
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
         notifications = utils.get_current_user().get_notifications(paginated=True, page=page_n)
+        utils.get_current_user().read_notifications()
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):

@@ -380,6 +380,16 @@ class Crab(db.Model):
         else:
             return notifs.all()
 
+    def read_notifications(self):
+        """ Mark all of this user's notifications as read.
+        """
+        notifs = Notification.query_all() \
+            .filter_by(recipient=self) \
+            .filter_by(read=False)
+        for notif in notifs:
+            notif.read = True
+        db.session.commit()
+
     def award(self, title=None, trophy=None):
         """ Award user trophy by object or by title.
 
