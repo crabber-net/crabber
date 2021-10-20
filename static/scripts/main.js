@@ -361,6 +361,8 @@ function updateStylePreferences(form) {
     // Handle changes locally
     let lightMode = $(form.light_mode).is(':checked');
     $('#light-mode-css').attr('disabled', !lightMode);
+    let dyslexicMode = $(form.dyslexic_mode).is(':checked');
+    $('#dyslexic-mode-css').attr('disabled', !dyslexicMode);
     let comicsansMode = $(form.comicsans_mode).is(':checked');
     $('#comicsans-mode-css').attr('disabled', !comicsansMode);
 }
