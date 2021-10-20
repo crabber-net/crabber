@@ -76,7 +76,7 @@
                     </div>
                 </form>
             {% else %}
-            <form method="POST" onsubmit="savedescription();">
+            <form method="POST" onsubmit="return savedescription()">
                 <!-- Fixed values -->
                 <input type="hidden" name="user_action" value="update_description">
                 <input type="hidden" name="user_id" value="{{this_user.id}}">
@@ -438,12 +438,12 @@
         // Verify lengths
         if (displayName.length < 1) {
             alert("Display name cannot be empty.")
-            $('.profile-box-display-name')[0].innerText = "change me";
+            $('.profile-box-display-name')[0].innerText = "~change me~";
             return false;
         }
         if (description.length < 1) {
             alert("User description cannot be empty.")
-            $('.profile-box-description')[0].innerText = "change me";
+            $('.profile-box-description')[0].innerText = "~change me~";
             return false;
         }
 
