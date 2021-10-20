@@ -1518,7 +1518,12 @@ class Notification(db.Model):
         ''' Returns a query containing all valid notifications.
         '''
         return Notification.query \
-                .filter(Notification.sender.has(deleted=False, banned=False))
+            .filter(
+                or_(
+                    Notification.sender.has(deleted=False, banned=False),
+                    Notification.sender == None
+                )
+            )
 
     def mark_read(self, is_read=True):
         self.read = is_read

@@ -138,6 +138,10 @@
         <div class="trendy-tag-molts neue-card neue-card-media p-1">
             {% for molt in tag_molts %}
                 {% include 'molt.html' %}
+            {% else %}
+                <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">
+                    Nothing here.
+                </div>
             {% endfor %}
         </div>
     </div>
