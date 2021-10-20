@@ -531,7 +531,8 @@ class Crab(db.Model):
         is_duplicate = False
         if kwargs.get("sender") is not self:
             # Don't notify if either user is blocked
-            if (sender := kwargs.get("sender")) is not None:
+            sender = kwargs.get("sender")
+            if sender is not None:
                 if self.is_blocked_by(sender) or self.is_blocking(sender):
                     return None
 
