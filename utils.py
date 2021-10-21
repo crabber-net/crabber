@@ -16,7 +16,11 @@ import uuid
 from werkzeug.wrappers import Response
 
 db = extensions.db
-geo_reader = geoip2.database.Reader(os.path.join(BASE_PATH, 'GeoLite2-City.mmdb'))
+
+if GEO_ENABLED:
+    geo_reader = geoip2.database.Reader(GEO_PATH)
+else:
+    geo_reader = None
 
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
@@ -483,17 +487,18 @@ def is_banned(ip_addr: str) -> bool:
     if ip_addr in BLACKLIST_IP:
         return True
 
-    try:
-        location = geo_reader.city(ip_addr)
+    if GEO_ENABLED:
+        try:
+            location = geo_reader.city(ip_addr)
 
-        # Postal code blacklisted
-        if location.postal.code in BLACKLIST_POST_CODE:
-            return True
+            # Postal code blacklisted
+            if location.postal.code in BLACKLIST_POST_CODE:
+                return True
 
-        # City blacklisted
-        if location.city.geoname_id in BLACKLIST_CITY_ID:
-            return True
-    except AddressNotFoundError:
-        return False
+            # City blacklisted
+            if location.city.geoname_id in BLACKLIST_CITY_ID:
+                return True
+        except AddressNotFoundError:
+            return False
 
     return False
