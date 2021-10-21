@@ -1175,7 +1175,7 @@ class Molt(db.Model):
         """ Quote Molt as `author`.
         """
         new_quote = author.molt(comment, is_quote=True, original_molt=self,
-                                **kwargs)
+                                nsfw=self.nsfw, **kwargs)
         self.author.notify(sender=author, type='quote', molt=new_quote)
         return new_quote
 
@@ -1188,7 +1188,7 @@ class Molt(db.Model):
                                                 author=crab, deleted=False)
         if not duplicate_remolt.count():
             new_remolt = crab.molt('', is_remolt=True, original_molt=self,
-                                   **kwargs)
+                                   nsfw=self.nsfw, **kwargs)
             self.author.notify(sender=crab, type="remolt", molt=new_remolt)
             return new_remolt
 
@@ -1196,7 +1196,7 @@ class Molt(db.Model):
         """ Reply to Molt as `author`.
         """
         new_reply = author.molt(comment, is_reply=True, original_molt=self,
-                                **kwargs)
+                                nsfw=self.nsfw, **kwargs)
         self.author.notify(sender=author, type="reply", molt=new_reply)
         return new_reply
 
