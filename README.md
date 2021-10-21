@@ -47,15 +47,24 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-3. Setup the database
+3. Download a GeoLite2 City database from [MaxMind](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) saved as `GeoLite2-City.mmdb`
+4. Create a `mail_conf.json` file in the root of the project with a `address`
+and `password` field
+```json
+{
+    "address": "",
+    "password": ""
+}
+```
+5. Setup the database
 ```bash
 python scripts/initialize_database.py
 ```
-4. Add any site administrators to `admins.cfg` via their usernames
+6. Add any site administrators to `admins.cfg` via their usernames
 ```bash
 vim admins.cfg  # The only Crab-approved text editor
 ```
-5. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
+7. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
    runs `fetch_cards.py` periodically.
 ```bash
 crontab -e
