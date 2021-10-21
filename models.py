@@ -838,7 +838,7 @@ class Molt(db.Model):
         """
         if self.raw_mentions:
             mention_list = self.raw_mentions.splitlines()
-            return Crab.query.filter(Crab.username.in_(mention_list)).all()
+            return Crab.query.filter(func.lower(Crab.username).in_(mention_list)).all()
         return list()
 
     @property
@@ -949,7 +949,7 @@ class Molt(db.Model):
         for user in patterns.mention.findall(self.content):
             if self.raw_mentions is None:
                 self.raw_mentions = ""
-            self.raw_mentions += user + "\n"
+            self.raw_mentions += user.lower() + "\n"
 
         # Parse links
         link = patterns.ext_link.search(self.content)
