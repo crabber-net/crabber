@@ -359,6 +359,38 @@
                             </form>
                         {% endif %}
 
+                        {% if author.id == current_user.id %}
+                            <!-- MARK SFW BUTTON -->
+                            {% if molt.nsfw %}
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="disable_nsfw_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="if (confirm('Are you sure you want to remove the NSFW label?')) {
+                                    SubForm(this.parentNode);$(this).parents('div.mini-molt').remove();}">
+
+                                    <svg width="19" height="19" data-jam="eye">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#eye"></use>
+                                    </svg>
+                                    Remove NSFW label
+                                </div>
+                            </form>
+                            {% else %}
+                            <!-- MARK NSFW BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="enable_nsfw_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="if (confirm('Are you sure you want to label this Molt NSFW?')) {
+                                    SubForm(this.parentNode);$(this).parents('div.mini-molt').remove();}">
+
+                                    <svg width="19" height="19" data-jam="eye-close">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#eye-close"></use>
+                                    </svg>
+                                    Label NSFW
+                                </div>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+
                         {% if current_user.has_bookmarked(molt) %}
                         <!-- UNBOOKMARK MOLT BUTTON -->
                         <form class="dropdown-item clickable" method="POST">
