@@ -211,6 +211,22 @@
             </div>
         </div>
 
+        <!-- NSFW Toggle -->
+        <div class="form-group cool-input mb-2">
+            <script>
+                function confirmAge(elem) {
+                    if (elem.checked) {
+                        elem.checked = confirm('Are you 18 years or older?');
+                    }
+                }
+            </script>
+            <div class="custom-control custom-switch">
+                <input onchange="return confirmAge(this)" type="checkbox" class="custom-control-input" id="toggle-nsfw-mode"
+                    name="nsfw_mode" {{'checked' if nsfw_mode}}>
+                <label class="custom-control-label" for="toggle-nsfw-mode">Display NSFW Content</label>
+            </div>
+        </div>
+
         <!-- Submit button -->
         <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
         <div class="clearfix"></div>
