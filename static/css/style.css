@@ -595,6 +595,10 @@
     background-position: 50% 10%;
 }
 
+.nsfw-thumbnail {
+    filter: blur(20px);
+}
+
 .zindex-front {
     position: relative;
     z-index: 10;
