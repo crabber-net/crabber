@@ -86,6 +86,9 @@
             {% if molt.edited %}
             &mdash; This molt has been edited
             {% endif %}
+            {% if molt.nsfw %}
+                {% include 'nsfw-badge.html' %}
+            {% endif %}
         </div>
 
         {% if molt.remolt_count or molt.like_count %}

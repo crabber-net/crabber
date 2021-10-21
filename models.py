@@ -553,12 +553,13 @@ class Crab(db.Model):
                     return None
 
             # Check for molt duplicates
-            if kwargs.get("molt"):
+            molt = kwargs.get('molt')
+            if molt:
                 duplicate_notification = Notification.query.filter_by(
                     recipient=self,
                     sender=kwargs.get('sender'),
                     type=kwargs.get('type'),
-                    molt=kwargs.get('molt')
+                    molt=molt
                 )
                 if duplicate_notification.count():
                     is_duplicate = True
@@ -662,12 +663,31 @@ class Crab(db.Model):
             .filter_by(deleted=False, is_reply=False) \
             .filter(Molt.author.has(deleted=False, banned=False)) \
             .order_by(Molt.timestamp.desc())
-        molts = self.filter_molt_query_by_not_blocked(molts)
+        molts = self.filter_molt_query(molts)
         return molts
 
     def change_password(self, password: str):
         self.password = self.hash_pass(password)
         db.session.commit()
+
+    def filter_molt_query(self, query: BaseQuery) -> BaseQuery:
+        """ Filters a Molt query for all user blocks and preferences.
+        """
+        query = self.filter_molt_query_by_not_blocked(query)
+        if not self.show_nsfw:
+            query = self.filter_molt_query_by_not_nsfw(query)
+        return query
+
+    def filter_molt_query_by_not_nsfw(self, query: BaseQuery) -> BaseQuery:
+        """ Filters NSFW Molts out of a query.
+        """
+        query = query \
+            .filter(db.or_(Molt.nsfw == False, Molt.author_id == self.id)) \
+            .filter(db.or_(
+                Molt.original_molt == None,
+                Molt.original_molt.has(nsfw=False)
+            ))
+        return query
 
     def filter_molt_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
         """ Filters a Molt query by authors who have not blocked/been blocked

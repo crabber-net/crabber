@@ -223,8 +223,8 @@
             </script>
             <div class="custom-control custom-switch">
                 <input onchange="return confirmAge(this)" type="checkbox" class="custom-control-input" id="toggle-nsfw-mode"
-                       name="nsfw_mode" {{'checked' if current_user.nsfw}}
-                       value="{{'true' if current_user.nsfw else 'false'}}"
+                       name="nsfw_mode" {{'checked' if current_user.show_nsfw}}
+                       value="{{'true' if current_user.show_nsfw else 'false'}}"
                 >
                 <label class="custom-control-label" for="toggle-nsfw-mode">Display NSFW Content</label>
             </div>

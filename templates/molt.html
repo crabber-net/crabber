@@ -140,6 +140,9 @@
                 <span class="mini-molt-username zindex-front">@{{author.username}}</span>
                 <span class="mini-molt-timestamp zindex-front">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                {% if molt.nsfw %}
+                    {% include 'nsfw-badge.html' %}
+                {% endif %}
             </div>
         </div>
 

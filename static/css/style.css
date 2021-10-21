@@ -1292,6 +1292,15 @@ body, .master-container {
     white-space: nowrap;
 }
 
+.nsfw-badge {
+    color: var(--primary);
+    background: var(--primary-faded);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
 .thread-connector {
     height: 100%;
     width: 100%;

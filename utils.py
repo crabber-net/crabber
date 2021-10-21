@@ -393,7 +393,7 @@ def common_molt_actions() -> Response:
         if patterns.timezone.fullmatch(new_timezone):
             target_user.timezone = new_timezone
             target_user.lastfm = new_lastfm
-            target_user.nsfw = new_nsfw
+            target_user.show_nsfw = new_nsfw
             db.session.commit()
             return show_message("Changes saved.")
         else:
