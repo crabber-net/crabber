@@ -686,7 +686,9 @@ class Crab(db.Model):
             .filter(db.or_(Molt.nsfw == False, Molt.author_id == self.id)) \
             .filter(db.or_(
                 Molt.original_molt == None,
-                Molt.original_molt.has(nsfw=False)
+                Molt.original_molt.has(nsfw=False),
+                Molt.original_molt.has(author_id=self.id),
+                Molt.author_id == self.id
             ))
         return query
 
