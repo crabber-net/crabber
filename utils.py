@@ -332,10 +332,14 @@ def common_molt_actions() -> Response:
             or target_user.username == new_username:
                 if len(new_username) in range(4, 32):
                     if patterns.username.fullmatch(new_username):
-                        target_user.email = new_email
-                        target_user.username = new_username
-                        db.session.commit()
-                        return show_message('Changes saved.')
+                        if not patterns.only_underscores.fullmatch(new_username):
+                            target_user.email = new_email
+                            target_user.username = new_username
+                            db.session.commit()
+                            return show_message('Changes saved.')
+                        else:
+                            return show_error('Only underscores? Really? Think '
+                                              'of something better.')
                     else:
                         return show_error('Username must only contain letters, '
                                           'numbers, and underscores')

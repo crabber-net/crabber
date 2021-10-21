@@ -5,7 +5,9 @@ mention = re.compile(
 tag = re.compile(
     r'(?:^|\s|<br>)(?<!\\)%([\w]{1,16})(?!\w)')
 username = re.compile(
-    r'^\w+$')
+    r'^[a-zA-Z0-9_]+$')
+only_underscores = re.compile(
+    r'^_+$')
 youtube = re.compile(
     r'(?:https?://)?(?:www.)?(?:youtube\.com/watch\?(?:[^&]+&)*v=|youtu\.be/)(\S{11})')
 giphy = re.compile(
