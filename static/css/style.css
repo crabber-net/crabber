@@ -1389,6 +1389,12 @@ body, .master-container {
     line-height: 1.1em;
 }
 
+@media only screen and (max-height: 680px) {
+    #nav-footer {
+        display: none !important;
+    }
+}
+
 .header-cover {
     margin-top: 4rem;
 	width: 100%;
