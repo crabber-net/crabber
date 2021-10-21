@@ -218,11 +218,14 @@
                     if (elem.checked) {
                         elem.checked = confirm('Are you 18 years or older?');
                     }
+                    elem.value = elem.checked;
                 }
             </script>
             <div class="custom-control custom-switch">
                 <input onchange="return confirmAge(this)" type="checkbox" class="custom-control-input" id="toggle-nsfw-mode"
-                    name="nsfw_mode" {{'checked' if nsfw_mode}}>
+                       name="nsfw_mode" {{'checked' if current_user.nsfw}}
+                       value="{{'true' if current_user.nsfw else 'false'}}"
+                >
                 <label class="custom-control-label" for="toggle-nsfw-mode">Display NSFW Content</label>
             </div>
         </div>

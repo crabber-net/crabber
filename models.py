@@ -72,6 +72,10 @@ class Crab(db.Model):
     banned = db.Column(db.Boolean, nullable=False, default=False)
     _password_reset_token = db.Column('password_reset_token', db.String)
 
+    # Content visibility
+    nsfw = db.Column(db.Boolean, nullable=False, default=False)
+    show_nsfw = db.Column(db.Boolean, nullable=False, default=False)
+
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
     _following = db.relationship(
@@ -479,6 +483,7 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """ Create and publish new Molt.
         """
+        kwargs['nsfw'] = kwargs.get('nsfw') or self.nsfw
         new_molt = Molt.create(author=self, content=content, **kwargs)
         return new_molt
 
@@ -800,6 +805,9 @@ class Molt(db.Model):
     # Tag links
     tags = db.relationship('Crabtag', secondary=crabtag_table)
 
+    # Content visibility
+    nsfw = db.Column(db.Boolean, nullable=False, default=False)
+
     # Analytical data
     browser = db.Column(db.String)
     platform = db.Column(db.String)
@@ -983,6 +991,20 @@ class Molt(db.Model):
         """
         if self.approved:
             self.approved = False
+            db.session.commit()
+
+    def label_nsfw(self):
+        """ Mark molt as NSFW
+        """
+        if not self.nsfw:
+            self.nsfw = True
+            db.session.commit()
+
+    def label_sfw(self):
+        """ Mark molt as SFW (not NOT safe for work).
+        """
+        if self.nsfw:
+            self.nsfw = False
             db.session.commit()
 
     def semantic_content(self) -> str:

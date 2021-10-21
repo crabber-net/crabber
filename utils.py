@@ -261,6 +261,16 @@ def common_molt_actions() -> Response:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         target_molt.report()
 
+    elif action == "enable_nsfw_molt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        if target_molt.author == get_current_user():
+            target_molt.label_nsfw()
+
+    elif action == "disable_nsfw_molt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        if target_molt.author == get_current_user():
+            target_molt.label_sfw()
+
     elif action == "bookmark_molt" and molt_id is not None:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         if not get_current_user().has_bookmarked(target_molt):
@@ -379,9 +389,11 @@ def common_molt_actions() -> Response:
         target_user = get_current_user()
         new_timezone = request.form.get('timezone')
         new_lastfm = request.form.get('lastfm').strip()
+        new_nsfw = request.form.get('nsfw_mode', 'false') == 'true'
         if patterns.timezone.fullmatch(new_timezone):
             target_user.timezone = new_timezone
             target_user.lastfm = new_lastfm
+            target_user.nsfw = new_nsfw
             db.session.commit()
             return show_message("Changes saved.")
         else:
