@@ -75,6 +75,7 @@ class Crab(db.Model):
     # Content visibility
     nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw = db.Column(db.Boolean, nullable=False, default=False)
+    show_nsfw_thumbnails = db.Column(db.Boolean, nullable=False, default=False)
 
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
