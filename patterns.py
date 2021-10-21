@@ -3,7 +3,7 @@ import re
 mention = re.compile(
     r'(?:^|\s|<br>)(?<!\\)@([\w]{1,32})(?!\w)')
 tag = re.compile(
-    r'(?:^|\s|<br>)(?<!\\)%([\w]{1,16})(?!\w)')
+    r'(?:^|\s|<br>)(?<!\\)%([\w]{1,})(?!\w)')
 username = re.compile(
     r'^[a-zA-Z0-9_]+$')
 only_underscores = re.compile(
