@@ -57,7 +57,8 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
-mail = CrabMail(MAIL_JSON)
+if MAIL_ENABLED:
+    mail = CrabMail(MAIL_JSON)
 
 
 @app.route('/.well-known/<file>')
@@ -189,7 +190,7 @@ def forgot_password():
     if request.method == 'POST':
         crab_email = request.form.get('email')
         crab = models.Crab.get_by_email(crab_email)
-        if crab:
+        if crab and MAIL_ENABLED:
             token = crab.generate_password_reset_token()
 
             # Send email

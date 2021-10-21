@@ -33,7 +33,12 @@ FEATURED_CRAB_USERNAME = 'jake'
 BLACKLIST_IP = load_lines_from_file('blacklist-ip')
 BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
+
+GEO_PATH = os.path.join(BASE_PATH, 'GeoLite2-City.mmdb')
+GEO_ENABLED = os.path.exists(GEO_PATH)
+
 MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
+MAIL_ENABLED = os.path.exists(MAIL_JSON)
 
 SITE_RATE_LIMIT_MINUTE = 200
 SITE_RATE_LIMIT_SECOND = 10
