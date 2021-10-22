@@ -1200,7 +1200,7 @@ div.mini-molt:hover div.mini-molt:hover {
 
 @media only screen and (max-height: 823px) {
     .large-molt-media-container {
-        max-height: 25vh !important;
+        /* max-height: 25vh !important; */
         overflow-y: hidden;
     }
 }
