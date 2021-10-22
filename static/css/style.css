@@ -667,8 +667,23 @@
 #nav-panel {
     max-width: 18rem;
 }
+
+@media only screen and (max-height: 548px) {
+    #nav-panel {
+        overflow-y: scroll !important;
+        max-height: 100vh !important;
+    }
+}
+
 #add-panel {
     max-width: 21rem;
+}
+
+@media only screen and (max-height: 590px) {
+    #add-panel {
+        overflow-y: scroll !important;
+        max-height: 100vh !important;
+    }
 }
 
 #nav-panel strong {
