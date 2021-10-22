@@ -1335,8 +1335,13 @@ class Molt(db.Model):
             This means Molts that are not deleted and are authored by Crabs
             that are neither deleted or banned.
         """
-        query = query.filter(Molt.deleted == False,
-                             Molt.author.has(deleted=False, banned=False))
+        query = query \
+                .filter(Molt.deleted == False,
+                        Molt.author.has(deleted=False, banned=False)) \
+                .filter(db.or_(
+                    Molt.is_remolt == False,
+                    Molt.original_molt.has(deleted=False)
+                ))
         return query
 
     @staticmethod
