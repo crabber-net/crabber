@@ -79,6 +79,7 @@
     <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/lastfm.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/highlight.js') }}?version={{server_start}}"></script>
+    <script src="{{ url_for('static', filename='scripts/toast.js') }}?version={{server_start}}"></script>
     <script async>
         {% if current_user %}
             // When document loads
@@ -667,6 +668,10 @@
             </div>
             {% endif %}
         </div>
+    </div>
+
+    <!-- This is where dynamic toasts will show up -->
+    <div id="toaster-coaster">
     </div>
 
     <!-- Bootstrap JS -->

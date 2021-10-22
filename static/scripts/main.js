@@ -1,5 +1,5 @@
 // AJAX Form Submit
-function SubForm(form, url=null, success=null) {
+function SubForm(form, url=null, success=null, error=null) {
     if (url == null) {
         url = document.location.pathname;
         if (!url.endsWith('/'))
@@ -12,6 +12,9 @@ function SubForm(form, url=null, success=null) {
         success: success,
         error: function () {
             console.warn("Failed to submit form to server;");
+            if (error != null) {
+                error();
+            }
         },
     });
 }
@@ -382,3 +385,119 @@ function highlightKeyword(keyword, selector) {
     $(selector).highlight(keyword, {className: 'search-highlight'});
 }
 
+function submitRemolt(elem) {
+    let form = $(elem).closest('form');
+    // Hide dropdown
+    setTimeout(function() {
+        $(document).trigger('click')
+
+        // Swap dropdown buttons
+        form.addClass('hidden');
+        form.siblings('#dd-undo-remolt')
+            .removeClass('hidden');
+    }, 20);
+
+
+    // Visually activate remolt button
+    let remoltBtn = $(elem)
+        .closest('.mini-molt-actions')
+        .find('.mini-molt-action.remolt');
+    remoltBtn.addClass('active-remolt');
+
+    // Increment remolt count
+    let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+    let remoltCount = parseInt(remoltCounter.text()) + 1;
+    remoltCounter.text(remoltCount);
+
+    // Ajax submit form
+    SubForm(form, url=null,
+        success = function() {
+            // Maybe not necessary?
+            //
+            // makeToast(
+            //     'Remolt Submitted',
+            //     'Your remolt has been posted successfully.'
+            // );
+        },
+        error = function() {
+            makeToast(
+                'Failed to remolt',
+                'Sorry! Try again in a few seconds.'
+            );
+            //
+                // Swap dropdown buttons
+            form.removeClass('hidden');
+            form.siblings('#dd-undo-remolt')
+                .addClass('hidden');
+
+            // Visually deactivate remolt button
+            remoltBtn.removeClass('active-remolt');
+
+            // Increment remolt count
+            let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+            let remoltCount = parseInt(remoltCounter.text()) - 1;
+            remoltCounter.text(remoltCount);
+        },
+    );
+}
+
+function deleteRemolt(elem) {
+    let form = $(elem).closest('form');
+    // Hide dropdown
+    setTimeout(function() {
+        $(document).trigger('click')
+
+        // Swap dropdown buttons
+        form.addClass('hidden');
+        form.siblings('#dd-remolt')
+            .removeClass('hidden');
+    }, 20);
+
+
+    // Visually activate remolt button
+    let remoltBtn = $(elem)
+        .closest('.mini-molt-actions')
+        .find('.mini-molt-action.remolt');
+    remoltBtn.removeClass('active-remolt');
+
+    // Increment remolt count
+    let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+    let remoltCount = parseInt(remoltCounter.text()) - 1;
+    remoltCounter.text(remoltCount);
+
+    // Ajax submit form
+    SubForm(form, url=null,
+        success = function() {
+            let molt = form.parents('.regular-molt');
+            if (molt.hasClass('is-remolt')) {
+                molt.remove()
+            }
+
+            // Maybe not necessary?
+            //
+            // makeToast(
+            //     'Remolt deleted',
+            //     'Your remolt has been deleted successfully.'
+            // );
+        },
+        error = function() {
+            makeToast(
+                'Failed to delete remolt',
+                'Sorry! Try again in a few seconds.'
+            );
+            //
+                // Swap dropdown buttons
+            form.removeClass('hidden');
+            form.siblings('#dd-remolt')
+                .addClass('hidden');
+
+            // Visually deactivate remolt button
+            remoltBtn.addClass('active-remolt');
+
+            // Increment remolt count
+            let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+            let remoltCount = parseInt(remoltCounter.text()) + 1;
+            remoltCounter.text(remoltCount);
+        },
+    );
+}
