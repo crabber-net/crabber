@@ -1456,7 +1456,9 @@ class Molt(db.Model):
         base_url = config.BASE_URL if absolute_url else ''
         if match:
             start, end = match.span()
-            username_str = output[start:end].strip("@ \t\n")
+            username_str = output[start:end] \
+                    .replace('<br>', '') \
+                    .strip("@ \t\n")
             username = Crab.query.filter_by(deleted=False, banned=False) \
                 .filter(Crab.username.ilike(username_str)).first()
             if username:
