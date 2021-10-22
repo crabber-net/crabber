@@ -72,6 +72,11 @@ class Crab(db.Model):
     banned = db.Column(db.Boolean, nullable=False, default=False)
     _password_reset_token = db.Column('password_reset_token', db.String)
 
+    # Content visibility
+    nsfw = db.Column(db.Boolean, nullable=False, default=False)
+    show_nsfw = db.Column(db.Boolean, nullable=False, default=False)
+    show_nsfw_thumbnails = db.Column(db.Boolean, nullable=False, default=False)
+
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
     _following = db.relationship(
@@ -479,16 +484,13 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """ Create and publish new Molt.
         """
+        kwargs['nsfw'] = kwargs.get('nsfw') or self.nsfw
         new_molt = Molt.create(author=self, content=content, **kwargs)
         return new_molt
 
     def delete(self):
         """ Delete user. (Can be undone).
         """
-        # Unpin Molt if necessary
-        if self.author.pinned == self:
-            self.author.unpin()
-
         self.deleted = True
         db.session.commit()
 
@@ -548,12 +550,13 @@ class Crab(db.Model):
                     return None
 
             # Check for molt duplicates
-            if kwargs.get("molt"):
+            molt = kwargs.get('molt')
+            if molt:
                 duplicate_notification = Notification.query.filter_by(
                     recipient=self,
                     sender=kwargs.get('sender'),
                     type=kwargs.get('type'),
-                    molt=kwargs.get('molt')
+                    molt=molt
                 )
                 if duplicate_notification.count():
                     is_duplicate = True
@@ -657,12 +660,33 @@ class Crab(db.Model):
             .filter_by(deleted=False, is_reply=False) \
             .filter(Molt.author.has(deleted=False, banned=False)) \
             .order_by(Molt.timestamp.desc())
-        molts = self.filter_molt_query_by_not_blocked(molts)
+        molts = self.filter_molt_query(molts)
         return molts
 
     def change_password(self, password: str):
         self.password = self.hash_pass(password)
         db.session.commit()
+
+    def filter_molt_query(self, query: BaseQuery) -> BaseQuery:
+        """ Filters a Molt query for all user blocks and preferences.
+        """
+        query = self.filter_molt_query_by_not_blocked(query)
+        if not self.show_nsfw:
+            query = self.filter_molt_query_by_not_nsfw(query)
+        return query
+
+    def filter_molt_query_by_not_nsfw(self, query: BaseQuery) -> BaseQuery:
+        """ Filters NSFW Molts out of a query.
+        """
+        query = query \
+            .filter(db.or_(Molt.nsfw == False, Molt.author_id == self.id)) \
+            .filter(db.or_(
+                Molt.original_molt == None,
+                Molt.original_molt.has(nsfw=False),
+                Molt.original_molt.has(author_id=self.id),
+                Molt.author_id == self.id
+            ))
+        return query
 
     def filter_molt_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
         """ Filters a Molt query by authors who have not blocked/been blocked
@@ -799,6 +823,9 @@ class Molt(db.Model):
 
     # Tag links
     tags = db.relationship('Crabtag', secondary=crabtag_table)
+
+    # Content visibility
+    nsfw = db.Column(db.Boolean, nullable=False, default=False)
 
     # Analytical data
     browser = db.Column(db.String)
@@ -985,6 +1012,20 @@ class Molt(db.Model):
             self.approved = False
             db.session.commit()
 
+    def label_nsfw(self):
+        """ Mark molt as NSFW
+        """
+        if not self.nsfw:
+            self.nsfw = True
+            db.session.commit()
+
+    def label_sfw(self):
+        """ Mark molt as SFW (not NOT safe for work).
+        """
+        if self.nsfw:
+            self.nsfw = False
+            db.session.commit()
+
     def semantic_content(self) -> str:
         """ Return Molt content (including embeds, tags, and mentions)
             rasterized as semantic HTML. (For RSS feeds and other external
@@ -1130,7 +1171,7 @@ class Molt(db.Model):
         """ Quote Molt as `author`.
         """
         new_quote = author.molt(comment, is_quote=True, original_molt=self,
-                                **kwargs)
+                                nsfw=self.nsfw, **kwargs)
         self.author.notify(sender=author, type='quote', molt=new_quote)
         return new_quote
 
@@ -1143,7 +1184,7 @@ class Molt(db.Model):
                                                 author=crab, deleted=False)
         if not duplicate_remolt.count():
             new_remolt = crab.molt('', is_remolt=True, original_molt=self,
-                                   **kwargs)
+                                   nsfw=self.nsfw, **kwargs)
             self.author.notify(sender=crab, type="remolt", molt=new_remolt)
             return new_remolt
 
@@ -1151,7 +1192,7 @@ class Molt(db.Model):
         """ Reply to Molt as `author`.
         """
         new_reply = author.molt(comment, is_reply=True, original_molt=self,
-                                **kwargs)
+                                nsfw=self.nsfw, **kwargs)
         self.author.notify(sender=author, type="reply", molt=new_reply)
         return new_reply
 

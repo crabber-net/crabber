@@ -1,5 +1,7 @@
 from PIL import Image, ExifTags, UnidentifiedImageError
 
+ALPHA_BACKGROUND_COLOR = (255, 255, 255)
+
 
 def exif_rotate(image):
     try:
@@ -28,7 +30,7 @@ def prep_and_save(img_bytes, filename):
 
     # Flatten alpha to black if necessary
     if img.mode == "RGBA":
-        flat_img = Image.new("RGB", img.size, (0, 0, 0))
+        flat_img = Image.new("RGB", img.size, ALPHA_BACKGROUND_COLOR)
         flat_img.paste(img, mask=img.split()[3])  # 3 is the alpha channel
     else:
         flat_img = img

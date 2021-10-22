@@ -174,7 +174,8 @@ function updateImgPreview(imgInput) {
         // Update image preview
         console.log(imgPreview);
         $(imgPreview).parent().removeClass("d-none");
-        imgPreview.css("background-image", `url('${reader.result}')`);
+        // DEBUG: What was this for???
+        // imgPreview.css("background-image", `url('${reader.result}')`);
         imgPreview.attr("src", reader.result);
 
         // Show remove image button
@@ -234,7 +235,7 @@ function updateCounter() {
     counter.text(charLimit - currentLen);
 
     // Enable/disable submit button
-    let submitEnabled = moltFormHasContent(form) && currentLen < charLimit;
+    let submitEnabled = moltFormHasContent(form) && currentLen <= charLimit;
     form.find("button").attr("disabled", !submitEnabled);
 }
 
