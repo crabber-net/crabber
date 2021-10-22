@@ -84,11 +84,13 @@ about crontabs if you wish to make further adjustments.
 ## Running
 
 Simply run `crabber.py` in your configured environment and open `localhost` in
-your browser.
+your browser, you can specify a port for the development server to run on by
+setting the `PORT` environment variable, it defaults to port 80 if not set.
 
-```bash
-python crabber.py
 ```
+PORT=1024 python crabber.py
+```
+
 
 This gets you a development server but **should not** be used in production.
 Install a "real" server like Apache2, Nginx, etc.
