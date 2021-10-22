@@ -1,0 +1,8 @@
+{
+    "SOURCES_PATH": "static/scss",
+    "TARGET_PATH": "static/css",
+    "LIBRARY_PATHS": [],
+    "OUTPUT_STYLES": "compressed",
+    "SOURCE_COMMENTS": false,
+    "EXCLUDES": []
+}
