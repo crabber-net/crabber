@@ -1,6 +1,10 @@
 <!-- All molts live here! -->
 {% for notif in notifications.items %}
-    {% include "notif.html" %}
+    {% if not notif.molt.nsfw or current_user.show_nsfw %}
+        {% include "notif.html" %}
+    {% else %}
+        <div class="d-inline-block border-bottom border-dark w-100 p-2 text-muted text-molt text-center">Notification filtered due to your NSFW preferences</div>
+    {% endif %}
 {% else %}
     <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">Notifications will appear here. Get out there and make a splash!</div>
 {% endfor %}

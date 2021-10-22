@@ -595,6 +595,10 @@
     background-position: 50% 10%;
 }
 
+.nsfw-thumbnail {
+    filter: blur(20px);
+}
+
 .zindex-front {
     position: relative;
     z-index: 10;
@@ -1287,6 +1291,15 @@ body, .master-container {
     background: #1e2731;
     padding: 2px 6px;
     margin: -3px -3px -3px 5px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.nsfw-badge {
+    color: var(--primary);
+    background: var(--primary-faded);
+    padding: 2px 6px;
     border-radius: 6px;
     font-size: 11px;
     white-space: nowrap;

@@ -140,6 +140,9 @@
                 <span class="mini-molt-username zindex-front">@{{author.username}}</span>
                 <span class="mini-molt-timestamp zindex-front">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                {% if molt.nsfw %}
+                    {% include 'nsfw-badge.html' %}
+                {% endif %}
             </div>
         </div>
 
@@ -155,8 +158,8 @@
             </p>
 
             {% if molt.image %}
-            <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                <div class="mini-molt-media-img" src="{{url_for('static', filename=molt.image)}}" style="background-image: url('{{url_for('static', filename=molt.image)}}');"></div>
+                <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
+                <div class="mini-molt-media-img {{'nsfw-thumbnail' if molt.nsfw}}" src="{{url_for('static', filename=molt.image)}}" style="background-image: url('{{url_for('static', filename=molt.image)}}');"></div>
             </div>
             {% endif %}
         </div>
@@ -357,6 +360,36 @@
                                     Delete Remolt
                                 </div>
                             </form>
+                        {% endif %}
+
+                        {% if author.id == current_user.id %}
+                            <!-- MARK SFW BUTTON -->
+                            {% if molt.nsfw %}
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="disable_nsfw_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="if (confirm('Are you sure you want to remove the NSFW label?')) {this.parentNode.submit();}">
+
+                                    <svg width="19" height="19" data-jam="eye">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#eye"></use>
+                                    </svg>
+                                    Remove NSFW label
+                                </div>
+                            </form>
+                            {% else %}
+                            <!-- MARK NSFW BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="enable_nsfw_molt">
+                                <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                <div onClick="if (confirm('Are you sure you want to label this Molt NSFW?')) {this.parentNode.submit();}">
+
+                                    <svg width="19" height="19" data-jam="eye-close">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#eye-close"></use>
+                                    </svg>
+                                    Label NSFW
+                                </div>
+                            </form>
+                            {% endif %}
                         {% endif %}
 
                         {% if current_user.has_bookmarked(molt) %}
