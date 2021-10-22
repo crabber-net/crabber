@@ -67,7 +67,9 @@ python scripts/initialize_database.py
 ```bash
 vim admins.cfg  # The only Crab-approved text editor
 ```
-7. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
+7. Create the `static/css` folder and compile the stylesheets into `static/css`
+using `boussole compile`.
+8. (**Optional**) If you want OpenGraph cards you need to set up a cron job that
    runs `fetch_cards.py` periodically.
 ```bash
 crontab -e
