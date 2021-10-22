@@ -2204,3 +2204,7 @@ a:active.text-primary {
 .toast-header img {
     width: 1.5em;
 }
+
+.hidden {
+    display: none;
+}

@@ -257,6 +257,13 @@ def common_molt_actions() -> Response:
                            browser=request.user_agent.browser,
                            address=request.remote_addr)
 
+    elif action == "undo_remolt" and molt_id is not None:
+        target_molt = models.Molt.query.filter_by(id=molt_id).first()
+        current_user = get_current_user()
+        remolt = current_user.has_remolted(target_molt)
+        if remolt:
+            remolt.delete()
+
     elif action == "report_molt" and molt_id is not None:
         target_molt = models.Molt.query.filter_by(id=molt_id).first()
         target_molt.report()

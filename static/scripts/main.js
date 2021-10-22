@@ -389,7 +389,15 @@ function submitRemolt(elem) {
     let form = $(elem).closest('form');
     if (confirm('Remolt this?')) {
         // Hide dropdown
-        setTimeout(function() {$(document).trigger('click')}, 20);
+        setTimeout(function() {
+            $(document).trigger('click')
+
+            // Swap dropdown buttons
+            form.addClass('hidden');
+            form.siblings('#dd-undo-remolt')
+                .removeClass('hidden');
+        }, 20);
+
 
         // Visually activate remolt button
         let remoltBtn = $(elem)
@@ -415,6 +423,11 @@ function submitRemolt(elem) {
                     'Failed to remolt',
                     'Sorry! Try again in a few seconds.'
                 );
+                //
+                // Swap dropdown buttons
+                form.removeClass('hidden');
+                form.siblings('#dd-undo-remolt')
+                    .addClass('hidden');
 
                 // Visually deactivate remolt button
                 remoltBtn.removeClass('active-remolt');
@@ -422,6 +435,67 @@ function submitRemolt(elem) {
                 // Increment remolt count
                 let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
                 let remoltCount = parseInt(remoltCounter.text()) - 1;
+                remoltCounter.text(remoltCount);
+            },
+        );
+    }
+}
+
+function deleteRemolt(elem) {
+    let form = $(elem).closest('form');
+    if (confirm('Are you sure you want to delete this?')) {
+        // Hide dropdown
+        setTimeout(function() {
+            $(document).trigger('click')
+
+            // Swap dropdown buttons
+            form.addClass('hidden');
+            form.siblings('#dd-remolt')
+                .removeClass('hidden');
+        }, 20);
+
+
+        // Visually activate remolt button
+        let remoltBtn = $(elem)
+            .closest('.mini-molt-actions')
+            .find('.mini-molt-action.remolt');
+        remoltBtn.removeClass('active-remolt');
+
+        // Increment remolt count
+        let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+        let remoltCount = parseInt(remoltCounter.text()) - 1;
+        remoltCounter.text(remoltCount);
+
+        // Ajax submit form
+        SubForm(form, url=null,
+            success = function() {
+                let molt = form.parents('.regular-molt');
+                if (molt.hasClass('is-remolt')) {
+                    molt.remove()
+                }
+
+                makeToast(
+                    'Remolt deleted',
+                    'Your remolt has been deleted successfully.'
+                );
+            },
+            error = function() {
+                makeToast(
+                    'Failed to delete remolt',
+                    'Sorry! Try again in a few seconds.'
+                );
+                //
+                // Swap dropdown buttons
+                form.removeClass('hidden');
+                form.siblings('#dd-remolt')
+                    .addClass('hidden');
+
+                // Visually deactivate remolt button
+                remoltBtn.addClass('active-remolt');
+
+                // Increment remolt count
+                let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
+                let remoltCount = parseInt(remoltCounter.text()) + 1;
                 remoltCounter.text(remoltCount);
             },
         );
