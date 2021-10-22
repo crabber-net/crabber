@@ -129,7 +129,7 @@
 
                 <!-- Home page button -->
                 <form onsubmit="loadingIcon(this);" action="/">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
                     {% if current_page == "home" %}
                     id="nav-active"
                     {% endif %}
@@ -149,7 +149,7 @@
 
                 <!-- Wild West page button -->
                 <form onsubmit="loadingIcon(this);" action="/wild">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
                         {% if current_page == "wild-west" %}
                             id="nav-active"
                         {% endif %}>
@@ -171,7 +171,7 @@
 
                 <!-- Notification page button -->
                 <form onsubmit="loadingIcon(this);" action="/notifications">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
                     {% if current_page == "notifications" %}
                         id="nav-active"
                     {% endif %}>
@@ -194,7 +194,7 @@
 
                 <!-- Bookmark page button -->
                 <form onsubmit="loadingIcon(this);" action="/bookmarks">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
                         {% if current_page == "bookmarks" %} id="nav-active" {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "bookmarks" else ""}}" width="28" height="28" data-jam="bookmark">
@@ -214,7 +214,7 @@
 
                 <!-- Search page button -->
                 <form onsubmit="loadingIcon(this);" action="/search">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 position-relative"
                         {% if current_page == "search" %} id="nav-active" {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "notifications" else ""}}" width="28" height="28" data-jam="search">
@@ -234,7 +234,7 @@
 
                 <!-- User page button -->
                 <form onsubmit="loadingIcon(this);" action="/user/{{current_user.username}}">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2"
                     {% if current_page == "own-profile" %}
                     id="nav-active"
                     {% endif %}
@@ -258,7 +258,7 @@
 
                 <!-- Stats page button -->
                 <form onsubmit="loadingIcon(this);" action="/stats">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"
                     {% if current_page == "stats" %}
                         id="nav-active"
                     {% endif %}>
@@ -280,7 +280,7 @@
 
                 <!-- Settings page button -->
                 <form onsubmit="loadingIcon(this);" action="/settings">
-                    <button type="submit" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"
                     {% if current_page == "settings" %}
                         id="nav-active"
                     {% endif %}>

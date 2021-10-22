@@ -501,3 +501,11 @@ function deleteRemolt(elem) {
         },
     );
 }
+
+function openActionInNewTab(elem) {
+    let form = $(elem).closest('form');
+    let url = form.attr('action');
+    let handle = window.open(url, '_blank');
+    handle.blur();
+    window.focus();
+}
