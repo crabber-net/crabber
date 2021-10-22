@@ -834,6 +834,15 @@ div.mini-molt:hover div.mini-molt:hover {
     position: absolute;
     top: 0;
 }
+
+
+@media only screen and (max-height: 823px) {
+    .mini-molt-media-container {
+        max-height: 25vh !important;
+        overflow-y: hidden;
+    }
+}
+
 .mini-molt-text-box {
     /* This has to be visible for the pop-ups to work */
     overflow: visible;
@@ -1172,6 +1181,13 @@ div.mini-molt:hover div.mini-molt:hover {
 }
 .large-molt-media-container {
     max-height: none;
+}
+
+@media only screen and (max-height: 823px) {
+    .large-molt-media-container {
+        max-height: 25vh !important;
+        overflow-y: hidden;
+    }
 }
 
 .compose-button-row {
