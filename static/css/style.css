@@ -1628,8 +1628,9 @@ table#user-info th {
     width: 100%;
     fill: var(--primary);
     position: absolute;
+    height: 20rem;
     top: 0;
-    height: 15rem;
+    bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
@@ -1644,8 +1645,9 @@ table#user-info th {
     width: 100%;
     fill: var(--primary-faded);
     position: absolute;
+    height: 20rem;
     top: 0;
-    height: 15rem;
+    bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
