@@ -47,16 +47,19 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
-3. (**Optional**) Download a GeoLite2 City database from [MaxMind](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) saved as `GeoLite2-City.mmdb`
-4. (**Optional**)  Create a `mail_conf.json` file in the root of the project with a `address`
-and `password` field
+3. (**Optional**) Download the GeoLite2 City database from [MaxMind]
+(https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) 
+saved as `GeoLite2-City.mmdb` in the project root to enable location bans.
+4. (**Optional**)  Create a `mail_conf.json` file in the root of the project 
+with the fields `address` and `password` to enable server mail for password
+resets.
 ```json
 {
-    "address": "",
-    "password": ""
+    "address": "example@aol.com",
+    "password": "a_secure_password"
 }
 ```
-5. Setup the database
+5. Set up the database
 ```bash
 python scripts/initialize_database.py
 ```
