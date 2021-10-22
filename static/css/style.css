@@ -1680,6 +1680,12 @@ table#user-info th {
     font-size: 11rem;
 }
 
+@media only screen and (max-width: 430px) {
+    .user-count {
+        font-size: 6rem !important;
+    }
+}
+
 .stat-container {
     background: var(--dark-less-more);
     border-radius: 10px;
