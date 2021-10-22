@@ -1,3 +1,110 @@
-* {
-	font-family: "OpenDyslexic" !important;
-}
+:root {
+    --primary: rgb(230, 57, 70);
+    --primary-faded: rgba(230, 57, 71, 0.1);
+    --primary-faded-less: rgba(230, 57, 71, 0.3);
+    --primary-dark: rgb(167, 25, 37);
+    --primary-darker: rgb(110, 17, 25);
+    --light: rgb(29, 29, 29);
+    --light-darker: rgb(51, 51, 51);
+    --light-darker-er: rgb(80, 81, 90);
+    --light-faded: rgb(80, 83, 83);
+    --light-faded-less: rgb(105, 114, 117);
+    --light-faded-more: #babcc2 !important;
+    --dark: rgb(250, 250, 250);
+    --dark-transparent: rgb(250, 250, 250, 0);
+    --dark-less: rgb(240, 240, 240);
+    --dark-less-transparent: rgb(240, 240, 240, 0);
+    --dark-lesser: rgb(233, 233, 233);
+    --dark-lesser-transparent: rgb(233, 233, 233, 0);
+    --dark-lesserest: rgb(186, 188, 192);
+    --dark-less-more: rgb(230, 230, 230);
+    --border-dark: #dddddd;
+    --border-dark-less: #bec2c6;
+    --border-darker: rgba(0, 0, 0, 0.01);
+    --secondary: #399de6;
+    --tertiary: #39e683;
+    --quad: #1d3557;
+    --neue-card: white;
+    --neue-card-hover: rgb(251, 251, 251);
+    --muted: #535557;
+  }
+  .border-dark {
+    border-color: var(--border-dark) !important;
+  }
+  .btn.btn-primary {
+    color: var(--dark);
+    fill: var(--dark);
+    border: none;
+    .btn-icon {
+      fill: var(--dark);
+    }
+  }
+  .btn.btn-secondary {
+    &:active {
+      strong {
+        color: var(--dark-lesser);
+      }
+    }
+    strong {
+      color: var(--dark-less);
+    }
+  }
+  #nav-panel {
+    .btn.btn-secondary {
+      strong {
+        color: var(--light);
+      }
+      &:active {
+        strong {
+          color: var(--primary-dark);
+        }
+      }
+    }
+  }
+  .text-light {
+    color: var(--light) !important;
+    fill: var(--light) !important;
+  }
+  .text-muted {
+    color: var(--muted);
+  }
+  .verified {
+    fill: var(--primary);
+  }
+  .logo {
+    fill: var(--primary);
+  }
+  .btn-secondary {
+    &:hover {
+      fill: black;
+      color: black;
+    }
+  }
+  .follows-you {
+    background: #d1d1d1;
+  }
+  .user-count {
+    color: var(--dark);
+  }
+  .notif-badge {
+    color: var(--dark);
+    border-color: var(--light);
+  }
+  .avatar-edit-button {
+    svg {
+      fill: var(--dark) !important;
+    }
+  }
+  .banner-edit-button {
+    svg {
+      fill: var(--dark) !important;
+    }
+  }
+  .molt-dropdown {
+    .dropdown-item {
+      &:hover {
+        background: var(--dark);
+      }
+    }
+  }
+  
