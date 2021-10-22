@@ -246,7 +246,7 @@
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="remolt_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
-                                <div onClick="if (confirm('Remolt this?')) { this.parentNode.submit()}">
+                                <div onClick="submitRemolt(this)">
                                     <svg class="mini-molt-action-icon" width="19" height="19" data-jam="repeat">
                                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                                     </svg>

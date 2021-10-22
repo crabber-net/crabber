@@ -1,6 +1,6 @@
 const DEFAULT_IMG = '/static/img/icon.jpg';
 const DEFAULT_HIDE = true;
-const DEFAULT_DELAY = 5000;
+const DEFAULT_DELAY = 10000;
 
 const Toast = ({title, body, img, autohide, delay}) => `
 <div class="toast" role="alert" aria-live="assertive" aria-atomic="true"
