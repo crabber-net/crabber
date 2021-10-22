@@ -2187,3 +2187,20 @@ a:active.text-primary {
 .quoted-molt {
     border: 1px solid var(--border-dark-less);
 }
+
+/* Bootstrap toast container element */
+#toaster-coaster {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    margin: 2em;
+}
+
+.toast {
+    width: 20em;
+}
+
+.toast-header img {
+    width: 1.5em;
+}
