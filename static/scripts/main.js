@@ -234,7 +234,7 @@ function updateCounter() {
     counter.text(charLimit - currentLen);
 
     // Enable/disable submit button
-    let submitEnabled = moltFormHasContent(form) && currentLen < charLimit;
+    let submitEnabled = moltFormHasContent(form) && currentLen <= charLimit;
     form.find("button").attr("disabled", !submitEnabled);
 }
 
