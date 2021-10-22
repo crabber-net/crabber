@@ -27,6 +27,9 @@
     --neue-card: white;
     --neue-card-hover: rgb(251, 251, 251);
 
+    --unread-notif-background: var(--dark-less);
+    --unread-notif-background-hover: var(--dark-lesser);
+
     --muted: #535557;
 ;
 }

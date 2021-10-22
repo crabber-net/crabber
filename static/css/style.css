@@ -1250,10 +1250,10 @@ body, .master-container {
 }
 
 .notif-unread {
-    background: var(--dark-less);
+    background: var(--unread-notif-background);
 }
 .notif-unread:hover {
-    background: var(--dark-lesser) !important;
+    background: var(--unread-notif-background-hover) !important;
 }
 
 .tiny-reply-context {

@@ -28,6 +28,9 @@
     --neue-card: rgb(16, 20, 24);
     --neue-card-hover: rgb(18, 23, 27);
 
+    --unread-notif-background: rgb(24, 29, 34);
+    --unread-notif-background-hover: rgb(37, 43, 49);
+
     --muted: #6c757d;
     --placeholder: rgb(172, 172, 172);
 
