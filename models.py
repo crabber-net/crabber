@@ -491,10 +491,6 @@ class Crab(db.Model):
     def delete(self):
         """ Delete user. (Can be undone).
         """
-        # Unpin Molt if necessary
-        if self.author.pinned == self:
-            self.author.unpin()
-
         self.deleted = True
         db.session.commit()
 
