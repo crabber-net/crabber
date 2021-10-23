@@ -125,13 +125,21 @@ def crab_bio(crab_ID):
         if request.method == 'GET':
             return api_utils.crab_to_json(crab, bio=True)
         elif request.method == 'POST':
-            new_bio = {key: value for key, value in request.form.items()
-                       if key in ('age', 'description', 'emoji', 'jam',
-                                  'location', 'obsession', 'pronouns',
-                                  'quote', 'remember')
-                       and value}
-            crab.update_bio(new_bio)
-            return api_utils.crab_to_json(crab, bio=True)
+            auth = require_auth(request)
+            if auth:
+                if crab.id == auth['crab_id']:
+                    new_bio = {key: value for key, value in request.form.items()
+                               if key in ('age', 'description', 'emoji', 'jam',
+                                          'location', 'obsession', 'pronouns',
+                                          'quote', 'remember')
+                               and value}
+                    crab.update_bio(new_bio)
+                    return api_utils.crab_to_json(crab, bio=True)
+                else:
+                    return abort(401, description='This bio does not ' \
+                         'belong to the authorized user.')
+            else:
+                return abort(401, description='This endpoint requires authentication.')
     else:
         return abort(404, description='No Crab with that ID.')
 
@@ -164,9 +172,17 @@ def get_crab_bookmarks(crab_ID):
 
     crab = api_utils.get_crab(crab_ID)
     if crab:
-        bookmarks = crab.query_bookmarks()
-        bookmarks_json = api_utils.query_to_json(bookmarks)
-        return bookmarks_json
+        auth = require_auth(request)
+        if auth:
+            if crab.id == auth['crab_id']:
+                bookmarks = crab.query_bookmarks()
+                bookmarks_json = api_utils.query_to_json(bookmarks)
+                return bookmarks_json
+            else:
+                return abort(401, description='These bookmarks do not ' \
+                     'belong to the authorized user.')
+        else:
+            return abort(401, description='This endpoint requires authentication.')
     else:
         return abort(404, description='No Crab with that ID.')
 
