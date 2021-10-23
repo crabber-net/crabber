@@ -10,6 +10,7 @@ import models
 import os
 import patterns
 from typing import Iterable, Tuple, Union
+from flask_hcaptcha import hCaptcha
 import utils
 
 
@@ -20,6 +21,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
+    app.config['HCAPTCHA_ENABLED'] = HCAPTCHA_ENABLED
 
     limiter = register_extensions(app)
     register_blueprints(app)
@@ -57,6 +59,10 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
+site_key = os.getenv('HCAPTCHA_SITE_KEY')
+secret_key = os.getenv('HCAPTCHA_SECRET_KEY')
+captcha = hCaptcha(app, site_key, secret_key, HCAPTCHA_ENABLED)
+
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
 
@@ -288,16 +294,19 @@ def signup():
                         if not patterns.only_underscores.fullmatch(username):
                             if password == confirm_password:
                                 if password:
-                                    # Create user account
-                                    models.Crab.create_new(username=username,
-                                                           email=email,
-                                                           password=password,
-                                                           display_name=display_name)
+                                    if captcha.verify():
+                                        # Create user account
+                                        models.Crab.create_new(username=username,
+                                                            email=email,
+                                                            password=password,
+                                                            display_name=display_name)
 
-                                    # "Log in"
-                                    session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
-                                    # Redirect to let the user know it succeeded
-                                    return redirect("/signupsuccess")
+                                        # "Log in"
+                                        session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
+                                        # Redirect to let the user know it succeeded
+                                        return redirect("/signupsuccess")
+                                    else:
+                                        return redirect("/signup?failed&error_msg=Captcha verification failed")
                                 else:
                                     return redirect("/signup?failed&error_msg=Password cannot be blank")
                             else:

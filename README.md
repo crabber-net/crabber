@@ -81,6 +81,13 @@ This will run `fetch_cards.py` in your Crabber virtual environment once every
 minute. To run every five minutes change the first asterisk to `0/5`. Learn
 about crontabs if you wish to make further adjustments.
 
+## Captcha
+
+Crabber has the option of using an invisible captcha on the signup page to
+help prevent bots and spam, to enable this, set the `HCAPTCHA_ENABLED` to `True`
+in `config.py`, and set the `HCAPTCHA_SITE_KEY` and `HCAPTCHA_SECRET_KEY`
+environment variables to your site and secret key respectfully.
+
 ## Running
 
 Simply run `crabber.py` in your configured environment and open `localhost` in
@@ -90,7 +97,6 @@ setting the `PORT` environment variable, it defaults to port 80 if not set.
 ```
 PORT=1024 python crabber.py
 ```
-
 
 This gets you a development server but **should not** be used in production.
 Install a "real" server like Apache2, Nginx, etc.
