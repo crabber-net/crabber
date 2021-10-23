@@ -61,13 +61,6 @@
     </form>
 
     <div class="text-muted text-center my-5" id="cookie-footer">
-        {% if config['HCAPTCHA_ENABLED'] %}
-        <small>
-            This site is protected by hCaptcha and its
-            <a href="https://hcaptcha.com/privacy">Privacy Policy</a> and
-            <a href="https://hcaptcha.com/terms">Terms of Service</a> apply.
-        </small> <br/>
-        {% endif %}
         <small>Crabber uses cookies. If you care, you can <a href="{{url_for('static', filename='legal/cookies.txt')}}">read about it here.</a></small>
     </div>
 
