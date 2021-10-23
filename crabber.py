@@ -386,7 +386,7 @@ def user(username):
         # Check if blocked (if logged in)
         current_user_is_blocked = False
         if current_user:
-            this_user.is_blocking(current_user)
+            current_user_is_blocked = this_user.is_blocking(current_user)
 
         if this_user is None or current_user_is_blocked:
             return render_template('not-found.html', current_user=current_user, noun='user')
@@ -490,7 +490,9 @@ def molt_page(username, molt_id):
             is_blocked = primary_molt.author.is_blocking(current_user) \
                 or primary_molt.author.is_blocked_by(current_user)
 
-        if primary_molt is None or is_blocked:
+        if primary_molt is None \
+           or is_blocked \
+           or primary_molt.author.username != username:
             social_title = f'Unavailable Post'
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
         elif primary_molt.author.banned:
@@ -500,6 +502,7 @@ def molt_page(username, molt_id):
         else:
             social_title = f'{primary_molt.author.display_name}\'s post on Crabber'
             replies = primary_molt.query_replies()
+            replies = current_user.filter_molt_query(replies)
             return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
                                    replies=replies, current_user=utils.get_current_user(),
                                    social_title=social_title)

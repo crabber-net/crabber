@@ -9,6 +9,7 @@ from passlib.hash import sha256_crypt
 import patterns
 import secrets
 from sqlalchemy import desc, func, or_
+from sqlalchemy.orm import aliased
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -694,9 +695,15 @@ class Crab(db.Model):
         """
         blocker_ids = [crab.id for crab in self.blockers]
         blocked_ids = [crab.id for crab in self.blocked]
+        original_molt = aliased(Molt)
         query = query \
             .filter(Molt.author_id.notin_(blocker_ids)) \
-            .filter(Molt.author_id.notin_(blocked_ids))
+            .filter(Molt.author_id.notin_(blocked_ids)) \
+            .outerjoin(original_molt, original_molt.id == Molt.original_molt_id) \
+            .filter(db.or_(
+                Molt.original_molt == None,
+                original_molt.author_id.notin_(blocked_ids),
+            ))
         return query
 
     def filter_user_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
