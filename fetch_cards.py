@@ -11,7 +11,7 @@ import requests
 from requests.exceptions import RequestException
 from typing import Optional, Tuple
 from webpreview import web_preview
-from webpreview.excepts import URLUnreachable
+from webpreview.excepts import URLUnreachable, URLNotFound
 
 
 class Lock:
@@ -105,7 +105,7 @@ with Lock('fetch-cards') as lock:
                     card.title, card.description, card.image = metadata
                     card.ready = True
                     print(f'Fetched {card.url}')
-            except URLUnreachable:
+            except (URLUnreachable, URLNotFound, RequestException):
                 pass
             if not card.ready:
                 print(f'Failed to fetch {card.url}')
