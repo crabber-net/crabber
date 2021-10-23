@@ -845,17 +845,10 @@ div.mini-molt:hover div.mini-molt:hover {
     overflow: hidden;
     position: relative;
 }
+
 .mini-molt-media-container img {
     position: absolute;
     top: 0;
-}
-
-
-@media only screen and (max-height: 823px) {
-    .mini-molt-media-container {
-        max-height: 25vh !important;
-        overflow-y: hidden;
-    }
 }
 
 .mini-molt-text-box {
@@ -1194,13 +1187,14 @@ div.mini-molt:hover div.mini-molt:hover {
     line-height: 1.3125;
     font-weight: 400;
 }
+
 .large-molt-media-container {
     max-height: none;
 }
 
 @media only screen and (max-height: 823px) {
-    .large-molt-media-container {
-        /* max-height: 25vh !important; */
+    .mini-compose-textarea > .large-molt-media-container {
+        max-height: 25vh !important;
         overflow-y: hidden;
     }
 }
