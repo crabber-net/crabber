@@ -353,7 +353,13 @@ def user(username):
         current_user = utils.get_current_user()
         current_tab = request.args.get("tab", default="molts")
         this_user = models.Crab.get_by_username(username)
-        if this_user is None or this_user.is_blocking(current_user):
+
+        # Check if blocked (if logged in)
+        current_user_is_blocked = False
+        if current_user:
+            this_user.is_blocking(current_user)
+
+        if this_user is None or current_user_is_blocked:
             return render_template('not-found.html', current_user=current_user, noun='user')
         else:
             social_title = f'{this_user.display_name} on Crabber'
@@ -381,15 +387,18 @@ def user(username):
                 if section == 'molts':
                     molts = this_user.query_molts() \
                         .filter_by(is_reply=False)
-                    molts = current_user.filter_molt_query(molts)
+                    if current_user:
+                        molts = current_user.filter_molt_query(molts)
                     molts = molts.paginate(m_page_n, MOLTS_PER_PAGE, False)
                 elif section == 'replies':
                     replies = this_user.query_replies()
-                    replies = current_user.filter_molt_query(replies)
+                    if current_user:
+                        replies = current_user.filter_molt_query(replies)
                     replies = replies.paginate(m_page_n, MOLTS_PER_PAGE, False)
                 elif section == 'likes':
                     likes = this_user.query_likes()
-                    likes = current_user.filter_molt_query(likes)
+                    if current_user:
+                        likes = current_user.filter_molt_query(likes)
                     likes = likes.paginate(l_page_n, MOLTS_PER_PAGE)
                 return render_template(f'profile-ajax-tab-{section}.html',
                                        current_page=("own-profile" if this_user == current_user else ""),
@@ -445,9 +454,14 @@ def molt_page(username, molt_id):
         primary_molt = models.Molt.get_by_ID(molt_id)
         ajax_content = request.args.get('ajax_content')
         current_user = utils.get_current_user()
-        if primary_molt is None \
-            or primary_molt.author.is_blocking(current_user) \
-            or primary_molt.author.is_blocked_by(current_user):
+
+        # Check if blocked (if logged in)
+        is_blocked = False
+        if current_user:
+            is_blocked = primary_molt.author.is_blocking(current_user) \
+                or primary_molt.author.is_blocked_by(current_user)
+
+        if primary_molt is None or is_blocked:
             social_title = f'Unavailable Post'
             return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
         elif primary_molt.author.banned:
