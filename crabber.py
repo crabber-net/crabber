@@ -10,6 +10,7 @@ import models
 import os
 import patterns
 from typing import Iterable, Tuple, Union
+from flask_hcaptcha import hCaptcha
 import utils
 
 
@@ -57,6 +58,8 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
+captcha = hCaptcha(app)
+
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
 
@@ -259,16 +262,19 @@ def signup():
                         if not patterns.only_underscores.fullmatch(username):
                             if password == confirm_password:
                                 if password:
-                                    # Create user account
-                                    models.Crab.create_new(username=username,
-                                                           email=email,
-                                                           password=password,
-                                                           display_name=display_name)
+                                    if captcha.verify():
+                                        # Create user account
+                                        models.Crab.create_new(username=username,
+                                                            email=email,
+                                                            password=password,
+                                                            display_name=display_name)
 
-                                    # "Log in"
-                                    session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
-                                    # Redirect to let the user know it succeeded
-                                    return redirect("/signupsuccess")
+                                        # "Log in"
+                                        session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
+                                        # Redirect to let the user know it succeeded
+                                        return redirect("/signupsuccess")
+                                    else:
+                                        return redirect("/signup?failed&error_msg=Captcha verification failed")
                                 else:
                                     return redirect("/signup?failed&error_msg=Password cannot be blank")
                             else:
