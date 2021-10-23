@@ -1,0 +1,76 @@
+[
+    {
+        "title": "Social Newbie",
+        "description": "Get your first follower",
+        "image": "img/default_trophy_silver.png"
+    },
+    {
+        "title": "Mingler",
+        "description": "Have 10 followers",
+        "image": "img/default_trophy_silver.png"
+    },
+    {
+        "title": "Life of the Party",
+        "description": "Have 100 followers"
+    },
+    {
+        "title": "Celebrity",
+        "description": "Have 1000 followers"
+    },
+    {
+        "title": "Baby Crab",
+        "description": "Publish your first Molt",
+        "image": "img/default_trophy_silver.png"
+    },
+    {
+        "title": "Pineapple Express",
+        "description": "Use the crabtag %420"
+    },
+    {
+        "title": "I Want it That Way",
+        "image": "img/default_trophy_silver.png",
+        "description": "Change your avatar, banner, and description"
+    },
+    {
+        "title": "Dopamine Hit",
+        "image": "img/default_trophy_silver.png",
+        "description": "Get 10 likes on a Molt"
+    },
+    {
+        "title": "Dopamine Addict",
+        "description": "Get 100 likes on a Molt. Need... more..."
+    },
+    {
+        "title": "Full-On Junkie",
+        "description": "Get 1,000 likes on a Molt"
+    },
+    {
+        "title": "Back-Crabber",
+        "image": "img/default_trophy_silver.png",
+        "description": "Follow someone back only to have them unfollow you"
+    },
+    {
+        "title": "I Captivated the Guy",
+        "description": "Be followed by a verified user"
+    },
+    {
+        "title": "Lab Rat",
+        "description": "Participate in Crabber's beta phase"
+    },
+    {
+        "title": "They Live",
+        "description": "Survive the great site reset of 2020"
+    },
+    {
+        "title": "Crabber Contributor",
+        "description": "Contribute code to the development of Crabber."
+    },
+    {
+        "title": "Pentester",
+        "description": "Discover and report a security vulnerability."
+    },
+    {
+        "title": "Universal Donor",
+        "description": "Donate money to the development of Crabber <3"
+    }
+]
