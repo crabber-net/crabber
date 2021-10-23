@@ -4,14 +4,15 @@ from crab_mail import CrabMail
 import datetime
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
     send_from_directory, session
+from flask_hcaptcha import hCaptcha
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import models
 import os
 import patterns
 from typing import Iterable, Tuple, Union
-from flask_hcaptcha import hCaptcha
 import utils
+from werkzeug.middleware.profiler import ProfilerMiddleware
 
 
 def create_app():
@@ -24,6 +25,7 @@ def create_app():
     app.config['HCAPTCHA_SITE_KEY'] = os.getenv('HCAPTCHA_SITE_KEY')
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = HCAPTCHA_ENABLED
+    app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
 
     limiter = register_extensions(app)
     register_blueprints(app)
@@ -62,6 +64,9 @@ def register_blueprints(app):
 
 app, limiter = create_app()
 captcha = hCaptcha(app)
+if app.config['PROFILER_ENABLED']:
+    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, 
+                                      profile_dir='wsgi_profiler')
 
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
