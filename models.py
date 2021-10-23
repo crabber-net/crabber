@@ -996,14 +996,20 @@ class Molt(db.Model):
             self.raw_mentions += user.lower() + "\n"
 
         # Parse links
+        card_url = None
         link = patterns.ext_link.search(self.content)
         if link:
-            url = link.group(1)
+            card_url = link.group(1)
+        else:
+            link = patterns.ext_md_link.search(self.content)
+            if link:
+                card_url = link.group(2)
+        if card_url:
             # Check that link doesn't match any embed types
-            if all((not pattern.match(url) for pattern in [patterns.youtube,
+            if all((not pattern.match(card_url) for pattern in [patterns.youtube,
                                                            patterns.giphy,
                                                            patterns.ext_img])):
-                self.card = Card.get(url)
+                self.card = Card.get(card_url)
 
         # Notify mentioned users
         for user in self.mentions:
