@@ -1012,7 +1012,7 @@ class Molt(db.Model):
         # Award trophies where applicable:
         if self.author.query_molts().count() == 1:
             self.author.award(title="Baby Crab")
-        if "420" in self.tags:
+        if "420" in self.raw_tags:
             self.author.award(title="Pineapple Express")
 
     def approve(self):
