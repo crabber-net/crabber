@@ -84,9 +84,9 @@ about crontabs if you wish to make further adjustments.
 ## Captcha
 
 Crabber has the option of using an invisible captcha on the signup page to
-help prevent bots and spam, to enable this set the `HCAPTCHA_ENABLED` to `True`
-and set the `HCAPTCHA_SITE_KEY` variable to your site key and the 
-`HCAPTCHA_SECRET_KEY` to your secret key respectfully.
+help prevent bots and spam, to enable this, set the `HCAPTCHA_ENABLED` to `True`
+in `config.py`, and set the `HCAPTCHA_SITE_KEY` and `HCAPTCHA_SECRET_KEY`
+environment variables to your site and secret key respectfully.
 
 ## Running
 
