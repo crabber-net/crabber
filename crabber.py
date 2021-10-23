@@ -21,6 +21,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
+    app.config['HCAPTCHA_SITE_KEY'] = os.getenv('HCAPTCHA_SITE_KEY')
+    app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = HCAPTCHA_ENABLED
 
     limiter = register_extensions(app)
@@ -59,9 +61,7 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
-site_key = os.getenv('HCAPTCHA_SITE_KEY')
-secret_key = os.getenv('HCAPTCHA_SECRET_KEY')
-captcha = hCaptcha(app, site_key, secret_key, HCAPTCHA_ENABLED)
+captcha = hCaptcha(app)
 
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
