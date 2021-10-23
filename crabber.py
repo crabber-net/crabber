@@ -509,7 +509,7 @@ def molt_page(username, molt_id):
 
         # Check if blocked (if logged in)
         is_blocked = False
-        if current_user:
+        if current_user and primary_molt:
             is_blocked = primary_molt.author.is_blocking(current_user) \
                 or primary_molt.author.is_blocked_by(current_user)
 
