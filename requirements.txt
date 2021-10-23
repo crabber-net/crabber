@@ -1,3 +1,6 @@
+aiohttp==3.7.4.post0
+async-timeout==3.0.1
+attrs==21.2.0
 beautifulsoup4==4.9.3
 blis==0.7.4
 cached-property==1.5.2
@@ -11,6 +14,7 @@ crabatar==1.0.3
 cymem==2.0.5
 flake8==3.8.4
 Flask==1.1.2
+Flask-hCaptcha==0.5.4
 Flask-Limiter==1.4
 Flask-SQLAlchemy==2.4.4
 geoip2==4.1.0
@@ -21,8 +25,10 @@ Jinja2==2.11.3
 limits==1.5.1
 Mako==1.1.4
 MarkupSafe==1.1.1
+maxminddb==2.2.0
 mccabe==0.6.1
 more-itertools==8.6.0
+multidict==5.2.0
 murmurhash==1.0.5
 numpy==1.20.0
 ordered-set==3.1.1
@@ -50,7 +56,9 @@ thinc==7.4.5
 toml==0.10.2
 tomlkit==0.5.11
 tqdm==4.56.0
+typing-extensions==3.10.0.2
 urllib3==1.26.5
 wasabi==0.8.2
 webpreview==1.6.0
 Werkzeug==1.0.1
+yarl==1.7.0
