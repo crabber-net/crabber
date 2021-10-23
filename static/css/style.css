@@ -590,9 +590,13 @@
     height: 100%;
     width: 100%;
     position: absolute;
+    object-fit: cover;
     top: 0;
-    background-size: cover;
-    background-position: 50% 10%;
+}
+
+.profile-banner {
+    height: auto;
+    object-position: 50% 10%;
 }
 
 .nsfw-thumbnail {
