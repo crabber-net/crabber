@@ -461,7 +461,7 @@ class Crab(db.Model):
             # Create follow notification
             crab.notify(sender=self, type="follow")
             # Check if awards are applicable:
-            follower_count = crab.follower_count()
+            follower_count = crab.follower_count
             if follower_count == 1:
                 crab.award(title="Social Newbie")
             elif follower_count == 10:
