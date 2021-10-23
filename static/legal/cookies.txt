@@ -1,6 +1,6 @@
 Look, man:
 
-Cookies get such a bad rap. People here all about how bad they are and that they
+Cookies get such a bad rap. People hear all about how bad they are and that they
 need to clear their browser, etc. Sure, cookies can be misused by some people
 but so can JavaScript and we don't need to click on a pop-up for that every time
 we visit a new website.
