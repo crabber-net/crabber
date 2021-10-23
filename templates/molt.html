@@ -203,7 +203,7 @@
                     <svg class="mini-molt-action-icon" width="19" height="19" data-jam="message">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
                     </svg>
-                    <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
+                    <span class="mini-molt-action-counter ml-1">{{molt.reply_count}}</span>
                 </div>
             </form>
 
@@ -280,7 +280,7 @@
                         <svg class="mini-molt-action-icon text-primary" width="19" height="19" data-jam="heart-f">
                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart-f"></use>
                         </svg>
-                        <span class="mini-molt-action-counter ml-1 text-primary">{{molt.likes|length}}</span>
+                        <span class="mini-molt-action-counter ml-1 text-primary">{{molt.like_count}}</span>
                     {% else %}
                         <svg class="mini-molt-action-icon {{"d-none" if current_user.has_liked(molt) else ""}}" width="19" height="19" data-jam="heart">
                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart"></use>
@@ -289,7 +289,7 @@
                         <svg class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" width="19" height="19" data-jam="heart-f">
                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart-f"></use>
                         </svg>
-                        <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.likes|length}}</span>
+                        <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.like_count}}</span>
                     {% endif %}
                 </div>
             </form>

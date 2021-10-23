@@ -98,17 +98,26 @@ def index():
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'timeline-ajax-{block}.html',
-                                                current_page="home",
-                                                page_n=page_n,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'timeline-ajax-{block}.html',
+                    current_page="home",
+                    page_n=page_n,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
-            molts = utils.get_current_user().query_timeline() \
+            molts = utils.get_current_user() \
+                .query_timeline() \
                 .paginate(page_n, MOLTS_PER_PAGE, False)
 
-            return render_template('timeline-content.html' if request.args.get("ajax_content") else 'timeline.html', current_page="home", page_n=page_n,
-                                   molts=molts, current_user=utils.get_current_user())
+            return render_template(
+                'timeline-content.html' if request.args.get("ajax_content") \
+                else 'timeline.html',
+                current_page="home",
+                page_n=page_n,
+                molts=molts,
+                current_user=utils.get_current_user()
+            )
     else:
         featured_molt = models.Molt.query.filter_by(id=FEATURED_MOLT_ID).first()
         featured_user = models.Crab.query.filter_by(username=FEATURED_CRAB_USERNAME).first()

@@ -226,7 +226,7 @@ class Crab(db.Model):
     def trophy_count(self):
         """ Returns amount of trophies user has earned.
         """
-        return len(self.trophies)
+        return TrophyCase.query.filter_by(owner_id=self.id).count()
 
     @property
     def unread_notifications(self):
@@ -461,7 +461,7 @@ class Crab(db.Model):
             # Create follow notification
             crab.notify(sender=self, type="follow")
             # Check if awards are applicable:
-            follower_count = len(crab.followers)
+            follower_count = crab.follower_count()
             if follower_count == 1:
                 crab.award(title="Social Newbie")
             elif follower_count == 10:
@@ -535,18 +535,18 @@ class Crab(db.Model):
     def has_bookmarked(self, molt) -> Optional['Bookmark']:
         """ Returns bookmark if user has bookmarked `molt`.
         """
-        return Bookmark.query.filter_by(molt=molt, crab=self).first()
+        return Bookmark.query.filter_by(molt_id=molt.id, crab_id=self.id).first()
 
     def has_liked(self, molt) -> Optional['Like']:
         """ Returns like if user has liked `molt`.
         """
-        return Like.query.filter_by(molt=molt, crab=self).first()
+        return Like.query.filter_by(molt_id=molt.id, crab_id=self.id).first()
 
     def has_remolted(self, molt) -> Optional['Molt']:
         """ Returns the Remolt if user has remolted `molt`, otherwise None.
         """
-        molt = Molt.query.filter_by(is_remolt=True, original_molt=molt,
-                                    author=self, deleted=False).first()
+        molt = Molt.query.filter_by(is_remolt=True, original_molt_id=molt.id,
+                                    author_id=self.id, deleted=False).first()
         return molt
 
     def notify(self, **kwargs):
@@ -1010,7 +1010,7 @@ class Molt(db.Model):
             user.notify(sender=self.author, type="mention", molt=self)
 
         # Award trophies where applicable:
-        if len(self.author.molts) == 1:
+        if self.author.query_molts().count() == 1:
             self.author.award(title="Baby Crab")
         if "420" in self.tags:
             self.author.award(title="Pineapple Express")
@@ -1159,29 +1159,32 @@ class Molt(db.Model):
     def get_reply_from(self, crab: Union[Crab, int]) -> Optional['Molt']:
         """ Return first reply Molt from `crab` if it exists.
         """
-        reply = Molt.query.filter_by(is_reply=True, original_molt=self,
-                                     deleted=False)
-        if isinstance(crab, Crab):
-            reply = reply.filter_by(author=crab)
-        elif isinstance(crab, int):
-            reply = reply.filter_by(author_id=crab)
-        else:
-            return None
-        reply = reply.order_by(Molt.timestamp).first()
+        reply = None
+        if self.reply_count > 0:
+            reply = Molt.query.filter_by(is_reply=True, original_molt=self,
+                                         deleted=False)
+            if isinstance(crab, Crab):
+                reply = reply.filter_by(author=crab)
+            elif isinstance(crab, int):
+                reply = reply.filter_by(author_id=crab)
+            else:
+                return None
+            reply = reply.order_by(Molt.timestamp).first()
         return reply
-
 
     def get_reply_from_following(self, crab):
         """ Return first reply Molt from a crab that `crab` follows if it
             exists.
         """
-        reply = Molt.query_all() \
-            .join(following_table,
-                  following_table.c.following_id == Molt.author_id) \
-            .filter(or_(following_table.c.follower_id == crab.id,
-                        Molt.author_id == crab.id)) \
-            .filter(Molt.is_reply == True, Molt.original_molt_id == self.id) \
-            .order_by(Molt.timestamp).first()
+        reply = None
+        if self.reply_count > 0:
+            reply = Molt.query_all() \
+                .filter(Molt.is_reply == True, Molt.original_molt_id == self.id) \
+                .join(following_table,
+                      following_table.c.following_id == Molt.author_id) \
+                .filter(or_(following_table.c.follower_id == crab.id,
+                            Molt.author_id == crab.id)) \
+                .order_by(Molt.timestamp).first()
         return reply
 
     def quote(self, author, comment, **kwargs):
