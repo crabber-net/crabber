@@ -54,10 +54,20 @@
                 <a href="{{ url_for('static', filename='legal/tos.txt') }}" target="_blank">terms of service</a></label><br>
             <i><small class="text-muted">Seriously, this is really important. It's short, I promise.</small></i>
         </div>
+
+        {{ hcaptcha }}
+
         <button type="submit" class="btn btn-primary rounded-pill">Let me in!</button>
     </form>
 
     <div class="text-muted text-center my-5" id="cookie-footer">
+        {% if config['HCAPTCHA_ENABLED'] %}
+        <small>
+            This site is protected by hCaptcha and its
+            <a href="https://hcaptcha.com/privacy">Privacy Policy</a> and
+            <a href="https://hcaptcha.com/terms">Terms of Service</a> apply.
+        </small> <br/>
+        {% endif %}
         <small>Crabber uses cookies. If you care, you can <a href="{{url_for('static', filename='legal/cookies.txt')}}">read about it here.</a></small>
     </div>
 

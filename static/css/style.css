@@ -2241,3 +2241,7 @@ a:active.text-primary {
 .hidden {
     display: none;
 }
+
+.h-captcha {
+    margin: 10px !important;
+}
