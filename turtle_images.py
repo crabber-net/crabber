@@ -3,6 +3,19 @@ from PIL import Image, ExifTags, UnidentifiedImageError
 ALPHA_BACKGROUND_COLOR = (255, 255, 255)
 
 
+def size_to_quality(size):
+    if size <= 64:
+        return 98
+    elif size <= 256:
+        return 95
+    elif size <= 512:
+        return 90
+    elif size <= 1024:
+        return 75
+    else:
+        return 50
+
+
 def exif_rotate(image):
     try:
         for orientation in ExifTags.TAGS.keys():
@@ -36,4 +49,5 @@ def prep_and_save(img_bytes, filename):
         flat_img = img
 
     # Optimize and save image at 50% jpeg quality
-    flat_img.convert('RGB').save(filename, optimize=True, quality=50)
+    quality = max([size_to_quality(size) for size in flat_img.size])
+    flat_img.convert('RGB').save(filename, optimize=True, quality=quality)
