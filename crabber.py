@@ -58,7 +58,9 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
-captcha = hCaptcha(app)
+site_key = os.getenv('HCAPTCHA_SITE_KEY')
+secret_key = os.getenv('HCAPTCHA_SECRET_KEY')
+captcha = hCaptcha(app, site_key, secret_key)
 
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
