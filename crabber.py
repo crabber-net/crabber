@@ -408,7 +408,7 @@ def user(username):
 
         # Check if blocked (if logged in)
         current_user_is_blocked = False
-        if current_user:
+        if current_user and this_user:
             current_user_is_blocked = this_user.is_blocking(current_user)
 
         if this_user is None or current_user_is_blocked:
