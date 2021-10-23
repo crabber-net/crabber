@@ -350,6 +350,16 @@ class Crab(db.Model):
         self.raw_bio = json.dumps(new_bio)
         db.session.commit()
 
+    def verify(self):
+        """ Verify this user.
+        """
+        self.verified = True
+
+        for crab in self.following:
+            crab.award(title="I Captivated the Guy")
+
+        db.session.commit()
+
     def ban(self):
         """ Banish this user from the site.
         """

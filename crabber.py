@@ -741,8 +741,7 @@ def tortimer():
             else:
                 target: models.Molt = models.Molt.query.filter_by(id=request.form.get("molt_id")).first()
             if action == "verify":
-                target.verified = True
-                db.session.commit()
+                target.verify()
                 return utils.show_message(f"Verified @{target.username}")
             elif action == "delete":
                 target.delete()
