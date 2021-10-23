@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %} Delete account {% endblock %}
+{% block heading %}
+<!-- Logo -->
+<img class="logo"
+    src="{{ url_for('static', filename='img/crabber_logo.svg') }}" alt="Crabber Logo" width="43" height="43">
+{% endblock %}
+
+{% block body %}
+    <form class="w-75 m-4" method="POST">
+        <h1>Sorry to see you go</h1>
+        <p class="text-muted mb-5">
+            Enter your password to finish deleting your account.
+            <a href="/">
+                Click here
+            </a> to go back if you've changed your mind.
+        </p>
+
+        <!-- Confirm password -->
+        <div class="form-group cool-input">
+            <label for="new-password">Password</label>
+            <input type="password" name="password" class="form-control" id="new-password" autocomplete="new-password" required aria-required>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary rounded-pill mr-4">
+                Delete account
+            </button>
+            <div class="form-group d-inline-block form-check">
+                <input type="checkbox" class="form-check-input" id="confirm-deletion" required>
+                <label class="form-check-label" for="confirm-deletion">Are you sure?</label><br>
+            </div>
+        </div>
+    </form>
+{% endblock %}

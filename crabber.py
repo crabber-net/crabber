@@ -241,6 +241,35 @@ def reset_password():
                             'expired.', redirect_url='/login')
 
 
+@app.route("/delete-account/", methods=('GET', 'POST'))
+def delete_account():
+    current_user = utils.get_current_user()
+
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if current_user.verify_password(password):
+            current_user.delete()
+            session['current_user'] = None
+            return redirect('/account-deleted')
+        else:
+            return utils.show_error('Password incorrect',
+                                    preserve_arguments=True)
+    else:
+        if current_user:
+            return render_template('delete-account.html',
+                                   current_page='delete-account',
+                                   hide_sidebar=True)
+        else:
+            return redirect('/')
+
+
+@app.route("/account-deleted/")
+def account_deleted():
+    return render_template('account-deleted.html',
+                           current_page='account-deleted',
+                           hide_sidebar=True)
+
+
 @app.route("/signup/", methods=("GET", "POST"))
 def signup():
     if request.method == "POST":

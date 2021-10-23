@@ -151,6 +151,10 @@ def common_molt_actions() -> Response:
                 return show_error("File must be either a jpg, jpeg, or png")
         return show_error("There was an error uploading your image")
 
+    # Request account deletion
+    elif action == 'delete_account':
+        return redirect('/delete-account')
+
     # Submit new molt
     elif action in ('submit_molt', 'submit_quote_molt', 'submit_reply_molt'):
         if request.form.get('molt_content') or request.files.get('molt-media'):
