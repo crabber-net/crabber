@@ -24,7 +24,7 @@
                 </svg>
             </div>
         {% endif %}
-        <img class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" />
+        <div class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" style="background-image: url('{{url_for('static', filename=this_user.banner)}}');"></div>
     </div>
     <div class="profile-box-bio px-2 pt-2">
         <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{macros.expand_img() if current_page != "own-profile" else ""}}>
@@ -36,10 +36,9 @@
                 </svg>
             </div>
             {% endif %}
-            <div class="rounded-circle profile-picture shadow-expand">
-                <img src="{{url_for('static', filename=this_user.avatar)}}"
-                    style="border-radius: 100%;">
-            </div>
+            <div class="rounded-circle profile-picture shadow-expand"
+                style="background-image: url('{{url_for('static', filename=this_user.avatar)}}');"
+                src="{{url_for('static', filename=this_user.avatar)}}"></div>
         </div>
         <div class="profile-box-follow-row d-flex flex-row justify-content-end">
             <!-- Display correct follow button if page is not current user -->
