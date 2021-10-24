@@ -106,8 +106,8 @@ Install a "real" server like Apache2, Nginx, etc.
 ### REST
 
 Crabber has a REST API mounted at `/api/v1` using the
-[crabber_api.py](crabber_api.py) blueprint. Incomplete documentation is
-available [here](https://app.swaggerhub.com/apis-docs/jakeledoux/Crabber/1.0.0).
+[crabber_api.py](crabber_api.py) blueprint. Documentation is available
+[here](https://github.com/jakeledoux/crabber-api-docs).
 
 If you are interested in contributing to the documentation please create an
 issue to let us know, any help is appreciated!
