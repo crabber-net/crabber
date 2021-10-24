@@ -1,5 +1,5 @@
 <!-- All molts live here! -->
-{% for notif in notifications.items %}
+{% for notif, count, timestamp in notifications.items %}
     {% if not notif.molt.nsfw or current_user.show_nsfw %}
         {% include "notif.html" %}
     {% else %}

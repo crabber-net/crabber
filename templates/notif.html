@@ -57,13 +57,13 @@
                     <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#skull-f"></use>
                 </svg>
             {% endif %}
-            {% if notif.type != "other" and notif.type != "trophy" %}
+            {% if count == 1 and notif.type != "other" and notif.type != "trophy" %}
                 <a href="/user/{{notif.sender.username}}" class="zindex-front">
                     <div class="rounded-circle px26 notif-unfollow profile-picture" style="background-image: url('{{url_for('static', filename=notif.sender.avatar)}}');"></div>
                 </a>
             {% endif %}
         </div>
-        <div class="notif-header-row {{'mt-2' if notif.type != 'other' and notif.type != 'trophy' else 'mt-1'}}">
+        <div class="notif-header-row {{'mt-2' if notif.type != 'other' and notif.type != 'trophy' and count == 1 else 'mt-1'}}">
             {% if notif.type == "other" %}
                 {{notif.content}}
             {% elif notif.type == "trophy" %}
@@ -85,11 +85,15 @@
                 </div>
             {% else %}
                 <strong>
-                    <a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}
-                        {% if notif.sender.verified %}
-                        <a title="This user is verified">{{macros.verified(17)}}</a>
-                        {% endif %}
-                    </a>
+                    {% if count > 1 %}
+                        {{count}} people
+                    {% else %}
+                        <a href="/user/{{notif.sender.username}}" class="text-light">{{notif.sender.display_name}}
+                            {% if notif.sender.verified %}
+                            <a title="This user is verified">{{macros.verified(17)}}</a>
+                            {% endif %}
+                        </a>
+                    {% endif %}
                 </strong>
                 {% if notif.type == "follow" %}
                     followed you
