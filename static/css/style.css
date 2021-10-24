@@ -1176,12 +1176,11 @@ div.mini-molt:hover div.mini-molt:hover {
     height: 100%;
     max-width: 80%;
     max-height: 80%;
-
-	background-repeat: no-repeat;
-	background-size: contain;
-	background-position: center;
+    text-align: center;
+    pointer-events: none;
 }
 .image-modal-body img {
+    pointer-events: all;
     max-width: 100%;
     max-height: 100%;
 }
