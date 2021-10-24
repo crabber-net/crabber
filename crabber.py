@@ -525,7 +525,8 @@ def molt_page(username, molt_id):
         else:
             social_title = f'{primary_molt.author.display_name}\'s post on Crabber'
             replies = primary_molt.query_replies()
-            replies = current_user.filter_molt_query(replies)
+            if current_user:
+                replies = current_user.filter_molt_query(replies)
             return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
                                    replies=replies, current_user=utils.get_current_user(),
                                    social_title=social_title)
