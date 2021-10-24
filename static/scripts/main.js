@@ -330,6 +330,7 @@ function expandImage(url) {
     const body = modal.children('.image-modal-body')[0];
     var image = document.createElement('img');
     image.setAttribute("src", url);
+    image.setAttribute('onclick', 'toggleModal("#image_modal")');
     if (body.children[0]) 
         body.removeChild(body.children[0]);
     body.appendChild(image);
