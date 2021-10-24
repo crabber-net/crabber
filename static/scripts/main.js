@@ -326,8 +326,16 @@ function getImageSrc(el) {
 
 
 function expandImage(url) {
-    $('#image_modal .image-modal-body').css('background-image', `url("${url}")`);
-    $('#image_modal').modal('show');
+    const modal = $('#image_modal');
+    const body = modal.children('.image-modal-body')[0];
+    var image = document.createElement('img');
+    image.setAttribute("src", url);
+    image.setAttribute('onclick', 'toggleModal("#image_modal")');
+    if (body.children[0]) 
+        body.removeChild(body.children[0]);
+    body.appendChild(image);
+    modal.modal('show');
+    delete image;
 }
 
 function expandMoltBox() {
