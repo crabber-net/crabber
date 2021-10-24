@@ -1299,7 +1299,8 @@ class Molt(db.Model):
             .filter(Molt.author.has(banned=False, deleted=False))
 
     @staticmethod
-    def query_all(include_replies=True, include_remolts=False) -> BaseQuery:
+    def query_all(include_replies=True, include_remolts=False,
+                  include_quotes=True) -> BaseQuery:
         molts = Molt.query \
             .filter_by(deleted=False) \
             .filter(Molt.author.has(deleted=False, banned=False)) \
@@ -1308,6 +1309,8 @@ class Molt(db.Model):
             molts = molts.filter_by(is_reply=False)
         if not include_remolts:
             molts = molts.filter_by(is_remolt=False)
+        if not include_quotes:
+            molts = molts.filter_by(is_quote=False)
         return molts
 
     @staticmethod

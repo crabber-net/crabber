@@ -145,7 +145,8 @@ def wild_west():
                                                 current_user=utils.get_current_user())
             return jsonify(blocks)
         else:
-            molts = models.Molt.query_all(include_replies=False)
+            molts = models.Molt.query_all(include_replies=False,
+                                          include_quotes=False)
             molts = utils.get_current_user().filter_molt_query(molts)
             molts = molts.paginate(page_n, MOLTS_PER_PAGE, False)
             return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
