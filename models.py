@@ -10,6 +10,7 @@ import patterns
 import secrets
 from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import aliased
+from sqlalchemy.sql import expression
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -389,8 +390,53 @@ class Crab(db.Model):
     def get_notifications(self, paginated=False, page=1):
         """ Return all valid notifications for user.
         """
-        notifs = Notification.query_all().filter_by(recipient=self) \
-            .order_by(Notification.timestamp.desc())
+        blocker_ids = db.session \
+            .query(blocking_table.c.blocker_id) \
+            .filter(blocking_table.c.blocked_id == self.id)
+        blocked_ids = db.session \
+            .query(blocking_table.c.blocked_id) \
+            .filter(blocking_table.c.blocker_id == self.id)
+
+        block_ids = blocked_ids.union(blocker_ids)
+
+        notifs = Notification.query_all() \
+            .filter(db.or_(
+                Notification.sender_id == None,
+                Notification.sender_id.notin_(block_ids),
+            )) \
+            .filter_by(recipient=self)
+        likes = notifs \
+            .with_entities(
+                Notification,
+                func.count(Notification.id),
+                func.max(Notification.timestamp)
+            ) \
+            .filter_by(type='like') \
+            .group_by(Notification.molt_id)
+        remolts = notifs \
+            .with_entities(
+                Notification,
+                func.count(Notification.id),
+                func.max(Notification.timestamp)
+            ) \
+            .filter_by(type='remolt') \
+            .join(Molt, Molt.id == Notification.molt_id) \
+            .group_by(Molt.original_molt_id)
+        other = notifs \
+            .with_entities(
+                Notification,
+                expression.literal(1),
+                Notification.timestamp.label('timestamp')
+            ) \
+            .filter(
+                Notification.type.in_(
+                    ('other', 'trophy', 'mention', 'quote', 'reply', 'follow')
+                )
+            )
+        notifs = likes.union(
+            remolts,
+            other
+        ).order_by(Notification.timestamp.desc())
         if paginated:
             return notifs.paginate(page, config.NOTIFS_PER_PAGE, False)
         else:
