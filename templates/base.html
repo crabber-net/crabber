@@ -314,7 +314,7 @@
             </div>
 
             <!-- Molt modal -->
-            <div class="modal fade" id="compose_modal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
+            <div class="modal fade draft-modal" id="compose_modal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content bg-dark">
                         <div class="modal-header py-2 border-dark">
@@ -375,7 +375,7 @@
             </div>
 
             <!-- Quote Molt modal -->
-            <div class="modal fade" id="compose_quote_modal" tabindex="-1" role="dialog" aria-labelledby="composeQuoteModalLabel"
+            <div class="modal fade draft-modal" id="compose_quote_modal" tabindex="-1" role="dialog" aria-labelledby="composeQuoteModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content bg-dark">
@@ -438,7 +438,7 @@
             </div>
 
             <!-- Molt reply modal -->
-            <div class="modal fade" id="compose_reply_modal" tabindex="-1" role="dialog" aria-labelledby="composeReplyModalLabel"
+            <div class="modal fade draft-modal" id="compose_reply_modal" tabindex="-1" role="dialog" aria-labelledby="composeReplyModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content bg-dark">
@@ -501,7 +501,7 @@
             </div>
 
             <!-- Edit Molt modal -->
-            <div class="modal fade" id="edit_molt_modal" tabindex="-1" role="dialog" aria-labelledby="editMoltModalLabel"
+            <div class="modal fade draft-modal" id="edit_molt_modal" tabindex="-1" role="dialog" aria-labelledby="editMoltModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content bg-dark">
@@ -701,6 +701,10 @@
                 }
             }
         );
+
+        $('.draft-modal').on('shown.bs.modal', function() {
+            $(this).find('textarea').focus();
+        });
     </script>
 </body>
 </html>
