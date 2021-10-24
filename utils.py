@@ -355,7 +355,7 @@ def common_molt_actions() -> Response:
         if validate_email(new_email) or target_user.email == new_email:
             if validate_username(new_username) \
             or target_user.username == new_username:
-                if len(new_username) in range(4, 32):
+                if len(new_username) in range(3, 32):
                     if patterns.username.fullmatch(new_username):
                         if not patterns.only_underscores.fullmatch(new_username):
                             target_user.email = new_email
@@ -369,7 +369,7 @@ def common_molt_actions() -> Response:
                         return show_error('Username must only contain letters, '
                                           'numbers, and underscores')
                 else:
-                    return show_error('Username must be at least 4 characters '
+                    return show_error('Username must be at least 3 characters '
                                       'and less than 32')
             else:
                 return show_error('That username is taken')
