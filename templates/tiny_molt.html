@@ -11,7 +11,7 @@
 {# MOLT AUTHOR OPTIMIZATION #}
 {% set author = molt.get_author() %}
 
-<div class="tiny-molt mini-molt border border-dark tiny-rounded px-2 py-2 absolute-container">
+<div class="tiny-molt mini-molt {{'is-remolt' if is_remolt}} border border-dark tiny-rounded px-2 py-2 absolute-container">
     {% if molt.deleted %}
         <span class="text-muted w-100 d-inline-block text-center">This Molt has been deleted</span>
     {% else %}
@@ -116,13 +116,12 @@
                     {% if current_user %}
                         <!-- REMOLT DROPDOWN CONTENT -->
                         <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            {% if has_remolted %}
 
                                 <!-- UNDO REMOLT BUTTON -->
-                                <form class="dropdown-item clickable" method="POST">
+                                <form id="dd-undo-remolt" class="dropdown-item clickable {{'hidden' if not has_remolted}}" method="POST">
                                     <input type="hidden" name="user_action" value="delete_molt">
                                     <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                                    <div onClick="if (confirm('Are you sure you want to undo this Remolt?')) { this.parentNode.submit()}"
+                                    <div onClick="deleteRemolt(this)"
                                          class="text-danger">
                                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
                                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
@@ -130,20 +129,18 @@
                                         Undo Remolt
                                     </div>
                                 </form>
-                            {% else %}
 
                                 <!-- REMOLT BUTTON -->
-                                <form class="dropdown-item clickable" method="POST">
+                                <form id="dd-remolt" class="dropdown-item clickable {{'hidden' if has_remolted}}" method="POST">
                                     <input type="hidden" name="user_action" value="remolt_molt">
                                     <input type="hidden" name="molt_id" value="{{molt.id}}">
-                                    <div onClick="if (confirm('Remolt this?')) { this.parentNode.submit()}">
+                                    <div onClick="submitRemolt(this)">
                                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
                                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
                                         </svg>
                                         Remolt
                                     </div>
                                 </form>
-                            {% endif %}
 
                             <!-- QUOTE-MOLT BUTTON -->
                             <form class="dropdown-item clickable" method="POST">

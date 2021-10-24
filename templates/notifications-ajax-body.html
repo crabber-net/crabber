@@ -34,6 +34,10 @@
 <!-- Spacer -->
 <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 
+<script>
+    $(document).off('click');
+</script>
+
 {# MARK ALL NOTIFICATIONS AS READ #}
 {% if current_user.read_notifications() %}
 {% endif %}
