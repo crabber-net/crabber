@@ -119,8 +119,8 @@
 
                                 <!-- UNDO REMOLT BUTTON -->
                                 <form id="dd-undo-remolt" class="dropdown-item clickable {{'hidden' if not has_remolted}}" method="POST">
-                                    <input type="hidden" name="user_action" value="delete_molt">
-                                    <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+                                    <input type="hidden" name="user_action" value="undo_remolt">
+                                    <input type="hidden" name="molt_id" value="{{molt.id}}">
                                     <div onClick="deleteRemolt(this)"
                                          class="text-danger">
                                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">

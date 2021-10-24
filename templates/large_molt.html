@@ -15,7 +15,7 @@
     {% set original_author = molt.original_molt.get_author(('id', 'username', 'display_name')) %}
 {% endif %}
 
-<div class="large-molt mini-molt border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
+<div class="large-molt mini-molt {{'is-remolt' if is_remolt}} border-bottom border-dark px-3 pt-3 pb-0 absolute-container">
     <div class="row mb-3">
         <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}} pr-1 col-auto">
             <a href="/user/{{author.username}}" class="zindex-front">
@@ -165,34 +165,30 @@
                 {% if current_user %}
                     <!-- REMOLT DROPDOWN CONTENT -->
                     <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        {% if has_remolted %}
 
-                            <!-- UNDO REMOLT BUTTON -->
-                            <form class="dropdown-item clickable" method="POST">
-                                <input type="hidden" name="user_action" value="delete_molt">
-                                <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                                <div onClick="if (confirm('Are you sure you want to undo this Remolt?')) { this.parentNode.submit()}"
-                                     class="text-danger">
-                                    <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
-                                    </svg>
-                                    Undo Remolt
-                                </div>
-                            </form>
-                        {% else %}
+                        <!-- UNDO REMOLT BUTTON -->
+                        <form id="dd-undo-remolt" class="dropdown-item clickable {{'hidden' if not has_remolted}}" method="POST">
+                            <input type="hidden" name="user_action" value="undo_remolt">
+                            <input type="hidden" name="molt_id" value="{{molt.id}}">
+                            <div onClick="deleteRemolt(this)" class="text-danger">
+                                <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
+                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                </svg>
+                                Undo Remolt
+                            </div>
+                        </form>
 
-                            <!-- REMOLT BUTTON -->
-                            <form class="dropdown-item clickable" method="POST">
-                                <input type="hidden" name="user_action" value="remolt_molt">
-                                <input type="hidden" name="molt_id" value="{{molt.id}}">
-                                <div onClick="if (confirm('Remolt this?')) { this.parentNode.submit()}">
-                                    <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
-                                    </svg>
-                                    Remolt
-                                </div>
-                            </form>
-                        {% endif %}
+                        <!-- REMOLT BUTTON -->
+                        <form id="dd-remolt" class="dropdown-item clickable {{'hidden' if has_remolted}}" method="POST">
+                            <input type="hidden" name="user_action" value="remolt_molt">
+                            <input type="hidden" name="molt_id" value="{{molt.id}}">
+                            <div onClick="submitRemolt(this)">
+                                <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
+                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                </svg>
+                                Remolt
+                            </div>
+                        </form>
 
                         <!-- QUOTE-MOLT BUTTON -->
                         <form class="dropdown-item clickable" method="POST">
