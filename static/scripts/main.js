@@ -194,7 +194,7 @@ function updateImgPreview(imgInput) {
 function removeImg(closeBtn) {
     var form = $(closeBtn.parentElement.parentElement)
     var imgPreview = form.find(".img-preview").parent();
-    var imgInput = form.find(".custom-file");
+    var imgInput = form.find(".attach-image");
 
     // Clear image input
     form.find('.custom-file-input').val("");
@@ -516,4 +516,8 @@ function openActionInNewTab(elem) {
     let handle = window.open(url, '_blank');
     handle.blur();
     window.focus();
+}
+
+function checkboxToggle(elem) {
+    elem.value = elem.checked;
 }

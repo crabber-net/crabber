@@ -173,6 +173,7 @@ def common_molt_actions() -> Response:
             if action == 'submit_molt':
                 new_molt = get_current_user().molt(
                     request.form.get('molt_content'),
+                    nsfw=request.form.get('nsfw') == 'true',
                     image=img_attachment,
                     platform=request.user_agent.platform,
                     browser=request.user_agent.browser,

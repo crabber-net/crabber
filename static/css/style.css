@@ -600,6 +600,7 @@
 }
 
 .nsfw-thumbnail {
+    transform: scale(1.2);
     filter: blur(20px);
     overflow: hidden;
 }
@@ -1200,7 +1201,7 @@ div.mini-molt:hover div.mini-molt:hover {
 
 @media only screen and (max-height: 823px) {
     .mini-compose-textarea > .large-molt-media-container {
-        max-height: 25vh !important;
+        max-height: 50vh !important;
         overflow-y: hidden;
     }
 }
@@ -1209,11 +1210,22 @@ div.mini-molt:hover div.mini-molt:hover {
     max-height: 38px;
 }
 
+.molt-nsfw-toggle {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 .custom-file {
     width: 0.5em;
 }
 .custom-file-input {
     width: 0;
+}
+.attach-image input[type=file]{
+    display: none;
+}
+.custom-file-label#molt-image-picker-btn {
+    position: relative;
 }
 .custom-file-label {
     background: none;
@@ -1354,7 +1366,7 @@ body, .master-container {
     margin: auto 1em;
     fill: var(--primary);
 }
-.close-file-btn:hover {
+.close-file-btn:hover, .open-file-btn:hover {
     fill: var(--primary-faded-less);
 }
 

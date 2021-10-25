@@ -339,23 +339,30 @@
                                         </div>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
-                                        <!-- Image picker -->
-                                        <div class="file-input input-group mb-3">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile01" name="molt-media"
-                                                    aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
-                                                    accept="image/x-png,image/jpeg,image/png">
-                                                <label class="custom-file-label" for="inputGroupFile01">
-
-                                                    <svg class="file-btn" width="28" height="28" data-jam="picture">
-                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
-                                                    </svg>
-                                                </label>
+                                        <!-- NSFW toggle -->
+                                        <div class="molt-nsfw-toggle">
+                                            <div class="custom-control custom-switch">
+                                                <input onchange="checkboxToggle(this)" type="checkbox"
+                                                       class="custom-control-input" id="toggle-nsfw-compose"
+                                                       name="nsfw" {{'checked' if current_user.nsfw}}
+                                                       value="{{'true' if current_user.nsfw else 'false'}}"
+                                                >
+                                                       <label class="custom-control-label text-muted" for="toggle-nsfw-compose">NSFW</label>
                                             </div>
                                         </div>
 
-                                        <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
+                                        <!-- Image picker -->
+                                        <div class="attach-image file-input inline-block file-btn clickable">
+                                            <input type="file" class="custom-file-input" id="compose-molt-image-picker" name="molt-media"
+                                                onchange="updateImgPreview(this);" accept="image/x-png,image/jpeg,image/png">
+                                            <label id="molt-image-picker-btn" class="custom-file-label open-file-btn" for="compose-molt-image-picker">
+                                                <svg class="file-btn" width="28" height="28" data-jam="picture">
+                                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
+                                                </svg>
+                                            </label>
+                                        </div>
 
+                                        <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
                                             <svg width="28" height="28" data-jam="close-rectangle">
                                                 <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#close-rectangle"></use>
                                             </svg>
@@ -403,19 +410,27 @@
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
 
-                                        <!-- Image picker -->
-                                        <div class="file-input input-group mb-3">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile05" name="molt-media"
-                                                    aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
-                                                    accept="image/x-png,image/jpeg,image/png">
-                                                <label class="custom-file-label" for="inputGroupFile05">
-
-                                                    <svg class="file-btn" width="28" height="28" data-jam="picture">
-                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
-                                                    </svg>
-                                                </label>
+                                        <!-- NSFW toggle -->
+                                        <div class="molt-nsfw-toggle">
+                                            <div class="custom-control custom-switch">
+                                                <input onchange="checkboxToggle(this)" type="checkbox"
+                                                       class="custom-control-input" id="toggle-nsfw-quote"
+                                                       name="nsfw" {{'checked' if current_user.nsfw}}
+                                                       value="{{'true' if current_user.nsfw else 'false'}}"
+                                                >
+                                               <label class="custom-control-label text-muted" for="toggle-nsfw-quote">NSFW</label>
                                             </div>
+                                        </div>
+
+                                        <!-- Image picker -->
+                                        <div class="attach-image file-input inline-block file-btn clickable">
+                                            <input type="file" class="custom-file-input" id="quote-molt-image-picker" name="molt-media"
+                                                onchange="updateImgPreview(this);" accept="image/x-png,image/jpeg,image/png">
+                                            <label id="molt-image-picker-btn" class="custom-file-label open-file-btn" for="quote-molt-image-picker">
+                                                <svg class="file-btn" width="28" height="28" data-jam="picture">
+                                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
+                                                </svg>
+                                            </label>
                                         </div>
 
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
@@ -466,19 +481,27 @@
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
 
-                                        <!-- Image picker -->
-                                        <div class="file-input input-group mb-3">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile02" name="molt-media"
-                                                    aria-describedby="inputGroupFileAddon01" onchange="updateImgPreview(this);"
-                                                    accept="image/x-png,image/jpeg,image/png">
-                                                <label class="custom-file-label" for="inputGroupFile02">
-
-                                                    <svg class="file-btn" width="28" height="28" data-jam="picture">
-                                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
-                                                    </svg>
-                                                </label>
+                                        <!-- NSFW toggle -->
+                                        <div class="molt-nsfw-toggle">
+                                            <div class="custom-control custom-switch">
+                                                <input onchange="checkboxToggle(this)" type="checkbox"
+                                                       class="custom-control-input" id="toggle-nsfw-reply"
+                                                       name="nsfw" {{'checked' if current_user.nsfw}}
+                                                       value="{{'true' if current_user.nsfw else 'false'}}"
+                                                >
+                                               <label class="custom-control-label text-muted" for="toggle-nsfw-reply">NSFW</label>
                                             </div>
+                                        </div>
+
+                                        <!-- Image picker -->
+                                        <div class="attach-image file-input inline-block file-btn clickable">
+                                            <input type="file" class="custom-file-input" id="reply-molt-image-picker" name="molt-media"
+                                                onchange="updateImgPreview(this);" accept="image/x-png,image/jpeg,image/png">
+                                            <label id="molt-image-picker-btn" class="custom-file-label open-file-btn" for="reply-molt-image-picker">
+                                                <svg class="file-btn" width="28" height="28" data-jam="picture">
+                                                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
+                                                </svg>
+                                            </label>
                                         </div>
 
                                         <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
