@@ -12,7 +12,8 @@ function loadHTML(url) {
         success: function(data) {
             if (!url.match(/\/(?:$|\?)/))
                 url += '/';
-            window.history.pushState(data.body, `${data.title} | Crabber`, url);
+
+            window.history.replaceState(data.body, `${data.title} | Crabber`, url);
 
             // Insert HTML
             $("title").html(`${data.title} | Crabber`);
