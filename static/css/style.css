@@ -601,6 +601,7 @@
 
 .nsfw-thumbnail {
     filter: blur(20px);
+    overflow: hidden;
 }
 
 .zindex-front {

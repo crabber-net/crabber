@@ -1174,7 +1174,8 @@ class Molt(db.Model):
         link_card = '<!-- no cards created -->'
         if self.card:
             if self.card.ready:
-                link_card = render_template('link-card.html', card=self.card)
+                link_card = render_template('link-card.html', card=self.card,
+                                            nsfw=self.nsfw)
 
         # Preserve newlines
         new_content = new_content.strip().replace("\n", "<br>")

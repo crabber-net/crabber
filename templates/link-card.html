@@ -1,6 +1,6 @@
 <div class="link-card zindex-front clickable rounded-media"
      onclick="openNewTab('{{card.url}}');">
-    <div class="card-image" style="background-image: url('{{card.image}}');"></div>
+    <div class="card-image {{'nsfw-thumbnail' if nsfw}}" style="background-image: url('{{card.image}}');"></div>
     <div class="card-content">
         <span class="card-title">{{card.title}}</span>
         <span class="card-description text-muted">
