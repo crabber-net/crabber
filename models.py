@@ -1383,15 +1383,21 @@ class Molt(db.Model):
 
     @staticmethod
     def query_most_replied() -> BaseQuery:
-        replies = db.session.query(Molt.original_molt_id) \
-            .filter_by(is_reply=True, deleted=False) \
-            .filter(Molt.author.has(deleted=False, banned=False)) \
-            .filter(Molt.original_molt.has(deleted=False)) \
-            .filter(Molt.original_molt.has(Molt.author.has(deleted=False,
-                                                           banned=False))) \
-            .group_by(Molt.original_molt_id) \
-            .order_by(func.count(Molt.id).desc()).subquery()
-        molts = Molt.query.join(replies, replies.c.original_molt_id == Molt.id)
+        unique_replies = Molt.query_all() \
+            .filter_by(is_reply=True) \
+            .group_by(
+                Molt.original_molt_id,
+                Molt.author_id
+            ) \
+            .subquery()
+        molts = Molt.query \
+            .join(
+                unique_replies,
+                unique_replies.c.original_molt_id==Molt.id
+            ) \
+            .group_by(Molt.id) \
+            .order_by(func.count(Molt.id).desc())
+        molts = Molt.filter_query_by_available(molts)
         return molts
 
     @staticmethod
