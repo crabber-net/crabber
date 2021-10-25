@@ -594,6 +594,10 @@
     top: 0;
 }
 
+.profile-picture, .profile-picture img {
+    object-fit: cover;
+}
+
 .profile-banner {
     height: auto;
     object-position: 50% 10%;
