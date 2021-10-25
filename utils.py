@@ -190,6 +190,7 @@ def common_molt_actions() -> Response:
                     quote = target_molt.quote(
                         get_current_user(),
                         request.form.get('molt_content'),
+                        nsfw=request.form.get('nsfw') == 'true',
                         image=img_attachment,
                         platform=request.user_agent.platform,
                         browser=request.user_agent.browser,
@@ -209,6 +210,7 @@ def common_molt_actions() -> Response:
                     reply = target_molt.reply(
                         get_current_user(),
                         request.form.get('molt_content'),
+                        nsfw=request.form.get('nsfw') == 'true',
                         image=img_attachment,
                         platform=request.user_agent.platform,
                         browser=request.user_agent.browser,

@@ -541,7 +541,7 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """ Create and publish new Molt.
         """
-        kwargs['nsfw'] = kwargs.get('nsfw') or self.nsfw
+        kwargs['nsfw'] = kwargs.get('nsfw', self.nsfw)
         new_molt = Molt.create(author=self, content=content, **kwargs)
         return new_molt
 
@@ -1243,8 +1243,9 @@ class Molt(db.Model):
     def quote(self, author, comment, **kwargs):
         """ Quote Molt as `author`.
         """
+        kwargs['nsfw'] = kwargs.get('nsfw', self.nsfw)
         new_quote = author.molt(comment, is_quote=True, original_molt=self,
-                                nsfw=self.nsfw, **kwargs)
+                                **kwargs)
         self.author.notify(sender=author, type='quote', molt=new_quote)
         return new_quote
 
@@ -1264,8 +1265,9 @@ class Molt(db.Model):
     def reply(self, author, comment, **kwargs):
         """ Reply to Molt as `author`.
         """
+        kwargs['nsfw'] = kwargs.get('nsfw', self.nsfw)
         new_reply = author.molt(comment, is_reply=True, original_molt=self,
-                                nsfw=self.nsfw, **kwargs)
+                                **kwargs)
         self.author.notify(sender=author, type="reply", molt=new_reply)
         return new_reply
 
