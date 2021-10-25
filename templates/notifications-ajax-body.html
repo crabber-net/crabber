@@ -36,6 +36,7 @@
 
 <script>
     $(document).off('click');
+    $(window).on('popstate', () => document.location.reload());
 </script>
 
 {# MARK ALL NOTIFICATIONS AS READ #}
