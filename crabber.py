@@ -447,9 +447,10 @@ def user(username):
                     replies = this_user.query_replies()
                     if current_user:
                         replies = current_user.filter_molt_query(replies)
-                    replies = replies.paginate(m_page_n, MOLTS_PER_PAGE, False)
+                    replies = replies.paginate(r_page_n, MOLTS_PER_PAGE, False)
                 elif section == 'likes':
                     likes = this_user.query_likes()
+                    print(l_page_n)
                     if current_user:
                         likes = current_user.filter_molt_query(likes)
                     likes = likes.paginate(l_page_n, MOLTS_PER_PAGE)

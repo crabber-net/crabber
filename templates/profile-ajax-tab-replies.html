@@ -7,7 +7,7 @@
     <nav aria-label="Page navigation buttons" class="mt-4">
         <ul class="pagination justify-content-center">
             <li class="page-item {{'' if replies.has_prev else 'disabled'}}">
-                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.prev_num}});" tabindex="-1">
+                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{replies.prev_num}});" tabindex="-1">
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-left"></use>
                     </svg>
@@ -15,7 +15,7 @@
             </li>
             <li class="page-item {{'' if replies.has_prev else 'disabled'}}"><a class="page-link" href="javascript:loadContent_{{hexID}}(1);">Home</a></li>
             <li class="page-item {{'' if replies.has_next else 'disabled'}}">
-                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{molts.next_num}});">
+                <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{replies.next_num}});">
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
                         <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-right"></use>
                     </svg>
