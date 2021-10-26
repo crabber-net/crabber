@@ -14,7 +14,6 @@ from typing import Iterable, Tuple, Union
 import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
 
-
 def create_app():
     app = Flask(__name__, template_folder="./templates")
     app.secret_key = 'crabs are better than birds because they can cut their wings right off'
@@ -70,7 +69,6 @@ if app.config['PROFILER_ENABLED']:
 
 if MAIL_ENABLED:
     mail = CrabMail(MAIL_JSON)
-
 
 @app.route('/.well-known/<file>')
 def crabcoin(file):
@@ -391,8 +389,8 @@ def settings():
             return jsonify(blocks)
         else:
             return render_template("settings.html", current_page="settings",
-                                   current_user=utils.get_current_user())
-
+                                   current_user=utils.get_current_user(),
+                                   limits=LIMITS)
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
 @app.route("/user/<username>/", methods=("GET", "POST"))

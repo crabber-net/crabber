@@ -22,7 +22,6 @@ if GEO_ENABLED:
 else:
     geo_reader = None
 
-
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
         -> Response:
     """
@@ -336,6 +335,14 @@ def common_molt_actions() -> Response:
                 if "bio." in key:
                     if value.strip():
                         new_bio[key.split(".")[1].strip()] = value.strip()
+
+            # Overwrite values with restricted ones
+            for key, value in new_bio.items():
+                new_bio[key] = value[0:LIMITS[key]]
+            if (location): location = location[0:LIMITS["location"]]
+            if (disp_name): disp_name = disp_name[0:LIMITS["display_name"]]
+            if (website): website = website[0:LIMITS["website"]]
+            if (desc): desc = desc[0:LIMITS["description"]]
 
             current_user = get_current_user()
             current_user.display_name = disp_name

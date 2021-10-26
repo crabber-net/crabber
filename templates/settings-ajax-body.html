@@ -8,7 +8,7 @@
         <!-- Display name -->
         <div class="form-group cool-input">
             <label for="displayName">Display name</label>
-            <input type="text" name="display_name" class="form-control" id="displayName"
+            <input type="text" name="display_name" class="form-control" id="displayName" oninput="validateField('display_name', false)"
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
         </div>
 
@@ -22,14 +22,14 @@
         <!-- Location -->
         <div class="form-group cool-input">
             <label for="location">Location <span class="text-muted">(optional)</span></label>
-            <input type="text" name="location" class="form-control" id="location"
+            <input type="text" name="location" class="form-control" id="location" oninput="validateField('location', false)"
                 placeholder="Planet Earth, The Solar System" value="{{current_user.location if current_user.location else ""}}">
         </div>
 
         <!-- Website -->
         <div class="form-group cool-input">
             <label for="website">Website <span class="text-muted">(optional)</span></label>
-            <input type="text" name="website" class="form-control" id="website"
+            <input type="text" name="website" class="form-control" id="website" oninput="validateField('website', false)"
                 placeholder="https://onlycrabs.com/bigred" value="{{current_user.website if current_user.website else ""}}">
         </div>
 
@@ -39,7 +39,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Age</label>
             </div>
-            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42"
+            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42" oninput="validateField('age', true)"
                 {% if current_user.bio.get("age", "?") != "?" %}value="{{current_user.bio.get("age")}}"{% endif %}
                 >
         </div>
@@ -47,7 +47,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Pronouns</label>
             </div>
-            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them"
+            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them" oninput="validateField('pronouns', true)"
                 {% if current_user.bio.get("pronouns", "?") != "?" %}value="{{current_user.bio.get("pronouns")}}"{% endif %}
                 >
         </div>
@@ -55,7 +55,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Quote</label>
             </div>
-            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster."
+            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster." oninput="validateField('quote', true)"
                 {% if current_user.bio.get("quote", "?") != "?" %}value="{{current_user.bio.get("quote")}}"{% endif %}
                 >
         </div>
@@ -63,7 +63,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">My jam</label>
             </div>
-            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way"
+            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way" oninput="validateField('jam', true)"
                 {% if current_user.bio.get("jam", "?") != "?" %}value="{{current_user.bio.get("jam")}}"{% endif %}
                 >
         </div>
@@ -71,7 +71,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Latest obsession</label>
             </div>
-            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi"
+            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi" oninput="validateField('obsession', true)"
                 {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
                 >
         </div>
@@ -79,7 +79,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Remember when</label>
             </div>
-            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?"
+            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?" oninput="validateField('remember', true)"
                 {% if current_user.bio.get("remember", "?") != "?" %}value="{{current_user.bio.get("remember")}}"{% endif %}
                 >
         </div>
@@ -87,7 +87,7 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="description">Favorite emoji</label>
             </div>
-            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)"
+            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)" oninput="validateField('emoji', true)"
                 {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
                 >
         </div>
@@ -356,10 +356,22 @@
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 
+    let limits = '{{ limits|tojson }}';
+        limits = JSON.parse(limits);
+
     function validateDescription() {
         const input = $('#description');
         const content = input.val();
-        if (content.length >= 140)
-            input.val(content.substring(0, 140));
+        if (content.length >= limits['description'])
+            input.val(content.substring(0, limits['description']));
+    }
+
+    function validateField(field, bio) {
+        let input;
+        if (bio) input = $(`input[name="bio.${field}"]`);
+        else input = $(`input[name="${field}"]`);
+        const content = input.val();
+        if (content.length >= limits[field])
+            input.val(content.substring(0, limits[field]));
     }
 </script>
