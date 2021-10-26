@@ -107,7 +107,7 @@
         </div>
         <div class="profile-box-description w-100"
             {% if current_page == "own-profile" %}
-                onkeypress="return (this.innerText.length <= 140)" contentEditable
+                oninput="validateDescription()" contentEditable
             {% endif %}>
             {{this_user.description}}
         </div>
@@ -454,5 +454,12 @@
 
         // Submit form
         return true;
+    }
+
+    function validateDescription() {
+        const input = $('.profile-box-description');
+        const content = input.text();
+        if (content.length >= 140)
+            input.text(content.substring(0, 140));
     }
 </script>

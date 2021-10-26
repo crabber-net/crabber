@@ -807,8 +807,9 @@ def tortimer():
             crabs = models.Crab.query \
                 .order_by(models.Crab.register_time.desc()) \
                 .paginate(crab_page_n, MOLTS_PER_PAGE, False)
-            reports = models.Molt.query_all() \
-                .filter_by(approved=False, is_remolt=False) \
+            reports = models.Molt.query \
+                .filter_by(approved=False, deleted=False,
+                           is_remolt=False) \
                 .order_by(models.Molt.reports.desc(),
                           models.Molt.timestamp.desc()) \
                 .paginate(molt_page_n, MOLTS_PER_PAGE, False)
