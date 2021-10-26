@@ -222,7 +222,6 @@
     <h2 class="mb-3">Content Filtering</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_content_filters">
-
         <!-- Muted Words -->
         <div class="form-group cool-input">
             <label for="description">Muted words (comma separated)</label>
@@ -249,6 +248,13 @@
                 >
                 <label class="custom-control-label" for="toggle-nsfw-mode">Display NSFW Content</label>
             </div>
+        </div>
+
+        <!-- Blocked users -->
+        <div class="mb-2">
+            <a href="javascript:void(0);" class="text-muted" onclick="toggleModal('#blocked_modal');">
+                Click here to see a list of users you've blocked.
+            </a>
         </div>
 
         <!-- Submit button -->
@@ -321,6 +327,27 @@
 
     <!-- Spacer -->
     <div class="d-inline-block w-100 py-5 my-5 text-muted text-molt text-center"></div>
+</div>
+
+<!-- Blocked modal -->
+<div class="modal fade" id="blocked_modal" tabindex="-1" role="dialog" aria-labelledby="blockedUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark modal-left-align">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Blocked Users</strong>
+            </div>
+            <div class="modal-body row m-1 w-100 d-block">
+                {% for crab in current_user.blocked %}
+                    {% include "mini_bio.html" %}
+                {% else %}
+                    <span class="text-muted">You have not blocked anyone</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
