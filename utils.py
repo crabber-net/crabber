@@ -403,15 +403,34 @@ def common_molt_actions() -> Response:
         target_user = get_current_user()
         new_timezone = request.form.get('timezone')
         new_lastfm = request.form.get('lastfm').strip()
-        new_nsfw = request.form.get('nsfw_mode', 'false') == 'true'
         if patterns.timezone.fullmatch(new_timezone):
             target_user.timezone = new_timezone
             target_user.lastfm = new_lastfm
-            target_user.show_nsfw = new_nsfw
             db.session.commit()
             return show_message("Changes saved.")
         else:
             return show_error("That timezone is invalid, you naughty dog")
+
+    elif action == "update_content_filters":
+        target_user = get_current_user()
+        new_muted_words = request.form.get('muted_words')
+        new_nsfw = request.form.get('nsfw_mode', 'false') == 'true'
+
+        if new_muted_words != target_user._muted_words:
+            word_list = [
+                patterns.muted_words.sub('', word.lower()).strip()
+                for word in new_muted_words.split(',')
+            ]
+            word_list = filter(lambda s: len(s), word_list)
+            new_muted_words = ','.join(word_list)
+
+        target_user._muted_words = new_muted_words[:MUTED_WORDS_CHAR_LIMIT]
+        target_user.show_nsfw = new_nsfw
+
+        db.session.commit()
+        return show_message("Changes saved.")
+    else:
+        print(action)
 
     # PRG pattern
     return redirect(request.url)

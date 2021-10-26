@@ -15,7 +15,7 @@
         <!-- Description -->
         <div class="form-group cool-input">
             <label for="description">About me</label>
-            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
+            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="I'm too tired, maybe later."
             required aria-required oninput="validateDescription()">{{current_user.description.strip()}}</textarea>
         </div>
 
@@ -211,6 +211,26 @@
             </div>
         </div>
 
+        <!-- Submit button -->
+        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
+        <div class="clearfix"></div>
+    </form>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
+    <h2 class="mb-3">Content Filtering</h2>
+    <form method="POST" class="p-2">
+        <input type="hidden" name="user_action" value="update_content_filters">
+        <!-- Muted Words -->
+        <div class="form-group cool-input">
+            <label for="description">Muted words (comma separated)</label>
+            <textarea type="text" name="muted_words"
+                      class="bg-dark form-control text-light" id="muted-words"
+                      placeholder="emacs, lua, twitter"
+                      >{{current_user.muted_words_string}}</textarea>
+        </div>
+
         <!-- NSFW Toggle -->
         <div class="form-group cool-input mb-2">
             <script>
@@ -230,8 +250,20 @@
             </div>
         </div>
 
+        <!-- Blocked users -->
+        <div class="mb-2">
+            <a href="javascript:void(0);" class="text-muted" onclick="toggleModal('#blocked_modal');">
+                Click here to see a list of users you've blocked.
+            </a>
+        </div>
+
         <!-- Submit button -->
-        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
+        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit">
+            <strong>
+                Save
+            </strong>
+        </button>
+
         <div class="clearfix"></div>
     </form>
 
@@ -295,6 +327,27 @@
 
     <!-- Spacer -->
     <div class="d-inline-block w-100 py-5 my-5 text-muted text-molt text-center"></div>
+</div>
+
+<!-- Blocked modal -->
+<div class="modal fade" id="blocked_modal" tabindex="-1" role="dialog" aria-labelledby="blockedUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header py-2 border-dark modal-left-align">
+                <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>Blocked Users</strong>
+            </div>
+            <div class="modal-body row m-1 w-100 d-block">
+                {% for crab in current_user.blocked %}
+                    {% include "mini_bio.html" %}
+                {% else %}
+                    <span class="text-muted">You have not blocked anyone</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

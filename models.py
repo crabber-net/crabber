@@ -78,6 +78,7 @@ class Crab(db.Model):
     nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw_thumbnails = db.Column(db.Boolean, nullable=False, default=False)
+    _muted_words = db.Column('muted_words', db.String, nullable=False, server_default='')
 
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
@@ -125,6 +126,18 @@ class Crab(db.Model):
         """
 
         return datetime.timedelta(hours=float(self.timezone))
+
+    @property
+    def muted_words(self) -> List[str]:
+        """ Returns a list of the words this user has muted.
+        """
+        return filter(lambda s: len(s), self._muted_words.split(','))
+
+    @property
+    def muted_words_string(self) -> List[str]:
+        """ Returns a comma-separated list of the words this user has muted.
+        """
+        return ', '.join(self.muted_words)
 
     @property
     def bookmarks(self):
@@ -645,7 +658,8 @@ class Crab(db.Model):
         blocked = db.session.query(Crab) \
             .join(blocking_table, Crab.id == blocking_table.c.blocked_id) \
             .filter(blocking_table.c.blocker_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == False, Crab.deleted == False) \
+            .order_by(Crab.username)
         return blocked
 
     def query_blockers(self) -> BaseQuery:
@@ -655,7 +669,8 @@ class Crab(db.Model):
         blockers = db.session.query(Crab) \
             .join(blocking_table, Crab.id == blocking_table.c.blocker_id) \
             .filter(blocking_table.c.blocked_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == False, Crab.deleted == False) \
+            .order_by(Crab.username)
         return blockers
 
     def query_following(self) -> BaseQuery:
@@ -730,6 +745,20 @@ class Crab(db.Model):
         query = self.filter_molt_query_by_not_blocked(query)
         if not self.show_nsfw:
             query = self.filter_molt_query_by_not_nsfw(query)
+        query = self.filter_molt_query_by_muted_words(query)
+        return query
+
+    def filter_molt_query_by_muted_words(self, query: BaseQuery) -> BaseQuery:
+        """ Filters Molts containing muted words out of a query.
+        """
+        for muted_word in self.muted_words:
+            query = query \
+                .filter(
+                    db.or_(
+                        Molt.author_id == self.id,
+                        db.not_(Molt.content.ilike(f'%{muted_word}%'))
+                    )
+                )
         return query
 
     def filter_molt_query_by_not_nsfw(self, query: BaseQuery) -> BaseQuery:
