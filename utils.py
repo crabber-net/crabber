@@ -344,10 +344,10 @@ def common_molt_actions() -> Response:
             # Overwrite values with restricted ones
             for key, value in new_bio.items():
                 new_bio[key] = value[0:limits[key]]
-            location = location[0:limits["location"]]
-            disp_name = disp_name[0:limits["display_name"]]
-            website = website[0:limits["website"]]
-            desc = desc[0:limits["description"]]
+            if (location): location = location[0:limits["location"]]
+            if (disp_name): disp_name = disp_name[0:limits["display_name"]]
+            if (website): website = website[0:limits["website"]]
+            if (desc): desc = desc[0:limits["description"]]
 
             current_user = get_current_user()
             current_user.display_name = disp_name

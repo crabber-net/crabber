@@ -456,13 +456,15 @@ def user(username):
                 return render_template(f'profile-ajax-tab-{section}.html',
                                        current_page=("own-profile" if this_user == current_user else ""),
                                        molts=molts, current_user=current_user, this_user=this_user, likes=likes,
-                                       current_tab=current_tab, replies=replies, hexID=hex_ID)
+                                       current_tab=current_tab, replies=replies, hexID=hex_ID,
+                                       limits=(utils.limits if this_user == current_user else {}))
             else:
                 return render_template('profile.html',
                                        current_page=("own-profile" if this_user == current_user else ""),
                                        current_user=current_user, this_user=this_user,
                                        current_tab=current_tab, m_page_n=m_page_n,
                                        r_page_n=r_page_n, l_page_n=l_page_n,
+                                       limits=(utils.limits if this_user == current_user else {}),
                                        social_title=social_title)
 
 

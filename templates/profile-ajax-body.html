@@ -455,11 +455,16 @@
         // Submit form
         return true;
     }
+    
+    {% if limits %}
+        let limits = '{{ limits|tojson }}';
+            limits = JSON.parse(limits);
 
-    function validateDescription() {
-        const input = $('.profile-box-description');
-        const content = input.text();
-        if (content.length >= 140)
-            input.text(content.substring(0, 140));
-    }
+        function validateDescription() {
+            const input = $('.profile-box-description');
+            const content = input.text();
+            if (content.length >= limits['description'])
+                input.text(content.substring(0, limits['description']));
+        }
+    {% endif %}
 </script>
