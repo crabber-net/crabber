@@ -15,6 +15,7 @@ import turtle_images
 import uuid
 from werkzeug.wrappers import Response
 
+limits = {}
 db = extensions.db
 
 if GEO_ENABLED:
@@ -22,6 +23,9 @@ if GEO_ENABLED:
 else:
     geo_reader = None
 
+with open('limits.json', 'r') as limit_file:
+    limits = json.load(limit_file)
+    limit_file.close()
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
         -> Response:
@@ -337,17 +341,17 @@ def common_molt_actions() -> Response:
                     if value.strip():
                         new_bio[key.split(".")[1].strip()] = value.strip()
 
-            # Bio Field Character Limits
-            field_limits = {"age": 4, "pronouns": 30, "quote": 140, "jam": 140, 
-                            "obsession": 256, "remember": 256, "emoji": 30}
-
             # Overwrite values with restricted ones
             for key, value in new_bio.items():
-                new_bio[key] = value[0:field_limits[key]]
+                new_bio[key] = value[0:limits[key]]
+            location = location[0:limits["location"]]
+            disp_name = disp_name[0:limits["display_name"]]
+            website = website[0:limits["website"]]
+            desc = desc[0:limits["description"]]
 
             current_user = get_current_user()
             current_user.display_name = disp_name
-            current_user.description = desc[0:140]
+            current_user.description = desc
             if location:
                 current_user.location = location
             if website:
