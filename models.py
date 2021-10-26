@@ -658,7 +658,8 @@ class Crab(db.Model):
         blocked = db.session.query(Crab) \
             .join(blocking_table, Crab.id == blocking_table.c.blocked_id) \
             .filter(blocking_table.c.blocker_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == False, Crab.deleted == False) \
+            .order_by(Crab.username)
         return blocked
 
     def query_blockers(self) -> BaseQuery:
@@ -668,7 +669,8 @@ class Crab(db.Model):
         blockers = db.session.query(Crab) \
             .join(blocking_table, Crab.id == blocking_table.c.blocker_id) \
             .filter(blocking_table.c.blocked_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == False, Crab.deleted == False) \
+            .order_by(Crab.username)
         return blockers
 
     def query_following(self) -> BaseQuery:
