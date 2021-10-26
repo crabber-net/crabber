@@ -337,9 +337,17 @@ def common_molt_actions() -> Response:
                     if value.strip():
                         new_bio[key.split(".")[1].strip()] = value.strip()
 
+            # Bio Field Character Limits
+            field_limits = {"age": 4, "pronouns": 30, "quote": 140, "jam": 140, 
+                            "obsession": 256, "remember": 256, "emoji": 30}
+
+            # Overwrite values with restricted ones
+            for key, value in new_bio.items():
+                new_bio[key] = value[0:field_limits[key]]
+
             current_user = get_current_user()
             current_user.display_name = disp_name
-            current_user.description = desc
+            current_user.description = desc[0:140]
             if location:
                 current_user.location = location
             if website:
