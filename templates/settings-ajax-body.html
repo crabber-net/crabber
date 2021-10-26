@@ -16,7 +16,7 @@
         <div class="form-group cool-input">
             <label for="description">About me</label>
             <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
-            required aria-required>{{current_user.description.strip()}}</textarea>
+            required aria-required oninput="validateDescription()">{{current_user.description.strip()}}</textarea>
         </div>
 
         <!-- Location -->
@@ -302,4 +302,11 @@
     document.querySelector("input[name='lastfm']").blur();
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+
+    function validateDescription() {
+        const input = $('#description');
+        const content = input.val();
+        if (content.length >= 140)
+            input.val(content.substring(0, 140));
+    }
 </script>
