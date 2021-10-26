@@ -58,3 +58,8 @@ API_MAX_ACCESS_TOKENS = 5
 RSS_MOLT_LIMIT = 50
 
 HCAPTCHA_ENABLED = False
+
+LIMITS = {  "age": 4, "pronouns": 30, "quote": 140, "jam": 140, 
+            "obsession": 256, "remember": 256, "emoji": 30, 
+            "description": 140, "website": 140, "location": 140, 
+            "display_name": 64  }
