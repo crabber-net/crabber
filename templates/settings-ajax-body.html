@@ -15,7 +15,7 @@
         <!-- Description -->
         <div class="form-group cool-input">
             <label for="description">About me</label>
-            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="When I get back, I'm going to kill you."
+            <textarea type="text" name="description" class="bg-dark form-control text-light" id="description" placeholder="I'm too tired, maybe later."
             required aria-required>{{current_user.description.strip()}}</textarea>
         </div>
 
@@ -211,6 +211,27 @@
             </div>
         </div>
 
+        <!-- Submit button -->
+        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
+        <div class="clearfix"></div>
+    </form>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
+    <h2 class="mb-3">Content Filtering</h2>
+    <form method="POST" class="p-2">
+        <input type="hidden" name="user_action" value="update_content_filters">
+
+        <!-- Muted Words -->
+        <div class="form-group cool-input">
+            <label for="description">Muted words (comma separated)</label>
+            <textarea type="text" name="muted_words"
+                      class="bg-dark form-control text-light" id="muted-words"
+                      placeholder="emacs, lua, twitter"
+                      >{{current_user.muted_words_string}}</textarea>
+        </div>
+
         <!-- NSFW Toggle -->
         <div class="form-group cool-input mb-2">
             <script>
@@ -231,7 +252,12 @@
         </div>
 
         <!-- Submit button -->
-        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
+        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit">
+            <strong>
+                Save
+            </strong>
+        </button>
+
         <div class="clearfix"></div>
     </form>
 
