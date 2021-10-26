@@ -418,13 +418,13 @@ def common_molt_actions() -> Response:
 
         if new_muted_words != target_user._muted_words:
             word_list = [
-                word.encode('ascii', 'ignore').decode().lower().strip()
+                patterns.muted_words.sub('', word.lower()).strip()
                 for word in new_muted_words.split(',')
             ]
             word_list = filter(lambda s: len(s), word_list)
             new_muted_words = ','.join(word_list)
 
-        target_user._muted_words = new_muted_words
+        target_user._muted_words = new_muted_words[:MUTED_WORDS_CHAR_LIMIT]
         target_user.show_nsfw = new_nsfw
 
         db.session.commit()

@@ -1,5 +1,8 @@
 import re
 
+muted_words = re.compile(
+    r'[^a-z0-9, ]+'
+)
 mention = re.compile(
     r'(?:^|\s|<br>)(?<!\\)@([\w]{1,32})(?!\w)')
 tag = re.compile(

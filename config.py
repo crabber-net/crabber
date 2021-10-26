@@ -22,6 +22,7 @@ MOLT_CHAR_LIMIT: int = 280
 MOLTS_PER_PAGE: int = 20
 NOTIFS_PER_PAGE: int = 20
 MINUTES_EDITABLE: int = 5
+MUTED_WORDS_CHAR_LIMIT: int = 2048
 ADMINS: List[str] = load_lines_from_file("admins")  # Users allowed to access the Tortimer page
 UPLOAD_FOLDER: str = os.path.join(BASE_PATH, 'static/img/user_uploads')
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
