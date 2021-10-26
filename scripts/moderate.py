@@ -61,6 +61,7 @@ for molt in reports:
         elif action == 'b':
             molt.author.ban()
             print(f'Banned #{molt.author_id}')
+            break
         elif action == 'w':
             print(f'https://crabber.net/user/{molt.author.username}/status/{molt.id}/')
         elif action == 's':
