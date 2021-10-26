@@ -42,6 +42,9 @@ reports = Molt.query \
 ACTIONS = ('a', 'c', 'b', 'd', 'w', 's', 'q')
 
 for molt in reports:
+    if molt.author.banned or molt.author.deleted:
+        continue
+
     show_molt(molt)
 
     while True:
