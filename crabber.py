@@ -390,8 +390,7 @@ def settings():
         else:
             return render_template("settings.html", current_page="settings",
                                    current_user=utils.get_current_user(),
-                                   limits=utils.limits)
-
+                                   limits=LIMITS)
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
 @app.route("/user/<username>/", methods=("GET", "POST"))
@@ -456,15 +455,13 @@ def user(username):
                 return render_template(f'profile-ajax-tab-{section}.html',
                                        current_page=("own-profile" if this_user == current_user else ""),
                                        molts=molts, current_user=current_user, this_user=this_user, likes=likes,
-                                       current_tab=current_tab, replies=replies, hexID=hex_ID,
-                                       limits=(utils.limits if this_user == current_user else {}))
+                                       current_tab=current_tab, replies=replies, hexID=hex_ID)
             else:
                 return render_template('profile.html',
                                        current_page=("own-profile" if this_user == current_user else ""),
                                        current_user=current_user, this_user=this_user,
                                        current_tab=current_tab, m_page_n=m_page_n,
                                        r_page_n=r_page_n, l_page_n=l_page_n,
-                                       limits=(utils.limits if this_user == current_user else {}),
                                        social_title=social_title)
 
 

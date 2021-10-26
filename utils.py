@@ -15,17 +15,12 @@ import turtle_images
 import uuid
 from werkzeug.wrappers import Response
 
-limits = {}
 db = extensions.db
 
 if GEO_ENABLED:
     geo_reader = geoip2.database.Reader(GEO_PATH)
 else:
     geo_reader = None
-
-with open('limits.json', 'r') as limit_file:
-    limits = json.load(limit_file)
-    limit_file.close()
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) \
         -> Response:
@@ -343,11 +338,11 @@ def common_molt_actions() -> Response:
 
             # Overwrite values with restricted ones
             for key, value in new_bio.items():
-                new_bio[key] = value[0:limits[key]]
-            if (location): location = location[0:limits["location"]]
-            if (disp_name): disp_name = disp_name[0:limits["display_name"]]
-            if (website): website = website[0:limits["website"]]
-            if (desc): desc = desc[0:limits["description"]]
+                new_bio[key] = value[0:LIMITS[key]]
+            if (location): location = location[0:LIMITS["location"]]
+            if (disp_name): disp_name = disp_name[0:LIMITS["display_name"]]
+            if (website): website = website[0:LIMITS["website"]]
+            if (desc): desc = desc[0:LIMITS["description"]]
 
             current_user = get_current_user()
             current_user.display_name = disp_name
