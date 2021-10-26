@@ -414,8 +414,22 @@
                         </form>
                         {% endif %}
 
-                        <!-- REPORT MOLT BUTTON -->
                         {% if author.id != current_user.id %}
+                            <!-- BLOCK USER BUTTON -->
+                            <form class="dropdown-item clickable" method="POST">
+                                <input type="hidden" name="user_action" value="block">
+                                <input type="hidden" name="target_user" value="{{molt.author_id}}">
+                                <div onClick="if (confirm('Are you sure you want to block this user?')) {
+                                    SubForm(this.parentNode);replaceMolt(this, 'You have blocked this user.');}">
+
+                                    <svg width="19" height="19" data-jam="ghost">
+                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#ghost"></use>
+                                    </svg>
+                                    Block User
+                                </div>
+                            </form>
+
+                            <!-- REPORT MOLT BUTTON -->
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="report_molt">
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
