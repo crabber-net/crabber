@@ -291,58 +291,63 @@ def account_deleted():
 
 @app.route("/signup/", methods=("GET", "POST"))
 def signup():
-    if request.method == "POST":
-        # Validate data
-        form = request.form
-        email = form.get("email").strip().lower()
-        username = form.get("username").strip()
-        display_name = form.get("display-name").strip()
-        password = form.get("password").strip()
-        confirm_password = form.get("confirm-password").strip()
+    if REGISTRATION_ENABLED:
+        if request.method == "POST":
+            # Validate data
+            form = request.form
+            email = form.get("email").strip().lower()
+            username = form.get("username").strip()
+            display_name = form.get("display-name").strip()
+            password = form.get("password").strip()
+            confirm_password = form.get("confirm-password").strip()
 
-        if utils.validate_email(email):
-            if utils.validate_username(username):
-                if len(username) in range(3, 32):
-                    if patterns.username.fullmatch(username):
-                        if not patterns.only_underscores.fullmatch(username):
-                            if password == confirm_password:
-                                if password:
-                                    if captcha.verify():
-                                        # Create user account
-                                        models.Crab.create_new(username=username,
-                                                            email=email,
-                                                            password=password,
-                                                            display_name=display_name)
+            if utils.validate_email(email):
+                if utils.validate_username(username):
+                    if len(username) in range(3, 32):
+                        if patterns.username.fullmatch(username):
+                            if not patterns.only_underscores.fullmatch(username):
+                                if password == confirm_password:
+                                    if password:
+                                        if captcha.verify():
+                                            # Create user account
+                                            models.Crab.create_new(username=username,
+                                                                email=email,
+                                                                password=password,
+                                                                display_name=display_name)
 
-                                        # "Log in"
-                                        session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
-                                        # Redirect to let the user know it succeeded
-                                        return redirect("/signupsuccess")
+                                            # "Log in"
+                                            session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
+                                            # Redirect to let the user know it succeeded
+                                            return redirect("/signupsuccess")
+                                        else:
+                                            return redirect("/signup?failed&error_msg=Captcha verification failed")
                                     else:
-                                        return redirect("/signup?failed&error_msg=Captcha verification failed")
+                                        return redirect("/signup?failed&error_msg=Password cannot be blank")
                                 else:
-                                    return redirect("/signup?failed&error_msg=Password cannot be blank")
+                                    return redirect("/signup?failed&error_msg=Passwords do not match")
                             else:
-                                return redirect("/signup?failed&error_msg=Passwords do not match")
+                                return redirect("/signup?failed&error_msg=Username cannot be ONLY underscores.")
                         else:
-                            return redirect("/signup?failed&error_msg=Username cannot be ONLY underscores.")
+                            return redirect("/signup?failed&error_msg=Username must only contain \
+                                            letters, numbers, and underscores")
                     else:
-                        return redirect("/signup?failed&error_msg=Username must only contain \
-                                        letters, numbers, and underscores")
+                        return redirect("/signup?failed&error_msg=Username must be at least 3 characters and less than 32")
                 else:
-                    return redirect("/signup?failed&error_msg=Username must be at least 3 characters and less than 32")
+                    return redirect("/signup?failed&error_msg=That username is taken")
             else:
-                return redirect("/signup?failed&error_msg=That username is taken")
-        else:
-            return redirect("/signup?failed&error_msg=An account with that email address already exists")
+                return redirect("/signup?failed&error_msg=An account with that email address already exists")
 
-    elif session.get("current_user"):
-        return redirect("/")
+        elif session.get("current_user"):
+            return redirect("/")
+        else:
+            signup_failed = request.args.get("failed") is not None
+            error_msg = request.args.get("error_msg")
+            return render_template("signup.html", current_page="signup", hide_sidebar=True,
+                                   signup_failed=signup_failed, error_msg=error_msg)
     else:
-        signup_failed = request.args.get("failed") is not None
-        error_msg = request.args.get("error_msg")
-        return render_template("signup.html", current_page="signup", hide_sidebar=True,
-                               signup_failed=signup_failed, error_msg=error_msg)
+        return render_template("registration-closed.html",
+                               current_page="registration-closed",
+                               hide_sidebar=True)
 
 
 @app.route("/logout/")
