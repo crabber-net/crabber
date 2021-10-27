@@ -59,7 +59,7 @@ RSS_MOLT_LIMIT = 50
 
 HCAPTCHA_ENABLED = False
 
-LIMITS = {  "age": 4, "pronouns": 30, "quote": 140, "jam": 140, 
-            "obsession": 256, "remember": 256, "emoji": 30, 
-            "description": 140, "website": 140, "location": 140, 
+LIMITS = {  "age": 32, "pronouns": 64, "quote": 256, "jam": 256,
+            "obsession": 256, "remember": 256, "emoji": 32,
+            "description": 512, "website": 256, "location": 128,
             "display_name": 64  }
