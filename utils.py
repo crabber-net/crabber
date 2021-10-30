@@ -333,8 +333,7 @@ def common_molt_actions() -> Response:
             new_bio = target_user.bio
             for key, value in request.form.items():
                 if "bio." in key:
-                    if value.strip():
-                        new_bio[key.split(".")[1].strip()] = value.strip()
+                    new_bio[key.split(".")[1].strip()] = value.strip()
 
             # Overwrite values with restricted ones
             for key, value in new_bio.items():
