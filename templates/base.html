@@ -69,12 +69,16 @@
     <!-- Cursed modes -->
     <link rel="stylesheet" {{'disabled' if not light_mode}} id="light-mode-css" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
     <link rel="stylesheet" {{'disabled' if not comicsans_mode}} id="comicsans-mode-css" href="{{ url_for('static', filename='css/comicsans_mode.css') }}?version={{server_start}}">
+    <!-- Holiday modes -->
+    <link rel="stylesheet" id="halloween-mode-css" href="{{ url_for('static', filename='css/halloween_mode.css') }}?version={{server_start}}">
+    <!-- TODO: Christmas mode -->
     {% endif %}
 
     <meta name="last-refresh" content="{{TIMESTAMP}}">
     {% block ext_head %}{% endblock %}
 
     <!-- Custom scripts -->
+    <script src="{{ url_for('static', filename='scripts/holiday_modes.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/main.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/lastfm.js') }}?version={{server_start}}"></script>

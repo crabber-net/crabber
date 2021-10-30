@@ -1,0 +1,29 @@
+:root {
+    --primary: rgb(244, 107, 25) !important;
+    --primary-faded: rgba(244, 107, 25, 0.1) !important;
+    --primary-faded-less: rgba(244, 107, 25, 0.3) !important;
+    --primary-dark: rgb(194, 90, 27) !important;
+    --primary-darker: rgb(149, 61, 7) !important;
+    --light: rgb(217, 217, 217) !important;
+    --light-darker: rgb(151, 151, 151) !important;
+    --light-darker-er: rgb(112, 113, 124) !important;
+    --light-faded: rgb(77, 73, 96) !important;
+    --light-faded-less: rgb(105, 114, 117) !important;
+    --light-faded-more: #464249 !important;
+    --dark: rgb(17, 8, 25) !important;
+    --dark-transparent: rgba(17, 8, 25, 0) !important;
+    --dark-less: rgb(26, 20, 36) !important;
+    --dark-less-transparent: rgba(26, 20, 36, 0) !important;
+    --dark-lesser: rgb(48, 40, 62) !important;
+    --dark-lesser-transparent: rgba(18, 23, 28, 0) !important;
+    --dark-lesserest: rgb(36, 35, 48) !important;
+    --dark-less-more: rgb(12, 15, 18) !important;
+    --border-dark: #342f37 !important;
+    --border-dark-less: #503e5e !important;
+    --border-darker: rgb(21, 25, 30) !important;
+    --neue-card: rgb(21, 13, 32) !important;
+}
+
+.border-dark {
+    border-color: #2e243c !important;
+}
