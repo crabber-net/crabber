@@ -1,5 +1,5 @@
 import calendar
-from config import *
+import config
 from crab_mail import CrabMail
 import datetime
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
@@ -14,16 +14,18 @@ from typing import Iterable, Tuple, Union
 import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
 
+
 def create_app():
     app = Flask(__name__, template_folder="./templates")
-    app.secret_key = 'crabs are better than birds because they can cut their wings right off'
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'  # Database location
+    app.secret_key = ('crabs are better than birds because they can cut their '
+                      'wings right off')
+    app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # Max length of user-uploaded files. First number is megabytes.
+    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
     app.config['HCAPTCHA_SITE_KEY'] = os.getenv('HCAPTCHA_SITE_KEY')
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
-    app.config['HCAPTCHA_ENABLED'] = HCAPTCHA_ENABLED
+    app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
     app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
 
     limiter = register_extensions(app)
@@ -43,17 +45,22 @@ def register_blueprints(app):
     import crabber_rss
 
     # Rate-limit site
-    limiter = Limiter(app, key_func=get_remote_address,
-                      default_limits=[f'{SITE_RATE_LIMIT_MINUTE}/minute',
-                                      f'{SITE_RATE_LIMIT_SECOND}/second'])
+    limiter = Limiter(
+        app,
+        key_func=get_remote_address,
+        default_limits=[f'{config.SITE_RATE_LIMIT_MINUTE}/minute',
+                        f'{config.SITE_RATE_LIMIT_SECOND}/second']
+    )
     # Exempt API from site-limits
     limiter.exempt(crabber_api.API)
 
     # Rate-limit API
     api_limiter = Limiter(app, key_func=crabber_api.get_api_key)
-    api_limiter.limit(f'{API_RATE_LIMIT_SECOND}/second;'
-                      f'{API_RATE_LIMIT_MINUTE}/minute;'
-                      f'{API_RATE_LIMIT_HOUR}/hour')(crabber_api.API)
+    api_limiter.limit(
+        f'{config.API_RATE_LIMIT_SECOND}/second;'
+        f'{config.API_RATE_LIMIT_MINUTE}/minute;'
+        f'{config.API_RATE_LIMIT_HOUR}/hour'
+    )(crabber_api.API)
 
     # Register API V1 blueprint
     app.register_blueprint(crabber_api.API, url_prefix='/api/v1')
@@ -64,11 +71,14 @@ def register_blueprints(app):
 app, limiter = create_app()
 captcha = hCaptcha(app)
 if app.config['PROFILER_ENABLED']:
-    app.wsgi_app = ProfilerMiddleware(app.wsgi_app, 
-                                      profile_dir='wsgi_profiler')
+    app.wsgi_app = ProfilerMiddleware(
+        app.wsgi_app,
+        profile_dir='wsgi_profiler'
+    )
 
-if MAIL_ENABLED:
-    mail = CrabMail(MAIL_JSON)
+if config.MAIL_ENABLED:
+    mail = CrabMail(config.MAIL_JSON)
+
 
 @app.route('/.well-known/<file>')
 def crabcoin(file):
@@ -106,10 +116,10 @@ def index():
         else:
             molts = utils.get_current_user() \
                 .query_timeline() \
-                .paginate(page_n, MOLTS_PER_PAGE, False)
+                .paginate(page_n, config.MOLTS_PER_PAGE, False)
 
             return render_template(
-                'timeline-content.html' if request.args.get("ajax_content") \
+                'timeline-content.html' if request.args.get("ajax_content")
                 else 'timeline.html',
                 current_page="home",
                 page_n=page_n,
@@ -117,12 +127,21 @@ def index():
                 current_user=utils.get_current_user()
             )
     else:
-        featured_molt = models.Molt.query.filter_by(id=FEATURED_MOLT_ID).first()
-        featured_user = models.Crab.query.filter_by(username=FEATURED_CRAB_USERNAME).first()
-        return render_template('welcome.html', featured_molt=featured_molt,
-                               current_user=utils.get_current_user(),
-                               featured_user=featured_user, fullwidth=True,
-                               current_page='welcome', hide_sidebar=True)
+        featured_molt = models.Molt.query \
+            .filter_by(id=config.FEATURED_MOLT_ID) \
+            .first()
+        featured_user = models.Crab.query \
+            .filter_by(username=config.FEATURED_CRAB_USERNAME) \
+            .first()
+        return render_template(
+            'welcome.html',
+            featured_molt=featured_molt,
+            current_user=utils.get_current_user(),
+            featured_user=featured_user,
+            fullwidth=True,
+            current_page='welcome',
+            hide_sidebar=True
+        )
 
 
 @app.route("/wild/", methods=("GET", "POST"))
@@ -137,18 +156,26 @@ def wild_west():
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'wild-west-ajax-{block}.html',
-                                                current_page="wild-west",
-                                                page_n=page_n,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'wild-west-ajax-{block}.html',
+                    current_page="wild-west",
+                    page_n=page_n,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
             molts = models.Molt.query_all(include_replies=False,
                                           include_quotes=False)
             molts = utils.get_current_user().filter_molt_query(molts)
-            molts = molts.paginate(page_n, MOLTS_PER_PAGE, False)
-            return render_template('wild-west-content.html' if request.args.get("ajax_content") else 'wild-west.html', current_page="wild-west", page_n=page_n,
-                                   molts=molts, current_user=utils.get_current_user())
+            molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
+            return render_template(
+                'wild-west-content.html' if request.args.get("ajax_content")
+                else 'wild-west.html',
+                current_page="wild-west",
+                page_n=page_n,
+                molts=molts,
+                current_user=utils.get_current_user()
+            )
     else:
         return redirect("/login")
 
@@ -162,19 +189,25 @@ def notifications():
     # Display page
     elif session.get('current_user') is not None:
         page_n = request.args.get('p', 1, type=int)
-        notifications = utils.get_current_user().get_notifications(paginated=True, page=page_n)
+        notifications = utils.get_current_user() \
+            .get_notifications(paginated=True, page=page_n)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'notifications-ajax-{block}.html',
-                                                current_page="notifications",
-                                                notifications=notifications,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'notifications-ajax-{block}.html',
+                    current_page="notifications",
+                    notifications=notifications,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
-            return render_template('notifications.html', current_page="notifications",
-                                   notifications=notifications,
-                                   current_user=utils.get_current_user())
+            return render_template(
+                'notifications.html',
+                current_page="notifications",
+                notifications=notifications,
+                current_user=utils.get_current_user()
+            )
     else:
         return redirect("/login")
 
@@ -182,8 +215,10 @@ def notifications():
 @app.route("/login/", methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        email, password = request.form.get('email').strip().lower(), request.form.get('password')
-        attempted_user = models.Crab.query.filter_by(email=email, deleted=False).first()
+        email, password = request.form.get(
+            'email').strip().lower(), request.form.get('password')
+        attempted_user = models.Crab.query.filter_by(
+            email=email, deleted=False).first()
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
@@ -191,7 +226,8 @@ def login():
                     session['current_user'] = attempted_user.id
                     return redirect("/")
                 else:
-                    return utils.show_error('The account you\'re attempting to access has been banned.')
+                    return utils.show_error('The account you\'re attempting to'
+                                            ' access has been banned.')
             else:
                 return utils.show_error('Incorrect password.')
         else:
@@ -200,7 +236,12 @@ def login():
         return redirect('/')
     else:
         login_failed = request.args.get('failed') is not None
-        return render_template('login.html', current_page='login', hide_sidebar=True, login_failed=login_failed)
+        return render_template(
+            'login.html',
+            current_page='login',
+            hide_sidebar=True,
+            login_failed=login_failed
+        )
 
 
 @app.route("/forgotpassword/", methods=('GET', 'POST'))
@@ -209,27 +250,33 @@ def forgot_password():
     if request.method == 'POST':
         crab_email = request.form.get('email')
         crab = models.Crab.get_by_email(crab_email)
-        if crab and MAIL_ENABLED:
+        if crab and config.MAIL_ENABLED:
             token = crab.generate_password_reset_token()
 
             # Send email
-            body = render_template('password-reset-email.html',
-                                   crab=crab, token=token)
+            body = render_template(
+                'password-reset-email.html',
+                crab=crab,
+                token=token
+            )
             if mail.send_mail(crab_email, subject='Reset your password',
                               body=body):
                 email_sent = True
             else:
-                return show_error('There was a problem sending your email. '
-                                  'Please try again.')
+                return utils.show_error('There was a problem sending your '
+                                        'email. Please try again.')
         else:
             # Crab not found, still displaying "email sent" for security
             # purposes
             email_sent = True
     elif session.get('current_user'):
         return redirect('/')
-    return render_template('forgot-password.html',
-                           current_page='forgot-password',
-                           hide_sidebar=True, email_sent=email_sent)
+    return render_template(
+        'forgot-password.html',
+        current_page='forgot-password',
+        hide_sidebar=True,
+        email_sent=email_sent
+    )
 
 
 @app.route("/resetpassword/", methods=('GET', 'POST'))
@@ -253,9 +300,11 @@ def reset_password():
             elif session.get('current_user'):
                 return redirect('/')
             else:
-                return render_template('reset-password.html',
-                                       current_page='reset-password',
-                                       hide_sidebar=True)
+                return render_template(
+                    'reset-password.html',
+                    current_page='reset-password',
+                    hide_sidebar=True
+                )
     return utils.show_error('Password reset link is either invalid or '
                             'expired.', redirect_url='/login')
 
@@ -275,23 +324,27 @@ def delete_account():
                                     preserve_arguments=True)
     else:
         if current_user:
-            return render_template('delete-account.html',
-                                   current_page='delete-account',
-                                   hide_sidebar=True)
+            return render_template(
+                'delete-account.html',
+                current_page='delete-account',
+                hide_sidebar=True
+            )
         else:
             return redirect('/')
 
 
 @app.route("/account-deleted/")
 def account_deleted():
-    return render_template('account-deleted.html',
-                           current_page='account-deleted',
-                           hide_sidebar=True)
+    return render_template(
+        'account-deleted.html',
+        current_page='account-deleted',
+        hide_sidebar=True
+    )
 
 
 @app.route("/signup/", methods=("GET", "POST"))
 def signup():
-    if REGISTRATION_ENABLED:
+    if config.REGISTRATION_ENABLED:
         if request.method == "POST":
             # Validate data
             form = request.form
@@ -310,44 +363,83 @@ def signup():
                                     if password:
                                         if captcha.verify():
                                             # Create user account
-                                            models.Crab.create_new(username=username,
-                                                                email=email,
-                                                                password=password,
-                                                                display_name=display_name)
+                                            models.Crab.create_new(
+                                                username=username,
+                                                email=email,
+                                                password=password,
+                                                display_name=display_name
+                                            )
 
                                             # "Log in"
-                                            session["current_user"] = models.Crab.query.filter_by(username=username, deleted=False, banned=False).first().id
-                                            # Redirect to let the user know it succeeded
-                                            return redirect("/signupsuccess")
+                                            session['current_user'] = models.Crab \
+                                                .query \
+                                                .filter_by(
+                                                    username=username,
+                                                    deleted=False,
+                                                    banned=False
+                                                ).first().id
+                                            # Redirect on success
+                                            return redirect('/signupsuccess')
                                         else:
-                                            return redirect("/signup?failed&error_msg=Captcha verification failed")
+                                            return redirect(
+                                                '/signup?failed&error_msg='
+                                                'Captcha verification failed'
+                                            )
                                     else:
-                                        return redirect("/signup?failed&error_msg=Password cannot be blank")
+                                        return redirect(
+                                            '/signup?failed&error_msg='
+                                            'Password cannot be blank'
+                                        )
                                 else:
-                                    return redirect("/signup?failed&error_msg=Passwords do not match")
+                                    return redirect(
+                                        '/signup?failed&error_msg='
+                                        'Passwords do not match'
+                                    )
                             else:
-                                return redirect("/signup?failed&error_msg=Username cannot be ONLY underscores.")
+                                return redirect(
+                                    '/signup?failed&error_msg='
+                                    'Username cannot be ONLY underscores'
+                                )
                         else:
-                            return redirect("/signup?failed&error_msg=Username must only contain \
-                                            letters, numbers, and underscores")
+                            return redirect(
+                                '/signup?failed&error_msg='
+                                'Username must only contain letters, numbers, and '
+                                'underscores'
+                            )
                     else:
-                        return redirect("/signup?failed&error_msg=Username must be at least 3 characters and less than 32")
+                        return redirect(
+                            '/signup?failed&error_msg='
+                            'Username must be between 3 and 32 characters.'
+                        )
                 else:
-                    return redirect("/signup?failed&error_msg=That username is taken")
+                    return redirect(
+                        '/signup?failed&error_msg='
+                        'That username is taken'
+                    )
             else:
-                return redirect("/signup?failed&error_msg=An account with that email address already exists")
+                return redirect(
+                    '/signup?failed&error_msg='
+                    'An account with that email address already exists'
+                )
 
-        elif session.get("current_user"):
-            return redirect("/")
+        elif session.get('current_user'):
+            return redirect('/')
         else:
-            signup_failed = request.args.get("failed") is not None
-            error_msg = request.args.get("error_msg")
-            return render_template("signup.html", current_page="signup", hide_sidebar=True,
-                                   signup_failed=signup_failed, error_msg=error_msg)
+            signup_failed = request.args.get('failed') is not None
+            error_msg = request.args.get('error_msg')
+            return render_template(
+                'signup.html',
+                current_page='signup',
+                hide_sidebar=True,
+                signup_failed=signup_failed,
+                error_msg=error_msg
+            )
     else:
-        return render_template("registration-closed.html",
-                               current_page="registration-closed",
-                               hide_sidebar=True)
+        return render_template(
+            'registration-closed.html',
+            current_page='registration-closed',
+            hide_sidebar=True
+        )
 
 
 @app.route("/logout/")
@@ -358,9 +450,14 @@ def logout():
 
 @app.route("/signupsuccess/")
 def signupsuccess():
-    recommended_users = models.Crab.query.filter(models.Crab.username.in_(RECOMMENDED_USERS)).all()
-    return render_template("signup_success.html", current_user=utils.get_current_user(),
-                           recommended_users=recommended_users)
+    recommended_users = models.Crab.query \
+        .filter(models.Crab.username.in_(config.RECOMMENDED_USERS)) \
+        .all()
+    return render_template(
+        'signup_success.html',
+        current_user=utils.get_current_user(),
+        recommended_users=recommended_users
+    )
 
 
 @app.route("/settings/", methods=("GET", "POST"))
@@ -388,14 +485,20 @@ def settings():
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'settings-ajax-{block}.html',
-                                                current_page='settings',
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'settings-ajax-{block}.html',
+                    current_page='settings',
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
-            return render_template("settings.html", current_page="settings",
-                                   current_user=utils.get_current_user(),
-                                   limits=LIMITS)
+            return render_template(
+                'settings.html',
+                current_page='settings',
+                current_user=utils.get_current_user(),
+                limits=config.LIMITS
+            )
+
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
 @app.route("/user/<username>/", methods=("GET", "POST"))
@@ -416,7 +519,11 @@ def user(username):
             current_user_is_blocked = this_user.is_blocking(current_user)
 
         if this_user is None or current_user_is_blocked:
-            return render_template('not-found.html', current_user=current_user, noun='user')
+            return render_template(
+                'not-found.html',
+                current_user=current_user,
+                noun='user'
+            )
         else:
             social_title = f'{this_user.display_name} on Crabber'
             m_page_n = request.args.get('molts-p', 1, type=int)
@@ -428,10 +535,12 @@ def user(username):
                 for block in ('title', 'heading', 'body'):
                     blocks[block] = render_template(
                         f'profile-ajax-{block}.html',
-                        current_page=("own-profile" if this_user == current_user else ""),
+                        current_page=(
+                            'own-profile' if this_user == current_user else ''
+                        ),
                         current_user=current_user,
-                        this_user=this_user, likes=likes,
-                        current_tab=current_tab, replies=replies
+                        this_user=this_user,
+                        current_tab=current_tab,
                     )
                 return jsonify(blocks)
             elif request.args.get('ajax_section'):
@@ -445,29 +554,44 @@ def user(username):
                         .filter_by(is_reply=False)
                     if current_user:
                         molts = current_user.filter_molt_query(molts)
-                    molts = molts.paginate(m_page_n, MOLTS_PER_PAGE, False)
+                    molts = molts.paginate(m_page_n, config.MOLTS_PER_PAGE,
+                                           False)
                 elif section == 'replies':
                     replies = this_user.query_replies()
                     if current_user:
                         replies = current_user.filter_molt_query(replies)
-                    replies = replies.paginate(r_page_n, MOLTS_PER_PAGE, False)
+                    replies = replies.paginate(r_page_n, config.MOLTS_PER_PAGE,
+                                               False)
                 elif section == 'likes':
                     likes = this_user.query_likes()
                     print(l_page_n)
                     if current_user:
                         likes = current_user.filter_molt_query(likes)
-                    likes = likes.paginate(l_page_n, MOLTS_PER_PAGE)
-                return render_template(f'profile-ajax-tab-{section}.html',
-                                       current_page=("own-profile" if this_user == current_user else ""),
-                                       molts=molts, current_user=current_user, this_user=this_user, likes=likes,
-                                       current_tab=current_tab, replies=replies, hexID=hex_ID)
+                    likes = likes.paginate(l_page_n, config.MOLTS_PER_PAGE)
+                return render_template(
+                    f'profile-ajax-tab-{section}.html',
+                    current_page=(
+                        'own-profile' if this_user == current_user else ''
+                    ),
+                    molts=molts,
+                    current_user=current_user,
+                    this_user=this_user,
+                    likes=likes,
+                    current_tab=current_tab,
+                    replies=replies,
+                    hexID=hex_ID
+                )
             else:
-                return render_template('profile.html',
-                                       current_page=("own-profile" if this_user == current_user else ""),
-                                       current_user=current_user, this_user=this_user,
-                                       current_tab=current_tab, m_page_n=m_page_n,
-                                       r_page_n=r_page_n, l_page_n=l_page_n,
-                                       social_title=social_title)
+                return render_template(
+                    'profile.html',
+                    current_page=(
+                        'own-profile' if this_user == current_user else ''
+                    ),
+                    current_user=current_user, this_user=this_user,
+                    current_tab=current_tab, m_page_n=m_page_n,
+                    r_page_n=r_page_n, l_page_n=l_page_n,
+                    social_title=social_title
+                )
 
 
 @app.route("/user/<username>/follow<tab>/", methods=("GET", "POST"))
@@ -480,10 +604,17 @@ def user_following(username, tab):
     elif session.get('current_user') is not None:
         this_user = models.Crab.get_by_username(username)
         if this_user is None:
-            return render_template('not-found.html', current_user=utils.get_current_user(), noun="user")
+            return render_template(
+                'not-found.html',
+                current_user=utils.get_current_user(),
+                noun="user"
+            )
         elif this_user.banned:
-            return render_template('not-found.html', current_user=utils.get_current_user(),
-                                   message='This user has been banned.')
+            return render_template(
+                'not-found.html',
+                current_user=utils.get_current_user(),
+                message='This user has been banned.'
+            )
         else:
             followx = None
             if tab == 'ing':
@@ -492,10 +623,17 @@ def user_following(username, tab):
                 followx = this_user.followers
             elif tab == 'ers_you_know':
                 followx = utils.get_current_user().get_mutuals_for(this_user)
-            return render_template('followx.html',
-                                   current_page=("own-profile" if this_user == utils.get_current_user() else ""),
-                                   followx=followx,
-                                   current_user=utils.get_current_user(), this_user=this_user, tab="follow" + tab)
+            return render_template(
+                'followx.html',
+                current_page=(
+                    'own-profile' if this_user == utils.get_current_user()
+                    else ''
+                ),
+                followx=followx,
+                current_user=utils.get_current_user(),
+                this_user=this_user,
+                tab="follow" + tab
+            )
     else:
         return redirect("/login")
 
@@ -521,23 +659,37 @@ def molt_page(username, molt_id):
         if primary_molt is None \
            or is_blocked \
            or primary_molt.author.username != username:
-            social_title = f'Unavailable Post'
-            return render_template('not-found.html', current_user=utils.get_current_user(), noun="molt")
+            social_title = 'Unavailable Post'
+            return render_template(
+                'not-found.html',
+                current_user=utils.get_current_user(),
+                noun="molt"
+            )
         elif primary_molt.author.banned:
-            social_title = f'Unavailable Post'
-            return render_template('not-found.html', current_user=utils.get_current_user(),
-                                   message='The author of this Molt has been banned.')
+            social_title = 'Unavailable Post'
+            return render_template(
+                'not-found.html',
+                current_user=utils.get_current_user(),
+                message='The author of this Molt has been banned.'
+            )
         else:
-            social_title = f'{primary_molt.author.display_name}\'s post on Crabber'
+            social_title = (f'{primary_molt.author.display_name}\'s post on '
+                            'Crabber')
             replies = primary_molt.query_replies()
             if current_user:
                 replies = current_user.filter_molt_query(replies)
-            return render_template('molt-page-replies.html' if ajax_content else 'molt-page.html', current_page="molt-page", molt=primary_molt,
-                                   replies=replies, current_user=utils.get_current_user(),
-                                   social_title=social_title)
+            return render_template(
+                'molt-page-replies.html' if ajax_content else 'molt-page.html',
+                current_page="molt-page",
+                molt=primary_molt,
+                replies=replies,
+                current_user=utils.get_current_user(),
+                social_title=social_title
+            )
 
 
-@app.route("/user/<username>/status/<molt_id>/quotes/", methods=("GET", "POST"))
+@app.route('/user/<username>/status/<molt_id>/quotes/',
+           methods=('GET', 'POST'))
 def molt_quotes_page(username, molt_id):
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
@@ -547,8 +699,13 @@ def molt_quotes_page(username, molt_id):
     else:
         primary_molt = models.Molt.get_by_ID(molt_id)
         quotes = primary_molt.query_quotes()
-        return render_template('quotes.html', current_page="molt-page", molt=primary_molt,
-                               quotes=quotes, current_user=utils.get_current_user())
+        return render_template(
+            'quotes.html',
+            current_page="molt-page",
+            molt=primary_molt,
+            quotes=quotes,
+            current_user=utils.get_current_user()
+        )
 
 
 @app.route("/crabtag/<crabtag>/", methods=("GET", "POST"))
@@ -563,26 +720,35 @@ def crabtags(crabtag):
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'crabtag-ajax-{block}.html',
-                                                current_page="crabtag",
-                                                crabtag=crabtag,
-                                                page_n=page_n,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'crabtag-ajax-{block}.html',
+                    current_page='crabtag',
+                    crabtag=crabtag,
+                    page_n=page_n,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
             molts = models.Molt.query_with_tag(crabtag)
             molts = utils.get_current_user().filter_molt_query(molts)
-            molts = molts.paginate(page_n, MOLTS_PER_PAGE, False)
-            return render_template('crabtag-content.html' if request.args.get("ajax_content") else 'crabtag.html', current_page="crabtag", page_n=page_n,
-                                   molts=molts, current_user=utils.get_current_user(), crabtag=crabtag)
+            molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
+            return render_template(
+                ('crabtag-content.html' if request.args.get('ajax_content')
+                 else 'crabtag.html'),
+                current_page='crabtag',
+                page_n=page_n,
+                molts=molts,
+                current_user=utils.get_current_user(),
+                crabtag=crabtag
+            )
     else:
-        return redirect("/login")
+        return redirect('/login')
 
 
-@app.route("/bookmarks/", methods=("GET", "POST"))
+@app.route('/bookmarks/', methods=('GET', 'POST'))
 def bookmarks():
     # Handle forms and redirect to clear post data on browser
-    if request.method == "POST":
+    if request.method == 'POST':
         return utils.common_molt_actions()
 
     # Display page
@@ -591,19 +757,26 @@ def bookmarks():
         page_n = request.args.get('p', 1, type=int)
         bookmarks = current_user.query_bookmarks()
         bookmarks = utils.get_current_user().filter_molt_query(bookmarks)
-        bookmarks = bookmarks.paginate(page_n, MOLTS_PER_PAGE, False)
+        bookmarks = bookmarks.paginate(page_n, config.MOLTS_PER_PAGE, False)
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'bookmarks-ajax-{block}.html',
-                                                current_page='bookmarks',
-                                                page_n=page_n, bookmarks=bookmarks,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'bookmarks-ajax-{block}.html',
+                    current_page='bookmarks',
+                    page_n=page_n, bookmarks=bookmarks,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
-            return render_template('bookmarks-content.html' if request.args.get('ajax_content') else 'bookmarks.html',
-                                   current_page='bookmarks', page_n=page_n,
-                                   bookmarks=bookmarks, current_user=utils.get_current_user())
+            return render_template(
+                'bookmarks-content.html' if request.args.get('ajax_content')
+                else 'bookmarks.html',
+                current_page='bookmarks',
+                page_n=page_n,
+                bookmarks=bookmarks,
+                current_user=utils.get_current_user()
+            )
     else:
         return redirect("/login")
 
@@ -623,25 +796,37 @@ def search():
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
-                blocks[block] = render_template(f'search-ajax-{block}.html',
-                                                current_page="search",
-                                                query=query, page_n=page_n,
-                                                current_user=utils.get_current_user())
+                blocks[block] = render_template(
+                    f'search-ajax-{block}.html',
+                    current_page="search",
+                    query=query,
+                    page_n=page_n,
+                    current_user=utils.get_current_user()
+                )
             return jsonify(blocks)
         else:
             if query:
                 crab_results = models.Crab.search(query)
-                crab_results = utils.get_current_user().filter_user_query_by_not_blocked(crab_results)
+                crab_results = utils.get_current_user() \
+                    .filter_user_query_by_not_blocked(crab_results)
                 molt_results = models.Molt.search(query)
-                molt_results = utils.get_current_user().filter_molt_query(molt_results)
-                molt_results = molt_results.paginate(page_n, MOLTS_PER_PAGE, False)
+                molt_results = utils.get_current_user() \
+                    .filter_molt_query(molt_results)
+                molt_results = molt_results.paginate(
+                    page_n, config.MOLTS_PER_PAGE, False)
             else:
                 molt_results = tuple()
                 crab_results = tuple()
 
-            return render_template('search-results.html' if ajax_content else 'search.html', current_page="search",
-                                   query=query, page_n=page_n, molt_results=molt_results,
-                                   crab_results=crab_results, current_user=utils.get_current_user())
+            return render_template(
+                'search-results.html' if ajax_content else 'search.html',
+                current_page="search",
+                query=query,
+                page_n=page_n,
+                molt_results=molt_results,
+                crab_results=crab_results,
+                current_user=utils.get_current_user()
+            )
     else:
         return redirect("/login")
 
@@ -654,11 +839,13 @@ def stats():
 
     # Query follow counts for users
     most_followed = models.Crab.query_most_popular()
-    most_followed = utils.get_current_user().filter_user_query_by_not_blocked(most_followed)
+    most_followed = utils.get_current_user(
+    ).filter_user_query_by_not_blocked(most_followed)
     most_followed = most_followed.first()
     newest_user = models.Crab.query_all() \
         .order_by(models.Crab.register_time.desc())
-    newest_user = utils.get_current_user().filter_user_query_by_not_blocked(newest_user)
+    newest_user = utils.get_current_user() \
+        .filter_user_query_by_not_blocked(newest_user)
     newest_user = newest_user.first()
 
     best_molt = models.Molt.query_most_liked()
@@ -668,44 +855,62 @@ def stats():
     talked_molt = utils.get_current_user().filter_molt_query(talked_molt)
     talked_molt = talked_molt.first()
     trendy_tag = models.Crabtag.query_most_popular().first()[0]
-    trendy_tag_molts = models.Molt.order_query_by_likes(trendy_tag.query_molts())
-    trendy_tag_molts = utils.get_current_user().filter_molt_query(trendy_tag_molts)
+    trendy_tag_molts = models.Molt.order_query_by_likes(
+        trendy_tag.query_molts())
+    trendy_tag_molts = utils.get_current_user() \
+        .filter_molt_query(trendy_tag_molts)
     trendy_tag_molts = trendy_tag_molts.limit(3).all()
-    stats_dict = dict(users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
-                      mini_stats=[
-                          dict(number=models.Molt.query.count(),
-                               label="molts sent"),
-                          dict(number=models.Molt.query.filter_by(deleted=True).count(),
-                               label="molts deleted",
-                               sublabel="what are they hiding?"),
-                          dict(number=models.Like.query.count(),
-                               label="likes given"),
-                          dict(number=models.TrophyCase.query.count(),
-                               label="trophies awarded")
-                      ],
-                      crab_king=most_followed,
-                      baby_crab=newest_user,
-                      best_molt=best_molt,
-                      talked_molt=talked_molt,
-                      trendy_tag=trendy_tag,
-                      trendy_tag_molts=trendy_tag_molts)
+
+    stats_dict = dict(
+        users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
+        mini_stats=[
+            dict(number=models.Molt.query.count(),
+                 label="molts sent"),
+            dict(number=models.Molt.query.filter_by(deleted=True).count(),
+                 label="molts deleted",
+                 sublabel="what are they hiding?"),
+            dict(number=models.Like.query.count(),
+                 label="likes given"),
+            dict(number=models.TrophyCase.query.count(),
+                 label="trophies awarded")
+        ],
+        crab_king=most_followed,
+        baby_crab=newest_user,
+        best_molt=best_molt,
+        talked_molt=talked_molt,
+        trendy_tag=trendy_tag,
+        trendy_tag_molts=trendy_tag_molts
+    )
+
     if request.args.get('ajax_json'):
         blocks = dict()
         for block in ('title', 'heading', 'body'):
-            blocks[block] = render_template(f'stats-ajax-{block}.html',
-                                            current_user=utils.get_current_user(),
-                                            stats=stats_dict, current_page='stats')
+            blocks[block] = render_template(
+                f'stats-ajax-{block}.html',
+                current_user=utils.get_current_user(),
+                stats=stats_dict,
+                current_page='stats'
+            )
         return jsonify(blocks)
     else:
-        return render_template('stats.html', current_user=utils.get_current_user(),
-                               stats=stats_dict, current_page='stats')
+        return render_template(
+            'stats.html',
+            current_user=utils.get_current_user(),
+            stats=stats_dict,
+            current_page='stats'
+        )
 
 
 @app.route("/debug/")
 @app.route("/admin/")
 @app.route("/secret/")
 def secret():
-    return "You're not supposed to be here. <a href='https://xkcd.com/838/'>This incident will be reported.</a>"
+    return (
+        'You\'re not supposed to be here.'
+        '<a href="https://xkcd.com/838/">'
+        '    This incident will be reported.'
+        '</a>'
+    )
 
 
 @app.route("/developer/", methods=("GET", "POST"))
@@ -719,20 +924,20 @@ def developer():
         action = request.form.get("user_action")
 
         if action == 'create_developer_key':
-            if len(developer_keys) < API_MAX_DEVELOPER_KEYS:
+            if len(developer_keys) < config.API_MAX_DEVELOPER_KEYS:
                 models.DeveloperKey.create(current_user)
                 return utils.show_message('Created new developer key.')
             else:
                 return utils.show_error(
-                    f'You are only allowed {API_MAX_DEVELOPER_KEYS} '
+                    f'You are only allowed {config.API_MAX_DEVELOPER_KEYS} '
                     'developer keys.')
         elif action == 'create_access_token':
-            if len(access_tokens) < API_MAX_ACCESS_TOKENS:
+            if len(access_tokens) < config.API_MAX_ACCESS_TOKENS:
                 models.AccessToken.create(current_user)
                 return utils.show_message('Created access token.')
             else:
                 return utils.show_error(
-                    f'You are only allowed {API_MAX_ACCESS_TOKENS} '
+                    f'You are only allowed {config.API_MAX_ACCESS_TOKENS} '
                     'access tokens.')
         elif action == 'delete_developer_key':
             key_id = request.form.get('developer_key_id')
@@ -752,10 +957,12 @@ def developer():
         # PRG pattern
         return redirect(request.url)
     else:
-        return render_template('developer.html',
-                               access_tokens=access_tokens,
-                               developer_keys=developer_keys,
-                               current_user=current_user)
+        return render_template(
+            'developer.html',
+            access_tokens=access_tokens,
+            developer_keys=developer_keys,
+            current_user=current_user
+        )
 
 
 # This wise tortoise, the admin control panel
@@ -809,12 +1016,12 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
-        MOLT_CHAR_LIMIT=MOLT_CHAR_LIMIT,
-        BASE_URL=BASE_URL,
+        MOLT_CHAR_LIMIT=config.MOLT_CHAR_LIMIT,
+        BASE_URL=config.BASE_URL,
         TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
         IS_WINDOWS=os.name == "nt",
         localize=utils.localize,
-        server_start=SERVER_START,
+        server_start=config.SERVER_START,
         current_year=now.utcnow().year,
         error=error, msg=msg, location=location,
         uuid=utils.hexID, referrer=request.referrer,
@@ -822,12 +1029,13 @@ def inject_global_vars():
         dyslexic_mode=dyslexic_mode,
         comicsans_mode=comicsans_mode,
         trending_crabtags=models.Crabtag.get_trending(),
-        is_debug_server=is_debug_server,
+        is_debug_server=config.is_debug_server,
     )
 
 
 @app.template_filter()
-def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ('', 's')):
+def pluralize(value: Union[Iterable, int],
+              grammar: Tuple[str, str] = ('', 's')):
     """ Returns singular or plural string depending on length/value of `value`.
     """
     count = value if isinstance(value, int) else len(value)
@@ -884,8 +1092,11 @@ def error_403(_error_msg):
 
 @app.errorhandler(404)
 def error_404(_error_msg):
-    return render_template("404.html", current_page="404",
-                           current_user=utils.get_current_user()), 404
+    return render_template(
+        '404.html',
+        current_page='404',
+        current_user=utils.get_current_user()
+    ), 404
 
 
 @app.errorhandler(413)
