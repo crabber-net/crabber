@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "crabber"
+version = "0.1.0"
+description = ""
+authors = ["Jake Ledoux <contactjakeledoux@gmail.com>"]
+license = "GNU General Public License v2.0"
+
+[tool.poetry.dependencies]
+python = ">=3.7,<3.11"
+Flask = "^2.0.2"
+Flask-hCaptcha = "^0.5.4"
+Flask-Limiter = "^1.4"
+Flask-SQLAlchemy = "^2.5.1"
+passlib = "^1.7.4"
+crabatar = "^1.0.3"
+geoip2 = "^4.4.0"
+python-dotenv = "^0.19.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
