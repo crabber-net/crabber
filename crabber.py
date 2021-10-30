@@ -761,67 +761,7 @@ def developer():
 # This wise tortoise, the admin control panel
 @app.route("/tortimer/", methods=("GET", "POST"))
 def tortimer():
-    from extensions import db
-    if utils.get_current_user().username in ADMINS:
-        if request.method == "POST":
-            action = request.form.get("user_action")
-            if request.form.get("target") == "crab":
-                target: models.Crab = models.Crab.query.filter_by(id=request.form.get("crab_id")).first()
-            else:
-                target: models.Molt = models.Molt.query.filter_by(id=request.form.get("molt_id")).first()
-            if action == "verify":
-                target.verify()
-                return utils.show_message(f"Verified @{target.username}")
-            elif action == "delete":
-                target.delete()
-                if isinstance(target, models.Crab):
-                    return utils.show_message(f"Deleted @{target.username}")
-                return utils.show_message("Deleted Molt")
-            elif action == "restore":
-                target.restore()
-                if isinstance(target, models.Crab):
-                    return utils.show_message(f"Restored @{target.username}")
-                return utils.show_message("Restored Molt")
-            elif action == "ban":
-                target.ban()
-                return utils.show_message(f"Banned @{target.username}")
-            elif action == "unban":
-                target.unban()
-                return utils.show_message(f"Unbanned @{target.username}")
-            elif action == "approve":
-                target.approve()
-                return utils.show_message("Approved Molt")
-            elif action == "award":
-                if request.form.get("award_title"):
-                    try:
-                        target.award(title=request.form.get("award_title"))
-                        return utils.show_message(f"Awarded @{target.username}: {request.form.get('award_title')}")
-                    except models.NotFoundInDatabase:
-                        return utils.show_error(f"Unable to find trophy with title: {request.form.get('award_title')}")
-                else:
-                    return utils.show_error("No award title found.")
-
-            # PRG pattern
-            return redirect(request.url)
-
-        else:
-            crab_page_n = request.args.get('pc', 1, type=int)
-            molt_page_n = request.args.get('pm', 1, type=int)
-            crabs = models.Crab.query \
-                .order_by(models.Crab.register_time.desc()) \
-                .paginate(crab_page_n, MOLTS_PER_PAGE, False)
-            reports = models.Molt.query \
-                .filter_by(approved=False, deleted=False,
-                           is_remolt=False) \
-                .order_by(models.Molt.reports.desc(),
-                          models.Molt.timestamp.desc()) \
-                .paginate(molt_page_n, MOLTS_PER_PAGE, False)
-            return render_template('tortimer.html',
-                                   crabs=crabs, reports=reports,
-                                   current_user=utils.get_current_user(),
-                                   crab_page_n=crab_page_n, molt_page_n=molt_page_n)
-    else:
-        return error_404(BaseException)
+    return 'Deprecated.'
 
 
 @app.route("/ajax_request/<request_type>/")
@@ -850,80 +790,8 @@ def ajax_request(request_type):
 
 
 @app.route("/api/v0/<action>/", methods=('GET', 'POST'))
-def api_v0(action):
-    if request.method == "POST":
-        # Submit molt
-        if action == "molt":
-            username = request.form.get("username")
-            password = request.form.get("password")
-            content = request.form.get("content")
-
-            target_user: models.Crab = models.Crab.get_by_username(username)
-            if target_user:
-                if target_user.verify_password(password):
-                    if content:
-                        new_molt = target_user.molt(content,
-                                                    source='Crabber API')
-                        return jsonify(new_molt.dict())
-                    else:
-                        return "No content provided", 400
-                else:
-                    return "Incorrect password", 400
-            else:
-                return "No such user found", 400
-        # Reply to molt
-        elif action == "reply":
-            username = request.form.get("username")
-            password = request.form.get("password")
-            content = request.form.get("content")
-            original_id = request.form.get("original_id")
-            original_molt: models.Molt = models.Molt.get_by_ID(original_id)
-
-            target_user: models.Crab = models.Crab.get_by_username(username)
-            if target_user:
-                if target_user.verify_password(password):
-                    if content:
-                        if original_molt:
-                            new_molt = original_molt.reply(target_user,
-                                                           content,
-                                                           source='Crabber API')
-                            return jsonify(new_molt.dict())
-                        else:
-                            return "No molt found with that ID", 400
-                    else:
-                        return "No content provided", 400
-                else:
-                    return "Incorrect password", 400
-            else:
-                return "No such user found", 400
-
-        return jsonify("Blah!")
-    elif request.method == "GET":
-        # Test API
-        if action == "test":
-            return jsonify("Test success!")
-        # Get molt content
-        elif action == "molt":
-            molt_id = request.args.get("id")
-            molt = models.Molt.get_by_ID(molt_id)
-            if molt:
-                if molt.deleted:
-                    return "Molt has been deleted", 400
-                else:
-                    return jsonify(molt.dict())
-            else:
-                return "Molt not found", 400
-        # Get molts mentioning user
-        elif action == "mentions":
-            username = request.args.get("username")
-            since_ts = request.args.get("since", 0)
-            if username:
-                molts = models.Molt.query.filter(models.Molt.raw_mentions.contains((username + "\n"))) \
-                    .filter(models.Molt.timestamp > datetime.datetime.fromtimestamp(int(since_ts))).all()
-                return jsonify([molt.dict() for molt in molts])
-            else:
-                return "Username not provided", 400
-    return "What were you trying to do?", 400
+def api_v0(_action):
+    return 'Deprecated.'
 
 
 # GLOBAL FLASK VARIABLES GO HERE
