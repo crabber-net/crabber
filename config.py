@@ -73,7 +73,7 @@ API_MAX_ACCESS_TOKENS = 5
 RSS_MOLT_LIMIT = 50
 
 HCAPTCHA_ENABLED = getenv_bool('HCAPTCHA_ENABLED', False)
-REGISTRATION_ENABLED = getenv_bool('REGISTRATION_ENABLED', False)
+REGISTRATION_ENABLED = getenv_bool('REGISTRATION_ENABLED', True)
 
 LIMITS = {  "age": 32, "pronouns": 64, "quote": 256, "jam": 256,
             "obsession": 256, "remember": 256, "emoji": 32,
