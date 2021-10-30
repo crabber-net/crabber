@@ -20,7 +20,7 @@ def create_app():
     app.secret_key = ('crabs are better than birds because they can cut their '
                       'wings right off')
     app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///CRABBER_DATABASE.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
     app.config['HCAPTCHA_SITE_KEY'] = os.getenv('HCAPTCHA_SITE_KEY')

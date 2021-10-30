@@ -50,6 +50,9 @@ BLACKLIST_IP = load_lines_from_file('blacklist-ip')
 BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
 
+DATABASE_PATH = (os.getenv('CRABBER_DATABASE')
+                 or 'sqlite:///CRABBER_DATABASE.db')
+
 GEO_PATH = os.path.join(BASE_PATH, 'GeoLite2-City.mmdb')
 GEO_ENABLED = os.path.exists(GEO_PATH) and getenv_bool('GEO_ENABLED', True)
 
