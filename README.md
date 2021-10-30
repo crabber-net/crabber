@@ -41,11 +41,10 @@ it, there *are* a number of advantages Crabber has over Twitter. Here are a few:
 git clone https://github.com/jakeledoux/crabber.git
 cd crabber
 ```
-2. Create a python3 virtual environment and install the requirements
+2. Install dependencies *(requires [Poetry](https://python-poetry.org))*
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+poetry install
+poetry shell
 ```
 3. (**Optional**) Download the GeoLite2 City database from [MaxMind]
 (https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) 
@@ -75,7 +74,7 @@ crontab -e
 This will open your crontab file in $EDITOR. If you're not sure how crontabs
 work, add this line:
 ```
-* * * * * cd CRABBERDIRECTORY && venv/bin/python3 fetch_cards.py
+* * * * * cd CRABBERDIRECTORY && poetry run python fetch_cards.py
 ```
 This will run `fetch_cards.py` in your Crabber virtual environment once every
 minute. To run every five minutes change the first asterisk to `0/5`. Learn
