@@ -1117,8 +1117,10 @@ def before_request():
         if not models.Crab.get_by_ID(id=crab_id):
             # Force logout
             session['current_user'] = None
-            if models.Crab.get_by_ID(id=crab_id, include_invalidated=True) \
-               .banned:
+
+            old_account = models.Crab.get_by_ID(id=crab_id,
+                                                include_invalidated=True)
+            if old_account and old_account.banned:
                 return utils.show_error('The account you were logged into has '
                                         'been banned.', '/login')
             return utils.show_error('The account you were logged into no '
