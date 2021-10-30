@@ -2,7 +2,6 @@ import calendar
 import config
 from crab_mail import CrabMail
 import datetime
-from dotenv import load_dotenv
 from flask import abort, Flask, jsonify, render_template, request, redirect, \
     send_from_directory, session
 from flask_hcaptcha import hCaptcha
@@ -68,8 +67,6 @@ def register_blueprints(app):
     # Register RSS blueprint
     app.register_blueprint(crabber_rss.RSS, url_prefix='/rss')
 
-
-load_dotenv()
 
 app, limiter = create_app()
 captcha = hCaptcha(app)

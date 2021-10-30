@@ -1,7 +1,10 @@
 import datetime
+from dotenv import load_dotenv
 import os
 import platform
 from typing import List, Set
+
+load_dotenv()
 
 
 def load_lines_from_file(filename: str) -> List[str]:
@@ -36,10 +39,10 @@ BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
 
 GEO_PATH = os.path.join(BASE_PATH, 'GeoLite2-City.mmdb')
-GEO_ENABLED = os.path.exists(GEO_PATH)
+GEO_ENABLED = os.path.exists(GEO_PATH) and os.getenv('GEO_ENABLED', True)
 
 MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
-MAIL_ENABLED = os.path.exists(MAIL_JSON)
+MAIL_ENABLED = os.path.exists(MAIL_JSON) and os.getenv('MAIL_ENABLED', True)
 
 SITE_RATE_LIMIT_MINUTE = 200
 SITE_RATE_LIMIT_SECOND = 10
@@ -57,8 +60,8 @@ API_MAX_ACCESS_TOKENS = 5
 
 RSS_MOLT_LIMIT = 50
 
-HCAPTCHA_ENABLED = False
-REGISTRATION_ENABLED = True
+HCAPTCHA_ENABLED = os.getenv('HCAPTCHA_ENABLED', False)
+REGISTRATION_ENABLED = os.getenv('REGISTRATION_ENABLED', False)
 
 LIMITS = {  "age": 32, "pronouns": 64, "quote": 256, "jam": 256,
             "obsession": 256, "remember": 256, "emoji": 32,
