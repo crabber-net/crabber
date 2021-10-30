@@ -7,6 +7,18 @@ from typing import List, Set
 load_dotenv()
 
 
+def getenv_bool(key, default=False):
+    """ Retrieve boolean value from environment variable.
+    """
+    value = os.getenv(key, None)
+    if value:
+        if value.lower() in ('false', '0', 'off'):
+            return False
+        else:
+            return True
+    return default
+
+
 def load_lines_from_file(filename: str) -> List[str]:
     """ Loads lines from file into a list of strings.
         :param filename: Filename without path or extension (assumes app root
@@ -39,10 +51,10 @@ BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
 
 GEO_PATH = os.path.join(BASE_PATH, 'GeoLite2-City.mmdb')
-GEO_ENABLED = os.path.exists(GEO_PATH) and os.getenv('GEO_ENABLED', True)
+GEO_ENABLED = os.path.exists(GEO_PATH) and getenv_bool('GEO_ENABLED', True)
 
 MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
-MAIL_ENABLED = os.path.exists(MAIL_JSON) and os.getenv('MAIL_ENABLED', True)
+MAIL_ENABLED = os.path.exists(MAIL_JSON) and getenv_bool('MAIL_ENABLED', True)
 
 SITE_RATE_LIMIT_MINUTE = 200
 SITE_RATE_LIMIT_SECOND = 10
@@ -60,8 +72,8 @@ API_MAX_ACCESS_TOKENS = 5
 
 RSS_MOLT_LIMIT = 50
 
-HCAPTCHA_ENABLED = os.getenv('HCAPTCHA_ENABLED', False)
-REGISTRATION_ENABLED = os.getenv('REGISTRATION_ENABLED', False)
+HCAPTCHA_ENABLED = getenv_bool('HCAPTCHA_ENABLED', False)
+REGISTRATION_ENABLED = getenv_bool('REGISTRATION_ENABLED', False)
 
 LIMITS = {  "age": 32, "pronouns": 64, "quote": 256, "jam": 256,
             "obsession": 256, "remember": 256, "emoji": 32,
