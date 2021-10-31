@@ -19,7 +19,7 @@
     <div class="row mb-3">
         <div class="mini-molt-profile-box {{"mt-4" if (is_remolt or molt.is_reply) and not thread else ""}} pr-1 col-auto">
             <a href="/user/{{author.username}}" class="zindex-front">
-                <div class="rounded-circle px43 profile-picture" style="background-image: url('{{url_for('static', filename=author.avatar)}}');"></div>
+                <div class="rounded-circle px43 profile-picture" style="background-image: url('{{author.avatar}}');"></div>
             </a>
         </div>
         <div class="mini-molt-text-box w-100 px-2 col">
@@ -63,7 +63,7 @@
 
             {% if molt.image %}
             <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                <img class="w-100 rounded-media" src="{{url_for('static', filename=molt.image)}}" alt="Attached image">
+                <img class="w-100 rounded-media" src="{{molt.image}}" alt="Attached image">
             </div>
             {% endif %}
         </div>

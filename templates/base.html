@@ -6,8 +6,8 @@
     {% block head %}
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} | Crabber</title>
-    <link rel="shortcut icon" href="{{url_for('static', filename='img/favicon.svg')}}" type="image/svg+xml">
-    <link rel="alternate icon" href="{{url_for('static', filename='img/favicon.png')}}">
+    <link rel="shortcut icon" href="https://cdn.crabber.net/img/favicon.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="https://cdn.crabber.net/img/favicon.png">
 
     <!-- Search Engine Metadata -->
     <meta name="description" content="Crabber is a friendly open-source micro-blogging platform powered by Crabs.">
@@ -23,9 +23,9 @@
     {% elif molt %}
         {% set social_image = molt.author.avatar %}
     {% else %}
-        {% set social_image = 'img/crabber_header.png' %}
+        {% set social_image = 'https://cdn.crabber.net/img/crabber_header.png' %}
     {% endif %}
-    <meta property="og:image" content="{{BASE_URL}}{{url_for('static', filename=social_image)}}">
+    <meta property="og:image" content="{{social_image}}">
     {% if this_user %}
     <meta property="og:type" content="profile:{{this_user.username}}">
     {% else %}
@@ -40,10 +40,10 @@
     {% endif %}
 
     <!-- Mobile web app -->
-    <link rel="manifest" href="{{url_for('static', filename='manifest.json')}}">
+    <link rel="manifest" href="https://cdn.crabber.net/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="{{url_for('static', filename='img/icon.jpg')}}">
-    <link rel="apple-touch-startup-image" href="{{url_for('static', filename='img/launch.png')}}">
+    <link rel="apple-touch-icon" href="https://cdn.crabber.net/img/icon.jpg">
+    <link rel="apple-touch-startup-image" href="https://cdn.crabber.net/img/launch.png">
     <meta name="apple-mobile-web-app-title" content="Crabber">
 
     <!-- Required meta tags -->
@@ -244,7 +244,7 @@
                     {% endif %}
                     >
                         <div class="rounded-circle px28 profile-picture d-inline-block valign-middle"
-                            style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');">
+                            style="background-image: url('{{current_user.avatar}}');">
                             <div class="d-none rounded-circle loading-icon loading-profile"></div>
                         </div>
                         <strong class="d-none d-lg-inline-block ml-2">Profile</strong>
@@ -330,7 +330,7 @@
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
                                     <div class="rounded-circle px43 profile-picture"
-                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                                        style="background-image: url('{{current_user.avatar}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
@@ -400,7 +400,7 @@
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
                                     <div class="rounded-circle px43 profile-picture"
-                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                                        style="background-image: url('{{current_user.avatar}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
@@ -471,7 +471,7 @@
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
                                     <div class="rounded-circle px43 profile-picture"
-                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                                        style="background-image: url('{{current_user.avatar}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
@@ -542,7 +542,7 @@
                             <div class="mini-molt-profile-box col-lg-1 mr-2">
                                 <a href="/user/{{current_user.username}}">
                                     <div class="rounded-circle px43 profile-picture"
-                                        style="background-image: url('{{url_for('static', filename=current_user.avatar)}}');"></div>
+                                        style="background-image: url('{{current_user.avatar}}');"></div>
                                 </a>
                             </div>
                             <div class="mini-molt-text-box w-100 h-100 px-2 col">
@@ -620,7 +620,7 @@
                         <svg class="mr-2" width="28" height="28" data-jam="search">
                             <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#search">
                         </svg>
-                        <input class="w-100 mr-2" type="text" name="q" placeholder="Search Crabber" required>
+                        <input class="w-100" type="text" name="q" placeholder="Search Crabber" required>
                     </div>
                 </form>
             {% endif %}

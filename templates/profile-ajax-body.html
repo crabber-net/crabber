@@ -24,7 +24,7 @@
                 </svg>
             </div>
         {% endif %}
-        <img class="profile-banner" src="{{url_for('static', filename=this_user.banner)}}" />
+        <img class="profile-banner" src="{{this_user.banner}}" />
     </div>
     <div class="profile-box-bio px-2 pt-2">
         <div class="profile-box-avatar d-block w-25 force-square profile-box-shadow rounded-circle" {{macros.expand_img() if current_page != "own-profile" else ""}}>
@@ -37,7 +37,7 @@
             </div>
             {% endif %}
             <div class="rounded-circle profile-picture shadow-expand">
-                <img src="{{url_for('static', filename=this_user.avatar)}}"
+                <img src="{{this_user.avatar}}"
                     style="border-radius: 100%;">
             </div>
         </div>
@@ -145,7 +145,7 @@
             <!-- Last.fm -->
             {% if this_user.lastfm %}
                 <div class="d-inline-block mr-2" id="lastfm" data-lastfm-username="{{this_user.lastfm}}">
-                    <img class="lastfm-logo" class="valign-bottom" src="{{url_for('static', filename='img/lastfm.svg')}}" alt="Last.fm logo" width="16">
+                    <img class="lastfm-logo" class="valign-bottom" src="https://cdn.crabber.net/img/lastfm.svg" alt="Last.fm logo" width="16">
                     <!-- Now Playing -->
                     <a href="https://last.fm/user/{{this_user.lastfm}}" id="lastfm-now-playing" class="text-muted d-none" target="_blank" rel="nofollow">
                         <span id="lastfm-status">now playing</span>
@@ -175,8 +175,8 @@
                                     <div class="featured-mutuals mr-2">
                                         {% for mutual in featured_mutuals %}
                                         <div class="featured-mutual-avatar"
-                                             style="background-image: url('{{url_for('static', filename=mutual.avatar)}}');"
-                                             src="{{url_for('static', filename=this_user.avatar)}}">
+                                             style="background-image: url('{{mutual.avatar}}');"
+                                             src="{{this_user.avatar}}">
                                         </div>
                                         {% endfor %}
                                     </div>

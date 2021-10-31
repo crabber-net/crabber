@@ -1,21 +1,21 @@
 /* Load OpenDyslexic typeface */
 @font-face {
     font-family: "OpenDyslexic";
-    src: url("/static/fonts/OpenDyslexic-Regular.otf") format("opentype");
+    src: url("https://cdn.crabber.net/fonts/OpenDyslexic-Regular.otf") format("opentype");
 }
 @font-face {
     font-family: "OpenDyslexic";
-    src: url("/static/fonts/OpenDyslexic-Bold.otf") format("opentype");
+    src: url("https://cdn.crabber.net/fonts/OpenDyslexic-Bold.otf") format("opentype");
     font-weight: bold;
 }
 @font-face {
     font-family: "OpenDyslexic";
-    src: url("/static/fonts/OpenDyslexic-Italic.otf") format("opentype");
+    src: url("https://cdn.crabber.net/fonts/OpenDyslexic-Italic.otf") format("opentype");
     font-style: italic, oblique;
 }
 @font-face {
     font-family: "OpenDyslexic";
-    src: url("/static/fonts/OpenDyslexic-BoldItalic.otf") format("opentype");
+    src: url("https://cdn.crabber.net/fonts/OpenDyslexic-BoldItalic.otf") format("opentype");
     font-weight: bold;
     font-style: italic, oblique;
 }
@@ -1850,7 +1850,7 @@ table#user-info th {
     margin-left: -50vw;
 
     background-color: var(--dark);
-    background-image: url('/static/img/welcome_tile.png');
+    background-image: url('https://cdn.crabber.net/img/welcome_tile.png');
     background-size: 40rem;
     background-repeat: repeat;
 

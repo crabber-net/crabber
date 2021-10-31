@@ -7,7 +7,7 @@ VERSION="2.0.0"
 [DOCUMENTATION]
 ORG_NAME="Crabber"
 ORG_URL="https://crabber.net"
-ORG_LOGO="https://crabber.net/static/img/favicon.png"
+ORG_LOGO="https://cdn.crabber.net/img/favicon.png"
 ORG_PHYSICAL_ADDRESS="Burlington, Vermont"
 ORG_OFFICIAL_EMAIL="crabberwebsite@gmail.com"
 
@@ -24,4 +24,4 @@ display_decimals=2
 name="Crabcoin"
 desc="A crustaceous currency developed by Crabber.net"
 is_asset_anchored=false
-image="https://crabber.net/.well-known/crabcoin.png"
+image="https://cdn.crabber.net/.well-known/crabcoin.png"

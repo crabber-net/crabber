@@ -1,6 +1,5 @@
 let date = new Date();
 let [day, month] = [date.getDate(), date.getMonth() + 1];
-console.log(day, month);
 
 // TODO: Inject this sometime
 function halloweenReplace() {

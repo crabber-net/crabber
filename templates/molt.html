@@ -72,7 +72,7 @@
         {% else %}
         <a href="/user/{{author.username}}" class="zindex-front">
         {% endif %}
-            <img class="rounded-circle px43 profile-picture" src="{{url_for('static', filename=author.avatar)}}" />
+            <img class="rounded-circle px43 profile-picture" src="{{author.avatar}}" />
         </a>
         {% if is_parent %}
             <div class="thread-connector">
@@ -122,7 +122,7 @@
                 {% else %}
                 <a href="/user/{{author.username}}" class="zindex-front d-inline-block">
                 {% endif %}
-                    <div class="rounded-circle px20 profile-picture" style="background-image: url('{{url_for('static', filename=author.avatar)}}');"></div>
+                    <div class="rounded-circle px20 profile-picture" style="background-image: url('{{author.avatar}}');"></div>
                 </a>
             {% endif %}
 
@@ -159,7 +159,7 @@
 
             {% if molt.image %}
                 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                <img class="mini-molt-media-img {{'nsfw-thumbnail' if molt.nsfw}}" src="{{url_for('static', filename=molt.image)}}" />
+                <img class="mini-molt-media-img {{'nsfw-thumbnail' if molt.nsfw}}" src="{{molt.image}}" />
             </div>
             {% endif %}
         </div>

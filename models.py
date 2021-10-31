@@ -54,31 +54,31 @@ class Crab(db.Model):
     email = db.Column(db.String(120), nullable=False)
     display_name = db.Column(db.String(32), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    description = db.Column(db.String(140), nullable=False,
+    description = db.Column(db.String(1024), nullable=False,
                             server_default="This user has no description.")
-    raw_bio = db.Column(db.String, nullable=False,
-                        server_default='{}')
-    location = db.Column(db.String, nullable=True)
-    website = db.Column(db.String, nullable=True)
+    raw_bio = db.Column(db.String(2048), nullable=False, server_default='{}')
+    location = db.Column(db.String(256), nullable=True)
+    website = db.Column(db.String(1024), nullable=True)
     verified = db.Column(db.Boolean, nullable=False,
                          default=False)
     avatar = db.Column(db.String(140), nullable=False,
-                       server_default="img/avatar.jpg")
+                       server_default="https://cdn.crabber.net/img/avatar.jpg")
     banner = db.Column(db.String(140), nullable=False,
-                       server_default="img/banner.png")
+                       server_default="https://cdn.crabber.net/img/banner.png")
     register_time = db.Column(db.DateTime, nullable=False,
                               default=datetime.datetime.utcnow)
     deleted = db.Column(db.Boolean, nullable=False, default=False)
     timezone = db.Column(db.String(8), nullable=False, default="-06.00")
-    lastfm = db.Column(db.String, nullable=True)
+    lastfm = db.Column(db.String(128), nullable=True)
     banned = db.Column(db.Boolean, nullable=False, default=False)
-    _password_reset_token = db.Column('password_reset_token', db.String)
+    _password_reset_token = db.Column('password_reset_token', db.String(128))
 
     # Content visibility
     nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw_thumbnails = db.Column(db.Boolean, nullable=False, default=False)
-    _muted_words = db.Column('muted_words', db.String, nullable=False, server_default='')
+    _muted_words = db.Column('muted_words', db.String(4096), nullable=False,
+                             server_default='')
 
     # Dynamic relationships
     _molts = db.relationship('Molt', back_populates='author')
@@ -100,7 +100,7 @@ class Crab(db.Model):
     _bookmarks = db.relationship('Bookmark')
 
     pinned_molt_id = db.Column(db.Integer, nullable=True)
-    _preferences = db.Column('preferences', db.String,
+    _preferences = db.Column('preferences', db.String(4096),
                              nullable=False, default='{}')
 
     # Used for efficient queries in templates
@@ -446,9 +446,9 @@ class Crab(db.Model):
                     ('other', 'trophy', 'mention', 'quote', 'reply', 'follow')
                 )
             )
-        notifs = likes.union(
-            remolts,
-            other
+        notifs = other.union(
+            likes,
+            remolts
         ).order_by(Notification.timestamp.desc())
         if paginated:
             return notifs.paginate(page, config.NOTIFS_PER_PAGE, False)
@@ -903,27 +903,27 @@ class Molt(db.Model):
                           default=datetime.datetime.utcnow)
     deleted = db.Column(db.Boolean, nullable=False,
                         default=False)
-    raw_mentions = db.Column(db.String, nullable=False,
+    raw_mentions = db.Column(db.String(1024), nullable=False,
                              server_default="")
-    raw_tags = db.Column(db.String, nullable=False,
+    raw_tags = db.Column(db.String(1024), nullable=False,
                          server_default="")
     image = db.Column(db.String(1024), nullable=True)
-    source = db.Column(db.String)
+    source = db.Column(db.String(1024))
 
     card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
     card = db.relationship('Card')
 
-    # Tag links
-    tags = db.relationship('Crabtag', secondary=crabtag_table)
-
     # Content visibility
     nsfw = db.Column(db.Boolean, nullable=False, default=False)
 
+    # Tag links
+    tags = db.relationship('Crabtag', secondary=crabtag_table,
+                           back_populates='molts')
+
     # Analytical data
-    browser = db.Column(db.String)
-    platform = db.Column(db.String)
-    address = db.Column(db.String)
-    address = db.Column(db.String)
+    browser = db.Column(db.String(512))
+    platform = db.Column(db.String(512))
+    address = db.Column(db.String(512))
 
     # Moderation/flagging
     reports = db.Column(db.Integer, nullable=False, default=0)
@@ -942,6 +942,7 @@ class Molt(db.Model):
     edited = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
+        """__repr__."""
         return f"<Molt by '@{self.author.username}'>"
 
     @property
@@ -1145,7 +1146,7 @@ class Molt(db.Model):
         # Add <img/>
         if self.image:
             new_content += (
-                f' <img src="{config.BASE_URL}/static/{self.image}" />'
+                f' <img src="{self.image}" />'
             )
 
         # Add link to quoted Molt
@@ -1736,8 +1737,11 @@ class Trophy(db.Model):
     # Medium description of what it's for
     description = db.Column(db.String(240), nullable=False)
     # Image to display as an icon
-    image = db.Column(db.String(240), nullable=False,
-                      default="img/default_trophy.png")
+    image = db.Column(
+        db.String(240),
+        nullable=False,
+        default='https://cdn.crabber.net/trophies/default_trophy.png'
+    )
 
     def __repr__(self):
         return f"<Trophy '{self.title}'>"
@@ -1746,7 +1750,7 @@ class Trophy(db.Model):
 class DeveloperKey(db.Model):
     __tablename__ = 'developer_keys'
     id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String, nullable=False)
+    key = db.Column(db.String(64), nullable=False)
     crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
     crab = db.relationship('Crab', foreign_keys=[crab_id])
     deleted = db.Column(db.Boolean, nullable=False, default=False)
@@ -1777,7 +1781,7 @@ class DeveloperKey(db.Model):
 class AccessToken(db.Model):
     __tablename__ = 'access_tokens'
     id = db.Column(db.Integer, primary_key=True)
-    key = db.Column(db.String, nullable=False)
+    key = db.Column(db.String(64), nullable=False)
     crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
     crab = db.relationship('Crab', foreign_keys=[crab_id])
     deleted = db.Column(db.Boolean, nullable=False, default=False)
@@ -1809,9 +1813,10 @@ class Crabtag(db.Model):
     __tablename__ = 'crabtag'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String(512), nullable=False)
 
-    molts = db.relationship('Molt', secondary=crabtag_table)
+    molts = db.relationship('Molt', secondary=crabtag_table,
+                            back_populates='tags')
 
     def __repr__(self):
         return f'<Crabtag \'%{self.name}\'>'
@@ -1864,10 +1869,10 @@ class Card(db.Model):
     __tablename__ = 'card'
 
     id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String)
-    title = db.Column(db.String)
-    description = db.Column(db.String)
-    image = db.Column(db.String)
+    url = db.Column(db.String(1024))
+    title = db.Column(db.String(256))
+    description = db.Column(db.String(256))
+    image = db.Column(db.String(1024))
     ready = db.Column(db.Boolean, default=False)
     failed = db.Column(db.Boolean, default=False)
 

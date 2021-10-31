@@ -59,7 +59,7 @@
             {% endif %}
             {% if count == 1 and notif.type != "other" and notif.type != "trophy" %}
                 <a href="/user/{{notif.sender.username}}" class="zindex-front">
-                    <div class="rounded-circle px26 notif-unfollow profile-picture" style="background-image: url('{{url_for('static', filename=notif.sender.avatar)}}');"></div>
+                    <div class="rounded-circle px26 notif-unfollow profile-picture" style="background-image: url('{{notif.sender.avatar}}');"></div>
                 </a>
             {% endif %}
         </div>

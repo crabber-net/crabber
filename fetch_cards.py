@@ -83,7 +83,7 @@ def parse_metadata(html: str) -> Tuple[str, str, str]:
             image = favicons[0].get('href', None)
     # Fallback
     if image is None:
-        image = '/static/img/avatar.jpg'
+        image = 'https://cdn.crabber.net/img/avatar.jpg'
 
     return title, description, image
 

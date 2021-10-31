@@ -31,10 +31,10 @@
         <p class="text-center text-muted stat-explanation">The most followed active user</p>
         <div class="king-profile neue-card neue-card-media p-4 row flex-row absolute-container">
             <div class="col-auto">
-                <img class="profile-crown" src="{{url_for('static', filename='img/crown.svg')}}" alt="golden crown">
+                <img class="profile-crown" src="https://cdn.crabber.net/img/crown.svg" alt="golden crown">
                 <div class="rounded-circle profile-picture"
-                    style="background-image: url('{{url_for('static', filename=king.avatar)}}');"
-                    src="{{url_for('static', filename=king.avatar)}}">
+                    style="background-image: url('{{king.avatar}}');"
+                    src="{{king.avatar}}">
                 </div>
             </div>
 
@@ -74,8 +74,8 @@
                     </svg>
                 </div>
                 <div class="rounded-circle profile-picture"
-                    style="background-image: url('{{url_for('static', filename=baby.avatar)}}');"
-                    src="{{url_for('static', filename=baby.avatar)}}">
+                    style="background-image: url('{{baby.avatar}}');"
+                    src="{{baby.avatar}}">
                 </div>
             </div>
 
@@ -107,7 +107,13 @@
         </div>
         <p class="text-center text-muted">The most liked Molt</p>
         <div class="neue-card neue-card-media p-1">
-            {% include 'molt.html' %}
+            {% if molt %}
+                {% include 'molt.html' %}
+            {% else %}
+                <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">
+                    Nothing here.
+                </div>
+            {% endif %}
         </div>
     </div>
     {% endwith %}
@@ -120,7 +126,13 @@
         </div>
         <p class="text-center text-muted">The Molt that the most Crabs have replied to</p>
         <div class="neue-card neue-card-media p-1">
-            {% include 'molt.html' %}
+            {% if molt %}
+                {% include 'molt.html' %}
+            {% else %}
+                <div class="d-inline-block w-100 p-5 text-muted text-molt text-center">
+                    Nothing here.
+                </div>
+            {% endif %}
         </div>
     </div>
     {% endwith %}
@@ -132,9 +144,11 @@
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The most used crabtag</p>
-        <div class="trendy-tag">
-            <h2 class="text-primary text-center">%{{tag.name}}</h2>
-        </div>
+        {% if tag %}
+            <div class="trendy-tag">
+                <h2 class="text-primary text-center">%{{tag.name}}</h2>
+            </div>
+        {% endif %}
         <div class="trendy-tag-molts neue-card neue-card-media p-1">
             {% for molt in tag_molts %}
                 {% include 'molt.html' %}

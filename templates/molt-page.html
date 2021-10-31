@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block ext_head %}
     <!-- Preload loading indicator so you never see alt-text -->
-    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+    <link rel="preload" as="image" href="https://cdn.crabber.net/img/content-loading-indicator.gif">
 {% endblock %}
 {% block title %} Molt Thread {% endblock %}
 {% block meta_author %}{{molt.author.display_name}}{% endblock %}
@@ -46,7 +46,7 @@
             </svg>
             {% else %}
             <!-- Animated logo -->
-            <img src="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+            <img src="https://cdn.crabber.net/img/content-loading-indicator.gif">
             {% endif %}
             <!-- Spacer -->
             <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>

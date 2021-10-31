@@ -17,6 +17,19 @@ from werkzeug.wrappers import Response
 
 db = extensions.db
 
+if CDN_ENABLED:
+    import boto3
+
+    cdn_session = boto3.session.Session()
+    cdn_client = cdn_session.client(
+        's3',
+        region_name='nyc3',
+        endpoint_url=CDN_ENDPOINT,
+        aws_access_key_id=CDN_ACCESS_KEY,
+        aws_secret_access_key=CDN_SECRET_KEY
+    )
+
+
 if GEO_ENABLED:
     geo_reader = geoip2.database.Reader(GEO_PATH)
 else:
@@ -119,11 +132,13 @@ def common_molt_actions() -> Response:
                 return show_error("No image was selected")
             # File exists and filename passes pattern verification
             elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + ".jpg"
-                location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
-                turtle_images.prep_and_save(img, location)
+                img_url = upload_image(img)
+                if img_url is None:
+                    return show_error('The image you\'re attempting to upload '
+                                      'is either corrupted or not a valid '
+                                      'image file.')
                 current_user = get_current_user()
-                current_user.avatar = "img/user_uploads/" + filename
+                current_user.avatar = img_url
                 db.session.commit()
                 return redirect(request.path)
             else:
@@ -139,11 +154,13 @@ def common_molt_actions() -> Response:
                 return show_error("No image was selected")
             # File exists and filename passes pattern verification
             elif img and allowed_file(img.filename):
-                filename = str(uuid.uuid4()) + ".jpg"
-                location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
-                turtle_images.prep_and_save(img, location)
+                img_url = upload_image(img)
+                if img_url is None:
+                    return show_error('The image you\'re attempting to upload '
+                                      'is either corrupted or not a valid '
+                                      'image file.')
                 current_user = get_current_user()
-                current_user.banner = "img/user_uploads/" + filename
+                current_user.banner = img_url
                 db.session.commit()
                 return redirect(request.path)
             else:
@@ -165,8 +182,8 @@ def common_molt_actions() -> Response:
                     if img and allowed_file(img.filename):
                         img_attachment = upload_image(img)
                         if img_attachment is None:
-                            return show_error('The image you\'re attempting ' \
-                                              'to upload is either corrupted ' \
+                            return show_error('The image you\'re attempting '
+                                              'to upload is either corrupted '
                                               'or not a valid image file.')
 
             if action == 'submit_molt':
@@ -512,7 +529,16 @@ def upload_image(image_file):
     location = os.path.join(crabber.app.config['UPLOAD_FOLDER'], filename)
     try:
         turtle_images.prep_and_save(image_file, location)
-        return 'img/user_uploads/' + filename
+        if CDN_ENABLED and cdn_client:
+            cdn_client.upload_file(
+                location,  # Local file
+                CDN_SPACE_NAME,
+                f'user_uploads/{filename}',  # Remote file-name
+                ExtraArgs={'ACL': 'public-read'}
+            )
+            return 'https://cdn.crabber.net/user_uploads/' + filename
+        else:
+            return '/static/img/user_uploads/' + filename
     except turtle_images.UnidentifiedImageError:
         return None
 

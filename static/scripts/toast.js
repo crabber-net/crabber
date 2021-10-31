@@ -1,4 +1,4 @@
-const DEFAULT_IMG = '/static/img/icon.jpg';
+const DEFAULT_IMG = 'https://cdn.crabber.net/img/icon.jpg';
 const DEFAULT_HIDE = true;
 const DEFAULT_DELAY = 5000;
 

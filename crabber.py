@@ -28,8 +28,8 @@ def create_app():
     app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
     app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
 
-    limiter = register_extensions(app)
-    register_blueprints(app)
+    register_extensions(app)
+    limiter = register_blueprints(app)
 
     return app, limiter
 
@@ -67,9 +67,12 @@ def register_blueprints(app):
     # Register RSS blueprint
     app.register_blueprint(crabber_rss.RSS, url_prefix='/rss')
 
+    return limiter
+
 
 app, limiter = create_app()
 captcha = hCaptcha(app)
+
 if app.config['PROFILER_ENABLED']:
     app.wsgi_app = ProfilerMiddleware(
         app.wsgi_app,
@@ -78,6 +81,16 @@ if app.config['PROFILER_ENABLED']:
 
 if config.MAIL_ENABLED:
     mail = CrabMail(config.MAIL_JSON)
+
+
+@limiter.request_filter
+def _endpoint_whitelist():
+    ''' Exempts static files from being rate-limited.
+
+        This is a workaround for a bug with Flask-Limiter == 1.4 and Flask >=
+        2.0.
+    '''
+    return request.endpoint == 'static'
 
 
 @app.route('/.well-known/<file>')
@@ -448,8 +461,11 @@ def logout():
     return redirect("/login")
 
 
-@app.route("/signupsuccess/")
+@app.route("/signupsuccess/", methods=('GET', 'POST'))
 def signupsuccess():
+    if request.method == 'POST':
+        return utils.common_molt_actions()
+
     recommended_users = models.Crab.query \
         .filter(models.Crab.username.in_(config.RECOMMENDED_USERS)) \
         .all()
@@ -854,12 +870,15 @@ def stats():
     talked_molt = models.Molt.query_most_replied()
     talked_molt = utils.get_current_user().filter_molt_query(talked_molt)
     talked_molt = talked_molt.first()
-    trendy_tag = models.Crabtag.query_most_popular().first()[0]
-    trendy_tag_molts = models.Molt.order_query_by_likes(
-        trendy_tag.query_molts())
-    trendy_tag_molts = utils.get_current_user() \
-        .filter_molt_query(trendy_tag_molts)
-    trendy_tag_molts = trendy_tag_molts.limit(3).all()
+    trendy_tag = (models.Crabtag.query_most_popular().first() or (None,))[0]
+    if trendy_tag:
+        trendy_tag_molts = models.Molt.order_query_by_likes(
+            trendy_tag.query_molts())
+        trendy_tag_molts = utils.get_current_user() \
+            .filter_molt_query(trendy_tag_molts)
+        trendy_tag_molts = trendy_tag_molts.limit(3).all()
+    else:
+        trendy_tag_molts = list()
 
     stats_dict = dict(
         users=models.Crab.query.filter_by(deleted=False, banned=False).count(),

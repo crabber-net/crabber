@@ -8,7 +8,7 @@
         <image>
             <title>{{crab.display_name}} / @{{crab.username}}</title>
             <link>{{BASE_URL}}/user/{{crab.username}}/</link>
-            <url>{{BASE_URL}}{{url_for('static', filename=crab.avatar)}}</url>
+            <url>{{BASE_URL}}{{crab.avatar}}</url>
             <height>128</height>
             <width>128</width>
         </image>

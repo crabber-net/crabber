@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block ext_head %}
     <!-- Preload loading indicator so you never see alt-text -->
-    <link rel="preload" as="image" href="{{ url_for('static', filename='img/content-loading-indicator.gif') }}">
+    <link rel="preload" as="image" href="https://cdn.crabber.net/img/content-loading-indicator.gif">
 {% endblock %}
 {% block title %}
     {% include 'timeline-ajax-title.html' %}
 {% endblock %}
-{% block heading %} 
+{% block heading %}
     {% include 'timeline-ajax-heading.html' %}
 {% endblock %}
 

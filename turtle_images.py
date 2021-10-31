@@ -1,5 +1,6 @@
 from PIL import Image, ExifTags, UnidentifiedImageError
 
+MAX_RES = 2048
 ALPHA_BACKGROUND_COLOR = (255, 255, 255)
 
 
@@ -40,6 +41,10 @@ def prep_and_save(img_bytes, filename):
     img: Image = Image.open(img_bytes)
     # Apply rotation/crop specified by EXIF data
     img = exif_rotate(img)
+
+    # Resize image
+    if max(img.size) > MAX_RES:
+        img.thumbnail((MAX_RES, MAX_RES))
 
     # Flatten alpha to black if necessary
     if img.mode == "RGBA":

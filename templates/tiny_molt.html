@@ -69,7 +69,7 @@
 
                 {% if molt.image %}
                 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                    <img class="mini-molt-media-img" src="{{url_for('static', filename=molt.image)}}" />
+                    <img class="mini-molt-media-img" src="{{molt.image}}" />
                 </div>
                 {% endif %}
             </div>
