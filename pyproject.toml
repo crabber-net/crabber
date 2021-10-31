@@ -18,6 +18,8 @@ python-dotenv = "^0.19.1"
 boto3 = "^1.19.7"
 PyMySQL = "^1.0.2"
 cryptography = "^35.0.0"
+beautifulsoup4 = "^4.10.0"
+webpreview = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 
