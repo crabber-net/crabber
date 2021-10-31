@@ -303,15 +303,19 @@ class Crab(db.Model):
     def get_mutuals_for(self, crab: 'Crab'):
         """ Returns a list of people you follow who also follow `crab`.
         """
-        self_following = db.session.query(Crab) \
+        self_following = db.session.query(Crab.id) \
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == False, Crab.deleted == False) \
+            .subquery()
         crab_followers = db.session.query(Crab) \
             .join(following_table, Crab.id == following_table.c.follower_id) \
             .filter(following_table.c.following_id == crab.id) \
             .filter(Crab.banned == False, Crab.deleted == False)
-        return self_following.intersect(crab_followers).all()
+        mutuals = crab_followers \
+            .filter(Crab.id.in_(self_following))
+        return mutuals.all()
+
 
     def get_preference(self, key: str, default: Optional[Any] = None):
         """ Gets key from user's preferences.
