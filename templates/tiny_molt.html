@@ -44,7 +44,7 @@
             <div class="absolute-container my-2 text-muted reply-indicator">
 
                 <svg class="absolute-center mini-molt-action-icon " width="17" height="17" data-jam="arrow-up">
-                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#arrow-up"></use>
+                    <use href="{{sprite_url}}?version={{server_start}}#arrow-up"></use>
                 </svg>
             </div>
         {% endif %}
@@ -92,7 +92,7 @@
                     onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="message">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#message"></use>
+                        <use href="{{sprite_url}}?version={{server_start}}#message"></use>
                     </svg>
                     <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
                 </div>
@@ -109,7 +109,7 @@
                     <div class="zindex-front mini-molt-action remolt {{"active-remolt" if has_remolted else ""}}" href="#" role="button" id="dropdownMenuLink"
                          onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                            <use href="{{sprite_url}}?version={{server_start}}#repeat"></use>
                         </svg>
                         <span class="mini-molt-action-counter ml-1">{{molt.remolt_count}}</span>
                     </div>
@@ -124,7 +124,7 @@
                                     <div onClick="deleteRemolt(this)"
                                          class="text-danger">
                                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#repeat"></use>
                                         </svg>
                                         Undo Remolt
                                     </div>
@@ -136,7 +136,7 @@
                                     <input type="hidden" name="molt_id" value="{{molt.id}}">
                                     <div onClick="submitRemolt(this)">
                                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="repeat">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#repeat"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#repeat"></use>
                                         </svg>
                                         Remolt
                                     </div>
@@ -148,7 +148,7 @@
                                 <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
                                 <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
                                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#pencil"></use>
+                                        <use href="{{sprite_url}}?version={{server_start}}#pencil"></use>
                                     </svg>
                                     Quote Molt
                                 </div>
@@ -164,11 +164,11 @@
                     <div class="mini-molt-action like zindex-front" onClick="SubForm(this.parentNode);toggleLike(this);">
 
                         <svg class="mini-molt-action-icon {{"d-none" if current_user.has_liked(molt) else ""}}" width="16" height="16" data-jam="heart">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart"></use>
+                            <use href="{{sprite_url}}?version={{server_start}}#heart"></use>
                         </svg>
 
                         <svg class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" width="16" height="16" data-jam="heart-f">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#heart-f"></use>
+                            <use href="{{sprite_url}}?version={{server_start}}#heart-f"></use>
                         </svg>
                         <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.likes|length}}</span>
                     </div>
@@ -180,7 +180,7 @@
                         onclick="toggleDropdown(this);" aria-haspopup="true" aria-expanded="false">
 
                         <svg class="mini-molt-action-icon" width="16" height="16" data-jam="more-horizontal">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#more-horizontal"></use>
+                            <use href="{{sprite_url}}?version={{server_start}}#more-horizontal"></use>
                         </svg>
                     </span>
                     {% if current_user %}
@@ -194,7 +194,7 @@
                                         this.parentNode.submit();$(this).parents('div.mini-molt').remove();}">
 
                                         <svg width="16" height="16" data-jam="trash">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#trash"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#trash"></use>
                                         </svg>
                                         Delete Molt
                                     </div>
@@ -208,7 +208,7 @@
                                         this.parentNode.submit();$(this).parents('div.mini-molt').remove();}">
 
                                         <svg width="16" height="16" data-jam="trash">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#trash"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#trash"></use>
                                         </svg>
                                         Delete Re-Molt
                                     </div>
@@ -222,7 +222,7 @@
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                                 <div onClick="SubForm(this.parentNode);changeContent(this, 'Bookmark has been removed.')">
                                     <svg width="19" height="19" data-jam="bookmark-remove">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark-remove"></use>
+                                        <use href="{{sprite_url}}?version={{server_start}}#bookmark-remove"></use>
                                     </svg>
                                     Remove Molt from Bookmarks
                                 </div>
@@ -234,7 +234,7 @@
                                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                                 <div onClick="SubForm(this.parentNode);changeContent(this, 'Molt has been bookmarked.')">
                                     <svg width="19" height="19" data-jam="flag">
-                                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#bookmark"></use>
+                                        <use href="{{sprite_url}}?version={{server_start}}#bookmark"></use>
                                     </svg>
                                     Add Molt to Bookmarks
                                 </div>
@@ -250,7 +250,7 @@
                                         SubForm(this.parentNode);replaceMolt(this, 'You have blocked this user.');}">
 
                                         <svg width="19" height="19" data-jam="ghost">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#ghost"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#ghost"></use>
                                         </svg>
                                         Block User
                                     </div>
@@ -264,7 +264,7 @@
                                         SubForm(this.parentNode);replaceMolt(this, 'You have reported this Molt.');}">
 
                                         <svg width="16" height="16" data-jam="flag">
-                                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#flag"></use>
+                                            <use href="{{sprite_url}}?version={{server_start}}#flag"></use>
                                         </svg>
                                         Report Molt
                                     </div>

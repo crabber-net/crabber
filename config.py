@@ -50,6 +50,8 @@ BLACKLIST_IP = load_lines_from_file('blacklist-ip')
 BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
 
+SPRITE_URL = os.getenv('SPRITE_URL', '/static/img/sprites.svg')
+
 DATABASE_PATH = (os.getenv('CRABBER_DATABASE')
                  or 'sqlite:///CRABBER_DATABASE.db')
 
