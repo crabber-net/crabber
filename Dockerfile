@@ -8,4 +8,4 @@ RUN pip3 install --no-cache-dir -r /app/requirements.txt
 COPY ./ /app/web
 WORKDIR /app/web
 
-CMD gunicorn -b :80 crabber:app
+CMD gunicorn -b :8080 crabber:app
