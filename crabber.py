@@ -511,8 +511,7 @@ def settings():
             return render_template(
                 'settings.html',
                 current_page='settings',
-                current_user=utils.get_current_user(),
-                limits=config.LIMITS
+                current_user=utils.get_current_user()
             )
 
 
@@ -1035,6 +1034,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        limits=config.LIMITS,
         MOLT_CHAR_LIMIT=config.MOLT_CHAR_LIMIT,
         BASE_URL=config.BASE_URL,
         TIMESTAMP=round(calendar.timegm(now.utctimetuple())),
