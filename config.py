@@ -30,7 +30,7 @@ def load_lines_from_file(filename: str) -> List[str]:
 
 
 # Check if running on production server or local development
-is_debug_server = platform.node() != 'crabbyboi'
+is_debug_server = getenv_bool('IS_DEBUG_SERVER', True)
 
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 MOLT_CHAR_LIMIT: int = 280
@@ -44,8 +44,8 @@ ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_lines_from_file("recommended_users")  # Users suggested on post-signup page
 BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())  # Timestamp of when the server went up
-FEATURED_MOLT_ID = 1
-FEATURED_CRAB_USERNAME = 'jake'
+FEATURED_MOLT_ID = int(os.getenv('FEATURED_MOLT_ID') or '1')
+FEATURED_CRAB_USERNAME = os.getenv('FEATURED_CRAB_USERNAME', 'jake')
 BLACKLIST_IP = load_lines_from_file('blacklist-ip')
 BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
