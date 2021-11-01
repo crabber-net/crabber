@@ -15,7 +15,7 @@
                 <a class="page-link h-100 p-0" href="{{url_for('notifications', p=notifications.prev_num)}}" tabindex="-1">
 
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-left"></use>
+                        <use href="{{sprite_url}}?version={{server_start}}#chevron-left"></use>
                     </svg>
                 </a>
             </li>
@@ -24,7 +24,7 @@
                 <a class="page-link h-100 p-0" href="{{url_for('notifications', p=notifications.next_num)}}">
 
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-right"></use>
+                        <use href="{{sprite_url}}?version={{server_start}}#chevron-right"></use>
                     </svg>
                 </a>
             </li>

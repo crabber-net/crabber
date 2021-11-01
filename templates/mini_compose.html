@@ -42,7 +42,7 @@
                         onchange="updateImgPreview(this);" accept="image/x-png,image/jpeg,image/png">
                     <label id="molt-image-picker-btn" class="custom-file-label open-file-btn" for="mini-compose-molt-image-picker">
                         <svg class="file-btn" width="28" height="28" data-jam="picture">
-                            <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#picture"></use>
+                            <use href="{{sprite_url}}?version={{server_start}}#picture"></use>
                         </svg>
                     </label>
                 </div>
@@ -51,7 +51,7 @@
                 <div class="file-btn clickable close-file-btn d-none" onclick="removeImg(this);">
 
                     <svg width="28" height="28" data-jam="close-rectangle">
-                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#close-rectangle"></use>
+                        <use href="{{sprite_url}}?version={{server_start}}#close-rectangle"></use>
                     </svg>
                 </div>
 

@@ -1034,6 +1034,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        sprite_url=config.SPRITE_URL,
         limits=config.LIMITS,
         MOLT_CHAR_LIMIT=config.MOLT_CHAR_LIMIT,
         BASE_URL=config.BASE_URL,
