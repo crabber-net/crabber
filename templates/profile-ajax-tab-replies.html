@@ -9,7 +9,7 @@
             <li class="page-item {{'' if replies.has_prev else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{replies.prev_num}});" tabindex="-1">
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
-                        <use href="{{sprite_url}}?version={{server_start}}#chevron-left"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-left"></use>
                     </svg>
                 </a>
             </li>
@@ -17,7 +17,7 @@
             <li class="page-item {{'' if replies.has_next else 'disabled'}}">
                 <a class="page-link h-100 p-0" href="javascript:loadContent_{{hexID}}({{replies.next_num}});">
                     <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
-                        <use href="{{sprite_url}}?version={{server_start}}#chevron-right"></use>
+                        <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-right"></use>
                     </svg>
                 </a>
             </li>

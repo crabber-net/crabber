@@ -20,7 +20,7 @@
             <div class="banner-edit-button clickable w-100 h-100 absolute-top" onclick="toggleModal('#banner_modal');">
 
                 <svg class="text-light" width="46" height="46" data-jam="camera-f">
-                    <use href="{{sprite_url}}?version={{server_start}}#camera-f"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#camera-f"></use>
                 </svg>
             </div>
         {% endif %}
@@ -32,7 +32,7 @@
             <div class="avatar-edit-button clickable w-100 h-100 zindex-front" onclick="toggleModal('#avatar_modal');">
 
                 <svg class="text-light" width="46" height="46" data-jam="camera-f">
-                    <use href="{{sprite_url}}?version={{server_start}}#camera-f"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#camera-f"></use>
                 </svg>
             </div>
             {% endif %}
@@ -117,7 +117,7 @@
             <div class="d-inline-block mr-2" id="user-location">
 
                 <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
-                    <use href="{{sprite_url}}?version={{server_start}}#map-marker"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#map-marker"></use>
                 </svg>
                 {{this_user.location}}
             </div>
@@ -128,7 +128,7 @@
             <div class="d-inline-block mr-2" id="user-website">
 
                 <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="map-marker">
-                    <use href="{{sprite_url}}?version={{server_start}}#link"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#link"></use>
                 </svg>
                 <a class="text-primary" href="{{this_user.website}}" target="_blank" rel="nofollow">{{this_user.website|pretty_url}}</a>
             </div>
@@ -137,7 +137,7 @@
             <!-- Crabber Birthday -->
             <div class="d-inline-block mr-2" id="join-date">
                 <svg class="mini-molt-action-icon pb-1" width="16" height="20" data-jam="calendar">
-                    <use href="{{sprite_url}}?version={{server_start}}#calendar"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#calendar"></use>
                 </svg>
                 Joined {{localize(this_user.register_time).strftime('%B %Y')}}
             </div>
@@ -206,7 +206,7 @@
             <button id="shell-toggle" class="btn btn-trans pl-0 w-100 text-left">
 
                 <svg class="shell-toggle-chevron" width="24" height="24" data-jam="chevron-right">
-                    <use href="{{sprite_url}}?version={{server_start}}#chevron-right"></use>
+                    <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#chevron-right"></use>
                 </svg>
                 Full bio
             </button>
@@ -267,7 +267,7 @@
                             {% else %}
 
                             <svg class="" width="16" height="16" data-jam="infinite">
-                                <use href="{{sprite_url}}?version={{server_start}}#infinite"></use>
+                                <use href="{{url_for('static', filename='img/sprites.svg')}}?version={{server_start}}#infinite"></use>
                             </svg>
                             {% endif %}
                         </strong> follower/following ratio</li>
