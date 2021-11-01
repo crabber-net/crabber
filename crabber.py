@@ -80,7 +80,7 @@ if app.config['PROFILER_ENABLED']:
     )
 
 if config.MAIL_ENABLED:
-    mail = CrabMail(config.MAIL_JSON)
+    mail = CrabMail(config.MAIL_ADDRESS, config.MAIL_PASSWORD)
 
 
 @limiter.request_filter

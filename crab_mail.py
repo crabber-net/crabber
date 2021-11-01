@@ -7,13 +7,9 @@ from typing import Dict, Optional
 
 
 class CrabMail:
-    def __init__(self, config_filename: str):
-        # Load account information from disk
-        with open(config_filename, 'r') as f:
-            self.config: Dict[str, str] = json.load(f)
-
-        self.address: str = self.config['address']
-        self.password: str = self.config['password']
+    def __init__(self, address: str, password: str):
+        self.address: str = address
+        self.password: str = password
 
     def send_mail(self, recipient: str, subject: str, body: str,
                   html_body: Optional[str] = None) -> bool:

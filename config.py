@@ -56,8 +56,10 @@ DATABASE_PATH = (os.getenv('CRABBER_DATABASE')
 GEO_PATH = os.path.join(BASE_PATH, 'GeoLite2-City.mmdb')
 GEO_ENABLED = os.path.exists(GEO_PATH) and getenv_bool('GEO_ENABLED', True)
 
-MAIL_JSON = os.path.join(BASE_PATH, 'mail_conf.json')
-MAIL_ENABLED = os.path.exists(MAIL_JSON) and getenv_bool('MAIL_ENABLED', True)
+MAIL_ADDRESS = os.getenv('MAIL_ADDRESS')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+MAIL_ENABLED = (MAIL_ADDRESS and MAIL_PASSWORD
+                and getenv_bool('MAIL_ENABLED', False))
 
 CDN_ENABLED = getenv_bool('CDN_ENABLED', False)
 CDN_ACCESS_KEY = os.getenv('CDN_ACCESS_KEY')
