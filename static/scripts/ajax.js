@@ -1,6 +1,4 @@
 function loadHTML(url) {
-    return false;
-
     if (url.match(/logout\/?$/)) {
         window.location.href = url;
         return false;
