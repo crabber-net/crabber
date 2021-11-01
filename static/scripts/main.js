@@ -29,7 +29,7 @@ function GetData(request_type, data, callback, error_callback=null) {
     }
 
     $.ajax({
-        url: "/ajax_request/" + request_type,
+        url: "/ajax_request/" + request_type + "/",
         type: 'get',
         data: request_data,
         success: function (response) {
