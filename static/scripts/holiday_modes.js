@@ -14,7 +14,9 @@ function halloweenReplace() {
 
 // Halloween
 if ([30, 31].includes(day) && month == 10) {
-    document.getElementById('halloween-mode-css').disabled = false;
+    if (document.getElementById('light-mode-css').disabled) {
+        document.getElementById('halloween-mode-css').disabled = false;
+    }
 }
 // Christmas
 else if ([24, 25].includes(day) && month == 12) {

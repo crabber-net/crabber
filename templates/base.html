@@ -70,7 +70,7 @@
     <link rel="stylesheet" {{'disabled' if not light_mode}} id="light-mode-css" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
     <link rel="stylesheet" {{'disabled' if not comicsans_mode}} id="comicsans-mode-css" href="{{ url_for('static', filename='css/comicsans_mode.css') }}?version={{server_start}}">
     <!-- Holiday modes -->
-    <link rel="stylesheet" id="halloween-mode-css" href="{{ url_for('static', filename='css/halloween_mode.css') }}?version={{server_start}}">
+    <link rel="stylesheet" disabled id="halloween-mode-css" href="{{ url_for('static', filename='css/halloween_mode.css') }}?version={{server_start}}">
     <!-- TODO: Christmas mode -->
     {% endif %}
 
@@ -683,6 +683,7 @@
                 <!-- Copyright footer -->
                 <div id="nav-footer" class="text-muted-more d-none d-lg-block absolute-bottom mb-3">
                     <small class="mb-2 d-block">{{server_start|pretty_age}} since last server restart.</small>
+                    <small><a href="/static/legal/tos.txt">Terms of Service</a></small><br>
                     <small>&copy; Copyright {{current_year}}, Crabber</small>
                     <br>
                     <small>
