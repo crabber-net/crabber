@@ -114,7 +114,7 @@
         $(".content-loading-failed").addClass("d-none");
 
         $.ajax({
-            url: '/search',
+            url: '/search/',
             type: 'GET',
             data: {'q': query, 'p': page, 'ajax_content': true},
             success: insertBodyHTML,
