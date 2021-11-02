@@ -8,4 +8,10 @@ RUN pip3 install --no-cache-dir -r /app/requirements.txt
 COPY ./ /app/web
 WORKDIR /app/web
 
-CMD gunicorn -b :8080 --worker-tmp-dir /dev/shm crabber:app
+CMD gunicorn \
+    -b :8080 \
+    --workers 3 \
+    --worker-class gevent \
+    --worker-tmp-dir /dev/shm \
+    --timeout 600 \
+    crabber:app
