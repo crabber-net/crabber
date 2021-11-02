@@ -484,10 +484,12 @@ def settings():
         if request.form.get('user_action') == 'style_settings':
             current_user = utils.get_current_user()
 
+            spooky_mode = request.form.get('spooky_mode') == 'on'
             light_mode = request.form.get('light_mode') == 'on'
             dyslexic_mode = request.form.get('dyslexic_mode') == 'on'
             comicsans_mode = request.form.get('comicsans_mode') == 'on'
 
+            current_user.set_preference('spooky_mode', spooky_mode)
             current_user.set_preference('light_mode', light_mode)
             current_user.set_preference('dyslexic_mode', dyslexic_mode)
             current_user.set_preference('comicsans_mode', comicsans_mode)
@@ -1024,11 +1026,12 @@ def api_v0(_action):
 def inject_global_vars():
     current_user = utils.get_current_user()
     if current_user:
+        spooky_mode = current_user.get_preference('spooky_mode', False)
         light_mode = current_user.get_preference('light_mode', False)
         dyslexic_mode = current_user.get_preference('dyslexic_mode', False)
         comicsans_mode = current_user.get_preference('comicsans_mode', False)
     else:
-        light_mode = dyslexic_mode = comicsans_mode = False
+        spooky_mode = light_mode = dyslexic_mode = comicsans_mode = False
     error = request.args.get("error")
     msg = request.args.get("msg")
     location = request.path
@@ -1045,6 +1048,7 @@ def inject_global_vars():
         current_year=now.utcnow().year,
         error=error, msg=msg, location=location,
         uuid=utils.hexID, referrer=request.referrer,
+        spooky_mode=spooky_mode,
         light_mode=light_mode,
         dyslexic_mode=dyslexic_mode,
         comicsans_mode=comicsans_mode,

@@ -67,10 +67,11 @@
     <!-- Not cursed modes -->
     <link rel="stylesheet" {{'disabled' if not dyslexic_mode}} id="dyslexic-mode-css" href="{{ url_for('static', filename='css/dyslexic_mode.css') }}?version={{server_start}}">
     <!-- Cursed modes -->
-    <link rel="stylesheet" {{'disabled' if not light_mode}} id="light-mode-css" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
+    <link rel="stylesheet" {{'disabled' if not light_mode or spooky_mode}} id="light-mode-css" href="{{ url_for('static', filename='css/light_mode.css') }}?version={{server_start}}">
     <link rel="stylesheet" {{'disabled' if not comicsans_mode}} id="comicsans-mode-css" href="{{ url_for('static', filename='css/comicsans_mode.css') }}?version={{server_start}}">
     <!-- Holiday modes -->
-    <link rel="stylesheet" disabled id="halloween-mode-css" href="{{ url_for('static', filename='css/halloween_mode.css') }}?version={{server_start}}">
+    <link rel="stylesheet" {{'disabled' if not spooky_mode or light_mode}} id="halloween-mode-css" href="{{ url_for('static', filename='css/halloween_mode.css') }}?version={{server_start}}">
+    <link rel="stylesheet" {{'disabled' if not (spooky_mode and light_mode)}} id="halloween-light-mode-css" href="{{ url_for('static', filename='css/halloween_light_mode.css') }}?version={{server_start}}">
     <!-- TODO: Christmas mode -->
     {% endif %}
 

@@ -1,0 +1,46 @@
+:root {
+    --primary: rgb(244, 107, 25) !important;
+    --primary-faded: rgba(244, 107, 25, 0.1) !important;
+    --primary-faded-less: rgba(244, 107, 25, 0.3) !important;
+    --primary-dark: rgb(194, 90, 27) !important;
+    --primary-darker: rgb(149, 61, 7) !important;
+    --light: rgb(32, 6, 50) !important;
+    --light-darker: rgb(151, 151, 151) !important;
+    --light-darker-er: rgb(112, 113, 124) !important;
+    --light-faded: rgb(77, 73, 96) !important;
+    --light-faded-less: rgb(105, 114, 117) !important;
+    --light-faded-more: #464249 !important;
+    --dark: rgb(241, 232, 219) !important;
+    --dark-transparent: rgba(224, 212, 196, 0) !important;
+    --dark-less: rgb(227, 217, 205) !important;
+    --dark-less-transparent: rgba(227, 217, 205, 0) !important;
+    --dark-lesser: rgb(217, 205, 190) !important;
+    --dark-lesser-transparent: rgba(195, 184, 170, 0) !important;
+    --dark-lesserest: rgb(184, 172, 157) !important;
+    --dark-less-more: rgb(237, 229, 218) !important;
+    --border-dark: #c7c1b6 !important;
+    --border-dark-less: #c7c1b6 !important;
+    --border-darker: rgb(21, 25, 30) !important;
+    --neue-card: var(--dark-less) !important;
+    --border-color: rgb(180, 168, 152) !important;
+
+    --remolt: rgb(144, 52, 223) !important;
+
+    --placeholder: rgb(32, 6, 50) !important;
+}
+
+.border-dark {
+    border-color: var(--border-color) !important;
+}
+
+.text-light {
+    color: var(--light) !important;
+}
+
+.btn-secondary:hover {
+    color: #575760 !important;
+}
+
+.search-box ::placeholder {
+    color: var(--placeholder) !important;
+}
