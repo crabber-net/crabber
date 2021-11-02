@@ -884,6 +884,8 @@ class Crab(db.Model):
         """ Create new user. See `Crab.__init__` for arguments.
         """
         kwargs["password"] = cls.hash_pass(kwargs["password"])
+        kwargs['banner'] = kwargs.get('banner',
+                                      'https://cdn.crabber.net/img/banner.png')
         new_crab = cls(**kwargs)
         if 'avatar' not in kwargs:
             crabatar_img = utils.make_crabatar(new_crab.username)
