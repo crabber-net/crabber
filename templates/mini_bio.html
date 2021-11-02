@@ -17,15 +17,25 @@
             <input type="hidden" name="user_action" value="follow">
             <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow(this);"
                                   class="btn btn-outline-primary rounded-pill" id="follow-btn">
+            {% if spooky_mode %}
+                <strong class="default-text">Haunt</strong>
+                <strong class="hover-text">Haunt</strong>
+            {% else %}
                 <strong class="default-text">Follow</strong>
                 <strong class="hover-text">Follow</strong>
+            {% endif %}
             </button>
             {% else %}
             <input type="hidden" name="user_action" value="unfollow">
             <button type="button" onclick="SubForm(this.parentNode, '/');toggleFollow(this);"
                                   class="btn btn-primary rounded-pill" id="follow-btn">
+            {% if spooky_mode %}
+                <strong class="default-text">Haunting</strong>
+                <strong class="hover-text">Unhaunt</strong>
+            {% else %}
                 <strong class="default-text">Following</strong>
                 <strong class="hover-text">Unfollow</strong>
+            {% endif %}
             </button>
             {% endif %}
         </form>
@@ -38,7 +48,13 @@
             <br><span class="mini-molt-username zindex-front"
                 style="position: relative;top: -.1em;">@{{crab.username}}
                 {% if current_user in crab.following and not hide_description %}
-                    <small class="follows-you">Follows you</small>
+                    <small class="follows-you">
+                    {% if spooky_mode %}
+                        Haunts you
+                    {% else %}
+                        Follows you
+                    {% endif %}
+                    </small>
                 {% endif %}
             </span>
         </div>

@@ -160,17 +160,31 @@
                         {% endif %}>
 
                         <svg class="btn-icon {{"d-none" if current_page == "wild-west" else ""}}" width="28" height="28" data-jam="cactus">
+                        {% if spooky_mode %}
+                            <use href="{{sprite_url}}?version={{server_start}}#ghost"></use>
+                        {% else %}
                             <use href="{{sprite_url}}?version={{server_start}}#cactus"></use>
+                        {% endif %}
                         </svg>
 
                         <svg class="btn-icon {{"" if current_page == "wild-west" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="cactus-f">
+                        {% if spooky_mode %}
+                            <use href="{{sprite_url}}?version={{server_start}}#ghost-f"></use>
+                        {% else %}
                             <use href="{{sprite_url}}?version={{server_start}}#cactus-f"></use>
+                        {% endif %}
                         </svg>
 
                         <svg class="btn-icon loading-icon d-none" width="28" height="28" data-jam="refresh">
                             <use href="{{sprite_url}}?version={{server_start}}#refresh"></use>
                         </svg>
-                        <strong class="d-none d-lg-inline-block ml-2">Wild West</strong>
+                        <strong class="d-none d-lg-inline-block ml-2">
+                        {% if spooky_mode %}
+                            Graveyard
+                        {% else %}
+                            Wild West
+                        {% endif %}
+                        </strong>
                     </button>
                 </form>
 
@@ -312,7 +326,13 @@
                         <svg class="btn-icon text-muted" width="28" height="28" data-jam="log-out">
                             <use href="{{sprite_url}}?version={{server_start}}#log-out"></use>
                         </svg>
-                        <strong class="d-none d-lg-inline-block ml-2">Log out</strong>
+                        <strong class="d-none d-lg-inline-block ml-2">
+                        {% if spooky_mode %}
+                            Rest in peace
+                        {% else %}
+                            Log out
+                        {% endif %}
+                        </strong>
                     </button>
                 </form>
             {% endif %}
@@ -632,7 +652,13 @@
                     <!-- Who to follow -->
                     <div class="panel d-none d-xl-block" id="recommended-crabs">
                         <div class="panel-title">
-                            <span>Who to follow</span>
+                            <span>
+                            {% if spooky_mode %}
+                                Who to haunt
+                            {% else %}
+                                Who to follow
+                            {% endif %}
+                            </span>
                         </div>
                         {% for crab in recommended_crabs %}
                             <div class="recommended-crab">
@@ -650,7 +676,13 @@
                 <!-- Trending Crabtags -->
                 <div class="panel" id="trending">
                     <div class="panel-title">
-                        <span>Trending</span>
+                        <span>
+                        {% if spooky_mode %}
+                            Infectious
+                        {% else %}
+                            Trending
+                        {% endif %}
+                        </span>
                     </div>
                     {% for tag, uses in trending_crabtags %}
                         <a href="/crabtag/{{tag.name}}">

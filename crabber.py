@@ -1033,7 +1033,7 @@ def api_v0(_action):
     return 'Deprecated.'
 
 
-# GLOBAL FLASK VARIABLES GO HERE
+# GLOBAL FLASK TEMPLATE VARIABLES GO HERE
 @app.context_processor
 def inject_global_vars():
     current_user = utils.get_current_user()
