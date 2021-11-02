@@ -1214,7 +1214,9 @@ class Molt(db.Model):
                                             nsfw=self.nsfw)
 
         # Preserve newlines
-        new_content = new_content.strip().replace("\n", "<br>")
+        new_content = new_content.strip().replace('\n', '<br>')
+        # Preserve spaces
+        new_content = new_content.strip().replace('  ', ' &nbsp;')
 
         # Convert mentions into anchor tags
         new_content = Molt.label_mentions(new_content)
