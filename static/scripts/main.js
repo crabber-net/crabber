@@ -372,11 +372,22 @@ function updateStylePreferences(form) {
 
     // Handle changes locally
     let lightMode = $(form.light_mode).is(':checked');
-    $('#light-mode-css').attr('disabled', !lightMode);
+    let spookyMode = $(form.spooky_mode).is(':checked');
     let dyslexicMode = $(form.dyslexic_mode).is(':checked');
-    $('#dyslexic-mode-css').attr('disabled', !dyslexicMode);
     let comicsansMode = $(form.comicsans_mode).is(':checked');
+
+    if (spookyMode) {
+        $('#light-mode-css').attr('disabled', true);
+        $('#halloween-mode-css').attr('disabled', lightMode);
+        $('#halloween-light-mode-css').attr('disabled', !lightMode);
+    } else {
+        $('#light-mode-css').attr('disabled', !lightMode);
+        $('#halloween-mode-css').attr('disabled', true);
+        $('#halloween-light-mode-css').attr('disabled', true);
+    }
+
     $('#comicsans-mode-css').attr('disabled', !comicsansMode);
+    $('#dyslexic-mode-css').attr('disabled', !dyslexicMode);
 }
 
 function toggleModal(selector) {
