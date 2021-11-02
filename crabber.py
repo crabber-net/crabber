@@ -515,6 +515,8 @@ def settings():
                 current_page='settings',
                 current_user=utils.get_current_user()
             )
+    else:
+        return redirect("/login")
 
 
 @app.route("/u/<username>/", methods=("GET", "POST"))
@@ -854,29 +856,39 @@ def stats():
     if request.method == "POST":
         return utils.common_molt_actions()
 
+    current_user = utils.get_current_user()
+
     # Query follow counts for users
     most_followed = models.Crab.query_most_popular()
-    most_followed = utils.get_current_user(
-    ).filter_user_query_by_not_blocked(most_followed)
-    most_followed = most_followed.first()
     newest_user = models.Crab.query_all() \
         .order_by(models.Crab.register_time.desc())
-    newest_user = utils.get_current_user() \
-        .filter_user_query_by_not_blocked(newest_user)
+
+    if current_user:
+        most_followed = current_user \
+            .filter_user_query_by_not_blocked(most_followed)
+        newest_user = current_user \
+            .filter_user_query_by_not_blocked(newest_user)
+
     newest_user = newest_user.first()
+    most_followed = most_followed.first()
 
     best_molt = models.Molt.query_most_liked()
-    best_molt = utils.get_current_user().filter_molt_query(best_molt)
-    best_molt = best_molt.first()
     talked_molt = models.Molt.query_most_replied()
-    talked_molt = utils.get_current_user().filter_molt_query(talked_molt)
+
+    if current_user:
+        best_molt = current_user.filter_molt_query(best_molt)
+        talked_molt = current_user.filter_molt_query(talked_molt)
+
+    best_molt = best_molt.first()
     talked_molt = talked_molt.first()
+
     trendy_tag = (models.Crabtag.query_most_popular().first() or (None,))[0]
     if trendy_tag:
         trendy_tag_molts = models.Molt.order_query_by_likes(
             trendy_tag.query_molts())
-        trendy_tag_molts = utils.get_current_user() \
-            .filter_molt_query(trendy_tag_molts)
+        if current_user:
+            trendy_tag_molts = current_user \
+                .filter_molt_query(trendy_tag_molts)
         trendy_tag_molts = trendy_tag_molts.limit(3).all()
     else:
         trendy_tag_molts = list()
@@ -907,7 +919,7 @@ def stats():
         for block in ('title', 'heading', 'body'):
             blocks[block] = render_template(
                 f'stats-ajax-{block}.html',
-                current_user=utils.get_current_user(),
+                current_user=current_user,
                 stats=stats_dict,
                 current_page='stats'
             )
@@ -915,7 +927,7 @@ def stats():
     else:
         return render_template(
             'stats.html',
-            current_user=utils.get_current_user(),
+            current_user=current_user,
             stats=stats_dict,
             current_page='stats'
         )

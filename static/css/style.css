@@ -1304,8 +1304,11 @@ body, .master-container {
 }
 
 .bs-tooltip-auto[x-placement^=bottom] .arrow::before,
-.bs-tooltip-bottom .arrow::before {
+.bs-tooltip-bottom .arrow::before,
+.bs-tooltip-auto[x-placement^=top] .arrow::before,
+.bs-tooltip-top .arrow::before {
     border-bottom-color: var(--dark-less);
+    border-top-color: var(--dark-less);
 }
 .tooltip-inner {
     color: var(--light);
