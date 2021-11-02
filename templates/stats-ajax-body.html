@@ -25,7 +25,13 @@
     {% with king = stats['crab_king'][0] %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
-            <h1 class="text-center">Crab King</h1>
+            <h1 class="text-center">
+            {% if spooky_mode %}
+                Ghoul King
+            {% else %}
+                Crab King
+            {% endif %}
+            </h1>
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted stat-explanation">The most followed active user</p>
@@ -61,7 +67,13 @@
     {% with baby = stats['baby_crab'] %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
-            <h1 class="text-center">Baby Crab</h1>
+            <h1 class="text-center">
+            {% if spooky_mode %}
+                Baby Ghost
+            {% else %}
+                Baby Crab
+            {% endif %}
+            </h1>
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted stat-explanation">Our newest member. Go say hello!</p>
@@ -102,7 +114,13 @@
     {% with molt = stats['best_molt'][0], hide_border=True %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
-            <h1 class="text-center">Best Molt</h1>
+            <h1 class="text-center">
+            {% if spooky_mode %}
+                Scariest Molt
+            {% else %}
+                Best Molt
+            {% endif %}
+            </h1>
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The most liked Molt</p>
@@ -121,7 +139,13 @@
     {% with molt = stats['talked_molt'], hide_border=True %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
-            <h1 class="text-center" style="width: 17rem;">Talked About</h1>
+            <h1 class="text-center" style="width: 17rem;">
+            {% if spooky_mode %}
+                Most Haunted
+            {% else %}
+                Talked About
+            {% endif %}
+            </h1>
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The Molt that the most Crabs have replied to</p>
@@ -140,7 +164,13 @@
     {% with tag = stats['trendy_tag'], tag_molts=stats['trendy_tag_molts'], hide_border=True %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
-            <h1 class="text-center" style="width: 17rem;">Trendy</h1>
+            <h1 class="text-center" style="width: 17rem;">
+            {% if spooky_mode %}
+                Infectious
+            {% else %}
+                Trendy
+            {% endif %}
+            </h1>
             <div class="horizontal-line"></div>
         </div>
         <p class="text-center text-muted">The most used crabtag</p>
@@ -162,5 +192,11 @@
     {% endwith %}
 
     <!-- Spacer -->
-    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center">thanks for using crabber &lt;3</div>
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center">
+    {% if spooky_mode %}
+        thanks for keeping crabber spooky 👻
+    {% else %}
+        thanks for using crabber &lt;3
+    {% endif %}
+    </div>
 </div>

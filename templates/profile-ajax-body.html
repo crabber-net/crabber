@@ -66,11 +66,24 @@
                     <div class="d-inline-block ml-1 follow-section">
                         {% if not current_user in this_user.blockers %}
                             {% if not current_user in this_user.followers %}
-                                <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn"><strong>Follow</strong></button>
+                                <button name="user_action" value="follow" type="submit" class="btn btn-outline-primary rounded-pill follow-btn">
+                                    <strong>
+                                    {% if spooky_mode %}
+                                        Haunt
+                                    {% else %}
+                                        Follow
+                                    {% endif %}
+                                    </strong>
+                                </button>
                             {% else %}
                                 <button name="user_action" value="unfollow" type="submit" class="btn btn-primary rounded-pill unfollow-btn">
+                                {% if spooky_mode %}
+                                    <strong class="default-text">Haunting</strong>
+                                    <strong class="hover-text">Unhaunt</strong>
+                                {% else %}
                                     <strong class="default-text">Following</strong>
                                     <strong class="hover-text">Unfollow</strong>
+                                {% endif %}
                                 </button>
                             {% endif %}
                         {% endif %}
@@ -101,7 +114,13 @@
             {% endif %}
             <p class="text-muted mb-1">@{{this_user.username}}
                 {% if current_user in this_user.following %}
-                    <small class="follows-you">Follows you</small>
+                    <small class="follows-you">
+                    {% if spooky_mode %}
+                        Haunts You
+                    {% else %}
+                        Follows you
+                    {% endif %}
+                    </small>
                 {% endif %}
             </p>
         </div>
