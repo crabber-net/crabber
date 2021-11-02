@@ -80,7 +80,7 @@ def get_current_user():
     """
     crab = crabber.session.get('current_user_object')
     if not crab:
-        crab = models.Crab.get_by_ID(crabber.session.get('current_use'))
+        crab = models.Crab.get_by_ID(crabber.session.get('current_user'))
         crabber.session['current_user_object'] = crab
     return crab
 
