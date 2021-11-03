@@ -108,12 +108,14 @@ def robots():
 
 @app.route("/", methods=("GET", "POST"))
 def index():
+    current_user = utils.get_current_user()
+
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
         return utils.common_molt_actions()
 
     # Display page
-    elif session.get('current_user') is not None:
+    elif current_user is not None:
         page_n = request.args.get('p', 1, type=int)
 
         if request.args.get('ajax_json'):
@@ -123,22 +125,31 @@ def index():
                     f'timeline-ajax-{block}.html',
                     current_page="home",
                     page_n=page_n,
-                    current_user=utils.get_current_user()
+                    current_user=current_user
                 )
             return jsonify(blocks)
         else:
-            molts = utils.get_current_user() \
-                .query_timeline() \
-                .paginate(page_n, config.MOLTS_PER_PAGE, False)
+            if request.args.get('ajax_content'):
+                import time
+                start_time = time.time()
+                molts = current_user \
+                    .query_timeline() \
+                    .paginate(page_n, config.MOLTS_PER_PAGE, False)
 
-            return render_template(
-                'timeline-content.html' if request.args.get("ajax_content")
-                else 'timeline.html',
-                current_page="home",
-                page_n=page_n,
-                molts=molts,
-                current_user=utils.get_current_user()
-            )
+                return render_template(
+                    'timeline-content.html',
+                    current_page='home',
+                    page_n=page_n,
+                    molts=molts,
+                    current_user=current_user
+                )
+            else:
+                return render_template(
+                    'timeline.html',
+                    current_page='home',
+                    page_n=page_n,
+                    current_user=utils.get_current_user()
+                )
     else:
         featured_molt = models.Molt.query \
             .filter_by(id=config.FEATURED_MOLT_ID) \
@@ -159,13 +170,16 @@ def index():
 
 @app.route("/wild/", methods=("GET", "POST"))
 def wild_west():
+    current_user = utils.get_current_user()
+
     # Handle forms and redirect to clear post data on browser
     if request.method == "POST":
         return utils.common_molt_actions()
 
     # Display page
-    elif session.get('current_user') is not None:
+    elif current_user is not None:
         page_n = request.args.get('p', 1, type=int)
+        # Ajax page switching
         if request.args.get('ajax_json'):
             blocks = dict()
             for block in ('title', 'heading', 'body'):
@@ -177,18 +191,27 @@ def wild_west():
                 )
             return jsonify(blocks)
         else:
-            molts = models.Molt.query_all(include_replies=False,
-                                          include_quotes=False)
-            molts = utils.get_current_user().filter_molt_query(molts)
-            molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
-            return render_template(
-                'wild-west-content.html' if request.args.get("ajax_content")
-                else 'wild-west.html',
-                current_page="wild-west",
-                page_n=page_n,
-                molts=molts,
-                current_user=utils.get_current_user()
-            )
+            # Ajax content loading
+            if request.args.get('ajax_content'):
+                molts = models.Molt.query_all(include_replies=False,
+                                              include_quotes=False)
+                molts = utils.get_current_user().filter_molt_query(molts)
+                molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
+                return render_template(
+                    'wild-west-content.html',
+                    current_page='wild-west',
+                    page_n=page_n,
+                    molts=molts,
+                    current_user=current_user
+                )
+            # Page skeleton
+            else:
+                return render_template(
+                    'wild-west.html',
+                    current_page='wild-west',
+                    page_n=page_n,
+                    current_user=current_user
+                )
     else:
         return redirect("/login")
 
@@ -583,7 +606,6 @@ def user(username):
                                                False)
                 elif section == 'likes':
                     likes = this_user.query_likes()
-                    print(l_page_n)
                     if current_user:
                         likes = current_user.filter_molt_query(likes)
                     likes = likes.paginate(l_page_n, config.MOLTS_PER_PAGE)

@@ -306,8 +306,7 @@ class Crab(db.Model):
         self_following = db.session.query(Crab.id) \
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id == self.id) \
-            .filter(Crab.banned == False, Crab.deleted == False) \
-            .subquery()
+            .filter(Crab.banned == False, Crab.deleted == False)
         crab_followers = db.session.query(Crab) \
             .join(following_table, Crab.id == following_table.c.follower_id) \
             .filter(following_table.c.following_id == crab.id) \
@@ -731,10 +730,17 @@ class Crab(db.Model):
         return molts
 
     def query_timeline(self) -> BaseQuery:
-        following_ids = [crab.id for crab in self.following] + [self.id]
-        molts = Molt.query.filter(Molt.author_id.in_(following_ids)) \
-            .filter_by(deleted=False, is_reply=False) \
-            .filter(Molt.author.has(deleted=False, banned=False)) \
+        following_ids = db.session.query(following_table.c.following_id) \
+            .filter(following_table.c.follower_id == self.id)
+        molts = Molt.query_all(
+            include_replies=False,
+            include_quotes=True,
+            include_remolts=True
+        ) \
+            .filter(db.or_(
+                Molt.author_id.in_(following_ids),
+                Molt.author_id == self.id
+            )) \
             .order_by(Molt.timestamp.desc())
         molts = self.filter_molt_query(molts)
         return molts
@@ -782,8 +788,10 @@ class Crab(db.Model):
         """ Filters a Molt query by authors who have not blocked/been blocked
             by this user.
         """
-        blocker_ids = [crab.id for crab in self.blockers]
-        blocked_ids = [crab.id for crab in self.blocked]
+        blocked_ids = db.session.query(blocking_table.c.blocked_id) \
+            .filter(blocking_table.c.blocker_id == self.id)
+        blocker_ids = db.session.query(blocking_table.c.blocker_id) \
+            .filter(blocking_table.c.blocked_id == self.id)
         original_molt = aliased(Molt)
         query = query \
             .filter(Molt.author_id.notin_(blocker_ids)) \

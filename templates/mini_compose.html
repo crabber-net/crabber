@@ -1,11 +1,6 @@
 {% import "macros.jinja" as macros %}
 
 {% set placeholder = "How are you feeling?"%}
-{% if current_user %}
-    {% if current_user.username == "Colmag15" %}
-        {% set placeholder = "Why are you feeling this way?"%}
-    {% endif %}
-{% endif %}
 <div class="mini-compose-box border-bottom border-dark px-3 py-2 d-flex flex-row">
     <div class="mini-molt-profile-box">
         <a href="/user/{{current_user.username}}">

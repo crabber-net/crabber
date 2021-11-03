@@ -138,8 +138,7 @@
                 <a title="This user is verified" class="zindex-front">{{macros.verified(17)}}</a>
                 {% endif %}
                 <span class="mini-molt-username zindex-front">@{{author.username}}</span>
-                <span class="mini-molt-timestamp zindex-front">· <a href="javascript:void(0)"
-                        title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                <span class="mini-molt-timestamp zindex-front">· {{molt.pretty_age}}</span>
                 {% if molt.nsfw %}
                     {% include 'nsfw-badge.html' %}
                 {% endif %}

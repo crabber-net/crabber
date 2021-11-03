@@ -96,7 +96,7 @@
                 // Initial notif count update
                 GetData("unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
 
-                // Update notif count every 5 seconds
+                // Update notif count every 10 seconds
                 setInterval(GetData, 10000, "unread_notif", {'crab_id': {{current_user.id}}}, updateNotifBadge);
 
                 // Stop propagation of onclick to parent if child element says so
