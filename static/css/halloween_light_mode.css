@@ -51,3 +51,7 @@
 .search-box ::placeholder {
     color: var(--placeholder) !important;
 }
+
+.logo {
+    fill: var(--primary);
+}
