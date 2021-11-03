@@ -22,6 +22,9 @@
     --border-dark-less: #503e5e !important;
     --border-darker: rgb(21, 25, 30) !important;
     --neue-card: rgb(21, 13, 32) !important;
+
+    --unread-notif-background: rgb(34, 28, 41);
+    --unread-notif-background-hover: rgb(42, 33, 51);
 }
 
 .border-dark {

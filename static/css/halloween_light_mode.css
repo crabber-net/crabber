@@ -24,9 +24,16 @@
     --neue-card: var(--dark-less) !important;
     --border-color: rgb(180, 168, 152) !important;
 
+    --unread-notif-background: rgb(222, 211, 196);
+    --unread-notif-background-hover: rgb(207, 193, 174);
+
     --remolt: rgb(144, 52, 223) !important;
 
     --placeholder: rgb(32, 6, 50) !important;
+}
+
+.notif-badge {
+    color: var(--dark);
 }
 
 .border-dark {
