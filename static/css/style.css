@@ -99,6 +99,26 @@
         transform: rotate(180deg);
     }
 }
+@keyframes playful-wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+    20% {
+        transform: rotate(-4deg);
+    }
+    40% {
+        transform: rotate(4deg);
+    }
+    60% {
+        transform: rotate(-4deg);
+    }
+    80% {
+        transform: rotate(4deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
 @keyframes tippy-taps {
     0% {
         transform: translateY(0px) rotate(15deg);
@@ -2269,4 +2289,11 @@ a:active.text-primary {
 
 .h-captcha {
     margin: 10px !important;
+}
+
+#nav-panel .logo:hover {
+    animation-name: playful-wiggle;
+    animation-iteration-count: 1;
+    animation-duration: 500ms;
+    animation-timing-function: ease-in-out;
 }
