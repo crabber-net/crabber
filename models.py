@@ -128,6 +128,13 @@ class Crab(db.Model):
         return datetime.timedelta(hours=float(self.timezone))
 
     @property
+    def is_moderator(self) -> bool:
+        """ Returns whether the user is a website moderator.
+        """
+
+        return self.username.lower() in [*config.MODERATORS, *config.ADMINS]
+
+    @property
     def muted_words(self) -> List[str]:
         """ Returns a list of the words this user has muted.
         """

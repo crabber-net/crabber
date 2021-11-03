@@ -1025,6 +1025,42 @@ def tortimer():
     return 'Deprecated.'
 
 
+# The new moderation panel
+@app.route("/moderation/", methods=('GET', 'POST'))
+def moderation():
+    if request.method == 'POST':
+        return utils.moderation_actions()
+    else:
+        current_user = utils.get_current_user()
+        if current_user and current_user.is_moderator:
+            viewing = request.args.get('viewing')
+            if viewing == 'user':
+                username = request.args.get('username')
+                crab = models.Crab.get_by_username(username)
+                return render_template(
+                    'moderation-crab.html',
+                    crab=crab,
+                    current_user=current_user
+                )
+            elif viewing == 'queue':
+                return render_template(
+                    'moderation-queue.html',
+                    current_user=current_user
+                )
+            elif viewing == 'logs':
+                return render_template(
+                    'moderation-logs.html',
+                    current_user=current_user
+                )
+            else:
+                return render_template(
+                    'moderation.html',
+                    current_user=current_user
+                )
+        else:
+            return error_404(None)
+
+
 @app.route("/ajax_request/<request_type>/")
 def ajax_request(request_type):
     if request_type == "unread_notif":

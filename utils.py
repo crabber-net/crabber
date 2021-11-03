@@ -115,6 +115,64 @@ def allowed_file(filename: str) -> bool:
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def return_and_log(action_text: str) -> Response:
+    current_user = get_current_user()
+    log = (
+        f'[{datetime.datetime.now().isoformat(timespec="seconds")}]'
+        f' {current_user.username} - {action_text}'
+    )
+    print(log)
+    return action_text
+
+
+def moderation_actions() -> Response:
+    """
+    Executes actions requested by moderators.
+    """
+    current_user = get_current_user()
+    action = request.form.get('action')
+    crab_id = request.form.get('crab_id')
+    molt_id = request.form.get('molt_id')
+    molt = models.Molt.get_by_ID(molt_id)
+    crab = models.Crab.get_by_ID(crab_id) or molt.author
+
+    if current_user and current_user.is_moderator:
+        if crab:
+            if crab.is_moderator:
+                return return_and_log(f'attempted action on @{crab.username}')
+
+            # Ban user
+            if action == 'ban':
+                return return_and_log(
+                    f'banned @{crab.username}'
+                )
+
+            # Clear user's username
+            elif action == 'clear_username':
+                old_username = crab.username
+                return return_and_log(
+                    f'cleared username for @{old_username}'
+                )
+
+            # Clear user's display name
+            elif action == 'clear_display_name':
+                return return_and_log(
+                    f'cleared display name for @{crab.username}'
+                )
+
+            # Clear user's description
+            elif action == 'clear_description':
+                return return_and_log(
+                    f'cleared description for @{crab.username}'
+                )
+
+            else:
+                return 'Invalid action.'
+        else:
+            return 'Malformed request.'
+    else:
+        return 'Not allowed.'
+
 def common_molt_actions() -> Response:
     """
     Sorts through potential actions in POST form data and executes them.

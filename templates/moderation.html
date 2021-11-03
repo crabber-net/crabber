@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+    Moderation Panel
+{% endblock %}
+
+{% block heading %}
+    Moderation Panel
+{% endblock %}
+
+{% block body %}
+    <form>
+        <h2>
+            Go to specific user
+        </h2>
+        <input type="text" name="username" required>
+        <button type="submit" name="viewing" value="user">
+            Go
+        </button>
+    </form>
+
+    <form>
+        <h2>
+            Other views
+        </h2>
+        <button type="submit" name="viewing" value="queue">
+            Moderation queue
+        </button>
+        <button type="submit" name="viewing" value="logs">
+            Moderation logs
+        </button>
+    </form>
+{% endblock %}

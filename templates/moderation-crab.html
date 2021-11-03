@@ -1,0 +1,27 @@
+{% extends 'moderation-view.html' %}
+{% block moderation_heading %}
+    Crab: @{{crab.username}}
+{% endblock %}
+{% block moderation_content %}
+    {% if crab %}
+        {% include 'mini_bio.html' %}
+
+        <form method="POST" target="_blank">
+            <input type="hidden" name="crab_id" value="{{crab.id}}">
+            <button type="submit" name="action" value="ban">
+                Ban
+            </button>
+            <button type="submit" name="action" value="clear_description">
+                Clear description
+            </button>
+            <button type="submit" name="action" value="clear_display_name">
+                Clear display name
+            </button>
+            <button type="submit" name="action" value="clear_username">
+                Clear username
+            </button>
+        </form>
+    {% else %}
+        Crab not found.
+    {% endif %}
+{% endblock %}
