@@ -22,7 +22,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
     app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
+    app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024  # 15 MB
     app.config['HCAPTCHA_SITE_KEY'] = os.getenv('HCAPTCHA_SITE_KEY')
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
