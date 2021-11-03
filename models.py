@@ -784,6 +784,7 @@ class Crab(db.Model):
         """
         blocker_ids = [crab.id for crab in self.blockers]
         blocked_ids = [crab.id for crab in self.blocked]
+        print(blocker_ids)
         original_molt = aliased(Molt)
         query = query \
             .filter(Molt.author_id.notin_(blocker_ids)) \
@@ -791,7 +792,10 @@ class Crab(db.Model):
             .outerjoin(original_molt, original_molt.id == Molt.original_molt_id) \
             .filter(db.or_(
                 Molt.original_molt == None,
-                original_molt.author_id.notin_(blocked_ids),
+                db.and_(
+                    original_molt.author_id.notin_(blocked_ids),
+                    original_molt.author_id.notin_(blocker_ids)
+                )
             ))
         return query
 
