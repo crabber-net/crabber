@@ -784,7 +784,6 @@ class Crab(db.Model):
         """
         blocker_ids = [crab.id for crab in self.blockers]
         blocked_ids = [crab.id for crab in self.blocked]
-        print(blocker_ids)
         original_molt = aliased(Molt)
         query = query \
             .filter(Molt.author_id.notin_(blocker_ids)) \
