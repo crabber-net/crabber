@@ -106,6 +106,17 @@ def robots():
     return 'We <3 robots!'
 
 
+@app.route('/legal/TOS/')
+def terms_of_service():
+    with app.open_resource('static/legal/tos.txt', 'r') as f:
+        contents = f.read()
+        return render_template(
+            'plaintext.html',
+            title='Terms of Service',
+            content=contents
+        )
+
+
 @app.route("/", methods=("GET", "POST"))
 def index():
     current_user = utils.get_current_user()
