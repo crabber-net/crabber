@@ -423,7 +423,7 @@ class Crab(db.Model):
                     print(f'\nEMAIL BODY:\n{body}\n')
                 else:
                     extensions.mail.send_mail(
-                        crab_email,
+                        crab.email,
                         subject='Your account has been banned',
                         body=body
                     )
@@ -445,7 +445,7 @@ class Crab(db.Model):
                     print(f'\nEMAIL BODY:\n{body}\n')
                 else:
                     extensions.mail.send_mail(
-                        crab_email,
+                        crab.email,
                         subject='Your account has been restored',
                         body=body
                     )
