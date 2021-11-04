@@ -37,12 +37,24 @@
                     View Molt in new tab
                 </a>
                 <div class="mod-buttons float-right">
-                    <button type="submit" name="action" value="approve_molt">
-                        Approve molt
-                    </button>
-                    <button type="submit" name="action" value="delete_molt">
-                        Delete molt
-                    </button>
+                    {% if molt.deleted %}
+                        <button type="submit" name="action" value="restore_molt">
+                            Restore molt
+                        </button>
+                    {% else %}
+                        {% if molt.approved %}
+                            <button type="submit" name="action" value="unapprove_molt">
+                                Unapprove molt
+                            </button>
+                        {% else %}
+                            <button type="submit" name="action" value="approve_molt">
+                                Approve molt
+                            </button>
+                        {% endif %}
+                        <button type="submit" name="action" value="delete_molt">
+                            Delete molt
+                        </button>
+                    {% endif %}
                     <button type="submit" name="action" value="ban">
                         Ban user
                     </button>

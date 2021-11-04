@@ -1036,7 +1036,8 @@ def moderation():
             viewing = request.args.get('viewing')
             if viewing == 'user':
                 username = request.args.get('username')
-                crab = models.Crab.get_by_username(username)
+                crab = models.Crab.get_by_username(username,
+                                                   include_invalidated=True)
                 return render_template(
                     'moderation-crab.html',
                     crab=crab,
@@ -1060,13 +1061,15 @@ def moderation():
                     current_user=current_user
                 )
             elif viewing == 'logs':
+                page_n = request.args.get('page_n', 1)
                 logs = models.ModLog.query \
                     .order_by(models.ModLog.timestamp.desc()) \
-                    .limit(50)
+                    .paginate(page_n, 50, False)
                 return render_template(
                     'moderation-logs.html',
                     logs=logs,
-                    current_user=current_user
+                    current_user=current_user,
+                    page_n=page_n
                 )
             else:
                 return render_template(

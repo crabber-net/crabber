@@ -136,12 +136,13 @@ def moderation_actions() -> Response:
     action = request.form.get('action')
     crab_id = request.form.get('crab_id')
     molt_id = request.form.get('molt_id')
-    molt = models.Molt.get_by_ID(molt_id)
-    crab = models.Crab.get_by_ID(crab_id) or molt.author
+    molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
+    crab = models.Crab.get_by_ID(crab_id, include_invalidated=True) \
+        or molt.author
 
     if current_user and current_user.is_moderator:
         if crab:
-            if crab.is_moderator:
+            if crab.is_moderator and not current_user.is_admin:
                 return return_and_log(
                     action='attempted_action_on_mod',
                     crab=crab, molt=molt
@@ -149,6 +150,15 @@ def moderation_actions() -> Response:
 
             # Ban user
             if action == 'ban':
+                crab.ban()
+                return return_and_log(
+                    action=action,
+                    crab=crab, molt=molt
+                )
+
+            # Unban user
+            if action == 'unban':
+                crab.unban()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt
@@ -157,6 +167,8 @@ def moderation_actions() -> Response:
             # Clear user's username
             elif action == 'clear_username':
                 old_username = crab.username
+                crab.username = f'change_me_{hexID(6)}'
+                db.session.commit()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt,
@@ -166,6 +178,8 @@ def moderation_actions() -> Response:
             # Clear user's display name
             elif action == 'clear_display_name':
                 old_display_name = crab.display_name
+                crab.display_name = 'Unnamed Crab'
+                db.session.commit()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt,
@@ -175,16 +189,64 @@ def moderation_actions() -> Response:
             # Clear user's description
             elif action == 'clear_description':
                 old_description = crab.description
+                crab.description = 'This user has no description.'
+                db.session.commit()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt,
                     additional_context=old_description
                 )
 
-            if molt:
+            # Verify user
+            elif action == 'verify_user':
+                crab.verify()
+                return return_and_log(
+                    action=action,
+                    crab=crab, molt=molt
+                )
 
+            # Revoke user's verification
+            elif action == 'unverify_user':
+                crab.r()
+                return return_and_log(
+                    action=action,
+                    crab=crab, molt=molt
+                )
+
+            # Award trophy
+            elif action == 'award_trophy':
+                trophy_title = request.form.get('trophy_title')
+                if trophy_title:
+                    try:
+                        trophy_case = crab.award(title=trophy_title)
+                        if trophy_case:
+                            return return_and_log(
+                                action=action,
+                                crab=crab, molt=molt,
+                                additional_context=trophy_case.trophy.title
+                            )
+                        else:
+                            return 'User already awarded trophy.'
+                    except models.NotFoundInDatabase:
+                        return (
+                            'Could not find trophy matching title: '
+                            + trophy_title
+                        )
+                else:
+                    return 'No trophy title provided.'
+
+            if molt:
                 # Approve molt
                 if action == 'approve_molt':
+                    molt.approve()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+                # Unapprove molt
+                if action == 'unapprove_molt':
+                    molt.unapprove()
                     return return_and_log(
                         action=action,
                         crab=crab, molt=molt
@@ -192,12 +254,21 @@ def moderation_actions() -> Response:
 
                 # Delete molt
                 elif action == 'delete_molt':
+                    molt.delete()
                     return return_and_log(
                         action=action,
                         crab=crab, molt=molt
                     )
 
-            return 'Invalid action.'
+                # Restore molt
+                elif action == 'restore_molt':
+                    molt.restore()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+            return f'Invalid action: {dict(request.form)}'
         else:
             return 'Malformed request.'
     else:

@@ -21,4 +21,16 @@
 
 {% block body %}
     {% block moderation_content %}{% endblock %}
+
+    <script>
+        // Prevent random action taken on enter
+        // (multiple submit buttons in form)
+        $('input').on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 {% endblock %}
