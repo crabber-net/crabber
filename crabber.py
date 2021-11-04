@@ -415,7 +415,7 @@ def signup():
                                                     username=username,
                                                     deleted=False,
                                                     banned=False
-                                                ).first().id
+                                                ).first()
                                             session['current_user'] =  \
                                                     current_user.id
                                             session['current_user_ts'] = \
