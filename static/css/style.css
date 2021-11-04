@@ -2303,3 +2303,11 @@ a:active.text-primary {
     animation-duration: 500ms;
     animation-timing-function: ease-in-out;
 }
+
+.heading-btn {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+}

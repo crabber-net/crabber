@@ -1,2 +1,15 @@
 {{this_user.display_name}}<br>
 <small class="text-muted">{{this_user.molt_count}} Molt{{this_user.molt_count|pluralize}}</small>
+
+{% if current_user.is_moderator %}
+    <!-- Moderator button -->
+    <div class="d-inline-block block-section heading-btn">
+        <button type="button"
+                onclick="window.open('/moderation/?viewing=user&username={{this_user.username}}', '_blank');"
+                class="btn btn-outline-secondary rounded-pill mod-btn">
+            <strong>
+                Open in mod console
+            </strong>
+        </button>
+    </div>
+{% endif %}
