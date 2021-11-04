@@ -150,8 +150,9 @@ def moderation_actions() -> Response:
 
             # Ban user
             if action == 'ban':
-                reason = request.form.get('ban_reason').strip()
-                if reason:
+                reason = request.form.get('ban_reason')
+                if reason is not None:
+                    reason = reason.strip()
                     crab.ban(reason)
                     return return_and_log(
                         action=action,
