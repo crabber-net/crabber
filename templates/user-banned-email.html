@@ -1,0 +1,13 @@
+Hi, @{{crab.username}}, sorry for the bad news.
+
+Your account has been banned at the discretion of one of our moderators.
+
+{% if ban_reason %}
+They gave the following reason:
+"{{ban_reason|safe}}"
+{% endif %}
+
+If you feel that this action was taken in error or have any other questions just send a reply and we'll do our best to get back to you.
+
+Thanks,
+Crabber

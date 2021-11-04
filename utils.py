@@ -150,11 +150,16 @@ def moderation_actions() -> Response:
 
             # Ban user
             if action == 'ban':
-                crab.ban()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt
-                )
+                reason = request.form.get('ban_reason').strip()
+                if reason:
+                    crab.ban(reason)
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt,
+                        additional_context=reason
+                    )
+                else:
+                    return 'No reason provided for ban.'
 
             # Unban user
             if action == 'unban':
@@ -268,6 +273,21 @@ def moderation_actions() -> Response:
                         crab=crab, molt=molt
                     )
 
+                # Label molt NSFW
+                elif action == 'nsfw_molt':
+                    molt.label_nsfw()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+                # Remove NSFW label from molt
+                elif action == 'sfw_molt':
+                    molt.label_sfw()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
             return f'Invalid action: {dict(request.form)}'
         else:
             return 'Malformed request.'

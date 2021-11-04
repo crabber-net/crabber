@@ -8,15 +8,6 @@
 
         <form method="POST" target="_blank">
             <input type="hidden" name="crab_id" value="{{crab.id}}">
-            {% if crab.banned %}
-                <button type="submit" name="action" value="unban">
-                    Unban
-                </button>
-            {% else %}
-                <button type="submit" name="action" value="ban">
-                    Ban
-                </button>
-            {% endif %}
             <button type="submit" name="action" value="clear_description">
                 Clear description
             </button>
@@ -37,14 +28,27 @@
                         Verify user
                     </button>
                 {% endif %}
-                <div>
+                <div class="mt-2">
                     <input type="text" name="trophy_title"
                            placeholder="trophy title">
                     <button type="submit" name="action" value="award_trophy">
                         Award
                     </button>
                 </div>
-            {% endif %}
+                {% endif %}
+                <div class="mt-2">
+                {% if crab.banned %}
+                    <button type="submit" name="action" value="unban">
+                        Unban
+                    </button>
+                {% else %}
+                    <input type="text" name="ban_reason"
+                           placeholder="reason (for user's email)">
+                    <button type="submit" name="action" value="ban">
+                        Ban
+                    </button>
+                {% endif %}
+                </div>
         </form>
     {% else %}
         Crab not found.
