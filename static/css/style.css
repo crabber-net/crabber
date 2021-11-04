@@ -692,6 +692,9 @@
     height: 100vh;
     overflow: hidden;
 }
+#main-panel.extra-width {
+    max-width: none;
+}
 
 /* Limit panel width on massive screens */
 #nav-panel {

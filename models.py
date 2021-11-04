@@ -2131,8 +2131,8 @@ class ModLog(db.Model):
             )
 
         return (
-            f'[{self.timestamp.isoformat(timespec="seconds")}]'
-            f' [@{self.mod.username}]'
+            f'[{self.timestamp.isoformat(timespec="seconds")}]' +
+            f' [@{self.mod.username}]'.ljust(16) +
             f' - {action_text}'
         )
 

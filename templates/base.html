@@ -595,7 +595,7 @@
 
             <!-- Main Content -->
             {% if not fullwidth %}
-                <div class="col col-lg-6 content border-dark border-left border-right p-0" id="main-panel">
+                <div class="col {{'col-lg-6' if not extra_width}} content {{'extra-width' if extra_width}} border-dark border-left border-right p-0" id="main-panel">
                     {% if not current_user and not hide_sidebar %}
                         <div class="border-dark border-bottom p-2 d-block d-lg-none">
                             {% include 'join_crabber.html' %}

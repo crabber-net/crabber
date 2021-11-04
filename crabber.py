@@ -1087,7 +1087,9 @@ def moderation():
                     'moderation-logs.html',
                     logs=logs,
                     current_user=current_user,
-                    page_n=page_n
+                    page_n=page_n,
+                    hide_sidebar=True,
+                    extra_width=True
                 )
             else:
                 return render_template(
