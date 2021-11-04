@@ -253,13 +253,15 @@ def login():
     if request.method == 'POST':
         email, password = request.form.get(
             'email').strip().lower(), request.form.get('password')
-        attempted_user = models.Crab.query.filter_by(
+        attempted_user: models.Crab = models.Crab.query.filter_by(
             email=email, deleted=False).first()
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
                     # Login successful
                     session['current_user'] = attempted_user.id
+                    session['current_user_ts'] = \
+                            attempted_user.register_timestamp
                     return redirect("/")
                 else:
                     return utils.show_error('The account you\'re attempting to'
@@ -407,13 +409,18 @@ def signup():
                                             )
 
                                             # "Log in"
-                                            session['current_user'] = models.Crab \
+                                            current_user = models.Crab \
                                                 .query \
                                                 .filter_by(
                                                     username=username,
                                                     deleted=False,
                                                     banned=False
                                                 ).first().id
+                                            session['current_user'] =  \
+                                                    current_user.id
+                                            session['current_user_ts'] = \
+                                                    current_user \
+                                                    .register_timestamp
                                             # Redirect on success
                                             return redirect('/signupsuccess')
                                         else:
@@ -1172,7 +1179,11 @@ def before_request():
     # Make sure cookies are still valid
     if session.get('current_user'):
         crab_id = session.get('current_user')
-        if not models.Crab.get_by_ID(id=crab_id):
+        crab = models.Crab.get_by_ID(id=crab_id)
+        current_user_ts = session.get('current_user_ts')
+
+        # Account deleted or banned
+        if not crab:
             # Force logout
             session['current_user'] = None
 
@@ -1183,6 +1194,20 @@ def before_request():
                                         'been banned.', '/login')
             return utils.show_error('The account you were logged into no '
                                     'longer exists.', '/login')
+        # Potential database rollback or exploit
+        elif crab.register_timestamp != current_user_ts:
+            print(crab.register_timestamp, current_user_ts)
+            if current_user_ts:
+                # Force logout
+                session['current_user'] = None
+
+                return utils.show_error(
+                    'Your cookies are invalidated or corrupted. Please attempt'
+                    ' to log in again.',
+                    '/login'
+                )
+            else:
+                session['current_user_ts'] = crab.register_timestamp
     # Persist session after browser is closed
     session.permanent = True
 

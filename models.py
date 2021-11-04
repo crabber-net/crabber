@@ -115,6 +115,12 @@ class Crab(db.Model):
         return f"<Crab '@{self.username}'>"
 
     @property
+    def register_timestamp(self):
+        """ Returns integer timestamp of user's registration
+        """
+        return int(self.register_time.timestamp())
+
+    @property
     def bio(self):
         """ Returns bio JSON as dictionary.
         """
