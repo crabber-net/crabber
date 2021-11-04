@@ -2089,6 +2089,14 @@ class ModLog(db.Model):
             action_text = (
                 f'restored molt (#{self.molt.id}, @{self.crab.username})'
             )
+        elif self.action == 'nsfw_molt':
+            action_text = (
+                f'labeled molt NSFW (#{self.molt.id}, @{self.crab.username})'
+            )
+        elif self.action == 'sfw_molt':
+            action_text = (
+                f'removed molt\'s NSFW label (#{self.molt.id}, @{self.crab.username})'
+            )
 
         return (
             f'[{self.timestamp.isoformat(timespec="seconds")}]'

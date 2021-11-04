@@ -268,6 +268,21 @@ def moderation_actions() -> Response:
                         crab=crab, molt=molt
                     )
 
+                # Label molt NSFW
+                elif action == 'nsfw_molt':
+                    molt.label_nsfw()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+                # Remove NSFW label from molt
+                elif action == 'sfw_molt':
+                    molt.label_sfw()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
             return f'Invalid action: {dict(request.form)}'
         else:
             return 'Malformed request.'

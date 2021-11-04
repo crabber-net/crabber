@@ -39,13 +39,23 @@
                     <a href="/user/{{molt.author.username}}/status/{{molt.id}}" target="_blank">
                         View Molt in new tab
                     </a>
-                    <div class="mod-buttons float-right">
+                    <br>
+                    <div class="mod-buttons mt-2">
                         <button type="submit" name="action" value="approve_molt">
                             Approve molt
                         </button>
                         <button type="submit" name="action" value="delete_molt">
                             Delete molt
                         </button>
+                        {% if molt.nsfw %}
+                            <button type="submit" name="action" value="sfw_molt">
+                                Mark SFW
+                            </button>
+                        {% else %}
+                            <button type="submit" name="action" value="nsfw_molt">
+                                Mark NSFW
+                            </button>
+                        {% endif %}
                         <button type="submit" name="action" value="ban">
                             Ban user
                         </button>
