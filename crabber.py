@@ -108,8 +108,8 @@ def robots():
 
 @app.route('/legal/TOS/')
 def terms_of_service():
-    with app.open_resource('static/legal/tos.txt', 'r') as f:
-        contents = f.read()
+    with app.open_resource('static/legal/tos.txt', 'rb') as f:
+        contents = f.read().decode('utf-8')
         return render_template(
             'plaintext.html',
             title='Terms of Service',
