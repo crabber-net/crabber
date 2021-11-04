@@ -1143,6 +1143,8 @@ def inject_global_vars():
         comicsans_mode=comicsans_mode,
         trending_crabtags=models.Crabtag.get_trending(),
         is_debug_server=config.is_debug_server,
+        admins=config.ADMINS,
+        moderators=config.MODERATORS,
     )
 
 
