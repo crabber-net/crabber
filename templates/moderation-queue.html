@@ -56,9 +56,19 @@
                                 Mark NSFW
                             </button>
                         {% endif %}
-                        <button type="submit" name="action" value="ban">
-                            Ban user
-                        </button>
+                        <div class="mt-2">
+                        {% if molt.author.banned %}
+                            <button type="submit" name="action" value="unban">
+                                Unban
+                            </button>
+                        {% else %}
+                            <input type="text" name="ban_reason"
+                                   placeholder="reason (for user's email)">
+                            <button type="submit" name="action" value="ban">
+                                Ban
+                            </button>
+                        {% endif %}
+                        </div>
                     </div>
                 </div>
             </form>

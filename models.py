@@ -405,12 +405,28 @@ class Crab(db.Model):
 
         db.session.commit()
 
-    def ban(self):
+    def ban(self, reason=None):
         """ Banish this user from the site.
         """
         if not self.banned:
             self.banned = True
             db.session.commit()
+
+            if config.MAIL_ENABLED:
+                # Send ban notification email
+                body = render_template(
+                    'user-banned-email.html',
+                    crab=self,
+                    ban_reason=reason
+                )
+                if config.is_debug_server:
+                    print(f'\nEMAIL BODY:\n{body}\n')
+                else:
+                    extensions.mail.send_mail(
+                        crab_email,
+                        subject='Your account has been banned',
+                        body=body
+                    )
 
     def unban(self):
         """ Restore a banned user's access to the site.
@@ -418,6 +434,21 @@ class Crab(db.Model):
         if self.banned:
             self.banned = False
             db.session.commit()
+
+            if config.MAIL_ENABLED:
+                # Send ban notification email
+                body = render_template(
+                    'user-unbanned-email.html',
+                    crab=self
+                )
+                if config.is_debug_server:
+                    print(f'\nEMAIL BODY:\n{body}\n')
+                else:
+                    extensions.mail.send_mail(
+                        crab_email,
+                        subject='Your account has been restored',
+                        body=body
+                    )
 
     def pin(self, molt):
         """ Set `molt` as user's pinned molt
@@ -2039,7 +2070,8 @@ class ModLog(db.Model):
             )
         elif self.action == 'ban':
             action_text = (
-                f'banned user (@{self.crab.username})'
+                f'banned user (@{self.crab.username}, '
+                f'reason: "{self.additional_context}")'
             )
         elif self.action == 'unban':
             action_text = (
