@@ -76,7 +76,7 @@ display name, etc.) with the exception of email addresses.
                     remain private you may modify your browser's User Agent
                     header.
 
-### 3B. Duration of Storage
+## 3B. Duration of Storage
 
 All data collected by Crabber should be presumed to be kept indefinitely.
 "Deleting" an account through the Crabber website does not mean the data will
