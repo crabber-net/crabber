@@ -1858,6 +1858,9 @@ table#user-info th {
 #follow-btn {
     width: 7em;
 }
+.mod-btn {
+    width: max-content;
+}
 .mini-molt.trophy {
 	overflow: hidden;
 }
