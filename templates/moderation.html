@@ -8,20 +8,30 @@
 {% endblock %}
 
 {% block body %}
-    <form>
-        <h2>
+    <form class="m-2">
+        <h5>
             Go to specific user
-        </h2>
-        <input type="text" name="username" required>
+        </h5>
+        <input type="text" name="username" placeholder="username" required>
         <button type="submit" name="viewing" value="user">
             Go
         </button>
     </form>
 
-    <form>
-        <h2>
+    <form class="m-2">
+        <h5>
+            Go to specific molt
+        </h5>
+        <input type="text" name="molt_id" placeholder="molt ID" required>
+        <button type="submit" name="viewing" value="molt">
+            Go
+        </button>
+    </form>
+
+    <form class="m-2">
+        <h5>
             Other views
-        </h2>
+        </h5>
         <button type="submit" name="viewing" value="queue">
             Moderation queue
         </button>

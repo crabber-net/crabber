@@ -1,6 +1,65 @@
 {% extends 'moderation-view.html' %}
+
+{% block moderation_heading %}
+    Mod Queue
+{% endblock %}
+
 {% block moderation_content %}
-    <p>
-        viewing mod queue
-    </p>
+    {% for molt in queue %}
+        <div class="border border-dark m-2 rounded-media">
+            <form method="POST" target="_blank">
+                <input type="hidden" name="crab_id" value="{{molt.author_id}}">
+                <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+                <p class="p-2 border-bottom border-dark">
+                    Reports:
+                    <span class="text-danger font-weight-bold">
+                        {{molt.reports}}
+                    </span>
+                    <br>
+                    Status:
+                    <span class="text-muted font-weight-bold">
+                        {% if molt.deleted %}
+                            Deleted
+                        {% elif molt.approved %}
+                            Approved
+                        {% else %}
+                            Active
+                        {% endif %}
+                    </span>
+                </p>
+                <div class="border-bottom border-dark">
+                    {% with static=True, hide_buttons=True, hide_border=True,
+                       always_show=True
+                    %}
+                        {% include 'molt.html' %}
+                    {% endwith %}
+                </div>
+                <div class="p-2">
+                    <a href="/user/{{molt.author.username}}/status/{{molt.id}}" target="_blank">
+                        View Molt in new tab
+                    </a>
+                    <div class="mod-buttons float-right">
+                        <button type="submit" name="action" value="approve_molt">
+                            Approve molt
+                        </button>
+                        <button type="submit" name="action" value="delete_molt">
+                            Delete molt
+                        </button>
+                        <button type="submit" name="action" value="ban">
+                            Ban user
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% endfor %}
+
+    <a class="d-inline-block w-100 my-5 text-center"
+       href="javascript:location.reload();">
+        refresh page for more
+    </a>
+
+    <!-- Spacer -->
+    <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 {% endblock %}

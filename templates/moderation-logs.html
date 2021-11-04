@@ -1,6 +1,12 @@
 {% extends 'moderation-view.html' %}
+{% block moderation_heading %}
+    Mod Logs
+{% endblock %}
 {% block moderation_content %}
-    <p>
-        viewing mod logs
-    </p>
+<pre class="p-2 text-light">
+{% for log in logs %}{{log}}
+{% else %}
+nothing logged.
+{% endfor %}
+</pre>
 {% endblock %}

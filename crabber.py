@@ -1042,14 +1042,30 @@ def moderation():
                     crab=crab,
                     current_user=current_user
                 )
+            elif viewing == 'molt':
+                molt_id = request.args.get('molt_id')
+                molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
+                return render_template(
+                    'moderation-molt.html',
+                    molt=molt,
+                    current_user=current_user
+                )
             elif viewing == 'queue':
+                queue = models.Molt \
+                    .query_reported() \
+                    .limit(10)
                 return render_template(
                     'moderation-queue.html',
+                    queue=queue,
                     current_user=current_user
                 )
             elif viewing == 'logs':
+                logs = models.ModLog.query \
+                    .order_by(models.ModLog.timestamp.desc()) \
+                    .limit(50)
                 return render_template(
                     'moderation-logs.html',
+                    logs=logs,
                     current_user=current_user
                 )
             else:

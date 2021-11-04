@@ -12,6 +12,7 @@ import models
 import patterns
 import random
 import turtle_images
+from typing import Optional
 import uuid
 from werkzeug.wrappers import Response
 
@@ -115,14 +116,16 @@ def allowed_file(filename: str) -> bool:
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def return_and_log(action_text: str) -> Response:
-    current_user = get_current_user()
-    log = (
-        f'[{datetime.datetime.now().isoformat(timespec="seconds")}]'
-        f' {current_user.username} - {action_text}'
+def return_and_log(action: str, crab, molt=None, additional_context=None) \
+        -> Response:
+    log = models.ModLog.create(
+        mod=get_current_user(),
+        action=action,
+        crab=crab,
+        molt=molt,
+        additional_context=additional_context
     )
-    print(log)
-    return action_text
+    return str(log)
 
 
 def moderation_actions() -> Response:
@@ -139,35 +142,62 @@ def moderation_actions() -> Response:
     if current_user and current_user.is_moderator:
         if crab:
             if crab.is_moderator:
-                return return_and_log(f'attempted action on @{crab.username}')
+                return return_and_log(
+                    action='attempted_action_on_mod',
+                    crab=crab, molt=molt
+                )
 
             # Ban user
             if action == 'ban':
                 return return_and_log(
-                    f'banned @{crab.username}'
+                    action=action,
+                    crab=crab, molt=molt
                 )
 
             # Clear user's username
             elif action == 'clear_username':
                 old_username = crab.username
                 return return_and_log(
-                    f'cleared username for @{old_username}'
+                    action=action,
+                    crab=crab, molt=molt,
+                    additional_context=old_username
                 )
 
             # Clear user's display name
             elif action == 'clear_display_name':
+                old_display_name = crab.display_name
                 return return_and_log(
-                    f'cleared display name for @{crab.username}'
+                    action=action,
+                    crab=crab, molt=molt,
+                    additional_context=old_display_name
                 )
 
             # Clear user's description
             elif action == 'clear_description':
+                old_description = crab.description
                 return return_and_log(
-                    f'cleared description for @{crab.username}'
+                    action=action,
+                    crab=crab, molt=molt,
+                    additional_context=old_description
                 )
 
-            else:
-                return 'Invalid action.'
+            if molt:
+
+                # Approve molt
+                if action == 'approve_molt':
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+                # Delete molt
+                elif action == 'delete_molt':
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt
+                    )
+
+            return 'Invalid action.'
         else:
             return 'Malformed request.'
     else:
