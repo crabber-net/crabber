@@ -47,6 +47,11 @@ administrator.
      site encourages that.
   7. Any content shared on the site that contains mature material should be
      labeled as such using the built-in "nsfw" toggle shown when making molts.
+  8. Impersonation or parody accounts must denote themselves as such in their
+     display name or description in a way that's clear and legible to the
+     average user.
+  9. Do not create accounts for the sole purpose of claiming a username,
+     otherwise known as "username squatting".
 
 # 3. Privacy
 
