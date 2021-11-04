@@ -1,8 +1,8 @@
 ![crabber](https://i.imgur.com/DOqc5s8.png)
 A Twitter clone for crabby people.
 
-[![](https://img.shields.io/github/languages/code-size/jakeledoux/crabber)](https://github.com/jakeledoux/crabber)
-[![](https://img.shields.io/github/issues/jakeledoux/crabber)](https://github.com/jakeledoux/crabber/issues)
+[![](https://img.shields.io/github/languages/code-size/crabber-net/crabber)](https://github.com/crabber-net/crabber)
+[![](https://img.shields.io/github/issues/crabber-net/crabber)](https://github.com/crabber-net/crabber/issues)
 [![](https://img.shields.io/website?url=https%3A%2F%2Fcrabber.net)](https://crabber.net)
 
 ---
@@ -38,7 +38,7 @@ it, there *are* a number of advantages Crabber has over Twitter. Here are a few:
 
 1. Clone the repo
 ```bash
-git clone https://github.com/jakeledoux/crabber.git
+git clone https://github.com/crabber-net/crabber.git
 cd crabber
 ```
 2. Install dependencies *(requires [Poetry](https://python-poetry.org))*
@@ -106,7 +106,7 @@ Install a "real" server like Apache2, Nginx, etc.
 
 Crabber has a REST API mounted at `/api/v1` using the
 [crabber_api.py](crabber_api.py) blueprint. Documentation is available
-[here](https://github.com/jakeledoux/crabber-api-docs).
+[here](https://github.com/crabber-net/crabber-api-docs).
 
 If you are interested in contributing to the documentation please create an
 issue to let us know, any help is appreciated!
