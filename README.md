@@ -118,7 +118,7 @@ and make developing bots and other applications more fun.
 
 You can find that library [here on
 PyPi](https://pypi.org/project/python-crabber/) and [its repo
-here](https://github.com/jakeledoux/pythone-crabber).
+here](https://github.com/crabber-net/python-crabber).
 
 ```bash
 pip install python-crabber
