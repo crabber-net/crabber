@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}
+    Moderation Panel
+{% endblock %}
+
+{% block heading %}
+    <div class="row">
+        <div class="col-2 col-lg-1 clickable" onclick="location.href='.'">
+            <svg class="text-primary heading-back-arrow" width="24" height="24" data-jam="arrow-left">
+                <use href="{{sprite_url}}?version={{server_start}}#arrow-left"></use>
+            </svg>
+        </div>
+        <div>
+            Moderation Panel
+            ...
+            {% block moderation_heading %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+    {% block moderation_content %}{% endblock %}
+
+    <script>
+        // Prevent random action taken on enter
+        // (multiple submit buttons in form)
+        $('input').on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

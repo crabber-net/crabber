@@ -7,7 +7,7 @@ from typing import List, Set
 load_dotenv()
 
 
-def getenv_bool(key, default=False):
+def getenv_bool(key, default=False) -> bool:
     """ Retrieve boolean value from environment variable.
     """
     value = os.getenv(key, None)
@@ -17,6 +17,16 @@ def getenv_bool(key, default=False):
         else:
             return True
     return default
+
+
+def getenv_list(key) -> List[str]:
+    """ Retrieve list of strings from comma-separated environment variable.
+    """
+    value = os.getenv(key, None)
+    if value:
+        return [part.strip().lower() for part in value.split(',')]
+
+    return list()
 
 
 def load_lines_from_file(filename: str) -> List[str]:
@@ -38,7 +48,6 @@ MOLTS_PER_PAGE: int = 20
 NOTIFS_PER_PAGE: int = 20
 MINUTES_EDITABLE: int = 5
 MUTED_WORDS_CHAR_LIMIT: int = 2048
-ADMINS: List[str] = load_lines_from_file("admins")  # Users allowed to access the Tortimer page
 UPLOAD_FOLDER: str = os.path.join(BASE_PATH, 'static/img/user_uploads')
 ALLOWED_EXTENSIONS: Set[str] = {'png', 'jpg', 'jpeg'}
 RECOMMENDED_USERS: List[str] = load_lines_from_file("recommended_users")  # Users suggested on post-signup page
@@ -49,6 +58,9 @@ FEATURED_CRAB_USERNAME = os.getenv('FEATURED_CRAB_USERNAME', 'jake')
 BLACKLIST_IP = load_lines_from_file('blacklist-ip')
 BLACKLIST_POST_CODE = load_lines_from_file('blacklist-post-code')
 BLACKLIST_CITY_ID = load_lines_from_file('blacklist-city')
+
+ADMINS: List[str] = getenv_list('ADMINS')
+MODERATORS: List[str] = getenv_list('MODERATORS')
 
 SPRITE_URL = os.getenv('SPRITE_URL', '/static/img/sprites.svg')
 

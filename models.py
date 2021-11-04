@@ -39,6 +39,7 @@ blocking_table = db.Table(
     db.Column('blocked_id', db.Integer, db.ForeignKey('crab.id'))
 )
 
+
 class NotFoundInDatabase(BaseException):
     pass
 
@@ -115,6 +116,12 @@ class Crab(db.Model):
         return f"<Crab '@{self.username}'>"
 
     @property
+    def register_timestamp(self):
+        """ Returns integer timestamp of user's registration
+        """
+        return int(self.register_time.timestamp())
+
+    @property
     def bio(self):
         """ Returns bio JSON as dictionary.
         """
@@ -126,6 +133,20 @@ class Crab(db.Model):
         """
 
         return datetime.timedelta(hours=float(self.timezone))
+
+    @property
+    def is_admin(self) -> bool:
+        """ Returns whether the user is a website admin.
+        """
+
+        return self.username.lower() in config.ADMINS
+
+    @property
+    def is_moderator(self) -> bool:
+        """ Returns whether the user is a website moderator.
+        """
+
+        return self.username.lower() in [*config.MODERATORS, *config.ADMINS]
 
     @property
     def muted_words(self) -> List[str]:
@@ -377,6 +398,13 @@ class Crab(db.Model):
 
         db.session.commit()
 
+    def unverify(self):
+        """ Revoke this user's verification.
+        """
+        self.verified = False
+
+        db.session.commit()
+
     def ban(self):
         """ Banish this user from the site.
         """
@@ -482,7 +510,8 @@ class Crab(db.Model):
 
         # Query trophy by title
         if trophy is None:
-            trophy_query = Trophy.query.filter_by(title=title)
+            trophy_query = Trophy.query \
+                .filter(Trophy.title.ilike(title))
             if trophy_query.count() == 0:
                 raise NotFoundInDatabase(f"Trophy with title: '{title}' not"
                                          "found.")
@@ -1412,6 +1441,23 @@ class Molt(db.Model):
         return molts
 
     @staticmethod
+    def query_reported() -> BaseQuery:
+        queue = Molt.query \
+        .filter_by(
+            deleted=False,
+            approved=False,
+        ) \
+        .filter(Molt.author.has(
+            banned=False, deleted=False)
+        ) \
+        .order_by(
+            Molt.reports.desc(),
+            Molt.timestamp.desc(),
+        )
+
+        return queue
+
+    @staticmethod
     def query_like_counts() -> BaseQuery:
         """ Queries molt like counts as (molt_id: int, likes: int) and orders
             by likes descending.
@@ -1963,3 +2009,99 @@ class Bookmark(db.Model):
             .filter(Molt.author.has(deleted=False, banned=False))
         return likes
 
+
+class ModLog(db.Model):
+    __tablename__ = 'mod_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    mod_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    mod = db.relationship('Crab', foreign_keys=[mod_id])
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.datetime.utcnow)
+    action = db.Column(db.String(64), nullable=False)
+    additional_context = db.Column(db.String(512))
+
+    # Subject Crab
+    crab_id = db.Column(db.Integer, db.ForeignKey('crab.id'), nullable=False)
+    crab = db.relationship('Crab', foreign_keys=[crab_id])
+
+    # Subject Molt
+    molt_id = db.Column(db.Integer, db.ForeignKey('molt.id'))
+    molt = db.relationship('Molt', foreign_keys=[molt_id])
+
+    def __repr__(self):
+        return f'<ModLog (@{self.mod.username})>'
+
+    def __str__(self):
+        action_text = 'unknown'
+        if self.action == 'attempted_action_on_mod':
+            action_text = (
+                f'attempted action on mod or admin (@{self.crab.username})'
+            )
+        elif self.action == 'ban':
+            action_text = (
+                f'banned user (@{self.crab.username})'
+            )
+        elif self.action == 'unban':
+            action_text = (
+                f'unbanned user (@{self.crab.username})'
+            )
+        elif self.action == 'clear_username':
+            action_text = (
+                f'cleared username (@{self.crab.username}, '
+                f'originally @{self.additional_context})'
+            )
+        elif self.action == 'clear_display_name':
+            action_text = (
+                f'cleared display name (@{self.crab.username}, '
+                f'originally "{self.additional_context}")'
+            )
+        elif self.action == 'clear_description':
+            action_text = (
+                f'cleared user description (@{self.crab.username}, '
+                f'see DB for more details)'
+            )
+        elif self.action == 'verify_user':
+            action_text = (
+                f'verified user (@{self.crab.username})'
+            )
+        elif self.action == 'unverify_user':
+            action_text = (
+                f'unverified user (@{self.crab.username})'
+            )
+        elif self.action == 'award_trophy':
+            action_text = (
+                f'awarded trophy to user (@{self.crab.username}, '
+                f'"{self.additional_context}")'
+            )
+        elif self.action == 'approve_molt':
+            action_text = (
+                f'approved molt (#{self.molt.id}, @{self.crab.username})'
+            )
+        elif self.action == 'unapprove_molt':
+            action_text = (
+                f'unapproved molt (#{self.molt.id}, @{self.crab.username})'
+            )
+        elif self.action == 'delete_molt':
+            action_text = (
+                f'deleted molt (#{self.molt.id}, @{self.crab.username})'
+            )
+        elif self.action == 'restore_molt':
+            action_text = (
+                f'restored molt (#{self.molt.id}, @{self.crab.username})'
+            )
+
+        return (
+            f'[{self.timestamp.isoformat(timespec="seconds")}]'
+            f' [@{self.mod.username}]'
+            f' - {action_text}'
+        )
+
+    @classmethod
+    def create(cls, mod: Crab, action: str, crab: Crab,
+               molt: Optional[Molt] = None,
+               additional_context: Optional[str] = None):
+        log = cls(mod=mod, action=action, crab=crab, molt=molt,
+                  additional_context=additional_context)
+        db.session.add(log)
+        db.session.commit()
+        return log

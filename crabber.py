@@ -106,6 +106,17 @@ def robots():
     return 'We <3 robots!'
 
 
+@app.route('/legal/TOS/')
+def terms_of_service():
+    with app.open_resource('static/legal/tos.txt', 'r') as f:
+        contents = f.read()
+        return render_template(
+            'plaintext.html',
+            title='Terms of Service',
+            content=contents
+        )
+
+
 @app.route("/", methods=("GET", "POST"))
 def index():
     current_user = utils.get_current_user()
@@ -253,13 +264,15 @@ def login():
     if request.method == 'POST':
         email, password = request.form.get(
             'email').strip().lower(), request.form.get('password')
-        attempted_user = models.Crab.query.filter_by(
+        attempted_user: models.Crab = models.Crab.query.filter_by(
             email=email, deleted=False).first()
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
                     # Login successful
                     session['current_user'] = attempted_user.id
+                    session['current_user_ts'] = \
+                            attempted_user.register_timestamp
                     return redirect("/")
                 else:
                     return utils.show_error('The account you\'re attempting to'
@@ -407,13 +420,18 @@ def signup():
                                             )
 
                                             # "Log in"
-                                            session['current_user'] = models.Crab \
+                                            current_user = models.Crab \
                                                 .query \
                                                 .filter_by(
                                                     username=username,
                                                     deleted=False,
                                                     banned=False
-                                                ).first().id
+                                                ).first()
+                                            session['current_user'] =  \
+                                                    current_user.id
+                                            session['current_user_ts'] = \
+                                                    current_user \
+                                                    .register_timestamp
                                             # Redirect on success
                                             return redirect('/signupsuccess')
                                         else:
@@ -1025,6 +1043,61 @@ def tortimer():
     return 'Deprecated.'
 
 
+# The new moderation panel
+@app.route("/moderation/", methods=('GET', 'POST'))
+def moderation():
+    if request.method == 'POST':
+        return utils.moderation_actions()
+    else:
+        current_user = utils.get_current_user()
+        if current_user and current_user.is_moderator:
+            viewing = request.args.get('viewing')
+            if viewing == 'user':
+                username = request.args.get('username')
+                crab = models.Crab.get_by_username(username,
+                                                   include_invalidated=True)
+                return render_template(
+                    'moderation-crab.html',
+                    crab=crab,
+                    current_user=current_user
+                )
+            elif viewing == 'molt':
+                molt_id = request.args.get('molt_id')
+                molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
+                return render_template(
+                    'moderation-molt.html',
+                    molt=molt,
+                    current_user=current_user
+                )
+            elif viewing == 'queue':
+                queue = models.Molt \
+                    .query_reported() \
+                    .limit(10)
+                return render_template(
+                    'moderation-queue.html',
+                    queue=queue,
+                    current_user=current_user
+                )
+            elif viewing == 'logs':
+                page_n = request.args.get('page_n', 1)
+                logs = models.ModLog.query \
+                    .order_by(models.ModLog.timestamp.desc()) \
+                    .paginate(page_n, 50, False)
+                return render_template(
+                    'moderation-logs.html',
+                    logs=logs,
+                    current_user=current_user,
+                    page_n=page_n
+                )
+            else:
+                return render_template(
+                    'moderation.html',
+                    current_user=current_user
+                )
+        else:
+            return error_404(None)
+
+
 @app.route("/ajax_request/<request_type>/")
 def ajax_request(request_type):
     if request_type == "unread_notif":
@@ -1088,6 +1161,8 @@ def inject_global_vars():
         comicsans_mode=comicsans_mode,
         trending_crabtags=models.Crabtag.get_trending(),
         is_debug_server=config.is_debug_server,
+        admins=config.ADMINS,
+        moderators=config.MODERATORS,
     )
 
 
@@ -1172,7 +1247,11 @@ def before_request():
     # Make sure cookies are still valid
     if session.get('current_user'):
         crab_id = session.get('current_user')
-        if not models.Crab.get_by_ID(id=crab_id):
+        crab = models.Crab.get_by_ID(id=crab_id)
+        current_user_ts = session.get('current_user_ts')
+
+        # Account deleted or banned
+        if not crab:
             # Force logout
             session['current_user'] = None
 
@@ -1183,6 +1262,20 @@ def before_request():
                                         'been banned.', '/login')
             return utils.show_error('The account you were logged into no '
                                     'longer exists.', '/login')
+        # Potential database rollback or exploit
+        elif crab.register_timestamp != current_user_ts:
+            print(crab.register_timestamp, current_user_ts)
+            if current_user_ts:
+                # Force logout
+                session['current_user'] = None
+
+                return utils.show_error(
+                    'Your cookies are invalidated or corrupted. Please attempt'
+                    ' to log in again.',
+                    '/login'
+                )
+            else:
+                session['current_user_ts'] = crab.register_timestamp
     # Persist session after browser is closed
     session.permanent = True
 

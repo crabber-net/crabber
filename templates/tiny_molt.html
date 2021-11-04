@@ -185,6 +185,20 @@
                     </span>
                     {% if current_user %}
                         <div class="neue-card molt-dropdown dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            {% if current_user.is_moderator %}
+                                <form action="/moderation" target="_blank"
+                                      class="dropdown-item clickable">
+                                    <input type="hidden" name="viewing" value="molt">
+                                    <input type="hidden" name="molt_id" value="{{molt.id}}">
+                                    <div onClick="this.parentNode.submit();">
+                                        <svg width="19" height="19" data-jam="cog">
+                                            <use href="{{sprite_url}}?version={{server_start}}#cog"></use>
+                                        </svg>
+                                        Open in mod panel
+                                    </div>
+                                </form>
+                            {% endif %}
+
                             <!-- DELETE BUTTON -->
                             {% if author.id == current_user.id %}
                                 <form class="dropdown-item clickable" method="POST">
