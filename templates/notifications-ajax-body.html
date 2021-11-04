@@ -35,6 +35,7 @@
 <div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
 
 <script>
+    updateNotifBadge(0);
     $(document).off('click');
     if (window.history && window.history.pushState)
         $(window).on('popstate', () => document.location.reload());
