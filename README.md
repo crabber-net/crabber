@@ -49,24 +49,13 @@ poetry shell
 3. (**Optional**) Download the GeoLite2 City database from [MaxMind]
 (https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en) 
 saved as `GeoLite2-City.mmdb` in the project root to enable location bans.
-4. (**Optional**)  Create a `mail_conf.json` file in the root of the project 
-with the fields `address` and `password` to enable server mail for password
-resets.
-```json
-{
-    "address": "example@aol.com",
-    "password": "a_secure_password"
-}
-```
+4. (**Optional**) Add configuration variables to your environment with a
+   `.env` file or through other means.
 5. Set up the database
 ```bash
 python scripts/initialize_database.py
 ```
-6. Add any site administrators to `admins.cfg` via their usernames
-```bash
-vim admins.cfg  # The only Crab-approved text editor
-```
-7. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
+6. *(Optional)* If you want OpenGraph cards you need to set up a cron job that
    runs `fetch_cards.py` periodically.
 ```bash
 crontab -e
