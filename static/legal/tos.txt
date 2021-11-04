@@ -45,6 +45,8 @@ administrator.
   6. This site does not support "cancel culture". Give people the benefit of the
      doubt and don't brigade them for their minor mistakes. People grow and this
      site encourages that.
+  7. Any content shared on the site that contains mature material should be
+     labeled as such using the built-in "nsfw" toggle shown when making molts.
 
 # 3. Privacy
 
