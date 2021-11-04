@@ -1,0 +1,46 @@
+{% extends 'moderation-view.html' %}
+
+{% block moderation_heading %}
+    Mod Logs
+{% endblock %}
+
+{% block moderation_content %}
+
+<pre class="p-2 text-light">
+{% for log in logs.items %}{{log}}
+{% else %}
+nothing logged.
+{% endfor %}
+</pre>
+
+{% if not logs.has_next %}
+    <div class="d-inline-block w-100 pt-5 pb-3 text-muted text-molt text-center">
+        The end.
+    </div>
+{% endif %}
+
+<nav aria-label="Page navigation buttons" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {{'' if logs.has_prev else 'disabled'}}">
+            <a class="page-link h-100 p-0" href="javascript:loadContent({{logs.prev_num}});" tabindex="-1">
+
+                <svg class="absolute-center" width="24" height="24" data-jam="chevron-left">
+                    <use href="{{sprite_url}}?version={{server_start}}#chevron-left"></use>
+                </svg>
+            </a>
+        </li>
+        <li class="page-item {{'' if page_n > 1 else 'disabled'}}"><a class="page-link" href="javascript:loadContent(1);">Home</a></li>
+        <li class="page-item {{'' if logs.has_next else 'disabled'}}">
+            <a class="page-link h-100 p-0" href="javascript:loadContent({{logs.next_num}});">
+
+                <svg class="absolute-center" width="24" height="24" data-jam="chevron-right">
+                    <use href="{{sprite_url}}?version={{server_start}}#chevron-right"></use>
+                </svg>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Spacer -->
+<div class="d-inline-block w-100 p-5 my-5 text-muted text-molt text-center"></div>
+{% endblock %}

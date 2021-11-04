@@ -51,6 +51,19 @@
                 <form method="POST">
                     <input type="hidden" name="target_user" value="{{this_user.id}}">
 
+                    {% if current_user.is_moderator %}
+                    <!-- Moderator button -->
+                    <div class="d-inline-block block-section">
+                        <button type="button"
+                                onclick="window.open('/moderation/?viewing=user&username={{this_user.username}}', '_blank');"
+                                class="btn btn-outline-secondary rounded-pill mod-btn">
+                            <strong>
+                                Open in mod console
+                            </strong>
+                        </button>
+                    </div>
+                    {% endif %}
+
                     <!-- Block/Unblock button -->
                     <div class="d-inline-block block-section">
                         {% if not current_user in this_user.blockers%}

@@ -1032,6 +1032,61 @@ def tortimer():
     return 'Deprecated.'
 
 
+# The new moderation panel
+@app.route("/moderation/", methods=('GET', 'POST'))
+def moderation():
+    if request.method == 'POST':
+        return utils.moderation_actions()
+    else:
+        current_user = utils.get_current_user()
+        if current_user and current_user.is_moderator:
+            viewing = request.args.get('viewing')
+            if viewing == 'user':
+                username = request.args.get('username')
+                crab = models.Crab.get_by_username(username,
+                                                   include_invalidated=True)
+                return render_template(
+                    'moderation-crab.html',
+                    crab=crab,
+                    current_user=current_user
+                )
+            elif viewing == 'molt':
+                molt_id = request.args.get('molt_id')
+                molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
+                return render_template(
+                    'moderation-molt.html',
+                    molt=molt,
+                    current_user=current_user
+                )
+            elif viewing == 'queue':
+                queue = models.Molt \
+                    .query_reported() \
+                    .limit(10)
+                return render_template(
+                    'moderation-queue.html',
+                    queue=queue,
+                    current_user=current_user
+                )
+            elif viewing == 'logs':
+                page_n = request.args.get('page_n', 1)
+                logs = models.ModLog.query \
+                    .order_by(models.ModLog.timestamp.desc()) \
+                    .paginate(page_n, 50, False)
+                return render_template(
+                    'moderation-logs.html',
+                    logs=logs,
+                    current_user=current_user,
+                    page_n=page_n
+                )
+            else:
+                return render_template(
+                    'moderation.html',
+                    current_user=current_user
+                )
+        else:
+            return error_404(None)
+
+
 @app.route("/ajax_request/<request_type>/")
 def ajax_request(request_type):
     if request_type == "unread_notif":
@@ -1095,6 +1150,8 @@ def inject_global_vars():
         comicsans_mode=comicsans_mode,
         trending_crabtags=models.Crabtag.get_trending(),
         is_debug_server=config.is_debug_server,
+        admins=config.ADMINS,
+        moderators=config.MODERATORS,
     )
 
 
