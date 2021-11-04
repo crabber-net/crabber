@@ -2025,14 +2025,12 @@ table#user-info th {
 
     border-bottom: 1px solid var(--border-dark);
 }
-.recommended-crab {
-    padding: 0 1rem;
-    margin: 0 -1rem;
-
+.recommended-crab, .trending-tag {
     transition: ease-in-out 200ms;
 }
-.recommended-crab:hover {
-    background-color: var(--dark-lesser);
+.recommended-crab:hover, .trending-tag:hover {
+    background-color: var(--dark-less-more);
+    border-radius: 0.5em;
 }
 .recommended-crab .mini-bio {
     background: transparent !important;
@@ -2045,9 +2043,6 @@ table#user-info th {
     padding: 0.25rem;
 
     border-radius: 0.25rem;
-}
-.trending-tag:hover {
-    background-color: var(--dark-less-more);
 }
 .trending-tag span {
     display: block;
