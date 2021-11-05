@@ -141,6 +141,9 @@ def moderation_actions() -> Response:
         or molt.author
 
     if current_user and current_user.is_moderator:
+        if not current_user.is_admin:
+            current_user.award('Unlimited Power!')
+
         if crab:
             if crab.is_moderator and not current_user.is_admin:
                 return return_and_log(
@@ -215,7 +218,7 @@ def moderation_actions() -> Response:
 
             # Revoke user's verification
             elif action == 'unverify_user':
-                crab.r()
+                crab.unverify()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt
