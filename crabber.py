@@ -28,8 +28,9 @@ def create_app():
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
     app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
-    app.config['TOPT_SECRET'] = os.getenv('TOPT_SECRET')
+    app.config['TOTP_SECRET'] = os.getenv('TOTP_SECRET')
     app.config['TOTP_ISSUER'] = os.getenv('TOTP_ISSUER')
+    app.config['TOTP_ENABLED'] = config.TOTP_ENABLED
 
     register_extensions(app)
     limiter = register_blueprints(app)
