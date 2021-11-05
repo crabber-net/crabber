@@ -195,7 +195,9 @@ def moderation_actions() -> Response:
             # Clear user's description
             elif action == 'clear_description':
                 old_description = crab.description
-                crab.description = 'This user has no description.'
+                crab.description = (
+                    'This description has been reset by a moderator.'
+                )
                 db.session.commit()
                 return return_and_log(
                     action=action,
