@@ -1079,7 +1079,7 @@ def moderation():
                     current_user=current_user
                 )
             elif viewing == 'logs':
-                page_n = request.args.get('page_n', 1)
+                page_n = request.args.get('p', 1, type=int)
                 logs = models.ModLog.query \
                     .order_by(models.ModLog.timestamp.desc()) \
                     .paginate(page_n, 50, False)
