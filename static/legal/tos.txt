@@ -52,6 +52,10 @@ administrator.
      average user.
   9. Do not create accounts for the sole purpose of claiming a username,
      otherwise known as "username squatting".
+ 10. You must be 13 years or older to use Crabber, and at least 18 years old to
+     view and post NSFW content.
+ 11. While NSFW content is allowed, hardcore pornography is not and repeat
+     violations will be treated as a serious offense.
 
 # 3. Privacy
 
