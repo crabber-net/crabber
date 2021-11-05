@@ -19,6 +19,11 @@
     font-weight: bold;
     font-style: italic, oblique;
 }
+@font-face {
+    font-family: "Comic Sans MS";
+    src: url("/static/fonts/comic.ttf");
+    font-weight: normal;
+}
 
 /* Medium devices and smaller */
 @media (max-width: 992px) {
