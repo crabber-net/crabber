@@ -13,7 +13,8 @@ import patterns
 from typing import Iterable, Tuple, Union
 import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
-
+from hashlib import sha256
+from pyotp import TOTP
 
 def create_app():
     app = Flask(__name__, template_folder="./templates")
@@ -27,6 +28,8 @@ def create_app():
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
     app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
+    app.config['TOPT_SECRET'] = os.getenv('TOPT_SECRET')
+    app.config['TOTP_ISSUER'] = os.getenv('TOTP_ISSUER')
 
     register_extensions(app)
     limiter = register_blueprints(app)
@@ -71,6 +74,11 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
+
+if config.TOTP_ENABLED:
+    global totp; totp = TOTP(app.config['TOTP_SECRET'], 
+        digest=sha256, issuer=app.config['TOTP_ISSUER'])
+
 captcha = hCaptcha(app)
 
 if app.config['PROFILER_ENABLED']:
