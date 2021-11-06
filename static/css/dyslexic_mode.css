@@ -1,3 +1,8 @@
 * {
     font-family: "OpenDyslexic" !important;
 }
+
+.verified {
+    text-align: middle !important;
+    margin-bottom: .2em !important;
+}
