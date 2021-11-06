@@ -297,6 +297,30 @@
                     </button>
                 </form>
 
+                {% if current_user.is_moderator %}
+                <!-- Moderation panel button -->
+                <form onsubmit="window.location = '/moderation';" action="/moderation">
+                    <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"
+                    {% if current_page == "moderation-panel" %}
+                        id="nav-active"
+                    {% endif %}>
+
+                        <svg class="btn-icon text-muted {{"d-none" if current_page == "moderation" else ""}}" width="28" height="28" data-jam="extinguisher">
+                            <use href="{{sprite_url}}?version={{server_start}}#extinguisher"></use>
+                        </svg>
+
+                        <svg class="btn-icon text-muted {{"" if current_page == "moderation" else "d-none"}} btn-icon-f" width="28" height="28" data-jam="extinguisher-f">
+                            <use href="{{sprite_url}}?version={{server_start}}#extinguisher-f"></use>
+                        </svg>
+
+                        <svg class="btn-icon loading-icon loading-icon-center d-none" width="28" height="28" data-jam="refresh">
+                            <use href="{{sprite_url}}?version={{server_start}}#refresh"></use>
+                        </svg>
+                        <strong class="d-none d-lg-inline-block ml-2">Mod Panel</strong>
+                    </button>
+                </form>
+                {% endif %}
+
                 <!-- Settings page button -->
                 <form onsubmit="loadingIcon(this);" action="/settings">
                     <button type="submit" onauxclick="openActionInNewTab(this)" class="btn btn-secondary rounded-pill mx-auto mx-lg-0 mt-2 extra-navs"

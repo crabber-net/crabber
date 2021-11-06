@@ -1059,7 +1059,8 @@ def moderation():
                 return render_template(
                     'moderation-crab.html',
                     crab=crab,
-                    current_user=current_user
+                    current_user=current_user,
+                    current_page='moderation-panel'
                 )
             elif viewing == 'molt':
                 molt_id = request.args.get('molt_id')
@@ -1067,7 +1068,8 @@ def moderation():
                 return render_template(
                     'moderation-molt.html',
                     molt=molt,
-                    current_user=current_user
+                    current_user=current_user,
+                    current_page='moderation-panel'
                 )
             elif viewing == 'queue':
                 queue = models.Molt \
@@ -1076,7 +1078,8 @@ def moderation():
                 return render_template(
                     'moderation-queue.html',
                     queue=queue,
-                    current_user=current_user
+                    current_user=current_user,
+                    current_page='moderation-panel'
                 )
             elif viewing == 'logs':
                 page_n = request.args.get('p', 1, type=int)
@@ -1087,6 +1090,7 @@ def moderation():
                     'moderation-logs.html',
                     logs=logs,
                     current_user=current_user,
+                    current_page='moderation-panel',
                     page_n=page_n,
                     hide_sidebar=True,
                     extra_width=True
@@ -1094,7 +1098,8 @@ def moderation():
             else:
                 return render_template(
                     'moderation.html',
-                    current_user=current_user
+                    current_user=current_user,
+                    current_page='moderation-panel'
                 )
         else:
             return error_404(None)
