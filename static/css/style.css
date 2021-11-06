@@ -1373,6 +1373,10 @@ body, .master-container {
     width: 150px;
 }
 
+.stat {
+    width: 165px;
+}
+
 /* Notification nav icon badge */
 .notif-badge {
     background: var(--primary);
