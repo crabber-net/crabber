@@ -946,7 +946,7 @@ def label_mentions(content, absolute_url=False):
     """
     output = content
     match = patterns.mention.search(output)
-    base_url = config.BASE_URL if absolute_url else ''
+    base_url = BASE_URL if absolute_url else ''
     if match:
         start, end = match.span()
         username_str = output[start:end] \
@@ -975,7 +975,7 @@ def label_crabtags(content, absolute_url=False):
     """
     output = content
     match = patterns.tag.search(output)
-    base_url = config.BASE_URL if absolute_url else ''
+    base_url = BASE_URL if absolute_url else ''
     if match:
         start, end = match.span()
         output = [
