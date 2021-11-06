@@ -36,7 +36,7 @@
 {% set author = molt.get_author() %}
 
 {% set is_deleted = molt.deleted %}
-{% set is_unavailable = author.banned or author.deleted %}
+{% set is_unavailable = author.banned or author.deleted or molt.original_molt.deleted %}
 {% if always_show %}
     {% set is_deleted = false %}
     {% set is_unavailable = false %}
