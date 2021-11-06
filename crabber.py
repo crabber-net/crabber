@@ -277,14 +277,15 @@ def login():
             'email').strip().lower(), request.form.get('password')
         attempted_user: models.Crab = models.Crab.query.filter_by(
             email=email, deleted=False).first()
-        totp_code = request.form.get('totp') or None
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
                     if app.config['TOTP_ENABLED']:
-                        if attempted_user.totp and not (totp_code and totp.verify(totp_code)):
-                            return utils.show_error('The two factor'
-                                ' authentication code entered is invalid.')
+                        if attempted_user.totp:
+                            session['totp_user'] = attempted_user.id
+                            session['totp_user_ts'] = \
+                                attempted_user.register_timestamp
+                            return redirect('/login/totp')
                     session['current_user'] = attempted_user.id
                     session['current_user_ts'] = \
                             attempted_user.register_timestamp
@@ -307,6 +308,21 @@ def login():
             login_failed=login_failed
         )
 
+@app.route("/login/totp", methods=('GET', 'POST'))
+def totp_login():
+    if request.method == 'POST':
+        totp_code = request.form.get('totp') or None
+        if (totp_code and totp.verify(totp_code)):
+            session['current_user'] = session['totp_user']
+            session['current_user_ts'] = session['totp_user_ts']
+            del session['totp_user']; del session['totp_user_ts']
+            return redirect('/')
+        else:
+            return utils.show_error('The two factor authentication code given'
+                                    ' was invalid or expired.')
+    if not 'totp_user' in session: return redirect('/login')
+    return render_template('login_2fa.html', 
+        current_page='totp', hide_sidebar=True)
 
 @app.route("/forgotpassword/", methods=('GET', 'POST'))
 def forgot_password():

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %} Two-Factor Authentication {% endblock %}
+{% block heading %}
+<!-- Logo -->
+<img class="logo"
+    src="https://cdn.crabber.net/img/crabber_logo.svg" alt="Crabber Logo" width="43" height="43">
+{% endblock %}
+
+{% block body %}
+    <form class="w-75 m-4" method="POST">
+        <h1 class="mb-5">Two-Factor Authentication</h1>
+        <div class="form-group cool-input">
+            <label for="login-totp">Authentication Code</label>
+            <input type="text" name="totp" class="form-control" id="login-totp" required aria-required>
+        </div>
+        <div class="d-flex align-items-center mt-4">
+            <button type="submit" class="btn btn-primary rounded-pill mr-4">
+                Continue
+            </button>
+        </div>
+    </form>
+{% endblock %}
