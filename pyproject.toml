@@ -23,6 +23,7 @@ webpreview = "^1.6.0"
 gunicorn = "^20.1.0"
 gevent = "^21.8.0"
 pyotp = "^2.6.0"
+Flask-QRcode = "^3.0.0"
 
 [tool.poetry.dev-dependencies]
 

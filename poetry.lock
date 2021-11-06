@@ -235,6 +235,19 @@ limits = "*"
 six = ">=1.4.1"
 
 [[package]]
+name = "flask-qrcode"
+version = "3.0.0"
+description = "A concise Flask extension to render QR codes on Jinja2 templates using python-qrcode"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = "*"
+pillow = "*"
+qrcode = "*"
+
+[[package]]
 name = "flask-sqlalchemy"
 version = "2.5.1"
 description = "Adds SQLAlchemy support to your Flask application."
@@ -486,6 +499,24 @@ python-versions = ">=3.5"
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "qrcode"
+version = "7.3.1"
+description = "QR Code image generator"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+all = ["zest.releaser", "tox", "pytest", "pytest", "pytest-cov", "pillow"]
+dev = ["tox", "pytest"]
+maintainer = ["zest.releaser"]
+pil = ["pillow"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "requests"
 version = "2.26.0"
 description = "Python HTTP for Humans."
@@ -663,7 +694,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.11"
-content-hash = "1e3f7cfeea9db63b3f4b7fe17469c8a042a89b42a76f836f123fce126f355f09"
+content-hash = "b3ccdfce40a1fe0d320c4383e913c6b338b32f4be9d0038baa12ba278fc5b99d"
 
 [metadata.files]
 aiohttp = [
@@ -838,6 +869,9 @@ flask-limiter = [
     {file = "Flask-Limiter-1.4.tar.gz", hash = "sha256:021279c905a1e24f181377ab3be711be7541734b494f4e6db2b8edeba7601e48"},
     {file = "Flask_Limiter-1.4-py3-none-any.whl", hash = "sha256:f8a65a7874f48ff8df2ea5e86d5b85b48fcbae065ebeb5271b317fe68fcfa979"},
     {file = "Flask_Limiter-1.4-py3.7.egg", hash = "sha256:055a388a89f4d5768c64025443f1f41e3babcbbbf315c728413c27b4975af239"},
+]
+flask-qrcode = [
+    {file = "Flask-QRcode-3.0.0.tar.gz", hash = "sha256:96a49da1396a600e79cc4b119610a2e61cb1433f9449994eabf36bbe1478b96b"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.5.1.tar.gz", hash = "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912"},
@@ -1207,6 +1241,9 @@ python-dateutil = [
 python-dotenv = [
     {file = "python-dotenv-0.19.1.tar.gz", hash = "sha256:14f8185cc8d494662683e6914addcb7e95374771e707601dfc70166946b4c4b8"},
     {file = "python_dotenv-0.19.1-py2.py3-none-any.whl", hash = "sha256:bbd3da593fc49c249397cbfbcc449cf36cb02e75afc8157fcc6a81df6fb7750a"},
+]
+qrcode = [
+    {file = "qrcode-7.3.1.tar.gz", hash = "sha256:375a6ff240ca9bd41adc070428b5dfc1dcfbb0f2507f1ac848f6cded38956578"},
 ]
 requests = [
     {file = "requests-2.26.0-py2.py3-none-any.whl", hash = "sha256:6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"},
