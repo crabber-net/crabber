@@ -786,7 +786,9 @@ class Crab(db.Model):
         """ Returns all replies the user has published that are still
             available.
         """
-        molts = self.query_molts().filter_by(is_reply=True)
+        molts = self.query_molts() \
+            .filter_by(is_reply=True) \
+            .filter(Molt.original_molt.has(deleted=False))
         return molts
 
     def query_timeline(self) -> BaseQuery:
@@ -1318,20 +1320,27 @@ class Molt(db.Model):
             }
         }
 
-    def get_reply_from(self, crab: Union[Crab, int]) -> Optional['Molt']:
+    def get_reply_from(self, crab: Union[List[int], Crab, int]) \
+            -> Optional['Molt']:
         """ Return first reply Molt from `crab` if it exists.
         """
         reply = None
         if self.reply_count > 0:
             reply = Molt.query.filter_by(is_reply=True, original_molt=self,
                                          deleted=False)
-            if isinstance(crab, Crab):
+            if isinstance(crab, list):
+                crab = [id for id in crab if id]
+                reply = reply.filter(
+                    Molt.author_id.in_(crab)
+                )
+            elif isinstance(crab, Crab):
                 reply = reply.filter_by(author=crab)
             elif isinstance(crab, int):
                 reply = reply.filter_by(author_id=crab)
             else:
                 return None
             reply = reply.order_by(Molt.timestamp).first()
+            print(reply)
         return reply
 
     def get_reply_from_following(self, crab):

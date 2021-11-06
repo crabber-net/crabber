@@ -2,7 +2,7 @@
 
 <!-- All replies live here! -->
 {% for reply in replies %}
-    {% with molt=reply, thread=true, show_replies_from=molt.author %}
+    {% with molt=reply, thread=true, show_replies_from=[molt.author_id, reply.author_id, molt.original_molt.author_id] %}
         {% include "molt.html" %}
     {% endwith %}
 {% else %}

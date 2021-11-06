@@ -47,6 +47,13 @@
     {% set original_author = molt.original_molt.get_author(('id', 'username', 'display_name')) %}
 {% endif %}
 
+{% if molt.is_reply and recurse_parents %}
+    <div class="mt-2">
+        {% with molt=molt.original_molt, thread=true, is_parent=true, hide_border=true %}
+            {% include "molt.html" %}
+        {% endwith %}
+    </div>
+{% endif %}
 
 <div class="regular-molt mini-molt {{'is-remolt' if is_remolt}} {{'border-bottom' if not hide_border}} border-dark {{'px-3' if not is_in_quote}} py-2 {{'mb-2' if show_replies}} d-flex flex-row absolute-container">
     {% if is_deleted %}

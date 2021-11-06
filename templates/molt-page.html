@@ -28,7 +28,7 @@
     {% else %}
         {% if molt.is_reply %}
             <div class="mt-2">
-                {% with molt=molt.original_molt, thread=true, is_parent=true, hide_border=true %}
+                {% with molt=molt.original_molt, recurse_parents=true, thread=true, is_parent=true, hide_border=true %}
                     {% include "molt.html" %}
                 {% endwith %}
             </div>
