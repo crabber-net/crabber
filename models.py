@@ -74,6 +74,9 @@ class Crab(db.Model):
     banned = db.Column(db.Boolean, nullable=False, default=False)
     _password_reset_token = db.Column('password_reset_token', db.String(128))
 
+    # Two Factor Authentication
+    totp = db.Column('two_factor', db.Boolean, nullable=False, default=False)
+
     # Content visibility
     nsfw = db.Column(db.Boolean, nullable=False, default=False)
     show_nsfw = db.Column(db.Boolean, nullable=False, default=False)

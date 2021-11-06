@@ -13,7 +13,9 @@ import patterns
 from typing import Iterable, Tuple, Union
 import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
-
+from flask_qrcode import QRcode
+from hashlib import sha256
+from pyotp import TOTP
 
 def create_app():
     app = Flask(__name__, template_folder="./templates")
@@ -27,6 +29,9 @@ def create_app():
     app.config['HCAPTCHA_SECRET_KEY'] = os.getenv('HCAPTCHA_SECRET_KEY')
     app.config['HCAPTCHA_ENABLED'] = config.HCAPTCHA_ENABLED
     app.config['PROFILER_ENABLED'] = os.getenv('PROFILER_ENABLED')
+    app.config['TOTP_SECRET'] = os.getenv('TOTP_SECRET')
+    app.config['TOTP_ISSUER'] = os.getenv('TOTP_ISSUER')
+    app.config['TOTP_ENABLED'] = config.TOTP_ENABLED
 
     register_extensions(app)
     limiter = register_blueprints(app)
@@ -71,7 +76,15 @@ def register_blueprints(app):
 
 
 app, limiter = create_app()
+
+if config.TOTP_ENABLED:
+    secret = sha256()
+    secret.update(app.config['TOTP_SECRET'].encode('utf-8'))
+    global totp; totp = TOTP(secret.hexdigest(),
+        digest=sha256, issuer=app.config['TOTP_ISSUER'])
+
 captcha = hCaptcha(app)
+QRcode(app)
 
 if app.config['PROFILER_ENABLED']:
     app.wsgi_app = ProfilerMiddleware(
@@ -269,11 +282,16 @@ def login():
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
-                    # Login successful
+                    if app.config['TOTP_ENABLED']:
+                        if attempted_user.totp:
+                            session['totp_user'] = attempted_user.id
+                            session['totp_user_ts'] = \
+                                attempted_user.register_timestamp
+                            return redirect('/login/totp')
                     session['current_user'] = attempted_user.id
                     session['current_user_ts'] = \
                             attempted_user.register_timestamp
-                    return redirect("/")
+                    return redirect("/")              
                 else:
                     return utils.show_error('The account you\'re attempting to'
                                             ' access has been banned.')
@@ -292,6 +310,21 @@ def login():
             login_failed=login_failed
         )
 
+@app.route("/login/totp", methods=('GET', 'POST'))
+def totp_login():
+    if request.method == 'POST':
+        totp_code = request.form.get('totp') or None
+        if (totp_code and totp.verify(totp_code)):
+            session['current_user'] = session['totp_user']
+            session['current_user_ts'] = session['totp_user_ts']
+            del session['totp_user']; del session['totp_user_ts']
+            return redirect('/')
+        else:
+            return utils.show_error('The two factor authentication code given'
+                                    ' was invalid or expired.')
+    if not 'totp_user' in session: return redirect('/login')
+    return render_template('login_2fa.html', 
+        current_page='totp', hide_sidebar=True)
 
 @app.route("/forgotpassword/", methods=('GET', 'POST'))
 def forgot_password():
@@ -547,14 +580,16 @@ def settings():
                 blocks[block] = render_template(
                     f'settings-ajax-{block}.html',
                     current_page='settings',
-                    current_user=utils.get_current_user()
+                    current_user=utils.get_current_user(),
+                    totp=totp
                 )
             return jsonify(blocks)
         else:
             return render_template(
                 'settings.html',
                 current_page='settings',
-                current_user=utils.get_current_user()
+                current_user=utils.get_current_user(),
+                totp=totp
             )
     else:
         return redirect("/login")
