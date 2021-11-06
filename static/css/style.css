@@ -2342,3 +2342,7 @@ a:active.text-primary {
     display: block;
     padding: 1em;
 }
+
+.btn {
+    white-space: nowrap;
+}
