@@ -158,6 +158,21 @@
     <!-- Section border -->
     <hr class="border-dark mb-3 mt-4">
 
+    <form method="POST" class="p-2">
+        <h3 class="mb-3">Additional Security</h3>
+
+        <div class="custom-control custom-switch">
+            <input type="checkbox" class="custom-control-input" id="toggle-totp"
+                   name="nsfw_mode" {{'checked' if current_user.totp}}
+                   value="{{'true' if current_user.totp else 'false'}}"
+            >
+            <label class="custom-control-label" for="toggle-totp">Two-Factor Authentication</label>
+        </div>
+    </form>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
     <h2 class="mb-3">Misc</h2>
     <form method="POST" class="p-2">
         <input type="hidden" name="user_action" value="update_general_settings">
