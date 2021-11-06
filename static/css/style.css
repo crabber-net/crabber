@@ -1290,8 +1290,11 @@ body, .master-container {
 .notif-other, .notif-reply, .notif-follow {
     fill: var(--reply);
 }
-.notif-like, .notif-mention {
+.notif-like {
     fill: var(--like);
+}
+.notif-mention {
+    fill: var(--reply);
 }
 .notif-remolt {
     fill: var(--remolt);
