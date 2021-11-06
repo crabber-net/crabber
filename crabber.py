@@ -275,14 +275,18 @@ def login():
             'email').strip().lower(), request.form.get('password')
         attempted_user: models.Crab = models.Crab.query.filter_by(
             email=email, deleted=False).first()
+        totp_code = request.form.get('totp') or None
         if attempted_user is not None:
             if attempted_user.verify_password(password):
                 if not attempted_user.banned:
-                    # Login successful
+                    if app.config['TOTP_ENABLED']:
+                        if attempted_user.totp and not (totp_code and totp.verify(totp_code)):
+                            return utils.show_error('The two factor'
+                                ' authentication code entered is invalid.')
                     session['current_user'] = attempted_user.id
                     session['current_user_ts'] = \
                             attempted_user.register_timestamp
-                    return redirect("/")
+                    return redirect("/")              
                 else:
                     return utils.show_error('The account you\'re attempting to'
                                             ' access has been banned.')
