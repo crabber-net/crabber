@@ -78,7 +78,9 @@ def register_blueprints(app):
 app, limiter = create_app()
 
 if config.TOTP_ENABLED:
-    global totp; totp = TOTP(app.config['TOTP_SECRET'], 
+    secret = sha256()
+    secret.update(app.config['TOTP_SECRET'].encode('utf-8'))
+    global totp; totp = TOTP(secret.hexdigest(),
         digest=sha256, issuer=app.config['TOTP_ISSUER'])
 
 captcha = hCaptcha(app)
