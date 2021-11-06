@@ -97,7 +97,7 @@
                 <!-- Dynamic values -->
                 <input type="hidden" name="display_name" value="">
                 <input type="hidden" name="description" value="">
-                <button type="submit" id="save-button" class="btn btn-primary rounded-pill d-none"><strong>Save changes</strong></button>
+                <button type="submit" id="save-button" class="btn btn-primary rounded-pill hidden"><strong>Save changes</strong></button>
             </form>
             {% endif %}
         </div>
@@ -105,6 +105,7 @@
             <strong class="profile-box-display-name"
                 {% if current_page == "own-profile" %}
                     onkeypress="return (this.innerText.length <= 32)" contentEditable
+                    onclick="showEditor('name')"
                 {% endif %}>
                 {{this_user.display_name}}</strong>
             {% if this_user.verified %}
@@ -124,11 +125,20 @@
                 {% endif %}
             </p>
         </div>
-        <div class="profile-box-description w-100"
-            {% if current_page == "own-profile" %}
-                contentEditable
-            {% endif %}>
-            {{this_user.description}}
+        <div class="profile-box-description w-100">
+            <div id="rich-description"
+                 {% if current_page == 'own-profile' %}
+                 class="editable-description"
+                 onclick="showEditor('description');"
+                 {% endif %}
+            >
+                {{this_user.rich_description|safe}}
+            </div>
+            {% if current_page == 'own-profile' %}
+            <div class="hidden" id="editable-description">
+                <textarea id="description-editor">{{this_user.description}}</textarea>
+            </div>
+        {% endif %}
         </div>
         <div class="profile-box-join-date text-muted mt-1">
             <!-- Location -->
@@ -446,24 +456,39 @@
         window.history.pushState({}, '', newLocation.href);
     }
 
-    // Display save button when a change is made
-    $("[contentEditable]").one("input", function() {
-        $("#save-button").removeClass("d-none");
-    })
+    function showEditor(focus) {
+        $('strong.profile-box-display-name').addClass('active');
+        $('div#rich-description.editable-description').addClass('hidden');
+        $('div#editable-description').removeClass('hidden');
+        $('#save-button').removeClass('hidden');
+
+        if (focus != undefined) {
+            if (focus == 'description') {
+                let descriptionEditor = document.getElementById('description-editor');
+                descriptionEditor.focus();
+                descriptionEditor.setSelectionRange(
+                    descriptionEditor.value.length,
+                    descriptionEditor.value.length
+                );
+            }
+            else if (focus == 'name') {
+                let nameEditor = $('.profile-box-display-name')[0];
+                nameEditor.focus();
+            }
+        }
+    }
 
     function savedescription() {
         let displayName = $('.profile-box-display-name')[0].innerText.trim();
-        let description = $('.profile-box-description')[0].innerText.trim();
+        let description = document.getElementById('description-editor').value.trim();
 
         // Verify lengths
         if (displayName.length < 1) {
-            alert("Display name cannot be empty.")
-            $('.profile-box-display-name')[0].innerText = "~change me~";
+            alert('Display name cannot be empty.')
             return false;
         }
         if (description.length < 1) {
-            alert("User description cannot be empty.")
-            $('.profile-box-description')[0].innerText = "~change me~";
+            alert('Description cannot be empty.')
             return false;
         }
 

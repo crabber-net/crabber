@@ -1011,9 +1011,20 @@ div.mini-molt:hover div.mini-molt:hover {
     /* margin-top: -0.5em; */
     overflow: hidden;
 }
-[contentEditable]:focus, [contentEditable]:hover {
+[contentEditable]:focus, [contentEditable]:hover, [contentEditable].active,
+div#rich-description.editable-description:hover,
+div#editable-description textarea{
     border: 1px solid var(--primary-faded-less);
+    border-radius: .25em;
     outline: none;
+}
+strong.profile-box-display-name {
+    display: inline-block;
+    min-width: 2em;
+}
+div#rich-description, div#editable-description textarea {
+    width: 100%;
+    background: none;
 }
 .profile-box-category {
     transition: ease-in-out 150ms color, background-color;
