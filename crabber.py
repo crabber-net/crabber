@@ -13,6 +13,7 @@ import patterns
 from typing import Iterable, Tuple, Union
 import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
+from flask_qrcode import QRcode
 from hashlib import sha256
 from pyotp import TOTP
 
@@ -81,6 +82,7 @@ if config.TOTP_ENABLED:
         digest=sha256, issuer=app.config['TOTP_ISSUER'])
 
 captcha = hCaptcha(app)
+QRcode(app)
 
 if app.config['PROFILER_ENABLED']:
     app.wsgi_app = ProfilerMiddleware(
@@ -560,14 +562,16 @@ def settings():
                 blocks[block] = render_template(
                     f'settings-ajax-{block}.html',
                     current_page='settings',
-                    current_user=utils.get_current_user()
+                    current_user=utils.get_current_user(),
+                    totp=totp
                 )
             return jsonify(blocks)
         else:
             return render_template(
                 'settings.html',
                 current_page='settings',
-                current_user=utils.get_current_user()
+                current_user=utils.get_current_user(),
+                totp=totp
             )
     else:
         return redirect("/login")
