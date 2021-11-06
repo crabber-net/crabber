@@ -1,0 +1,27 @@
+{% if molt.deleted %}
+    <button type="submit" name="action" value="restore_molt">
+        Restore molt
+    </button>
+{% else %}
+    {% if molt.approved %}
+        <button type="submit" name="action" value="unapprove_molt">
+            Unapprove molt
+        </button>
+    {% else %}
+        <button type="submit" name="action" value="approve_molt">
+            Approve molt
+        </button>
+    {% endif %}
+    <button type="submit" name="action" value="delete_molt">
+        Delete molt
+    </button>
+{% endif %}
+{% if molt.nsfw %}
+    <button type="submit" name="action" value="sfw_molt">
+        Mark SFW
+    </button>
+{% else %}
+    <button type="submit" name="action" value="nsfw_molt">
+        Mark NSFW
+    </button>
+{% endif %}

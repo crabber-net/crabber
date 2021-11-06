@@ -511,7 +511,8 @@ class Crab(db.Model):
             ) \
             .filter(
                 Notification.type.in_(
-                    ('other', 'trophy', 'mention', 'quote', 'reply', 'follow')
+                    ('other', 'warning', 'trophy', 'mention', 'quote', 'reply',
+                     'follow')
                 )
             )
         notifs = other.union(
@@ -1897,6 +1898,11 @@ class ModLog(db.Model):
         elif self.action == 'unban':
             action_text = (
                 f'unbanned user (@{self.crab.username})'
+            )
+        elif self.action == 'warn':
+            action_text = (
+                f'warned user (@{self.crab.username}, '
+                f'message: "{self.additional_context}")'
             )
         elif self.action == 'clear_username':
             action_text = (

@@ -1304,6 +1304,9 @@ body, .master-container {
 .notif-icon {
   left: -36px;
 }
+.notif-warning {
+    fill: var(--warning);
+}
 .notif-other, .notif-reply, .notif-follow {
     fill: var(--reply);
 }
@@ -1322,12 +1325,20 @@ body, .master-container {
 .notif-trophy {
     fill: #7b600e;
 }
-
 .notif-unread {
     background: var(--unread-notif-background);
 }
 .notif-unread:hover {
     background: var(--unread-notif-background-hover) !important;
+}
+
+.moderator-warning {
+    display: block;
+    padding: 1em;
+    margin: 0.5em 0;
+    border-left: 5px solid var(--border-dark);
+    border-radius: 0.5em;
+    background-color: var(--dark-less);
 }
 
 .tiny-reply-context {
@@ -2325,4 +2336,9 @@ a:active.text-primary {
     bottom: 0;
     top: 0;
     margin: auto;
+}
+
+.moderation-form {
+    display: block;
+    padding: 1em;
 }

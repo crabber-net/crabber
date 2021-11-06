@@ -1,0 +1,48 @@
+<button type="submit" name="action" value="clear_description">
+    Clear description
+</button>
+<button type="submit" name="action" value="clear_display_name">
+    Clear display name
+</button>
+<button type="submit" name="action" value="clear_username">
+    Clear username
+</button>
+{% if current_user.is_admin %}
+    <br>
+    {% if crab.verified %}
+        <button type="submit" name="action" value="unverify_user">
+            Unverify user
+        </button>
+    {% else %}
+        <button type="submit" name="action" value="verify_user">
+            Verify user
+        </button>
+    {% endif %}
+    <div class="mt-2">
+        <input type="text" name="trophy_title"
+               placeholder="trophy title">
+        <button type="submit" name="action" value="award_trophy">
+            Award
+        </button>
+    </div>
+{% endif %}
+<div class="mt-2">
+    <input type="text" name="warn_message"
+           placeholder="warning">
+    <button type="submit" name="action" value="warn">
+        Issue warning
+    </button>
+</div>
+<div class="mt-2">
+    {% if crab.banned %}
+        <button type="submit" name="action" value="unban">
+            Unban
+        </button>
+    {% else %}
+        <input type="text" name="ban_reason"
+               placeholder="reason (for user's email)">
+        <button type="submit" name="action" value="ban">
+            Ban
+        </button>
+    {% endif %}
+</div>

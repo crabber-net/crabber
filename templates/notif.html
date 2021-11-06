@@ -1,5 +1,7 @@
 {% import "macros.jinja" as macros %}
 
+{% set show_avatar = count == 1 and notif.type not in ('other', 'trophy', 'warning') %}
+
 <div class="notif mini-molt border-bottom border-dark p-2 d-flex flex-row absolute-container {{'' if notif.read else 'notif-unread'}}"
     {% if notif.type == 'trophy' %}
         onclick="location.href='/user/{{current_user.username}}?tab=trophies'"
@@ -12,9 +14,12 @@
     <div class="notif-indent ml-5 mr-2 w-100">
         <div class="notif-icon-row">
             {% if notif.type == "other" %}
-
                 <svg class="notif-icon notif-other" width="26" height="26" data-jam="bell-f">
                     <use href="{{sprite_url}}?version={{server_start}}#bell-f"></use>
+                </svg>
+            {% elif notif.type == "warning" %}
+                <svg class="notif-icon notif-warning" width="26" height="26" data-jam="triange-danger-f">
+                    <use href="{{sprite_url}}?version={{server_start}}#triangle-danger-f"></use>
                 </svg>
             {% elif notif.type == "trophy" %}
 
@@ -57,15 +62,22 @@
                     <use href="{{sprite_url}}?version={{server_start}}#skull-f"></use>
                 </svg>
             {% endif %}
-            {% if count == 1 and notif.type != "other" and notif.type != "trophy" %}
+            {% if show_avatar %}
                 <a href="/user/{{notif.sender.username}}" class="zindex-front">
                     <div class="rounded-circle px26 notif-unfollow profile-picture" style="background-image: url('{{notif.sender.avatar}}');"></div>
                 </a>
             {% endif %}
         </div>
-        <div class="notif-header-row {{'mt-2' if notif.type != 'other' and notif.type != 'trophy' and count == 1 else 'mt-1'}}">
+        <div class="notif-header-row {{'mt-2' if show_avatar else 'mt-1'}}">
             {% if notif.type == "other" %}
                 {{notif.content}}
+            {% elif notif.type == "warning" %}
+                <strong class="text-warning">
+                    You have recieved the following warning from a moderator:
+                </strong>
+                <em class="moderator-warning">
+                    {{notif.content}}
+                </em>
             {% elif notif.type == "trophy" %}
                 You earned the trophy: <strong>{{notif.content}}</strong>!
             {% elif notif.type == "mention" %}

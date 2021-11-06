@@ -167,12 +167,26 @@ def moderation_actions() -> Response:
                     return 'No reason provided for ban.'
 
             # Unban user
-            if action == 'unban':
+            elif action == 'unban':
                 crab.unban()
                 return return_and_log(
                     action=action,
                     crab=crab, molt=molt
                 )
+
+            # Issue warning to user
+            elif action == 'warn':
+                message = request.form.get('warn_message')
+                if message is not None:
+                    message = message.strip()
+                    crab.notify(type='warning', content=message)
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt,
+                        additional_context=message
+                    )
+                else:
+                    return 'No warning message provided.'
 
             # Clear user's username
             elif action == 'clear_username':
