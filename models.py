@@ -2,7 +2,7 @@ import config
 import datetime
 import email.utils
 import extensions
-from flask import escape, render_template, render_template_string, url_for
+from flask import render_template, render_template_string, url_for
 from flask_sqlalchemy import BaseQuery
 import json
 from passlib.hash import sha256_crypt
@@ -120,6 +120,12 @@ class Crab(db.Model):
         """ Returns integer timestamp of user's registration
         """
         return int(self.register_time.timestamp())
+
+    @property
+    def rich_description(self):
+        """ Returns user's description parsed into rich HTML.
+        """
+        return utils.parse_rich_content(self.description, include_media=False)
 
     @property
     def bio(self):
@@ -1202,100 +1208,22 @@ class Molt(db.Model):
             self.nsfw = False
             db.session.commit()
 
-    def semantic_content(self) -> str:
+    def semantic_content(self):
         """ Return Molt content (including embeds, tags, and mentions)
             rasterized as semantic HTML. (For RSS feeds and other external
             applications)
         """
-        # Escape/sanitize user submitted content
-        new_content = str(escape(self.content))
-        new_content, _ = Molt.label_links(new_content)
-
-        # Preserve newlines
-        new_content = new_content.strip().replace("\n", "<br>")
-
-        # Convert mentions into anchor tags
-        new_content = Molt.label_mentions(new_content, absolute_url=True)
-
-        # Convert crabtags into anchor tags
-        new_content = Molt.label_crabtags(new_content, absolute_url=True)
-
-        # Add <img/>
-        if self.image:
-            new_content += (
-                f' <img src="{self.image}" />'
-            )
-
-        # Add link to quoted Molt
-        if self.is_quote:
-            new_content += f' <a href="{self.original_molt.href}">' \
-                f'{self.original_molt.href}</a>'
-
-        return f'<p>{new_content}</p>'
+        quoted_molt = self.original_molt if self.is_quote else None
+        return utils.parse_semantic_content(self.content, self.image,
+                                            quoted_molt=quoted_molt)
 
     def rich_content(self, full_size_media=False):
         """ Return Molt content (including embeds, tags, and mentions)
-            rasterized as HTML.
+            rasterized as rich HTML.
         """
-        # Escape/sanitize user submitted content
-        new_content = str(escape(self.content))
-
-        # Render youtube link to embedded iframe
-        if patterns.youtube.search(new_content):
-            youtube_id = patterns.youtube.search(new_content).group(1)
-            youtube_embed = render_template_string(
-                f'{{% with video="{youtube_id}" %}}'
-                '   {% include "youtube.html" %}'
-                '{% endwith %}'
-            )
-            new_content = patterns.youtube.sub('', new_content)
-        else:
-            youtube_embed = "<!-- no valid youtube links found -->"
-
-        # Render giphy link to embedded iframe
-        if patterns.giphy.search(new_content):
-            giphy_id = patterns.giphy.search(new_content).group(1)
-            giphy_embed = render_template_string(
-                f'{{% with giphy_id="{giphy_id}" %}}'
-                '   {% include "giphy.html" %}'
-                '{% endwith %}',
-                full_size_media=full_size_media)
-            new_content = patterns.giphy.sub('', new_content)
-        else:
-            giphy_embed = "<!-- no valid giphy links found -->"
-
-        # Render external image link to external_img macro
-        if patterns.ext_img.search(new_content):
-            image_link = patterns.ext_img.search(new_content).group(1)
-            ext_img_embed = render_template_string(
-                f'{{% with link="{image_link}" %}}'
-                '  {% include "external_img.html" %}'
-                '{% endwith %}',
-                full_size_media=full_size_media)
-            new_content = patterns.ext_img.sub('', new_content)
-        else:
-            ext_img_embed = "<!-- no valid external image links found -->"
-
-        new_content, _ = Molt.label_links(new_content)
-
-        link_card = '<!-- no cards created -->'
-        if self.card:
-            if self.card.ready:
-                link_card = render_template('link-card.html', card=self.card,
-                                            nsfw=self.nsfw)
-
-        # Preserve newlines
-        new_content = new_content.strip().replace('\n', '<br>')
-        # Preserve spaces
-        new_content = new_content.strip().replace('  ', ' &nbsp;')
-
-        # Convert mentions into anchor tags
-        new_content = Molt.label_mentions(new_content)
-        # Convert crabtags into anchor tags
-        new_content = Molt.label_crabtags(new_content)
-
-        return new_content + giphy_embed + ext_img_embed + youtube_embed  \
-            + link_card
+        return utils.parse_rich_content(self.content,
+                                        full_size_media=full_size_media,
+                                        nsfw=self.nsfw, card=self.card)
 
     def dict(self):
         """ Serialize Molt into dictionary.
@@ -1586,122 +1514,6 @@ class Molt(db.Model):
                                                banned=False)) \
                 .filter_by(deleted=False)
         return molt.first()
-
-    @staticmethod
-    def label_links(content: str, max_len: int = 35,
-                    include_markdown: bool = True) \
-        -> Tuple[str, List[str]]:
-        """ Replace links with HTML tags.
-
-            :param content: The text to parse.
-            :param max_len: Maximum length of visible URLs in characters.
-            :param include_markdown: Whether to parse markdown-style links
-                before unformatted ones. If markdown links are present then
-                this is necessary to avoid garbled output.
-            :returns: (new_content, list of urls found)
-        """
-        output = content[:]
-        urls = list()
-        if include_markdown:
-            output, new_urls = Molt.label_md_links(output)
-            urls.extend(new_urls)
-        match = patterns.ext_link.search(output)
-        if match:
-            start, end = match.span()
-            url = match.group(1)
-            urls.append(url)
-            displayed_url = url if len(url) <= max_len \
-                else url[:max_len - 3] + '...'
-
-            # Parse recursively before building output
-            recursive_content, recursive_urls = Molt.label_links(output[end:])
-            urls.extend(recursive_urls)
-
-            output = (
-                output[:start],
-                f'<a href="{url}" class="no-onclick mention zindex-front" \
-                target="_blank">{displayed_url}</a>',
-                recursive_content
-            )
-            output = ''.join(output)
-
-        return output, urls
-
-    @staticmethod
-    def label_md_links(content) -> Tuple[str, List[str]]:
-        """ Replace markdown links with HTML tags.
-
-            :param content: The text to parse.
-            :returns: (new_content, list of urls found)
-        """
-        output = content[:]
-        urls = list()
-        match = patterns.ext_md_link.search(output)
-        if match:
-            start, end = match.span()
-            url = match.group(2)
-            urls.append(url)
-            url_name = match.group(1)
-
-            # Parse recursively before building output
-            recursive_content, recursive_urls = Molt.label_md_links(output[end:])
-            urls.extend(recursive_urls)
-
-            output = [
-                output[:start],
-                f'<a href="{url}" class="no-onclick mention \
-                zindex-front" target="_blank">{url_name}</a>',
-                recursive_content
-            ]
-            output = ''.join(output)
-
-        return output, urls
-
-    @staticmethod
-    def label_mentions(content, absolute_url=False):
-        """ Replace mentions with HTML links to users.
-        """
-        output = content
-        match = patterns.mention.search(output)
-        base_url = config.BASE_URL if absolute_url else ''
-        if match:
-            start, end = match.span()
-            username_str = output[start:end] \
-                    .replace('<br>', '') \
-                    .strip("@ \t\n")
-            username = Crab.query.filter_by(deleted=False, banned=False) \
-                .filter(Crab.username.ilike(username_str)).first()
-            if username:
-                output = [
-                    output[:start],
-                    f'<a href="{base_url}/user/{match.group(1)}" \
-                    class="no-onclick mention zindex-front"> \
-                    {output[start:end]}</a>',
-                    Molt.label_mentions(output[end:])
-                ]
-                output = ''.join(output)
-            else:
-                output = output[:end] + Molt.label_mentions(output[end:])
-        return output
-
-    @staticmethod
-    def label_crabtags(content, absolute_url=False):
-        """ Replace crabtags with HTML links to crabtag exploration page.
-        """
-        output = content
-        match = patterns.tag.search(output)
-        base_url = config.BASE_URL if absolute_url else ''
-        if match:
-            start, end = match.span()
-            output = [
-                output[:start],
-                f'<a href="{base_url}/crabtag/{match.group(1)}" \
-                class="no-onclick crabtag zindex-front"> \
-                {output[start:end]}</a>',
-                Molt.label_crabtags(output[end:])
-            ]
-            output = ''.join(output)
-        return output
 
     @classmethod
     def create(cls, author, content, **kwargs):

@@ -3,7 +3,8 @@ from crabatar import Crabatar
 import crabber
 import datetime
 import extensions
-from flask import redirect, request
+from flask import escape, redirect, render_template, render_template_string, \
+    request
 import geoip2.database
 from geoip2.errors import AddressNotFoundError
 from sqlalchemy import func
@@ -12,7 +13,7 @@ import models
 import patterns
 import random
 import turtle_images
-from typing import Optional
+from typing import Optional, Tuple
 import uuid
 from werkzeug.wrappers import Response
 
@@ -764,3 +765,226 @@ def is_banned(ip_addr: str) -> bool:
             return False
 
     return False
+
+
+def parse_semantic_content(content, image=None, quoted_molt=None) -> str:
+    """ Return content string (including embeds, tags, and mentions) rendered
+        as semantic HTML. (For RSS feeds and other external applications)
+    """
+    # Escape/sanitize user submitted content
+    new_content = str(escape(content))
+    new_content, _ = label_links(new_content)
+
+    # Preserve newlines
+    new_content = new_content.strip().replace("\n", "<br>")
+
+    # Convert mentions into anchor tags
+    new_content = label_mentions(new_content, absolute_url=True)
+
+    # Convert crabtags into anchor tags
+    new_content = label_crabtags(new_content, absolute_url=True)
+
+    # Add <img/>
+    if image:
+        new_content += (
+            f' <img src="{image}" />'
+        )
+
+    # Add link to quoted Molt
+    if quoted_molt:
+        new_content += f' <a href="{quoted_molt.href}">' \
+            f'{quoted_molt.href}</a>'
+
+    return f'<p>{new_content}</p>'
+
+
+def parse_rich_content(content, include_media=True, full_size_media=False,
+                       preserve_whitespace=True, nsfw=False, card=None):
+    """ Parse content string (including embeds, tags, and mentions) and render
+        it as rich HTML.
+    """
+    # Escape/sanitize user submitted content
+    new_content = str(escape(content))
+
+    if include_media:
+        # Render youtube link to embedded iframe
+        if patterns.youtube.search(new_content):
+            youtube_id = patterns.youtube.search(new_content).group(1)
+            youtube_embed = render_template_string(
+                f'{{% with video="{youtube_id}" %}}'
+                '   {% include "youtube.html" %}'
+                '{% endwith %}'
+            )
+            new_content = patterns.youtube.sub('', new_content)
+        else:
+            youtube_embed = "<!-- no valid youtube links found -->"
+
+        # Render giphy link to embedded iframe
+        if patterns.giphy.search(new_content):
+            giphy_id = patterns.giphy.search(new_content).group(1)
+            giphy_embed = render_template_string(
+                f'{{% with giphy_id="{giphy_id}" %}}'
+                '   {% include "giphy.html" %}'
+                '{% endwith %}',
+                full_size_media=full_size_media)
+            new_content = patterns.giphy.sub('', new_content)
+        else:
+            giphy_embed = "<!-- no valid giphy links found -->"
+
+        # Render external image link to external_img macro
+        if patterns.ext_img.search(new_content):
+            image_link = patterns.ext_img.search(new_content).group(1)
+            ext_img_embed = render_template_string(
+                f'{{% with link="{image_link}" %}}'
+                '  {% include "external_img.html" %}'
+                '{% endwith %}',
+                full_size_media=full_size_media)
+            new_content = patterns.ext_img.sub('', new_content)
+        else:
+            ext_img_embed = "<!-- no valid external image links found -->"
+
+
+        link_card = '<!-- no cards created -->'
+        if card:
+            if card.ready:
+                link_card = render_template('link-card.html', card=card,
+                                            nsfw=nsfw)
+
+
+    new_content, _ = label_links(new_content)
+
+    if preserve_whitespace:
+        # Preserve newlines
+        new_content = new_content.strip().replace('\n', '<br>')
+        # Preserve spaces
+        new_content = new_content.strip().replace('  ', ' &nbsp;')
+
+    # Convert mentions into anchor tags
+    new_content = label_mentions(new_content)
+    # Convert crabtags into anchor tags
+    new_content = label_crabtags(new_content)
+
+    if include_media:
+        return new_content + giphy_embed + ext_img_embed + youtube_embed  \
+            + link_card
+    else:
+        return new_content
+
+
+def label_links(content: str, max_len: int = 35,
+                include_markdown: bool = True) \
+    -> Tuple[str, List[str]]:
+    """ Replace links with HTML tags.
+
+        :param content: The text to parse.
+        :param max_len: Maximum length of visible URLs in characters.
+        :param include_markdown: Whether to parse markdown-style links
+            before unformatted ones. If markdown links are present then
+            this is necessary to avoid garbled output.
+        :returns: (new_content, list of urls found)
+    """
+    output = content[:]
+    urls = list()
+    if include_markdown:
+        output, new_urls = label_md_links(output)
+        urls.extend(new_urls)
+    match = patterns.ext_link.search(output)
+    if match:
+        start, end = match.span()
+        url = match.group(1)
+        urls.append(url)
+        displayed_url = url if len(url) <= max_len \
+            else url[:max_len - 3] + '...'
+
+        # Parse recursively before building output
+        recursive_content, recursive_urls = label_links(output[end:])
+        urls.extend(recursive_urls)
+
+        output = (
+            output[:start],
+            f'<a href="{url}" class="no-onclick mention zindex-front" \
+            target="_blank">{displayed_url}</a>',
+            recursive_content
+        )
+        output = ''.join(output)
+
+    return output, urls
+
+
+def label_md_links(content) -> Tuple[str, List[str]]:
+    """ Replace markdown links with HTML tags.
+
+        :param content: The text to parse.
+        :returns: (new_content, list of urls found)
+    """
+    output = content[:]
+    urls = list()
+    match = patterns.ext_md_link.search(output)
+    if match:
+        start, end = match.span()
+        url = match.group(2)
+        urls.append(url)
+        url_name = match.group(1)
+
+        # Parse recursively before building output
+        recursive_content, recursive_urls = label_md_links(output[end:])
+        urls.extend(recursive_urls)
+
+        output = [
+            output[:start],
+            f'<a href="{url}" class="no-onclick mention \
+            zindex-front" target="_blank">{url_name}</a>',
+            recursive_content
+        ]
+        output = ''.join(output)
+
+    return output, urls
+
+
+def label_mentions(content, absolute_url=False):
+    """ Replace mentions with HTML links to users.
+    """
+    output = content
+    match = patterns.mention.search(output)
+    base_url = config.BASE_URL if absolute_url else ''
+    if match:
+        start, end = match.span()
+        username_str = output[start:end] \
+                .replace('<br>', '') \
+                .strip("@ \t\n")
+        username = models.Crab.query. \
+            filter_by(deleted=False, banned=False) \
+            .filter(models.Crab.username.ilike(username_str)) \
+            .first()
+        if username:
+            output = [
+                output[:start],
+                f'<a href="{base_url}/user/{match.group(1)}" \
+                target="_blank" class="no-onclick mention zindex-front"> \
+                {output[start:end]}</a>',
+                label_mentions(output[end:])
+            ]
+            output = ''.join(output)
+        else:
+            output = output[:end] + label_mentions(output[end:])
+    return output
+
+
+def label_crabtags(content, absolute_url=False):
+    """ Replace crabtags with HTML links to crabtag exploration page.
+    """
+    output = content
+    match = patterns.tag.search(output)
+    base_url = config.BASE_URL if absolute_url else ''
+    if match:
+        start, end = match.span()
+        output = [
+            output[:start],
+            f'<a href="{base_url}/crabtag/{match.group(1)}" \
+            target="_blank" class="no-onclick crabtag zindex-front"> \
+            {output[start:end]}</a>',
+            label_crabtags(output[end:])
+        ]
+        output = ''.join(output)
+    return output
+
