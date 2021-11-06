@@ -1017,6 +1017,7 @@ div#editable-description textarea{
     border: 1px solid var(--primary-faded-less);
     border-radius: .25em;
     outline: none;
+    color: inherit;
 }
 strong.profile-box-display-name {
     display: inline-block;

@@ -136,7 +136,7 @@
             </div>
             {% if current_page == 'own-profile' %}
             <div class="hidden" id="editable-description">
-                <textarea id="description-editor">{{this_user.description}}</textarea>
+                <textarea id="description-editor" rows=3 maxlength={{limits['description']}}>{{this_user.description}}</textarea>
             </div>
         {% endif %}
         </div>
