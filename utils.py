@@ -135,185 +135,192 @@ def moderation_actions() -> Response:
     """
     current_user = get_current_user()
     action = request.form.get('action')
-    crab_id = request.form.get('crab_id')
-    molt_id = request.form.get('molt_id')
-    molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
-    crab = models.Crab.get_by_ID(crab_id, include_invalidated=True) \
-        or molt.author
 
     if current_user and current_user.is_moderator:
-        if not current_user.is_admin:
-            current_user.award('Unlimited Power!')
+        # Check if a mod action requested at all
+        if action:
+            crab_id = request.form.get('crab_id')
+            molt_id = request.form.get('molt_id')
+            molt = models.Molt.get_by_ID(molt_id, include_invalidated=True)
+            crab = models.Crab.get_by_ID(crab_id, include_invalidated=True) \
+                or molt.author
 
-        if crab:
-            if crab.is_moderator and not current_user.is_admin:
-                return return_and_log(
-                    action='attempted_action_on_mod',
-                    crab=crab, molt=molt
-                )
+            # Award moderator trophy
+            if not current_user.is_admin:
+                current_user.award('Unlimited Power!')
 
-            # Ban user
-            if action == 'ban':
-                reason = request.form.get('ban_reason')
-                if reason is not None:
-                    reason = reason.strip()
-                    crab.ban(reason)
+            if crab:
+                if crab.is_moderator and not current_user.is_admin:
                     return return_and_log(
-                        action=action,
-                        crab=crab, molt=molt,
-                        additional_context=reason
+                        action='attempted_action_on_mod',
+                        crab=crab, molt=molt
                     )
-                else:
-                    return 'No reason provided for ban.'
 
-            # Unban user
-            elif action == 'unban':
-                crab.unban()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt
-                )
-
-            # Issue warning to user
-            elif action == 'warn':
-                message = request.form.get('warn_message')
-                if message is not None:
-                    message = message.strip()
-                    crab.notify(type='warning', content=message)
-                    return return_and_log(
-                        action=action,
-                        crab=crab, molt=molt,
-                        additional_context=message
-                    )
-                else:
-                    return 'No warning message provided.'
-
-            # Clear user's username
-            elif action == 'clear_username':
-                old_username = crab.username
-                crab.username = f'change_me_{hexID(6)}'
-                db.session.commit()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt,
-                    additional_context=old_username
-                )
-
-            # Clear user's display name
-            elif action == 'clear_display_name':
-                old_display_name = crab.display_name
-                crab.display_name = 'Unnamed Crab'
-                db.session.commit()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt,
-                    additional_context=old_display_name
-                )
-
-            # Clear user's description
-            elif action == 'clear_description':
-                old_description = crab.description
-                crab.description = (
-                    'This description has been reset by a moderator.'
-                )
-                db.session.commit()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt,
-                    additional_context=old_description
-                )
-
-            # Verify user
-            elif action == 'verify_user':
-                crab.verify()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt
-                )
-
-            # Revoke user's verification
-            elif action == 'unverify_user':
-                crab.unverify()
-                return return_and_log(
-                    action=action,
-                    crab=crab, molt=molt
-                )
-
-            # Award trophy
-            elif action == 'award_trophy':
-                trophy_title = request.form.get('trophy_title')
-                if trophy_title:
-                    try:
-                        trophy_case = crab.award(title=trophy_title)
-                        if trophy_case:
-                            return return_and_log(
-                                action=action,
-                                crab=crab, molt=molt,
-                                additional_context=trophy_case.trophy.title
-                            )
-                        else:
-                            return 'User already awarded trophy.'
-                    except models.NotFoundInDatabase:
-                        return (
-                            'Could not find trophy matching title: '
-                            + trophy_title
+                # Ban user
+                if action == 'ban':
+                    reason = request.form.get('ban_reason')
+                    if reason is not None:
+                        reason = reason.strip()
+                        crab.ban(reason)
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt,
+                            additional_context=reason
                         )
-                else:
-                    return 'No trophy title provided.'
+                    else:
+                        return 'No reason provided for ban.'
 
-            if molt:
-                # Approve molt
-                if action == 'approve_molt':
-                    molt.approve()
+                # Unban user
+                elif action == 'unban':
+                    crab.unban()
                     return return_and_log(
                         action=action,
                         crab=crab, molt=molt
                     )
 
-                # Unapprove molt
-                if action == 'unapprove_molt':
-                    molt.unapprove()
+                # Issue warning to user
+                elif action == 'warn':
+                    message = request.form.get('warn_message')
+                    if message is not None:
+                        message = message.strip()
+                        crab.notify(type='warning', content=message)
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt,
+                            additional_context=message
+                        )
+                    else:
+                        return 'No warning message provided.'
+
+                # Clear user's username
+                elif action == 'clear_username':
+                    old_username = crab.username
+                    crab.username = f'change_me_{hexID(6)}'
+                    db.session.commit()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt,
+                        additional_context=old_username
+                    )
+
+                # Clear user's display name
+                elif action == 'clear_display_name':
+                    old_display_name = crab.display_name
+                    crab.display_name = 'Unnamed Crab'
+                    db.session.commit()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt,
+                        additional_context=old_display_name
+                    )
+
+                # Clear user's description
+                elif action == 'clear_description':
+                    old_description = crab.description
+                    crab.description = (
+                        'This description has been reset by a moderator.'
+                    )
+                    db.session.commit()
+                    return return_and_log(
+                        action=action,
+                        crab=crab, molt=molt,
+                        additional_context=old_description
+                    )
+
+                # Verify user
+                elif action == 'verify_user':
+                    crab.verify()
                     return return_and_log(
                         action=action,
                         crab=crab, molt=molt
                     )
 
-                # Delete molt
-                elif action == 'delete_molt':
-                    molt.delete()
+                # Revoke user's verification
+                elif action == 'unverify_user':
+                    crab.unverify()
                     return return_and_log(
                         action=action,
                         crab=crab, molt=molt
                     )
 
-                # Restore molt
-                elif action == 'restore_molt':
-                    molt.restore()
-                    return return_and_log(
-                        action=action,
-                        crab=crab, molt=molt
-                    )
+                # Award trophy
+                elif action == 'award_trophy':
+                    trophy_title = request.form.get('trophy_title')
+                    if trophy_title:
+                        try:
+                            trophy_case = crab.award(title=trophy_title)
+                            if trophy_case:
+                                return return_and_log(
+                                    action=action,
+                                    crab=crab, molt=molt,
+                                    additional_context=trophy_case.trophy.title
+                                )
+                            else:
+                                return 'User already awarded trophy.'
+                        except models.NotFoundInDatabase:
+                            return (
+                                'Could not find trophy matching title: '
+                                + trophy_title
+                            )
+                    else:
+                        return 'No trophy title provided.'
 
-                # Label molt NSFW
-                elif action == 'nsfw_molt':
-                    molt.label_nsfw()
-                    return return_and_log(
-                        action=action,
-                        crab=crab, molt=molt
-                    )
+                if molt:
+                    # Approve molt
+                    if action == 'approve_molt':
+                        molt.approve()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
 
-                # Remove NSFW label from molt
-                elif action == 'sfw_molt':
-                    molt.label_sfw()
-                    return return_and_log(
-                        action=action,
-                        crab=crab, molt=molt
-                    )
-            return f'Invalid action: {dict(request.form)}'
+                    # Unapprove molt
+                    if action == 'unapprove_molt':
+                        molt.unapprove()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
+
+                    # Delete molt
+                    elif action == 'delete_molt':
+                        molt.delete()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
+
+                    # Restore molt
+                    elif action == 'restore_molt':
+                        molt.restore()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
+
+                    # Label molt NSFW
+                    elif action == 'nsfw_molt':
+                        molt.label_nsfw()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
+
+                    # Remove NSFW label from molt
+                    elif action == 'sfw_molt':
+                        molt.label_sfw()
+                        return return_and_log(
+                            action=action,
+                            crab=crab, molt=molt
+                        )
+                return f'Invalid action: {dict(request.form)}'
+            else:
+                return 'Malformed request.'
         else:
-            return 'Malformed request.'
+            return common_molt_actions()
     else:
         return 'Not allowed.'
+
 
 def common_molt_actions() -> Response:
     """
