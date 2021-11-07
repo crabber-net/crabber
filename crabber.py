@@ -1271,7 +1271,6 @@ def before_request():
                                     'longer exists.', '/login')
         # Potential database rollback or exploit
         elif crab.register_timestamp != current_user_ts:
-            print(crab.register_timestamp, current_user_ts)
             if current_user_ts:
                 # Force logout
                 session['current_user'] = None

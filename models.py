@@ -1271,7 +1271,6 @@ class Molt(db.Model):
             else:
                 return None
             reply = reply.order_by(Molt.timestamp).first()
-            print(reply)
         return reply
 
     def get_reply_from_following(self, crab):
