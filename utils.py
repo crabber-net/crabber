@@ -546,6 +546,11 @@ def common_molt_actions() -> Response:
             if website:
                 website = website.strip()
 
+            if not disp_name:
+                return show_error('Your display name cannot be blank.')
+            if not desc:
+                return show_error('Your description cannot be blank.')
+
             # Bio JSON assembly
             new_bio = target_user.bio
             for key, value in request.form.items():
