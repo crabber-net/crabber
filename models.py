@@ -366,8 +366,10 @@ class Crab(db.Model):
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id.in_(following_ids)) \
             .filter(following_table.c.following_id.notin_(following_ids)) \
+            .group_by(Crab.id) \
             .filter(Crab.banned == False, Crab.deleted == False) \
-            .filter(Crab.id != self.id)
+            .filter(Crab.id != self.id) \
+            .order_by(func.count(Crab.id).desc())
         recommended = self.filter_user_query_by_not_blocked(recommended)
 
         return recommended.limit(limit).all()
