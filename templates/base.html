@@ -735,12 +735,16 @@
                     </div>
                     <div class="panel-content">
                         <div>
-                        admins:
-                        {{admins}}
+                            platform: {{request.user_agent.platform}}
                         </div>
                         <div>
-                        mods:
-                        {{moderators}}
+                            browser: {{request.user_agent.browser}}
+                        </div>
+                        <div>
+                            admins: {{admins}}
+                        </div>
+                        <div>
+                            mods: {{moderators}}
                         </div>
                         <!-- Put values you want to monitor here -->
                     </div>
