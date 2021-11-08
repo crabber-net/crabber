@@ -544,19 +544,11 @@ def common_molt_actions() -> Response:
     elif action == "update_description":
         target_user = models.Crab.query.filter_by(id=request.form.get('user_id')).first()
         if target_user == get_current_user():
-            disp_name = request.form.get('display_name').strip()
-            desc = request.form.get('description').strip()
+            # Retrieve form fields
+            disp_name = request.form.get('display_name')
+            desc = request.form.get('description')
             location = request.form.get('location')
             website = request.form.get('website')
-            if location:
-                location = location.strip()
-            if website:
-                website = website.strip()
-
-            if not disp_name:
-                return show_error('Your display name cannot be blank.')
-            if not desc:
-                return show_error('Your description cannot be blank.')
 
             # Bio JSON assembly
             new_bio = target_user.bio
@@ -564,27 +556,45 @@ def common_molt_actions() -> Response:
                 if "bio." in key:
                     new_bio[key.split(".")[1].strip()] = value.strip()
 
-            # Overwrite values with restricted ones
-            for key, value in new_bio.items():
-                new_bio[key] = value[0:LIMITS[key]]
-            if (location): location = location[0:LIMITS["location"]]
-            if (disp_name): disp_name = disp_name[0:LIMITS["display_name"]]
-            if (website): website = website[0:LIMITS["website"]]
-            if (desc): desc = desc[0:LIMITS["description"]]
+            # Strip and trim values
+            new_bio = {
+                key: trim_strip(value, LIMITS.get(key, 512))
+                for key, value in new_bio.items()
+                if value.strip()  # Filter key if value empty
+            }
+            if location:
+                location = trim_strip(location, LIMITS['location'])
+            if disp_name:
+                disp_name = trim_strip(disp_name, LIMITS['display_name'])
+            if website:
+                website = trim_strip(website, LIMITS['website'])
+            if desc:
+                desc = trim_strip(desc, LIMITS['description'])
 
+            # Abort if client-side validation was bypassed
+            if not disp_name:
+                return show_error('Your display name cannot be blank.')
+            if not desc:
+                return show_error('Your description cannot be blank.')
+
+
+            # Prepend protocol identifier if omitted
+            if website:
+                if not website.startswith('http'):
+                    website = 'https://' + website
+
+            # Update Crab fields and commit to database
             current_user = get_current_user()
             current_user.display_name = disp_name
             current_user.description = desc
-            if location:
-                current_user.location = location
-            if website:
-                if not website.startswith('http'):
-                    website = 'http://' + website
-                current_user.website = website
+            current_user.location = location
+            current_user.website = website
             current_user.raw_bio = json.dumps(new_bio)
+
             db.session.commit()
-            if request.form.get('page') == "settings":
-                return show_message("Changes saved.")
+
+            if request.form.get('page') == 'settings':
+                return show_message('Changes saved.')
 
     elif action == "update_account":
         target_user = get_current_user()
@@ -1014,3 +1024,8 @@ def label_crabtags(content, absolute_url=False):
         output = ''.join(output)
     return output
 
+
+def trim_strip(value, length):
+    """ Strips whitespace from a string before trimming it to length.
+    """
+    return value.strip()[:length]
