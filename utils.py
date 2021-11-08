@@ -347,6 +347,9 @@ def common_molt_actions() -> Response:
                 current_user = get_current_user()
                 current_user.avatar = img_url
                 db.session.commit()
+
+                current_user.check_customization_trophies()
+
                 return redirect(request.path)
             else:
                 return show_error("File must be either a jpg, jpeg, or png")
@@ -369,6 +372,9 @@ def common_molt_actions() -> Response:
                 current_user = get_current_user()
                 current_user.banner = img_url
                 db.session.commit()
+
+                current_user.check_customization_trophies()
+
                 return redirect(request.path)
             else:
                 return show_error("File must be either a jpg, jpeg, or png")
@@ -592,6 +598,8 @@ def common_molt_actions() -> Response:
             current_user.raw_bio = json.dumps(new_bio)
 
             db.session.commit()
+
+            current_user.check_customization_trophies()
 
             if request.form.get('page') == 'settings':
                 return show_message('Changes saved.')

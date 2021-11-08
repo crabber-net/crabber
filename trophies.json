@@ -11,11 +11,12 @@
     },
     {
         "title": "Life of the Party",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
         "description": "Have 100 followers"
     },
     {
         "title": "Celebrity",
-        "description": "Have 1000 followers"
+        "description": "Have 1,000 followers"
     },
     {
         "title": "Baby Crab",
@@ -24,12 +25,33 @@
     },
     {
         "title": "Pineapple Express",
-        "description": "Use the crabtag %420"
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Find the hidden crabtag"
+    },
+    {
+        "title": "Mega Freakoid",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Find the hidden crabtag"
+    },
+    {
+        "title": "i can haz cheezburger?",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Find the hidden crabtag"
+    },
+    {
+        "title": "f7u12",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Find the hidden crabtag"
+    },
+    {
+        "title": "Back to the Future",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Find the hidden crabtag"
     },
     {
         "title": "I Want it That Way",
         "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
-        "description": "Change your avatar, banner, and description"
+        "description": "Change your avatar, banner, description, and bio"
     },
     {
         "title": "Dopamine Hit",
@@ -76,5 +98,23 @@
     {
         "title": "Unlimited Power!",
         "description": "Serve on Crabber's moderation team"
+    },
+    {
+        "title": "Loudmouth",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Post 1,000 molts"
+    },
+    {
+        "title": "Please Stop",
+        "description": "Post 10,000 molts"
+    },
+    {
+        "title": "20/20",
+        "image": "https://cdn.crabber.net/trophies/default_trophy_silver.png",
+        "description": "Achive a follow ratio of 20 or higher while following at least 20 users"
+    },
+    {
+        "title": "The Golden Ratio",
+        "description": "Achieve a crazy high follow ratio"
     }
 ]

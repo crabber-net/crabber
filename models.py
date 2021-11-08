@@ -596,18 +596,12 @@ class Crab(db.Model):
 
             # Create follow notification
             crab.notify(sender=self, type="follow")
-            # Check if awards are applicable:
-            follower_count = crab.follower_count
-            if follower_count == 1:
-                crab.award(title="Social Newbie")
-            elif follower_count == 10:
-                crab.award(title="Mingler")
-            elif follower_count == 100:
-                crab.award(title="Life of the Party")
-            elif follower_count == 1000:
-                crab.award(title="Celebrity")
+
+            # Award applicable trophies
+            self.check_follower_count_trophies()
+            crab.check_follower_count_trophies()
             if self.verified:
-                crab.award(title="I Captivated the Guy")
+                crab.award(title='I Captivated the Guy')
 
             db.session.commit()
 
@@ -629,6 +623,16 @@ class Crab(db.Model):
         """
         kwargs['nsfw'] = kwargs.get('nsfw', self.nsfw)
         new_molt = Molt.create(author=self, content=content, **kwargs)
+
+        # Award molt count trophies
+        molt_count = self.molt_count
+        if molt_count >= 10_000:
+            self.award(title='Please Stop')
+        if molt_count >= 1_000:
+            self.award(title='Loudmouth')
+        if molt_count == 1:
+            self.author.award(title='Baby Crab')
+
         return new_molt
 
     def delete(self):
@@ -877,6 +881,40 @@ class Crab(db.Model):
                 )
             ))
         return query
+
+    def check_customization_trophies(self):
+        """ Checks if user is eligable for profile customization trophies and
+            awards them as necessary.
+        """
+        if all((
+            self.description != 'This user has no description.',
+            'user_uploads' in self.banner,
+            'user_uploads' in self.avatar,
+            self.raw_bio != '{}'
+        )):
+            self.award('I Want it That Way')
+
+    def check_follower_count_trophies(self):
+        """ Checks if user is eligable for follower count trophies and awards
+            them as necessary.
+        """
+        following_count = self.following_count
+        follower_count = self.follower_count
+        if follower_count == 1:
+            self.award(title='Social Newbie')
+        elif follower_count == 10:
+            self.award(title='Mingler')
+        elif follower_count == 100:
+            self.award(title='Life of the Party')
+        elif follower_count == 1_000:
+            self.award(title='Celebrity')
+
+        if following_count >= 20:
+            follower_ratio = follower_count / following_count
+            if follower_ratio >= 20:
+                self.award(title='20/20')
+            if follower_ratio >= 100:
+                self.award(title='The Golden Ratio')
 
     def filter_user_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
         """ Filters a Crab query by users who have not blocked/been blocked by
@@ -1181,10 +1219,18 @@ class Molt(db.Model):
             user.notify(sender=self.author, type="mention", molt=self)
 
         # Award trophies where applicable:
-        if self.author.query_molts().count() == 1:
-            self.author.award(title="Baby Crab")
-        if "420" in self.raw_tags:
-            self.author.award(title="Pineapple Express")
+
+        lowercase_tags = [tag.lower() for tag in self.raw_tags.splitlines()]
+        if '420' in lowercase_tags:
+            self.author.award(title='Pineapple Express')
+        if 'waaahhhh' in lowercase_tags:
+            self.author.award(title='Mega Freakoid')
+        if 'lolcat' in lowercase_tags:
+            self.author.award(title='i can haz cheezburger?')
+        if 'fffffffuuuuuuuuuuuu' in lowercase_tags:
+            self.author.award(title='f7u12')
+        if '1985' in lowercase_tags:
+            self.author.award(title='Back to the Future')
 
     def approve(self):
         """ Approve Molt so it doesn't show in reports page.
