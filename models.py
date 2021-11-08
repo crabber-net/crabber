@@ -362,14 +362,18 @@ class Crab(db.Model):
             .join(following_table, Crab.id == following_table.c.following_id) \
             .filter(following_table.c.follower_id == self.id) \
             .filter(Crab.banned == False, Crab.deleted == False)
-        recommended = db.session.query(Crab) \
-            .join(following_table, Crab.id == following_table.c.following_id) \
-            .filter(following_table.c.follower_id.in_(following_ids)) \
-            .filter(following_table.c.following_id.notin_(following_ids)) \
-            .group_by(Crab.id) \
-            .filter(Crab.banned == False, Crab.deleted == False) \
-            .filter(Crab.id != self.id) \
-            .order_by(func.count(Crab.id).desc())
+        if following_ids.count():
+            recommended = db.session.query(Crab) \
+                .join(following_table, Crab.id == following_table.c.following_id) \
+                .filter(following_table.c.follower_id.in_(following_ids)) \
+                .filter(following_table.c.following_id.notin_(following_ids)) \
+                .group_by(Crab.id) \
+                .filter(Crab.banned == False, Crab.deleted == False) \
+                .filter(Crab.id != self.id) \
+                .order_by(func.count(Crab.id).desc())
+        else:
+            recommended = Crab.query_most_popular() \
+                .with_entities(Crab)
         recommended = self.filter_user_query_by_not_blocked(recommended)
 
         return recommended.limit(limit).all()
