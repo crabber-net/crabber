@@ -1380,8 +1380,9 @@ body, .master-container {
 /* Notification nav icon badge */
 .notif-badge {
     background: var(--primary);
-    border-radius: 100%;
-    width: 20px;
+    border-radius: 10px;
+    min-width: 20px;
+    padding: 0.1em;
     position: absolute;
     height: 20px;
     font-size: 13px;
