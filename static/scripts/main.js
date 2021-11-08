@@ -337,6 +337,8 @@ function editImageDescription(src, alt) {
     modal.find('input[name=img_src]').attr('value', src);
     if (alt != undefined) {
         modal.find('input[name=img_description]').attr('value', alt);
+    } else {
+        modal.find('input[name=img_description]').attr('value', null);
     }
     modal.modal('show');
 }
