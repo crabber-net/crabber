@@ -344,6 +344,15 @@ def common_molt_actions() -> Response:
                     return show_error('The image you\'re attempting to upload '
                                       'is either corrupted or not a valid '
                                       'image file.')
+
+                # Save alt text if provided
+                img_description = request.form.get('img_description')
+                if img_description:
+                    models.ImageDescription.set(
+                        src=img_url,
+                        alt=img_description
+                    )
+
                 current_user = get_current_user()
                 current_user.avatar = img_url
                 db.session.commit()
@@ -369,6 +378,15 @@ def common_molt_actions() -> Response:
                     return show_error('The image you\'re attempting to upload '
                                       'is either corrupted or not a valid '
                                       'image file.')
+
+                # Save alt text if provided
+                img_description = request.form.get('img_description')
+                if img_description:
+                    models.ImageDescription.set(
+                        src=img_url,
+                        alt=img_description
+                    )
+
                 current_user = get_current_user()
                 current_user.banner = img_url
                 db.session.commit()
@@ -394,7 +412,15 @@ def common_molt_actions() -> Response:
                 if img.filename != '':
                     if img and allowed_file(img.filename):
                         img_attachment = upload_image(img)
-                        if img_attachment is None:
+                        if img_attachment:
+                            img_description = \
+                                request.form.get('img_description')
+                            if img_description:
+                                models.ImageDescription.set(
+                                    src=img_attachment,
+                                    alt=img_description
+                                )
+                        else:
                             return show_error('The image you\'re attempting '
                                               'to upload is either corrupted '
                                               'or not a valid image file.')
@@ -467,6 +493,15 @@ def common_molt_actions() -> Response:
     elif action == "unfollow":
         target_user = models.Crab.query.filter_by(id=request.form.get('target_user')).first()
         get_current_user().unfollow(target_user)
+
+    elif action == "change_image_description":
+        img_src = request.form.get('img_src')
+        img_description = request.form.get('img_description')
+
+        if img_src and img_description:
+            models.ImageDescription.set(img_src, img_description)
+        else:
+            return show_error('Malformed request')
 
     elif action == "submit_molt_edit":
         target_molt = models.Molt.query.filter_by(id=molt_id).first()

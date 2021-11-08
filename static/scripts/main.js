@@ -175,7 +175,6 @@ function updateImgPreview(imgInput) {
 
     reader.onloadend = function() {
         // Update image preview
-        console.log(imgPreview);
         $(imgPreview).parent().removeClass("d-none");
         // DEBUG: What was this for???
         // imgPreview.css("background-image", `url('${reader.result}')`);
@@ -324,14 +323,27 @@ function getImageSrc(el) {
     return $(el).find('img[src], div[src]').attr('src');
 }
 
+function getImageAlt(el) {
+    return $(el).find('img[src], div[src]').attr('alt');
+}
 
-function expandImage(url) {
+function editImageDescription(src, alt) {
+    const modal = $('#image_description_modal');
+    modal.find('input[name=img_src]').attr('value', src);
+    if (alt != undefined) {
+        modal.find('input[name=img_description]').attr('value', alt);
+    }
+    modal.modal('show');
+}
+
+function expandImage(src, alt) {
     const modal = $('#image_modal');
     const body = modal.children('.image-modal-body')[0];
     var image = document.createElement('img');
-    image.setAttribute("src", url);
+    image.setAttribute("src", src);
+    image.setAttribute("alt", alt);
     image.setAttribute('onclick', 'toggleModal("#image_modal")');
-    if (body.children[0]) 
+    if (body.children[0])
         body.removeChild(body.children[0]);
     body.appendChild(image);
     modal.modal('show');
@@ -517,6 +529,29 @@ function deleteRemolt(elem) {
             let remoltCounter = remoltBtn.find('.mini-molt-action-counter');
             let remoltCount = parseInt(remoltCounter.text()) + 1;
             remoltCounter.text(remoltCount);
+        },
+    );
+}
+
+function submitImageDescription(elem) {
+    let form = $(elem).closest('form');
+    // Hide modal
+    toggleModal('#image_description_modal')
+
+
+    // Ajax submit form
+    SubForm(form, url=null,
+        success = function() {
+            makeToast(
+                'Success',
+                'The image\'s description was updated successfully.'
+            );
+        },
+        error = function() {
+            makeToast(
+                'Failed to update image description',
+                'Sorry! Try again in a few seconds.'
+            );
         },
     );
 }

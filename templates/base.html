@@ -362,6 +362,41 @@
             {% endif %}
             </div>
 
+            <!-- Edit image description modal -->
+            <div class="modal fade" id="image_description_modal" tabindex="-1" role="dialog" aria-labelledby="imageDescriptionModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header py-2 border-dark modal-left-align">
+                            <button type="button" class="close text-primary" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>Editing image description</strong>
+                        </div>
+                        <div class="modal-body row m-1 w-100 d-block">
+                            <form method="POST">
+                                <input type="hidden" name="user_action" value="change_image_description">
+                                <input type="hidden" name="img_src" value="">
+
+                                <div class="mb-2 input-group cool-input">
+                                    <div class="input-group-prepend">
+                                        <label class="input-group-text" for="img-description">Alt Text</label>
+                                    </div>
+                                    <input type="text" name="img_description"
+                                           class="form-control" id="img-description"
+                                           placeholder="image description (optional)"
+                                           autocomplete="off" required>
+                                </div>
+                                <button onclick="submitImageDescription(this)" type="button" class="btn btn-primary rounded-pill float-right">
+                                    <strong>
+                                        Update
+                                    </strong>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Molt modal -->
             <div class="modal fade draft-modal" id="compose_modal" tabindex="-1" role="dialog" aria-labelledby="composeModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -383,8 +418,11 @@
                                     <div class="mini-compose-textarea">
                                         <textarea onfocus="currentForm = this.form;" onfocusout="currentForm = null;" name="molt_content" rows="5" class="my-2 w-100"
                                             placeholder="How are you feeling?"></textarea>
-                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                                            <img class="img-preview w-100 rounded-media"></img>
+                                        <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
+                                            <input type="text" name="img_description" placeholder="image description"
+                                                   class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
+                                                   autocomplete="off">
+                                            <img class="img-preview w-100">
                                         </div>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
@@ -453,8 +491,11 @@
                                     <div class="mini-compose-reply-textarea">
                                         <textarea onfocus="currentForm = this.form;" onfocusout="currentForm = null;" name="molt_content" rows="5" class="my-2 w-100"
                                             placeholder="Remember to be kind"></textarea>
-                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                                            <img class="img-preview w-100 rounded-media"></img>
+                                        <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
+                                            <input type="text" name="img_description" placeholder="image description"
+                                                   class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
+                                                   autocomplete="off">
+                                            <img class="img-preview w-100"></img>
                                         </div>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">
@@ -524,8 +565,11 @@
                                     <div class="mini-compose-reply-textarea">
                                         <textarea onfocus="currentForm = this.form;" onfocusout="currentForm = null;" name="molt_content" rows="5" class="my-2 w-100"
                                             placeholder="Remember to be kind"></textarea>
-                                        <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                                            <img class="img-preview w-100 rounded-media"></img>
+                                        <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
+                                            <input type="text" name="img_description" placeholder="image description"
+                                                   class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
+                                                   autocomplete="off">
+                                            <img class="img-preview w-100"></img>
                                         </div>
                                     </div>
                                     <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">

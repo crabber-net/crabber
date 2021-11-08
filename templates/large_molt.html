@@ -59,11 +59,14 @@
         <div class="mini-molt-content large-molt-text">
             <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
             <!-- End-users won't have any idea what this comment is referring to :) -->
+            {% if molt.content %}
             <p class="mb-2"><span class="zindex-front not-clickable">{{molt.rich_content(full_size_media=True)|safe}}</span></p>
+            {% endif %}
 
             {% if molt.image %}
             <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                <img class="w-100 rounded-media" src="{{molt.image}}" alt="Attached image">
+                <img class="w-100 rounded-media" src="{{molt.image}}"
+                     alt="{{molt.image | alt_text}}"/>
             </div>
             {% endif %}
         </div>
