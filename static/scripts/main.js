@@ -328,6 +328,11 @@ function getImageAlt(el) {
 }
 
 function editImageDescription(src, alt) {
+    // Hide dropdown
+    setTimeout(function() {
+        $(document).trigger('click')
+    }, 20);
+
     const modal = $('#image_description_modal');
     modal.find('input[name=img_src]').attr('value', src);
     if (alt != undefined) {

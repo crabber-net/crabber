@@ -382,10 +382,10 @@
                         {% endif %}
 
                         {% if author.id == current_user.id %}
-                            <!-- MARK SFW BUTTON -->
+                            <!-- EDIT ALT TEXT BUTTON -->
                             {% if molt.image %}
                             <form class="dropdown-item clickable">
-                                <div onClick="editImageDescription('{{molt.image}}', '{{molt.image | alt_text('')}}')">
+                                <div onClick="editImageDescription('{{molt.image}}', '{{molt.image | alt_text('') | string_escape}}')">
                                     <svg width="19" height="19" data-jam="picture">
                                         <use href="{{sprite_url}}?version={{server_start}}#picture"></use>
                                     </svg>

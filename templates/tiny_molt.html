@@ -200,8 +200,8 @@
                                 </form>
                             {% endif %}
 
-                            <!-- DELETE BUTTON -->
                             {% if author.id == current_user.id %}
+                                <!-- DELETE BUTTON -->
                                 <form class="dropdown-item clickable" method="POST">
                                     <input type="hidden" name="user_action" value="delete_molt">
                                     <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -214,6 +214,19 @@
                                         Delete Molt
                                     </div>
                                 </form>
+
+                                <!-- EDIT ALT TEXT BUTTON -->
+                                {% if molt.image %}
+                                <form class="dropdown-item clickable">
+                                    <div onClick="editImageDescription('{{molt.image}}', '{{molt.image | alt_text('') | string_escape}}')">
+                                        <svg width="19" height="19" data-jam="picture">
+                                            <use href="{{sprite_url}}?version={{server_start}}#picture"></use>
+                                        </svg>
+                                        Edit image description
+                                    </div>
+                                </form>
+                                {% endif %}
+
                             <!-- REMOLT DELETE BUTTON -->
                             {% elif is_remolt and remolt_shell.author.id == current_user.id %}
                                 <form class="dropdown-item clickable" method="POST">

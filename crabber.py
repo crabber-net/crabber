@@ -2,8 +2,8 @@ import calendar
 import config
 from crab_mail import CrabMail
 import datetime
-from flask import abort, Flask, jsonify, render_template, request, redirect, \
-    send_from_directory, session
+from flask import abort, escape, Flask, jsonify, render_template, request, \
+    redirect, send_from_directory, session
 from flask_hcaptcha import hCaptcha
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -1193,10 +1193,17 @@ def alt_text(url, fallback_text=None):
     """ Attempts to get the alt text for a given image url.
     """
     text = models.ImageDescription.get_alt(url)
-    return text or (
+    text = text or (
         fallback_text if fallback_text is not None
         else 'No description provided.'
     )
+    return escape(text)
+
+@app.template_filter()
+def string_escape(value):
+    """ Escapes string to fit in quotations.
+    """
+    return value.replace("'", "\\'").replace('"', '\\"')
 
 @app.template_filter()
 def pretty_url(url, length=35):
