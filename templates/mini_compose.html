@@ -13,8 +13,10 @@
             <div class="mini-compose-textarea">
                 <textarea  onfocusout="currentForm = null;" name="molt_content" rows="5" class="my-2 w-100"
                     placeholder="{{placeholder}}" onfocus="expandMoltBox(this);currentForm = this.form;"></textarea>
-                <div class="large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                    <img class="img-preview w-100 rounded-media"></img>
+                <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
+                    <input type="text" name="img_description" placeholder="image description"
+                                                              class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();">
+                    <img class="img-preview w-100">
                 </div>
             </div>
             <div class="mini-molt-actions d-flex flex-row justify-content-end w-100 compose-button-row">

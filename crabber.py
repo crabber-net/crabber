@@ -1188,6 +1188,15 @@ def commafy(value):
     """
     return format(int(value), ',d')
 
+@app.template_filter()
+def alt_text(url, fallback_text=None):
+    """ Attempts to get the alt text for a given image url.
+    """
+    text = models.ImageDescription.get_alt(url)
+    return text or (
+        fallback_text if fallback_text is not None
+        else 'No description provided.'
+    )
 
 @app.template_filter()
 def pretty_url(url, length=35):

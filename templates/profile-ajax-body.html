@@ -391,13 +391,24 @@
             <div class="modal-body">
                 <p class="text-muted">Recommended size: 500x500</p>
                 <!-- Avatar upload form -->
-                <form method="POST" enctype="multipart/form-data" class="d-flex flex-row justify-content-between">
+                <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="user_action" value="change_avatar">
-                    <div class="d-inline-block profile-file-select">
-                        <input name="file" class="text-muted file-input" type="file" accept="image/x-png,image/jpeg, image/png" required>
+                    <div class="mb-2 input-group cool-input">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="avatar-description">Alt Text</label>
+                        </div>
+                        <input type="text" name="img_description"
+                               class="form-control" id="avatar-description"
+                               placeholder="image description (optional)"
+                               autocomplete="off">
                     </div>
-                    <div class="d-inline-block">
-                        <button type="submit" onclick="$(this).children().text('Posting...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="d-inline-block profile-file-select">
+                            <input name="file" class="text-muted file-input" type="file" accept="image/x-png,image/jpeg, image/png" required>
+                        </div>
+                        <div class="d-inline-block">
+                            <button type="submit" onclick="$(this).children().text('Posting...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -418,13 +429,24 @@
             <div class="modal-body">
                 <p class="text-muted">Recommended size: 1500x500</p>
                 <!-- Banner upload form -->
-                <form method="POST" enctype="multipart/form-data" class="d-flex flex-row justify-content-between">
+                <form method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="user_action" value="change_banner">
-                    <div class="d-inline-block profile-file-select">
-                        <input name="file" class="text-muted file-input" type="file" accept="image/x-png,image/jpeg, image/png" required>
+                    <div class="mb-2 input-group cool-input">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="avatar-description">Alt Text</label>
+                        </div>
+                        <input type="text" name="img_description"
+                               class="form-control" id="avatar-description"
+                               placeholder="image description (optional)"
+                               autocomplete="off">
                     </div>
-                    <div class="d-inline-block">
-                        <button type="submit" onclick="$(this).children().text('Posting...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="d-inline-block profile-file-select">
+                            <input name="file" class="text-muted file-input" type="file" accept="image/x-png,image/jpeg, image/png" required>
+                        </div>
+                        <div class="d-inline-block">
+                            <button type="submit" onclick="$(this).children().text('Posting...')" class="btn btn-primary rounded-pill mini-btn"><strong>Upload</strong></button>
+                        </div>
                     </div>
                 </form>
             </div>

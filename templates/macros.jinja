@@ -1,5 +1,5 @@
 {% macro expand_img() %}
-    style="cursor: pointer;" onclick="expandImage(getImageSrc(this));"
+    style="cursor: pointer;" onclick="expandImage(getImageSrc(this), getImageAlt(this));"
 {% endmacro %}
 
 {% macro verified(size) %}

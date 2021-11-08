@@ -2020,3 +2020,42 @@ class ModLog(db.Model):
         db.session.add(log)
         db.session.commit()
         return log
+
+
+class ImageDescription(db.Model):
+    __tablename__ = 'image_description'
+
+    id = db.Column(db.Integer, primary_key=True)
+    src = db.Column(db.String(1024))
+    alt = db.Column(db.String(1024))
+
+    def __repr__(self) -> str:
+        return f'<ImageDescription {self.src!r}>'
+
+    @classmethod
+    def get(cls, src: str) -> Optional['ImageDescription']:
+        """ Gets image description object by image source URL.
+        """
+        return cls.query.filter_by(src=src).first()
+
+    @classmethod
+    def get_alt(cls, src: str) -> Optional[str]:
+        """ Gets image description string by image source URL.
+        """
+        desc = cls.query.filter_by(src=src).first()
+        if desc:
+            return desc.alt
+
+    @classmethod
+    def set(cls, src: str, alt: str) -> 'ImageDescription':
+        """ Creates image description by image source URL.
+        """
+        desc = cls.query.filter_by(src=src).first()
+        if desc:
+            desc.alt = alt
+            db.session.commit()
+        else:
+            desc = cls(src=src, alt=alt)
+            db.session.add(desc)
+            db.session.commit()
+        return desc
