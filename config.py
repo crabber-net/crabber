@@ -102,5 +102,5 @@ REGISTRATION_ENABLED = getenv_bool('REGISTRATION_ENABLED', True)
 
 LIMITS = {  "age": 32, "pronouns": 64, "quote": 256, "jam": 256,
             "obsession": 256, "remember": 256, "emoji": 32,
-            "description": 512, "website": 256, "location": 128,
+            "description": 512, "website": 512, "location": 128,
             "display_name": 64  }
