@@ -55,3 +55,7 @@
 .logo {
     fill: var(--primary);
 }
+
+.toast-header {
+    background-color: var(--dark-less);
+}

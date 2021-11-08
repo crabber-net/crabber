@@ -2314,10 +2314,19 @@ a:active.text-primary {
 
 .toast {
     width: 20em;
+    background-color: var(--dark-lesser);
+}
+
+.toast-header {
+    background-color: var(--dark-lesserest);
 }
 
 .toast-header img {
     width: 1.5em;
+}
+
+.toast-header button.close {
+    color: var(--light);
 }
 
 .hidden {
