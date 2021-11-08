@@ -373,6 +373,7 @@ class Crab(db.Model):
                 .order_by(func.count(Crab.id).desc())
         else:
             recommended = Crab.query_most_popular() \
+                .filter(Crab.id != self.id) \
                 .with_entities(Crab)
         recommended = self.filter_user_query_by_not_blocked(recommended)
 
