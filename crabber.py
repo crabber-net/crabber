@@ -2,6 +2,7 @@ import calendar
 import config
 from crab_mail import CrabMail
 import datetime
+from dateutil.relativedelta import relativedelta
 from flask import abort, escape, Flask, jsonify, render_template, request, \
     redirect, send_from_directory, session
 from flask_hcaptcha import hCaptcha
@@ -1216,6 +1217,17 @@ def pretty_url(url, length=35):
         url = f'{url[:length - 3]}...'
     return url
 
+@app.template_filter()
+def format_dob(dob: str):
+    """ Format ISO-8601 as current age in years.
+        Any other strings will be passed through.
+    """
+    try:
+        dob_dt = datetime.datetime.fromisoformat(dob)
+        age = relativedelta(datetime.datetime.now(), dob_dt).years
+        return age
+    except (ValueError, TypeError):
+        return dob
 
 @app.template_filter()
 def pretty_age(time: Union[datetime.datetime, int]):

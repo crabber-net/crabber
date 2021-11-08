@@ -254,10 +254,12 @@
                         {% for key, value in this_user.bio.items() %}
                         <tr>
                             <th>{{bio_names[key]}}</th>
-                            <td class="bio-field-value"
-                                data-key="{{bio_names[key]}}"
-                                data-value="{{value}}">
+                            <td class="bio-field-value">
+                                {% if key == 'age' %}
+                                {{value | format_dob}}
+                                {% else %}
                                 {{value}}
+                                {% endif %}
                             </td>
                         </tr>
                         {% else %}
@@ -525,15 +527,4 @@
         // Submit form
         return true;
     }
-
-    $(document).ready(function() {
-        let ageField = $('.bio-field-value[data-key="Age"]');
-        // Gigantic regex inbound lmao (matches ISO-8601 formatted dates)
-        if (ageField.data('value').toString().match(/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/)) {
-            let birthday = new Date(ageField.data('value'));
-            let ageMs = new Date() - birthday;
-            let age = Math.abs((new Date(ageMs)).getUTCFullYear() - 1970);
-            ageField.text(age);
-        }
-    });
 </script>
