@@ -3,6 +3,7 @@ import config
 from crab_mail import CrabMail
 import datetime
 from dateutil.relativedelta import relativedelta
+from dateutil.parser import isoparse
 from flask import abort, escape, Flask, jsonify, render_template, request, \
     redirect, send_from_directory, session
 from flask_hcaptcha import hCaptcha
@@ -1223,7 +1224,7 @@ def format_dob(dob: str):
         Any other strings will be passed through.
     """
     try:
-        dob_dt = datetime.datetime.fromisoformat(dob)
+        dob_dt = isoparse(dob)
         age = relativedelta(datetime.datetime.now(), dob_dt).years
         return age
     except (ValueError, TypeError):
