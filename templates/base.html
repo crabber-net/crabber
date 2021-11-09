@@ -779,10 +779,10 @@
                     </div>
                     <div class="panel-content">
                         <div>
-                            platform: {{request.user_agent.platform}}
+                            platform: {{user_agent.os.family}}
                         </div>
                         <div>
-                            browser: {{request.user_agent.browser}}
+                            browser: {{user_agent.browser.family}}
                         </div>
                         <div>
                             admins: {{admins}}

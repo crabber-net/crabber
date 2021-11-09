@@ -15,8 +15,9 @@ import os
 import patterns
 import random
 import turtle_images
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import uuid
+import user_agents
 from werkzeug.wrappers import Response
 
 db = extensions.db
@@ -403,8 +404,8 @@ def common_molt_actions() -> Response:
                     request.form.get("molt_content"),
                     nsfw=request.form.get("nsfw") == "true",
                     image=img_attachment,
-                    platform=request.user_agent.platform,
-                    browser=request.user_agent.browser,
+                    platform=parse_user_agent().os.family,
+                    browser=parse_user_agent().browser.family,
                     address=request.remote_addr,
                 )
                 return redirect(
@@ -1063,3 +1064,11 @@ def format_dob(dob: str):
         return age
     except (ValueError, TypeError):
         return dob
+
+
+def parse_user_agent():
+    """Returns the user-agent header parsed into an object."""
+    user_agent = request.headers.get('user-agent')
+    if user_agent:
+        user_agent = user_agents.parse(user_agent)
+    return user_agent
