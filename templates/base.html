@@ -859,8 +859,10 @@
 
         // IT WAS THAT EASY THE WHOLE TIME???
         const target = document.getElementById('content-body');
-        document.addEventListener('wheel', function(event) {
-            target.scrollTop += event.deltaY;
+        $('.master-container div.row.h-100').on('wheel', function(event) {
+            if (event.target.closest('#content-body') == null) {
+                target.scrollTop += event.originalEvent.deltaY;
+            }
         });
     </script>
 </body>
