@@ -1371,6 +1371,7 @@ body, .master-container {
 
 .trophy {
     width: 150px;
+    text-align: center;
 }
 
 .stat {
