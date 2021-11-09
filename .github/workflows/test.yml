@@ -2,9 +2,8 @@ name: CI/Test
 
 on:
   pull_request:
-    types: [opened, synchronized, reopened]
+    types: [opened]
   push:
-    branches: [main]
 
 jobs:
 
