@@ -285,7 +285,7 @@ def login():
                     return redirect("/")
                 else:
                     return utils.show_error(
-                        "The account you're attempting to" " access has been banned."
+                        "The account you're attempting to access has been banned."
                     )
             else:
                 return utils.show_error("Incorrect password.")
@@ -318,7 +318,7 @@ def forgot_password():
                 email_sent = True
             else:
                 return utils.show_error(
-                    "There was a problem sending your " "email. Please try again."
+                    "There was a problem sending your email. Please try again."
                 )
         else:
             # Crab not found, still displaying "email sent" for security
@@ -363,7 +363,7 @@ def reset_password():
                     hide_sidebar=True,
                 )
     return utils.show_error(
-        "Password reset link is either invalid or " "expired.", redirect_url="/login"
+        "Password reset link is either invalid or expired.", redirect_url="/login"
     )
 
 
@@ -468,7 +468,7 @@ def signup():
                         )
                 else:
                     return redirect(
-                        "/signup?failed&error_msg=" "That username is taken"
+                        "/signup?failed&error_msg=That username is taken"
                     )
             else:
                 return redirect(
@@ -724,7 +724,7 @@ def molt_page(username, molt_id):
                 message="The author of this Molt has been banned.",
             )
         else:
-            social_title = f"{primary_molt.author.display_name}'s post on " "Crabber"
+            social_title = f"{primary_molt.author.display_name}'s post on Crabber"
             replies = primary_molt.query_replies()
             if current_user:
                 replies = current_user.filter_molt_query(replies)
@@ -1279,10 +1279,10 @@ def before_request():
             old_account = models.Crab.get_by_ID(id=crab_id, include_invalidated=True)
             if old_account and old_account.banned:
                 return utils.show_error(
-                    "The account you were logged into has " "been banned.", "/login"
+                    "The account you were logged into has been banned.", "/login"
                 )
             return utils.show_error(
-                "The account you were logged into no " "longer exists.", "/login"
+                "The account you were logged into no longer exists.", "/login"
             )
         # Potential database rollback or exploit
         elif crab.register_timestamp != current_user_ts:

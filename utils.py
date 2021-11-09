@@ -431,7 +431,7 @@ def common_molt_actions() -> Response:
                     )
                 else:
                     return show_error(
-                        "The Molt you're attempting to quote " "no longer exists."
+                        "The Molt you're attempting to quote no longer exists."
                     )
             elif action == "submit_reply_molt":
                 target_molt = (
@@ -454,7 +454,7 @@ def common_molt_actions() -> Response:
                     )
                 else:
                     return show_error(
-                        "The Molt you're attempting to reply to " "no longer exists."
+                        "The Molt you're attempting to reply to no longer exists."
                     )
         else:
             return show_error("Molts require either text or an image.")
@@ -660,7 +660,7 @@ def common_molt_actions() -> Response:
                         )
                 else:
                     return show_error(
-                        "Username must be at least 3 characters " "and less than 32"
+                        "Username must be at least 3 characters and less than 32"
                     )
             else:
                 return show_error("That username is taken")

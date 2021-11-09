@@ -44,7 +44,7 @@ def check_API_key():
     if key_object.crab.banned:
         return abort(
             400,
-            description="The account to which this API key " "belongs has been banned.",
+            description="The account to which this API key belongs has been banned.",
         )
 
 
@@ -95,7 +95,7 @@ def follow_crab(crab_ID):
                     return abort(400, description="Cannot follow self.")
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")
@@ -115,7 +115,7 @@ def unfollow_crab(crab_ID):
                 return "Unfollowed Crab.", 200
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")
@@ -306,7 +306,7 @@ def post_molt():
             else:
                 return abort(400, description="Missing required content.")
         else:
-            return abort(400, description="The authorized user no longer " "exists.")
+            return abort(400, description="The authorized user no longer exists.")
     else:
         return abort(401, description="This endpoint requires authentication.")
 
@@ -331,7 +331,7 @@ def get_molt(molt_ID):
                         )
                 else:
                     return abort(
-                        400, description="The authorized user no " "longer exists."
+                        400, description="The authorized user no longer exists."
                     )
             else:
                 return abort(401, description="This endpoint requires authentication.")
@@ -381,10 +381,10 @@ def edit_molt(molt_ID):
                     return abort(400, description="Molt is not editable.")
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
-            return abort(401, description="This endpoint requires " "authentication.")
+            return abort(401, description="This endpoint requires authentication.")
     else:
         return abort(404, description="No Molt with that ID.")
 
@@ -428,10 +428,10 @@ def quote_molt(molt_ID):
                     return abort(400, description="Missing required content.")
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
-            return abort(401, description="This endpoint requires " "authentication.")
+            return abort(401, description="This endpoint requires authentication.")
     else:
         return abort(404, description="No Molt with that ID.")
 
@@ -475,10 +475,10 @@ def reply_to_molt(molt_ID):
                     return abort(400, description="Missing required content.")
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
-            return abort(401, description="This endpoint requires " "authentication.")
+            return abort(401, description="This endpoint requires authentication.")
     else:
         return abort(404, description="No Molt with that ID.")
 
@@ -513,10 +513,10 @@ def remolt_molt(molt_ID):
                         return abort(400, description="No Remolt to delete.")
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
-            return abort(401, description="This endpoint requires " "authentication.")
+            return abort(401, description="This endpoint requires authentication.")
     else:
         return abort(404, description="No Molt with that ID.")
 
@@ -534,7 +534,7 @@ def bookmark_molt(molt_ID):
                 return "Bookmarked Molt.", 200
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")
@@ -555,7 +555,7 @@ def unbookmark_molt(molt_ID):
                 return "Unbookmarked Molt.", 200
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")
@@ -576,7 +576,7 @@ def like_molt(molt_ID):
                 return "Liked Molt.", 200
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")
@@ -597,7 +597,7 @@ def unlike_molt(molt_ID):
                 return "Unliked Molt.", 200
             else:
                 return abort(
-                    400, description="The authorized user no " "longer exists."
+                    400, description="The authorized user no longer exists."
                 )
         else:
             return abort(401, description="This endpoint requires authentication.")

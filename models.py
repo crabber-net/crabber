@@ -527,14 +527,14 @@ class Crab(db.Model):
         """Award user trophy by object or by title."""
         if trophy is None and title is None:
             raise TypeError(
-                "You must specify one of either trophy object or " "trophy title."
+                "You must specify one of either trophy object or trophy title."
             )
 
         # Query trophy by title
         if trophy is None:
             trophy_query = Trophy.query.filter(Trophy.title.ilike(title))
             if trophy_query.count() == 0:
-                raise NotFoundInDatabase(f"Trophy with title: '{title}' not" "found.")
+                raise NotFoundInDatabase(f"Trophy with title: '{title}' not found.")
             trophy = trophy_query.first()
 
         # Check trophy hasn't already been awarded to user
