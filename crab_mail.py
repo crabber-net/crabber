@@ -7,6 +7,7 @@ from typing import Optional
 
 class CrabMail:
     """Manages sending mail."""
+
     def __init__(self, address: str, password: str):
         self.address: str = address
         self.password: str = password

@@ -79,15 +79,10 @@ def show_message(
 
 
 def get_current_user():
-    """Retrieves the object of the currently logged-in user by ID.
-
-    :return: The logged in user
-    """
-    crab = crabber.session.get("current_user_object")
-    if not crab:
-        crab = models.Crab.get_by_ID(crabber.session.get("current_user"))
-        crabber.session["current_user_object"] = crab
-    return crab
+    """Retrieves the object of the currently logged-in user by ID."""
+    return models.Crab.query.filter_by(
+        id=crabber.session.get("current_user"), deleted=False
+    ).first()
 
 
 def validate_username(username: str) -> bool:

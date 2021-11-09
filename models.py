@@ -43,6 +43,7 @@ blocking_table = db.Table(
 
 class NotFoundInDatabase(BaseException):
     """Raised when requested item was not found in the database."""
+
     pass
 
 
@@ -265,7 +266,7 @@ class Crab(db.Model):
         return Notification.query_all().filter_by(recipient=self, read=False).count()
 
     @property
-    def pinned(self) -> Optional['Molt']:
+    def pinned(self) -> Optional["Molt"]:
         """Return user's currently pinned molt."""
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
 
@@ -1576,6 +1577,7 @@ class Molt(db.Model):
 
 class Like(db.Model):
     """Represents one like given to a Molt by a Crab."""
+
     __table_args__ = (db.UniqueConstraint("crab_id", "molt_id"),)
     id = db.Column(db.Integer, primary_key=True)
     crab_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1600,6 +1602,7 @@ class Like(db.Model):
 
 class Notification(db.Model):
     """Represents a notificaiton given to a Crab."""
+
     id = db.Column(db.Integer, primary_key=True)
     # Crab receiving notif
     recipient_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1659,6 +1662,7 @@ class Notification(db.Model):
 # Stores what users have what trophies
 class TrophyCase(db.Model):
     """Represents the possession of a Trophy by a Crab."""
+
     id = db.Column(db.Integer, primary_key=True)
     # Crab who owns trophy
     owner_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1684,6 +1688,7 @@ class Trophy(db.Model):
     Only one `Trophy` will exist per available trophy. Crabs are awarded `TrophyCase`
     instead.
     """
+
     id = db.Column(db.Integer, primary_key=True)
     # Short display title
     title = db.Column(db.String(32), nullable=False)
@@ -1702,6 +1707,7 @@ class Trophy(db.Model):
 
 class DeveloperKey(db.Model):
     """A key that grants API access to a developer under a given account."""
+
     __tablename__ = "developer_keys"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), nullable=False)
@@ -1737,6 +1743,7 @@ class DeveloperKey(db.Model):
 
 class AccessToken(db.Model):
     """A key that grants a developer to take action on behalf of a `Crab`."""
+
     __tablename__ = "access_tokens"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), nullable=False)
@@ -1772,6 +1779,7 @@ class AccessToken(db.Model):
 
 class Crabtag(db.Model):
     """Represents a specific crabtag used in at least one `Molt`."""
+
     __tablename__ = "crabtag"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -1826,6 +1834,7 @@ class Crabtag(db.Model):
 
 class Card(db.Model):
     """Represents a preview card for a URL."""
+
     __tablename__ = "card"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -1880,6 +1889,7 @@ class Card(db.Model):
 
 class Bookmark(db.Model):
     """Represents a `Crab`'s bookmark of a given `Molt`."""
+
     __tablename__ = "bookmark"
     __table_args__ = (db.UniqueConstraint("crab_id", "molt_id"),)
 
@@ -1907,6 +1917,7 @@ class Bookmark(db.Model):
 
 class ModLog(db.Model):
     """Represents the log of an action taken by a moderator."""
+
     __tablename__ = "mod_logs"
     id = db.Column(db.Integer, primary_key=True)
     mod_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -2011,6 +2022,7 @@ class ModLog(db.Model):
 
 class ImageDescription(db.Model):
     """Represents a user-provided text description for a given image url."""
+
     __tablename__ = "image_description"
 
     id = db.Column(db.Integer, primary_key=True)
