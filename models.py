@@ -1401,6 +1401,12 @@ class Molt(db.Model):
                 self.author.award(title="Dopamine Addict")
             if self.like_count == 1000:
                 self.author.award(title="Full on Junkie")
+            if (
+                "seth rogen" in self.content.lower()
+                or "sethrogen" in self.raw_tags.lower()
+            ):
+                crab.award(title="Rogen Out of Control")
+
             db.session.commit()
             return new_like
 
