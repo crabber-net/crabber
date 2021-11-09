@@ -148,7 +148,9 @@ class Crab(db.Model):
     @property
     def rich_description(self):
         """Returns user's description parsed into rich HTML."""
-        return utils.parse_rich_content(self.description, include_media=False)
+        return utils.parse_rich_content(
+            self.description, include_media=False, preserve_whitespace=False
+        )
 
     @property
     def bio(self):
