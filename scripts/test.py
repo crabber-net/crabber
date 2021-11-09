@@ -1,7 +1,8 @@
-import os,sys,inspect
+import os, sys, inspect
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 
 from crabber import db, Crab, Molt
 
@@ -11,20 +12,23 @@ db.create_all()
 pwd = "fish"
 
 # User test
-jake = Crab.create_new(username="jake",
-                       email="jake@crabber.net",
-                       password=pwd,
-                       display_name="Jake Ledoux")
+jake = Crab.create_new(
+    username="jake", email="jake@crabber.net", password=pwd, display_name="Jake Ledoux"
+)
 
-mezrah = Crab.create_new(username="mezinator5000",
-                         email="mezrah@crabber.net",
-                         password=pwd,
-                         display_name="Mezrah")
+mezrah = Crab.create_new(
+    username="mezinator5000",
+    email="mezrah@crabber.net",
+    password=pwd,
+    display_name="Mezrah",
+)
 
-christian = Crab.create_new(username="DiFrankSinatra",
-                            email="chris@crabber.net",
-                            password=pwd,
-                            display_name="Christian 😊")  # Emoji test
+christian = Crab.create_new(
+    username="DiFrankSinatra",
+    email="chris@crabber.net",
+    password=pwd,
+    display_name="Christian 😊",
+)  # Emoji test
 
 assert jake.register_time is not None
 assert jake.verify_password("fish")
@@ -39,7 +43,9 @@ assert uno.timestamp is not None
 assert len(uno.tags) == 0
 
 # Molt test 2
-dos = mezrah.molt("This site is %dumb. @jake, this is dumb.", image="https://i.imgur.com/GARoTYJ.jpg")
+dos = mezrah.molt(
+    "This site is %dumb. @jake, this is dumb.", image="https://i.imgur.com/GARoTYJ.jpg"
+)
 
 assert dos.author == mezrah
 assert dos in mezrah.molts
@@ -58,7 +64,9 @@ assert dos.like(christian) is None  # Liking something twice should not do anyth
 assert len(dos.likes) == 1
 dos.unlike(christian)
 assert len(dos.likes) == 0
-dos.unlike(jake)  # Un-liking something that hasn't been liked should just ignore rather than throw an error
+dos.unlike(
+    jake
+)  # Un-liking something that hasn't been liked should just ignore rather than throw an error
 
 # Remolt test
 tres = dos.remolt(christian)
