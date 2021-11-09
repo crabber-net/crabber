@@ -1,6 +1,10 @@
 name: CI/Test
 
-on: [push, pull_request, workflow_dispatch]
+on:
+  pull_request:
+    types: [opened]
+  push:
+    branches: [main]
 
 jobs:
 
@@ -18,7 +22,7 @@ jobs:
           python-version: 3.6
 
       - name: Install Poetry
-        uses: snok/install-poetry@1.2
+        uses: snok/install-poetry@1.2.1
 
       - name: Cache Poetry virtualenv
         uses: actions/cache@v1
