@@ -34,6 +34,10 @@ pytest-pylint = "^0.18.0"
 [tool.pytest.ini_options]
 addopts = "--pylint"
 
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 90
+disable = "C0302, C0114, C0116"
+
 [tool.black]
 # add black options when necessary
 
