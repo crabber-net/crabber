@@ -1,11 +1,9 @@
-""" This script checks for and awards time-based trophies (e.g. "one year") and
-    is to be run once a day at the beginning of each day.
-"""
+"""Awards time-based trophies."""
 from crabber import app
 from datetime import datetime
 from extensions import db
 import logging
-from models import Crab, Trophy, TrophyCase
+from models import Crab
 
 # Prepare database connection
 app.app_context().push()

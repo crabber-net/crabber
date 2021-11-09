@@ -1,5 +1,4 @@
 import patterns
-import pytest
 
 
 def assert_positive(pattern, samples):
@@ -18,8 +17,9 @@ def test_ext_link():
         "https://crabber.net/moderation/?molt_id=1&viewing=molt",
         "http://reddit.com",
         "https://www.discogs.com/user/jakeledoux/collection",
-        # "element.io",
-        # "google.com",
+        "element.io",
+        "google.com",
+        "www.google.com",
     ]
 
     assert_positive(patterns.ext_link, positive_samples)
@@ -34,6 +34,7 @@ def test_ext_link():
         "middle attacks like the good old days. I miss 2012.",
         "ftp://bezos's bank account and grab me a few million",
         "www.lol",
+        '<a href="https://tumblr.com">',
     ]
 
     assert_negative(patterns.ext_link, negative_samples)
@@ -46,9 +47,9 @@ def test_ext_md_link():
         "[reddit: the front page of the internet](http://reddit.com)",
         "[my CD collection on discogs]"
         "(https://www.discogs.com/user/jakeledoux/collection)",
-        # "[Element, a Matrix client](element.io)",
-        # "Why don't you [google](google.com) it?",
-        # "[caps are allowed](gOoGlE.cOm)",
+        "[Element, a Matrix client](element.io)",
+        "Why don't you [google](google.com) it?",
+        "[caps are allowed](gOoGlE.cOm)",
     ]
 
     assert_positive(patterns.ext_md_link, positive_samples)

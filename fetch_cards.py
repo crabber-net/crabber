@@ -1,13 +1,12 @@
-""" This script finds new cards and fetches their content. This should be run
-    periodically as a cron job.
+"""This script finds new cards and fetches their content.
+
+This should be run periodically as a cron job.
 """
 from bs4 import BeautifulSoup
 from crabber import app
-from datetime import datetime
 from extensions import db
 from models import Card
 import os
-import requests
 from requests.exceptions import RequestException
 from typing import Optional, Tuple
 from webpreview import web_preview
@@ -53,7 +52,7 @@ def parse_metadata(html: str) -> Tuple[str, str, str]:
             title = meta_title.get("content", None)
     if not title:
         if soup.title:
-            title = soupt.title.text
+            title = soup.title.text
         else:
             return None
 

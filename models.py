@@ -2,7 +2,7 @@ import config
 import datetime
 import email.utils
 import extensions
-from flask import render_template, render_template_string, url_for
+from flask import render_template, url_for
 from flask_sqlalchemy import BaseQuery
 import json
 from passlib.hash import sha256_crypt
@@ -11,6 +11,7 @@ import secrets
 from sqlalchemy import desc, func, or_
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import expression
+from sqlalchemy.sql.expression import false, true, null
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -41,12 +42,15 @@ blocking_table = db.Table(
 
 
 class NotFoundInDatabase(BaseException):
+    """Raised when requested item was not found in the database."""
+
     pass
 
 
 class Crab(db.Model):
-    """Crab object is the what stores user data. Users are referred to as
-    crabs. Create new with `Crab.create_new`.
+    """A Crab is a user.
+
+    Create new with `Crab.create_new`.
     """
 
     id = db.Column(db.Integer, primary_key=True)
@@ -138,13 +142,15 @@ class Crab(db.Model):
 
     @property
     def register_timestamp(self):
-        """Returns integer timestamp of user's registration"""
+        """Returns integer timestamp of user's registration."""
         return int(self.register_time.timestamp())
 
     @property
     def rich_description(self):
         """Returns user's description parsed into rich HTML."""
-        return utils.parse_rich_content(self.description, include_media=False)
+        return utils.parse_rich_content(
+            self.description, include_media=False, preserve_whitespace=False
+        )
 
     @property
     def bio(self):
@@ -153,20 +159,17 @@ class Crab(db.Model):
 
     @property
     def timedelta(self):
-        """Returns time offset for user's timezone"""
-
+        """Returns time offset for user's timezone."""
         return datetime.timedelta(hours=float(self.timezone))
 
     @property
     def is_admin(self) -> bool:
         """Returns whether the user is a website admin."""
-
         return self.username.lower() in config.ADMINS
 
     @property
     def is_moderator(self) -> bool:
         """Returns whether the user is a website moderator."""
-
         return self.username.lower() in [*config.MODERATORS, *config.ADMINS]
 
     @property
@@ -181,16 +184,12 @@ class Crab(db.Model):
 
     @property
     def bookmarks(self):
-        """Returns all bookmarks the user has where the molt is still
-        available.
-        """
+        """Returns all bookmarks the user has where the molt is still available."""
         return self.query_bookmarks().all()
 
     @property
     def bookmark_count(self):
-        """Returns number of molts the user has bookmarked that are still
-        available.
-        """
+        """Returns number of molts the user has bookmarked that are still available."""
         return self.query_bookmarks().count()
 
     @property
@@ -200,9 +199,7 @@ class Crab(db.Model):
 
     @property
     def like_count(self):
-        """Returns number of molts the user has liked that are still
-        available.
-        """
+        """Returns number of molts the user has liked that are still available."""
         return self.query_likes().count()
 
     @property
@@ -212,23 +209,17 @@ class Crab(db.Model):
 
     @property
     def molt_count(self):
-        """Returns number of molts the user has published that are still
-        available.
-        """
+        """Returns number of molts the user has published that are still available."""
         return self.query_molts().count()
 
     @property
     def replies(self):
-        """Returns all replies the user has published that are still
-        available.
-        """
+        """Returns all replies the user has published that are still available."""
         return self.query_replies().all()
 
     @property
     def reply_count(self):
-        """Returns number of replies the user has published that are still
-        available.
-        """
+        """Returns number of replies the user has published that are still available."""
         return self.query_replies().count()
 
     @property
@@ -238,9 +229,7 @@ class Crab(db.Model):
 
     @property
     def blockers(self) -> List["Crab"]:
-        """Returns Crabs that have blocked this Crab without deleted/banned
-        users.
-        """
+        """Returns Crabs that have blocked this Crab without deleted/banned users."""
         return self.query_blockers().all()
 
     @property
@@ -275,18 +264,16 @@ class Crab(db.Model):
 
     @property
     def unread_notifications(self):
-        """
-        Get the amount of unread notifications for this Crab
-        :return: len of unread notifs
-        """
+        """Get the amount of unread notifications for this Crab."""
         return Notification.query_all().filter_by(recipient=self, read=False).count()
 
     @property
-    def pinned(self):
-        """Return user's currently pinned molt. (May be None)"""
+    def pinned(self) -> Optional["Molt"]:
+        """Return user's currently pinned molt."""
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
 
     def generate_password_reset_token(self):
+        """Generates and returns a new password reset token."""
         new_token = dict(
             token=secrets.token_hex(32),
             timestamp=int(datetime.datetime.utcnow().timestamp()),
@@ -296,6 +283,7 @@ class Crab(db.Model):
         return new_token["token"]
 
     def verify_password_reset_token(self, token: str) -> bool:
+        """Verifies a given password reset token is still valid."""
         if token and self._password_reset_token:
             # Load from JSON
             real_token = json.loads(self._password_reset_token)
@@ -309,6 +297,7 @@ class Crab(db.Model):
         return False
 
     def clear_password_reset_token(self):
+        """Removes any existing password reset tokens."""
         self._password_reset_token = None
         db.session.commit()
 
@@ -333,13 +322,13 @@ class Crab(db.Model):
             db.session.query(Crab.id)
             .join(following_table, Crab.id == following_table.c.following_id)
             .filter(following_table.c.follower_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
         )
         crab_followers = (
             db.session.query(Crab)
             .join(following_table, Crab.id == following_table.c.follower_id)
             .filter(following_table.c.following_id == crab.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
         )
         mutuals = crab_followers.filter(Crab.id.in_(self_following))
         return mutuals.all()
@@ -357,11 +346,12 @@ class Crab(db.Model):
         db.session.commit()
 
     def get_recommended_crabs(self, limit=3):
+        """Returns recommended crabs based on this user's following."""
         following_ids = (
             db.session.query(Crab.id)
             .join(following_table, Crab.id == following_table.c.following_id)
             .filter(following_table.c.follower_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
         )
         if following_ids.count():
             recommended = (
@@ -370,7 +360,7 @@ class Crab(db.Model):
                 .filter(following_table.c.follower_id.in_(following_ids))
                 .filter(following_table.c.following_id.notin_(following_ids))
                 .group_by(Crab.id)
-                .filter(Crab.banned == False, Crab.deleted == False)
+                .filter(Crab.banned == false(), Crab.deleted == false())
                 .filter(Crab.id != self.id)
                 .order_by(func.count(Crab.id).desc())
             )
@@ -462,7 +452,7 @@ class Crab(db.Model):
                     )
 
     def pin(self, molt):
-        """Set `molt` as user's pinned molt"""
+        """Set `molt` as user's pinned molt."""
         self.pinned_molt_id = molt.id
         db.session.commit()
 
@@ -486,7 +476,7 @@ class Crab(db.Model):
             Notification.query_all()
             .filter(
                 db.or_(
-                    Notification.sender_id == None,
+                    Notification.sender_id == null(),
                     Notification.sender_id.notin_(block_ids),
                 )
             )
@@ -536,23 +526,17 @@ class Crab(db.Model):
         db.session.commit()
 
     def award(self, title=None, trophy=None):
-        """Award user trophy by object or by title.
-
-        :param trophy: Trophy object to award
-        :param title: Title of trophy to award
-        :return: Trophy case
-        """
-
+        """Award user trophy by object or by title."""
         if trophy is None and title is None:
             raise TypeError(
-                "You must specify one of either trophy object or " "trophy title."
+                "You must specify one of either trophy object or trophy title."
             )
 
         # Query trophy by title
         if trophy is None:
             trophy_query = Trophy.query.filter(Trophy.title.ilike(title))
             if trophy_query.count() == 0:
-                raise NotFoundInDatabase(f"Trophy with title: '{title}' not" "found.")
+                raise NotFoundInDatabase(f"Trophy with title: '{title}' not found.")
             trophy = trophy_query.first()
 
         # Check trophy hasn't already been awarded to user
@@ -602,9 +586,7 @@ class Crab(db.Model):
             db.session.commit()
 
     def verify_password(self, password):
-        """Returns true if `password` matches user's password.
-        :param password: Hash of password to check
-        """
+        """Returns true if `password` matches user's password."""
         return sha256_crypt.verify(password, self.password)
 
     def molt(self, content, **kwargs):
@@ -734,20 +716,18 @@ class Crab(db.Model):
             db.session.query(Crab)
             .join(blocking_table, Crab.id == blocking_table.c.blocked_id)
             .filter(blocking_table.c.blocker_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
             .order_by(Crab.username)
         )
         return blocked
 
     def query_blockers(self) -> BaseQuery:
-        """Returns Crabs that have blocked this Crab without deleted/banned
-        users.
-        """
+        """Returns Crabs that have blocked this Crab without deleted/banned users."""
         blockers = (
             db.session.query(Crab)
             .join(blocking_table, Crab.id == blocking_table.c.blocker_id)
             .filter(blocking_table.c.blocked_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
             .order_by(Crab.username)
         )
         return blockers
@@ -758,7 +738,7 @@ class Crab(db.Model):
             db.session.query(Crab)
             .join(following_table, Crab.id == following_table.c.following_id)
             .filter(following_table.c.follower_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
         )
         return following
 
@@ -768,14 +748,12 @@ class Crab(db.Model):
             db.session.query(Crab)
             .join(following_table, Crab.id == following_table.c.follower_id)
             .filter(following_table.c.following_id == self.id)
-            .filter(Crab.banned == False, Crab.deleted == False)
+            .filter(Crab.banned == false(), Crab.deleted == false())
         )
         return followers
 
     def query_bookmarks(self) -> BaseQuery:
-        """Returns all bookmarks the user has where the molt is still
-        available.
-        """
+        """Returns all bookmarks the user has where the molt is still available."""
         bookmarks = (
             Bookmark.query.filter_by(crab=self)
             .filter(Bookmark.molt.has(deleted=False))
@@ -804,9 +782,7 @@ class Crab(db.Model):
         return Molt.filter_query_by_available(molts)
 
     def query_replies(self) -> BaseQuery:
-        """Returns all replies the user has published that are still
-        available.
-        """
+        """Returns all replies the user has published that are still available."""
         molts = (
             self.query_molts()
             .filter_by(is_reply=True)
@@ -815,6 +791,7 @@ class Crab(db.Model):
         return molts
 
     def query_timeline(self) -> BaseQuery:
+        """Retrieves the molts in this user's timeline."""
         following_ids = db.session.query(following_table.c.following_id).filter(
             following_table.c.follower_id == self.id
         )
@@ -831,6 +808,7 @@ class Crab(db.Model):
         return molts
 
     def change_password(self, password: str):
+        """Updates this user's password hash."""
         self.password = self.hash_pass(password)
         db.session.commit()
 
@@ -856,10 +834,10 @@ class Crab(db.Model):
     def filter_molt_query_by_not_nsfw(self, query: BaseQuery) -> BaseQuery:
         """Filters NSFW Molts out of a query."""
         query = query.filter(
-            db.or_(Molt.nsfw == False, Molt.author_id == self.id)
+            db.or_(Molt.nsfw == false(), Molt.author_id == self.id)
         ).filter(
             db.or_(
-                Molt.original_molt == None,
+                Molt.original_molt == null(),
                 Molt.original_molt.has(nsfw=False),
                 Molt.original_molt.has(author_id=self.id),
                 Molt.author_id == self.id,
@@ -868,9 +846,7 @@ class Crab(db.Model):
         return query
 
     def filter_molt_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
-        """Filters a Molt query by authors who have not blocked/been blocked
-        by this user.
-        """
+        """Filters a Molt query by authors who are not blocked."""
         blocked_ids = db.session.query(blocking_table.c.blocked_id).filter(
             blocking_table.c.blocker_id == self.id
         )
@@ -884,7 +860,7 @@ class Crab(db.Model):
             .outerjoin(original_molt, original_molt.id == Molt.original_molt_id)
             .filter(
                 db.or_(
-                    Molt.original_molt == None,
+                    Molt.original_molt == null(),
                     db.and_(
                         original_molt.author_id.notin_(blocked_ids),
                         original_molt.author_id.notin_(blocker_ids),
@@ -895,9 +871,7 @@ class Crab(db.Model):
         return query
 
     def check_customization_trophies(self):
-        """Checks if user is eligable for profile customization trophies and
-        awards them as necessary.
-        """
+        """Awards applicable bio customization trophies."""
         if all(
             (
                 self.description != "This user has no description.",
@@ -909,9 +883,7 @@ class Crab(db.Model):
             self.award("I Want it That Way")
 
     def check_follower_count_trophies(self):
-        """Checks if user is eligable for follower count trophies and awards
-        them as necessary.
-        """
+        """Awards necessary follower/following trophies."""
         following_count = self.following_count
         follower_count = self.follower_count
         if follower_count == 1:
@@ -931,9 +903,7 @@ class Crab(db.Model):
                 self.award(title="The Golden Ratio")
 
     def filter_user_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
-        """Filters a Crab query by users who have not blocked/been blocked by
-        this user.
-        """
+        """Filters a Crab query by users who are not blocked."""
         blocker_ids = [crab.id for crab in self.blockers]
         blocked_ids = [crab.id for crab in self.blocked]
         query = query.filter(Crab.id.notin_(blocker_ids)).filter(
@@ -955,17 +925,19 @@ class Crab(db.Model):
 
     @staticmethod
     def query_all() -> BaseQuery:
+        """Queries all valid crabs."""
         return Crab.query.filter_by(deleted=False, banned=False)
 
     @staticmethod
     def query_most_popular() -> BaseQuery:
+        """Queries most followed crabs."""
         followers = (
             db.session.query(
                 following_table.c.following_id,
                 func.count(following_table.c.following_id).label("count"),
             )
             .join(Crab, Crab.id == following_table.c.follower_id)
-            .filter(Crab.deleted == False, Crab.banned == False)
+            .filter(Crab.deleted == false(), Crab.banned == false())
             .group_by(following_table.c.following_id)
             .subquery()
         )
@@ -973,13 +945,14 @@ class Crab(db.Model):
         crabs = (
             db.session.query(Crab, followers.c.count)
             .join(followers, followers.c.following_id == Crab.id)
-            .filter(Crab.deleted == False, Crab.banned == False)
+            .filter(Crab.deleted == false(), Crab.banned == false())
             .order_by(db.desc("count"))
         )
         return crabs
 
     @staticmethod
     def get_by_ID(id: int, include_invalidated: bool = False) -> Optional["Crab"]:
+        """Retrieves crab by ID."""
         if id:
             crab = Crab.query.filter_by(id=id)
             if not include_invalidated:
@@ -988,6 +961,7 @@ class Crab(db.Model):
 
     @staticmethod
     def get_by_email(email: str, include_invalidated: bool = False) -> Optional["Crab"]:
+        """Retrieves crab by email."""
         if email:
             crab = Crab.query.filter(Crab.email.ilike(email))
             if not include_invalidated:
@@ -998,6 +972,7 @@ class Crab(db.Model):
     def get_by_username(
         username: str, include_invalidated: bool = False
     ) -> Optional["Crab"]:
+        """Retrieves crab by username."""
         if username:
             crab = Crab.query.filter(Crab.username.ilike(username))
             if not include_invalidated:
@@ -1006,6 +981,7 @@ class Crab(db.Model):
 
     @staticmethod
     def search(query: str) -> BaseQuery:
+        """Searches availabled crabs."""
         results = Crab.query.filter_by(deleted=False, banned=False).filter(
             db.or_(
                 Crab.display_name.contains(query, autoescape=True),
@@ -1106,7 +1082,7 @@ class Molt(db.Model):
         return utils.localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
-    def quote_count(self):
+    def quotes(self):
         """Get all currently valid quotes of Molt."""
         return Molt.query_quotes(self).all()
 
@@ -1161,9 +1137,7 @@ class Molt(db.Model):
         return utils.get_pretty_age(self.timestamp)
 
     def get_author(self, column_names: Optional[Iterable[str]] = None):
-        """Returns only necessary columns from Molt.author, which results in a
-        faster query.
-        """
+        """Returns only necessary columns from Molt.author."""
         column_names = column_names or (
             "id",
             "username",
@@ -1178,10 +1152,9 @@ class Molt(db.Model):
         return author
 
     def evaluate_contents(self, notify: bool = True):
-        """Evaluates Crabtags and Mentions in Molt. This should be called
-        whenever content is changed.
+        """Evaluates Crabtags and Mentions in Molt.
 
-        :param notify: Whether to notify users who are mentioned.
+        This should be called whenever content is changed.
         """
         # Update raw_tags to include all new tags
         if self.raw_tags is None:
@@ -1252,7 +1225,7 @@ class Molt(db.Model):
             db.session.commit()
 
     def label_nsfw(self):
-        """Mark molt as NSFW"""
+        """Mark molt as NSFW."""
         if not self.nsfw:
             self.nsfw = True
             db.session.commit()
@@ -1264,9 +1237,10 @@ class Molt(db.Model):
             db.session.commit()
 
     def semantic_content(self):
-        """Return Molt content (including embeds, tags, and mentions)
-        rasterized as semantic HTML. (For RSS feeds and other external
-        applications)
+        """Render molt content for RSS.
+
+        Returns Molt content (including embeds, tags, and mentions) rasterized as semantic
+        HTML. (For RSS feeds and other external applications)
         """
         quoted_molt = self.original_molt if self.is_quote else None
         return utils.parse_semantic_content(
@@ -1274,7 +1248,9 @@ class Molt(db.Model):
         )
 
     def rich_content(self, full_size_media=False):
-        """Return Molt content (including embeds, tags, and mentions)
+        """Render molt content for site.
+
+        Returns Molt content (including embeds, tags, and mentions)
         rasterized as rich HTML.
         """
         return utils.parse_rich_content(
@@ -1325,14 +1301,12 @@ class Molt(db.Model):
         return reply
 
     def get_reply_from_following(self, crab):
-        """Return first reply Molt from a crab that `crab` follows if it
-        exists.
-        """
+        """Return first reply Molt from a crab that `crab` follows if it exists."""
         reply = None
         if self.reply_count > 0:
             reply = (
                 Molt.query_all()
-                .filter(Molt.is_reply == True, Molt.original_molt_id == self.id)
+                .filter(Molt.is_reply == true(), Molt.original_molt_id == self.id)
                 .join(following_table, following_table.c.following_id == Molt.author_id)
                 .filter(
                     or_(
@@ -1430,21 +1404,25 @@ class Molt(db.Model):
     # Query methods
 
     def query_likes(self):
+        """Query this molt's likes."""
         return Like.query.filter_by(molt=self).filter(
             Like.crab.has(deleted=False, banned=False)
         )
 
     def query_quotes(self) -> BaseQuery:
+        """Query this molt's quotes."""
         return Molt.query.filter_by(
             is_quote=True, original_molt=self, deleted=False
         ).filter(Molt.author.has(banned=False, deleted=False))
 
     def query_remolts(self) -> BaseQuery:
+        """Query this molt's remolts."""
         return Molt.query.filter_by(
             is_remolt=True, original_molt=self, deleted=False
         ).filter(Molt.author.has(banned=False, deleted=False))
 
     def query_replies(self) -> BaseQuery:
+        """Query this molt's replies."""
         return Molt.query.filter_by(
             is_reply=True, original_molt=self, deleted=False
         ).filter(Molt.author.has(banned=False, deleted=False))
@@ -1453,6 +1431,7 @@ class Molt(db.Model):
     def query_all(
         include_replies=True, include_remolts=False, include_quotes=True
     ) -> BaseQuery:
+        """Query all valid molts."""
         molts = (
             Molt.query.filter_by(deleted=False)
             .filter(Molt.author.has(deleted=False, banned=False))
@@ -1468,6 +1447,7 @@ class Molt(db.Model):
 
     @staticmethod
     def query_reported() -> BaseQuery:
+        """Query reported molts."""
         queue = (
             Molt.query.filter_by(
                 deleted=False,
@@ -1484,8 +1464,9 @@ class Molt(db.Model):
 
     @staticmethod
     def query_like_counts() -> BaseQuery:
-        """Queries molt like counts as (molt_id: int, likes: int) and orders
-        by likes descending.
+        """Queries molt like counts and orders by likes descending.
+
+        Returns as tuple: (molt_id: int, likes: int)
         """
         likes = (
             db.session.query(Like.molt_id, func.count(Like.molt_id).label("likes"))
@@ -1496,6 +1477,7 @@ class Molt(db.Model):
 
     @staticmethod
     def query_most_liked() -> BaseQuery:
+        """Query most liked molts."""
         molts = (
             db.session.query(Molt, func.count(Like.id))
             .join(Molt, Molt.id == Like.molt_id)
@@ -1509,6 +1491,7 @@ class Molt(db.Model):
 
     @staticmethod
     def query_most_replied() -> BaseQuery:
+        """Query most replied molts."""
         unique_replies = (
             Molt.query_all()
             .filter_by(is_reply=True)
@@ -1527,6 +1510,7 @@ class Molt(db.Model):
 
     @staticmethod
     def query_with_tag(crabtag: Union["Crabtag", str]) -> BaseQuery:
+        """Query molts containing a given crabtag."""
         molts = Molt.query_all().join(Molt.tags)
         if isinstance(crabtag, Crabtag):
             molts = molts.filter(Crabtag.name == crabtag.name)
@@ -1543,8 +1527,10 @@ class Molt(db.Model):
         that are neither deleted or banned.
         """
         query = query.filter(
-            Molt.deleted == False, Molt.author.has(deleted=False, banned=False)
-        ).filter(db.or_(Molt.is_remolt == False, Molt.original_molt.has(deleted=False)))
+            Molt.deleted == false(), Molt.author.has(deleted=false(), banned=false())
+        ).filter(
+            db.or_(Molt.is_remolt == false(), Molt.original_molt.has(deleted=False))
+        )
         return query
 
     @staticmethod
@@ -1558,6 +1544,7 @@ class Molt(db.Model):
 
     @staticmethod
     def search(query: str) -> BaseQuery:
+        """Search all molts."""
         results = (
             Molt.query.filter_by(deleted=False, is_reply=False)
             .filter(Molt.content.contains(query, autoescape=True))
@@ -1578,6 +1565,7 @@ class Molt(db.Model):
 
     @classmethod
     def create(cls, author, content, **kwargs):
+        """Create new molt."""
         kwargs["source"] = kwargs.get("source", "Crabber Web App")
         new_molt = cls(
             author=author, content=content[: config.MOLT_CHAR_LIMIT], **kwargs
@@ -1590,6 +1578,8 @@ class Molt(db.Model):
 
 
 class Like(db.Model):
+    """Represents one like given to a Molt by a Crab."""
+
     __table_args__ = (db.UniqueConstraint("crab_id", "molt_id"),)
     id = db.Column(db.Integer, primary_key=True)
     crab_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1606,13 +1596,15 @@ class Like(db.Model):
         likes = (
             Like.query.join(Like.molt)
             .filter(Like.crab.has(deleted=False, banned=False))
-            .filter(Molt.deleted == False)
+            .filter(Molt.deleted == false())
             .filter(Molt.author.has(deleted=False, banned=False))
         )
         return likes
 
 
 class Notification(db.Model):
+    """Represents a notificaiton given to a Crab."""
+
     id = db.Column(db.Integer, primary_key=True)
     # Crab receiving notif
     recipient_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1645,10 +1637,12 @@ class Notification(db.Model):
 
     @property
     def pretty_date(self):
+        """Formats notification date in an attractive way."""
         return utils.localize(self.timestamp).strftime("%I:%M %p · %b %e, %Y")
 
     @property
     def pretty_age(self):
+        """Formats notification age in an attractive way."""
         return utils.get_pretty_age(self.timestamp)
 
     @staticmethod
@@ -1657,17 +1651,20 @@ class Notification(db.Model):
         return Notification.query.filter(
             or_(
                 Notification.sender.has(deleted=False, banned=False),
-                Notification.sender == None,
+                Notification.sender == null(),
             )
         )
 
     def mark_read(self, is_read=True):
+        """Mark this notification as 'read' by the user."""
         self.read = is_read
         db.session.commit()
 
 
 # Stores what users have what trophies
 class TrophyCase(db.Model):
+    """Represents the possession of a Trophy by a Crab."""
+
     id = db.Column(db.Integer, primary_key=True)
     # Crab who owns trophy
     owner_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1688,6 +1685,12 @@ class TrophyCase(db.Model):
 
 # Stores each type of trophy
 class Trophy(db.Model):
+    """Represents an available trophy.
+
+    Only one `Trophy` will exist per available trophy. Crabs are awarded `TrophyCase`
+    instead.
+    """
+
     id = db.Column(db.Integer, primary_key=True)
     # Short display title
     title = db.Column(db.String(32), nullable=False)
@@ -1705,6 +1708,8 @@ class Trophy(db.Model):
 
 
 class DeveloperKey(db.Model):
+    """A key that grants API access to a developer under a given account."""
+
     __tablename__ = "developer_keys"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), nullable=False)
@@ -1716,11 +1721,13 @@ class DeveloperKey(db.Model):
         return f"<DeveloperKey (@{self.crab.username})>"
 
     def delete(self):
+        """Deletes this key."""
         self.deleted = True
         db.session.commit()
 
     @classmethod
     def gen_key(cls):
+        """Generates a unique key string."""
         while True:
             key = secrets.token_hex(16)
             if not cls.query.filter_by(key=key).count():
@@ -1728,6 +1735,7 @@ class DeveloperKey(db.Model):
 
     @classmethod
     def create(cls, crab):
+        """Generates a new key for `crab`."""
         key = cls.gen_key()
         token = cls(crab=crab, key=key)
         db.session.add(token)
@@ -1736,6 +1744,8 @@ class DeveloperKey(db.Model):
 
 
 class AccessToken(db.Model):
+    """A key that grants a developer to take action on behalf of a `Crab`."""
+
     __tablename__ = "access_tokens"
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(64), nullable=False)
@@ -1747,11 +1757,13 @@ class AccessToken(db.Model):
         return f"<AccessToken (@{self.crab.username})>"
 
     def delete(self):
+        """Deletes this key."""
         self.deleted = True
         db.session.commit()
 
     @classmethod
     def gen_key(cls):
+        """Generates a unique key string."""
         while True:
             key = secrets.token_hex(16)
             if not cls.query.filter_by(key=key).count():
@@ -1759,6 +1771,7 @@ class AccessToken(db.Model):
 
     @classmethod
     def create(cls, crab):
+        """Generates a new key for `crab`."""
         key = cls.gen_key()
         token = cls(crab=crab, key=key)
         db.session.add(token)
@@ -1767,6 +1780,8 @@ class AccessToken(db.Model):
 
 
 class Crabtag(db.Model):
+    """Represents a specific crabtag used in at least one `Molt`."""
+
     __tablename__ = "crabtag"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -1783,8 +1798,9 @@ class Crabtag(db.Model):
 
     @staticmethod
     def query_most_popular(since_date: Optional[datetime.datetime] = None) -> BaseQuery:
-        """Returns a query of (tag: Crabtag, count: int) ordered by count
-        descending.
+        """Queries the most popular (utilized) crabtags.
+
+        Returns as tuple: (tag: Crabtag, count: int)
         """
         most_popular = (
             Crabtag.query.join(Crabtag.molts)
@@ -1819,6 +1835,8 @@ class Crabtag(db.Model):
 
 
 class Card(db.Model):
+    """Represents a preview card for a URL."""
+
     __tablename__ = "card"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -1872,6 +1890,8 @@ class Card(db.Model):
 
 
 class Bookmark(db.Model):
+    """Represents a `Crab`'s bookmark of a given `Molt`."""
+
     __tablename__ = "bookmark"
     __table_args__ = (db.UniqueConstraint("crab_id", "molt_id"),)
 
@@ -1891,13 +1911,15 @@ class Bookmark(db.Model):
         likes = (
             Like.query.join(Like.molt)
             .filter(Like.crab.has(deleted=False, banned=False))
-            .filter(Molt.deleted == False)
+            .filter(Molt.deleted == false())
             .filter(Molt.author.has(deleted=False, banned=False))
         )
         return likes
 
 
 class ModLog(db.Model):
+    """Represents the log of an action taken by a moderator."""
+
     __tablename__ = "mod_logs"
     id = db.Column(db.Integer, primary_key=True)
     mod_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
@@ -1987,6 +2009,7 @@ class ModLog(db.Model):
         molt: Optional[Molt] = None,
         additional_context: Optional[str] = None,
     ):
+        """Logs a new action."""
         log = cls(
             mod=mod,
             action=action,
@@ -2000,6 +2023,8 @@ class ModLog(db.Model):
 
 
 class ImageDescription(db.Model):
+    """Represents a user-provided text description for a given image url."""
+
     __tablename__ = "image_description"
 
     id = db.Column(db.Integer, primary_key=True)

@@ -25,9 +25,10 @@ from werkzeug.middleware.profiler import ProfilerMiddleware
 
 
 def create_app():
+    """Initialize flask app."""
     app = Flask(__name__, template_folder="./templates")
     app.secret_key = (
-        "crabs are better than birds because they can cut their " "wings right off"
+        "crabs are better than birds because they can cut their wings right off"
     )
     app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
     app.config["SQLALCHEMY_DATABASE_URI"] = config.DATABASE_PATH
@@ -45,12 +46,14 @@ def create_app():
 
 
 def register_extensions(app):
+    """Registers flask extensions."""
     from extensions import db
 
     db.init_app(app)
 
 
 def register_blueprints(app):
+    """Registers flask blueprints."""
     import crabber_api
     import crabber_rss
 
@@ -133,11 +136,11 @@ def index():
         return utils.common_molt_actions()
 
     # Display page
-    elif current_user is not None:
+    if current_user is not None:
         page_n = request.args.get("p", 1, type=int)
 
         if request.args.get("ajax_json"):
-            blocks = dict()
+            blocks = {}
             for block in ("title", "heading", "body"):
                 blocks[block] = render_template(
                     f"timeline-ajax-{block}.html",
@@ -148,9 +151,6 @@ def index():
             return jsonify(blocks)
         else:
             if request.args.get("ajax_content"):
-                import time
-
-                start_time = time.time()
                 molts = current_user.query_timeline().paginate(
                     page_n, config.MOLTS_PER_PAGE, False
                 )
@@ -194,7 +194,7 @@ def wild_west():
         return utils.common_molt_actions()
 
     # Display page
-    elif current_user is not None:
+    if current_user is not None:
         page_n = request.args.get("p", 1, type=int)
         # Ajax page switching
         if request.args.get("ajax_json"):
@@ -285,7 +285,7 @@ def login():
                     return redirect("/")
                 else:
                     return utils.show_error(
-                        "The account you're attempting to" " access has been banned."
+                        "The account you're attempting to access has been banned."
                     )
             else:
                 return utils.show_error("Incorrect password.")
@@ -318,7 +318,7 @@ def forgot_password():
                 email_sent = True
             else:
                 return utils.show_error(
-                    "There was a problem sending your " "email. Please try again."
+                    "There was a problem sending your email. Please try again."
                 )
         else:
             # Crab not found, still displaying "email sent" for security
@@ -363,7 +363,7 @@ def reset_password():
                     hide_sidebar=True,
                 )
     return utils.show_error(
-        "Password reset link is either invalid or " "expired.", redirect_url="/login"
+        "Password reset link is either invalid or expired.", redirect_url="/login"
     )
 
 
@@ -467,9 +467,7 @@ def signup():
                             "Username must be between 3 and 32 characters."
                         )
                 else:
-                    return redirect(
-                        "/signup?failed&error_msg=" "That username is taken"
-                    )
+                    return redirect("/signup?failed&error_msg=That username is taken")
             else:
                 return redirect(
                     "/signup?failed&error_msg="
@@ -724,7 +722,7 @@ def molt_page(username, molt_id):
                 message="The author of this Molt has been banned.",
             )
         else:
-            social_title = f"{primary_molt.author.display_name}'s post on " "Crabber"
+            social_title = f"{primary_molt.author.display_name}'s post on Crabber"
             replies = primary_molt.query_replies()
             if current_user:
                 replies = current_user.filter_molt_query(replies)
@@ -1145,6 +1143,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        user_agent=utils.parse_user_agent(),
         sprite_url=config.SPRITE_URL,
         limits=config.LIMITS,
         MOLT_CHAR_LIMIT=config.MOLT_CHAR_LIMIT,
@@ -1213,6 +1212,7 @@ def pretty_url(url, length=35):
 @app.template_filter()
 def format_dob(dob: str):
     """Format ISO-8601 as current age in years.
+
     Any other strings will be passed through.
     """
     return utils.format_dob(dob)
@@ -1220,11 +1220,7 @@ def format_dob(dob: str):
 
 @app.template_filter()
 def pretty_age(time: Union[datetime.datetime, int]):
-    """Converts datetime to pretty twitter-esque age string. (Wrapper for
-    `utils.get_pretty_age`.
-    :param time:
-    :return: Age string
-    """
+    """Converts datetime to pretty twitter-esque age string."""
     if isinstance(time, int):
         time: datetime.datetime = datetime.datetime.fromtimestamp(time)
     return utils.get_pretty_age(time)
@@ -1282,10 +1278,10 @@ def before_request():
             old_account = models.Crab.get_by_ID(id=crab_id, include_invalidated=True)
             if old_account and old_account.banned:
                 return utils.show_error(
-                    "The account you were logged into has " "been banned.", "/login"
+                    "The account you were logged into has been banned.", "/login"
                 )
             return utils.show_error(
-                "The account you were logged into no " "longer exists.", "/login"
+                "The account you were logged into no longer exists.", "/login"
             )
         # Potential database rollback or exploit
         elif crab.register_timestamp != current_user_ts:

@@ -1,7 +1,6 @@
 import datetime
 from dotenv import load_dotenv
 import os
-import platform
 from typing import List, Set
 
 load_dotenv()
@@ -29,6 +28,7 @@ def getenv_list(key) -> List[str]:
 
 def load_lines_from_file(filename: str) -> List[str]:
     """Loads lines from file into a list of strings.
+
     :param filename: Filename without path or extension (assumes app root
      location and cfg extension)
     :return: List of strings as they appear in file
