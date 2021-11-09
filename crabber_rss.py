@@ -1,5 +1,5 @@
 import api_utils
-from config import *
+import config
 from flask import abort, Blueprint, render_template, Response
 import models
 
@@ -18,7 +18,7 @@ def get_crab(username):
         molts = (
             crab.query_molts()
             .filter_by(is_reply=False, is_remolt=False)
-            .limit(RSS_MOLT_LIMIT)
+            .limit(config.RSS_MOLT_LIMIT)
         )
         xml = render_template("rss_user_page.xml", crab=crab, molts=molts)
         return Response(xml, mimetype="text/xml")
@@ -30,7 +30,7 @@ def get_crab(username):
 def get_crabtag(tagname):
     crabtag = models.Crabtag.get(tagname)
     if crabtag:
-        molts = crabtag.query_molts().limit(RSS_MOLT_LIMIT)
+        molts = crabtag.query_molts().limit(config.RSS_MOLT_LIMIT)
     else:
         molts = []
     xml = render_template("rss_crabtag.xml", molts=molts, crabtag=tagname)
@@ -41,7 +41,7 @@ def get_crabtag(tagname):
 def get_timeline(username):
     crab = api_utils.get_crab_by_username(username)
     if crab:
-        molts = crab.query_timeline().limit(RSS_MOLT_LIMIT)
+        molts = crab.query_timeline().limit(config.RSS_MOLT_LIMIT)
         xml = render_template("rss_user_timeline.xml", crab=crab, molts=molts)
         return Response(xml, mimetype="text/xml")
     else:

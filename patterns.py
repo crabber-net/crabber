@@ -6,7 +6,10 @@ tag = re.compile(r"(?:^|\s|<br>)(?<!\\)%([\w]{1,})(?!\w)")
 username = re.compile(r"^[a-zA-Z0-9_]+$")
 only_underscores = re.compile(r"^_+$")
 youtube = re.compile(
-    r"(?:https?://)?(?:www.)?(?:youtube\.com/watch\?(?:[^&]+&)*v=|youtu\.be/|youtube\.com/shorts/)(\S{11})(?:[?&]\w+=\w+)?"
+    r"(?:https?://)?"
+    r"(?:www.)?"
+    r"(?:youtube\.com/watch\?(?:[^&]+&)*v=|youtu\.be/|youtube\.com/shorts/)"
+    r"(\S{11})(?:[?&]\w+=\w+)?"
 )
 giphy = re.compile(r"https://(?:media\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)")
 ext_img = re.compile(r"(https://\S+\.(gif|jpe?g|png))(?:\s|$)")

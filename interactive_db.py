@@ -1,3 +1,4 @@
+# flake8: noqa
 from crabber import app
 from extensions import db
 from models import (

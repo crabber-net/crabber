@@ -1,5 +1,4 @@
 import patterns
-import pytest
 
 
 def assert_positive(pattern, samples):

@@ -25,9 +25,10 @@ from werkzeug.middleware.profiler import ProfilerMiddleware
 
 
 def create_app():
+    """Initialize flask app."""
     app = Flask(__name__, template_folder="./templates")
     app.secret_key = (
-        "crabs are better than birds because they can cut their " "wings right off"
+        "crabs are better than birds because they can cut their wings right off"
     )
     app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
     app.config["SQLALCHEMY_DATABASE_URI"] = config.DATABASE_PATH
@@ -45,12 +46,14 @@ def create_app():
 
 
 def register_extensions(app):
+    """Registers flask extensions."""
     from extensions import db
 
     db.init_app(app)
 
 
 def register_blueprints(app):
+    """Registers flask blueprints."""
     import crabber_api
     import crabber_rss
 
@@ -133,11 +136,11 @@ def index():
         return utils.common_molt_actions()
 
     # Display page
-    elif current_user is not None:
+    if current_user is not None:
         page_n = request.args.get("p", 1, type=int)
 
         if request.args.get("ajax_json"):
-            blocks = dict()
+            blocks = {}
             for block in ("title", "heading", "body"):
                 blocks[block] = render_template(
                     f"timeline-ajax-{block}.html",
@@ -148,9 +151,6 @@ def index():
             return jsonify(blocks)
         else:
             if request.args.get("ajax_content"):
-                import time
-
-                start_time = time.time()
                 molts = current_user.query_timeline().paginate(
                     page_n, config.MOLTS_PER_PAGE, False
                 )
@@ -194,7 +194,7 @@ def wild_west():
         return utils.common_molt_actions()
 
     # Display page
-    elif current_user is not None:
+    if current_user is not None:
         page_n = request.args.get("p", 1, type=int)
         # Ajax page switching
         if request.args.get("ajax_json"):
@@ -1213,6 +1213,7 @@ def pretty_url(url, length=35):
 @app.template_filter()
 def format_dob(dob: str):
     """Format ISO-8601 as current age in years.
+
     Any other strings will be passed through.
     """
     return utils.format_dob(dob)
@@ -1220,11 +1221,7 @@ def format_dob(dob: str):
 
 @app.template_filter()
 def pretty_age(time: Union[datetime.datetime, int]):
-    """Converts datetime to pretty twitter-esque age string. (Wrapper for
-    `utils.get_pretty_age`.
-    :param time:
-    :return: Age string
-    """
+    """Converts datetime to pretty twitter-esque age string."""
     if isinstance(time, int):
         time: datetime.datetime = datetime.datetime.fromtimestamp(time)
     return utils.get_pretty_age(time)

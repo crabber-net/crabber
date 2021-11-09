@@ -1,5 +1,5 @@
 import api_utils
-from config import *
+import config
 from flask import abort, Blueprint, request
 import models
 from typing import Optional
@@ -168,7 +168,10 @@ def crab_bio(crab_ID):
 def get_crab_followers(crab_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_CRAB_LIMIT, minimum=0, maximum=API_MAX_CRAB_LIMIT
+        limit,
+        default=config.API_DEFAULT_CRAB_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_CRAB_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -186,7 +189,10 @@ def get_crab_followers(crab_ID):
 def get_crab_bookmarks(crab_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_CRAB_LIMIT, minimum=0, maximum=API_MAX_CRAB_LIMIT
+        limit,
+        default=config.API_DEFAULT_CRAB_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_CRAB_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -215,7 +221,10 @@ def get_crab_bookmarks(crab_ID):
 def get_crab_following(crab_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_CRAB_LIMIT, minimum=0, maximum=API_MAX_CRAB_LIMIT
+        limit,
+        default=config.API_DEFAULT_CRAB_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_CRAB_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -233,7 +242,10 @@ def get_crab_following(crab_ID):
 def get_crab_molts(crab_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -274,7 +286,7 @@ def post_molt():
                 else:
                     return abort(400, "Image filename is blank. Aborting.")
             if molt_content:
-                if len(molt_content) <= MOLT_CHAR_LIMIT:
+                if len(molt_content) <= config.MOLT_CHAR_LIMIT:
                     if image_verified:
                         molt_image = utils.upload_image(molt_image)
                         if molt_image is None:
@@ -289,7 +301,7 @@ def post_molt():
                     return abort(
                         400,
                         description="Molt length must be less than or equal "
-                        f"to {MOLT_CHAR_LIMIT} characters.",
+                        f"to {config.MOLT_CHAR_LIMIT} characters.",
                     )
             else:
                 return abort(400, description="Missing required content.")
@@ -340,7 +352,6 @@ def edit_molt(molt_ID):
                 molt_content = request.form.get("content")
                 molt_image_link = request.form.get("image")
                 molt_image = request.files.get("image")
-                molt_source = request.form.get("source", "Crabber API")
                 image_verified = False
 
                 if molt_image_link:
@@ -598,7 +609,10 @@ def unlike_molt(molt_ID):
 def get_molt_replies(molt_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -614,7 +628,10 @@ def get_molt_replies(molt_ID):
 def get_molt_quotes(molt_ID):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -630,7 +647,10 @@ def get_molt_quotes(molt_ID):
 def get_molts_mentioning(username):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -646,7 +666,10 @@ def get_molts_mentioning(username):
 def get_molts_replying(username):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -662,7 +685,10 @@ def get_molts_replying(username):
 def get_crabtag(crabtag):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
@@ -678,7 +704,10 @@ def get_crabtag(crabtag):
 def get_timeline(username):
     limit = request.args.get("limit")
     limit = api_utils.expect_int(
-        limit, default=API_DEFAULT_MOLT_LIMIT, minimum=0, maximum=API_MAX_MOLT_LIMIT
+        limit,
+        default=config.API_DEFAULT_MOLT_LIMIT,
+        minimum=0,
+        maximum=config.API_MAX_MOLT_LIMIT,
     )
     offset = request.args.get("offset")
     offset = api_utils.expect_int(offset, default=0, minimum=0)
