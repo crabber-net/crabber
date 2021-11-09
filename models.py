@@ -601,7 +601,7 @@ class Crab(db.Model):
         if molt_count >= 1_000:
             self.award(title="Loudmouth")
         if molt_count == 1:
-            self.author.award(title="Baby Crab")
+            self.award(title="Baby Crab")
 
         return new_molt
 
