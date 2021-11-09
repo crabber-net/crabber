@@ -1,12 +1,13 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import json
 import smtplib
 import ssl
-from typing import Dict, Optional
+from typing import Optional
 
 
 class CrabMail:
+    """Manages sending mail."""
+
     def __init__(self, address: str, password: str):
         self.address: str = address
         self.password: str = password

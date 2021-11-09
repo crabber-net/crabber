@@ -24,15 +24,31 @@ gunicorn = "^20.1.0"
 gevent = "^21.8.0"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.11.1"
 pytest = "^6.2.5"
 pytest-cov = "^3.0.0"
-python-language-server = "^0.36.2"
+python-language-server = {extras = ["pycodestyle", "pydocstyle", "rope"], version = "^0.36.2"}
 black = "^21.10b0"
+pytest-pycodestyle = "^2.2.0"
+pytest-flake8 = "^1.0.7"
+pytest-pydocstyle = "^2.2.0"
+pydocstyle = {extras = ["toml"], version = "^6.1.1"}
 python-lsp-black = "^1.0.0"
+
+[tool.pytest.ini_options]
+addopts = "--pycodestyle --pydocstyle --flake8 --ignore=scripts -W ignore::DeprecationWarning"
+
 
 [tool.black]
 # add black options when necessary
+
+[tool.pydocstyle]
+convention = "google"
+add-ignore = [
+    "D100",
+    "D107",
+    "D103",
+    "D105"
+]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

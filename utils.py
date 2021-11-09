@@ -1,4 +1,4 @@
-from config import *
+import config
 from crabatar import Crabatar
 import crabber
 import datetime
@@ -11,37 +11,38 @@ from geoip2.errors import AddressNotFoundError
 from sqlalchemy import func
 import json
 import models
+import os
 import patterns
 import random
 import turtle_images
-from typing import Optional, Tuple
+from typing import List, Tuple
 import uuid
 from werkzeug.wrappers import Response
 
 db = extensions.db
 
-if CDN_ENABLED:
+if config.CDN_ENABLED:
     import boto3
 
     cdn_session = boto3.session.Session()
     cdn_client = cdn_session.client(
         "s3",
         region_name="nyc3",
-        endpoint_url=CDN_ENDPOINT,
-        aws_access_key_id=CDN_ACCESS_KEY,
-        aws_secret_access_key=CDN_SECRET_KEY,
+        endpoint_url=config.CDN_ENDPOINT,
+        aws_access_key_id=config.CDN_ACCESS_KEY,
+        aws_secret_access_key=config.CDN_SECRET_KEY,
     )
 
 
-if GEO_ENABLED:
-    geo_reader = geoip2.database.Reader(GEO_PATH)
+if config.GEO_ENABLED:
+    geo_reader = geoip2.database.Reader(config.GEO_PATH)
 else:
     geo_reader = None
 
 
 def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) -> Response:
-    """
-    Redirect user to current page with error message alert
+    """Redirect user to current page with error message alert.
+
     :param error_msg: Message to display to user
     :param redirect_url: Location to redirect user to. Will default to current
         location.
@@ -60,8 +61,8 @@ def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) -> R
 def show_message(
     misc_msg: str, redirect_url=None, preserve_arguments=False
 ) -> Response:
-    """
-    Redirect user to current page with misc message alert
+    """Redirect user to current page with misc message alert.
+
     :param misc_msg: Message to display to user
     :param redirect_url: Location to redirect user to. Will default to current
         location.
@@ -78,20 +79,15 @@ def show_message(
 
 
 def get_current_user():
-    """
-    Retrieves the object of the currently logged-in user by ID.
-    :return: The logged in user
-    """
-    crab = crabber.session.get("current_user_object")
-    if not crab:
-        crab = models.Crab.get_by_ID(crabber.session.get("current_user"))
-        crabber.session["current_user_object"] = crab
-    return crab
+    """Retrieves the object of the currently logged-in user by ID."""
+    return models.Crab.query.filter_by(
+        id=crabber.session.get("current_user"), deleted=False
+    ).first()
 
 
 def validate_username(username: str) -> bool:
-    """
-    Validates `username` hasn't already been used by another (not deleted) user.
+    """Validates `username` hasn't already been used by another (not deleted) user.
+
     :param username: Username to validate
     :return: Whether it's been taken
     """
@@ -103,8 +99,8 @@ def validate_username(username: str) -> bool:
 
 
 def validate_email(email: str) -> bool:
-    """
-    Validates `email` hasn't already been used by another (not deleted) user.
+    """Validates `email` hasn't already been used by another (not deleted) user.
+
     :param email: Email to validate
     :return: Whether it's been taken
     """
@@ -112,12 +108,15 @@ def validate_email(email: str) -> bool:
 
 
 def allowed_file(filename: str) -> bool:
-    """
-    Verifies filename specified is valid and in `ALLOWED_EXTENSIONS`.
+    """Verifies filename specified is valid and in `config.ALLOWED_EXTENSIONS`.
+
     :param filename: Filename sans-path to check
     :return: Whether it's valid
     """
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in config.ALLOWED_EXTENSIONS
+    )
 
 
 def return_and_log(action: str, crab, molt=None, additional_context=None) -> Response:
@@ -132,9 +131,7 @@ def return_and_log(action: str, crab, molt=None, additional_context=None) -> Res
 
 
 def moderation_actions() -> Response:
-    """
-    Executes actions requested by moderators.
-    """
+    """Executes actions requested by moderators."""
     current_user = get_current_user()
     action = request.form.get("action")
 
@@ -301,8 +298,8 @@ def moderation_actions() -> Response:
 
 
 def common_molt_actions() -> Response:
-    """
-    Sorts through potential actions in POST form data and executes them.
+    """Sorts through potential actions in POST form data and executes them.
+
     :return: Redirect response to same page. See PRG pattern.
     """
     action = request.form.get("user_action")
@@ -599,18 +596,18 @@ def common_molt_actions() -> Response:
 
             # Strip and trim values
             new_bio = {
-                key: trim_strip(value, LIMITS.get(key, 512))
+                key: trim_strip(value, config.LIMITS.get(key, 512))
                 for key, value in new_bio.items()
                 if value.strip()  # Filter key if value empty
             }
             if location:
-                location = trim_strip(location, LIMITS["location"])
+                location = trim_strip(location, config.LIMITS["location"])
             if disp_name:
-                disp_name = trim_strip(disp_name, LIMITS["display_name"])
+                disp_name = trim_strip(disp_name, config.LIMITS["display_name"])
             if website:
-                website = trim_strip(website, LIMITS["website"])
+                website = trim_strip(website, config.LIMITS["website"])
             if desc:
-                desc = trim_strip(desc, LIMITS["description"])
+                desc = trim_strip(desc, config.LIMITS["description"])
 
             # Abort if client-side validation was bypassed
             if not disp_name:
@@ -713,7 +710,7 @@ def common_molt_actions() -> Response:
             word_list = filter(lambda s: len(s), word_list)
             new_muted_words = ",".join(word_list)
 
-        target_user._muted_words = new_muted_words[:MUTED_WORDS_CHAR_LIMIT]
+        target_user._muted_words = new_muted_words[: config.MUTED_WORDS_CHAR_LIMIT]
         target_user.show_nsfw = new_nsfw
 
         db.session.commit()
@@ -725,19 +722,9 @@ def common_molt_actions() -> Response:
     return redirect(request.url)
 
 
-def get_current_user():
-    """
-    Retrieves the object of the currently logged-in user by ID.
-    :return: The logged in user
-    """
-    return models.Crab.query.filter_by(
-        id=crabber.session.get("current_user"), deleted=False
-    ).first()
-
-
 def get_pretty_age(dt: datetime.datetime) -> str:
-    """
-    Converts datetime to pretty twitter-esque age string.
+    """Converts datetime to pretty twitter-esque age string.
+
     :param dt:
     :return: Age string
     """
@@ -761,18 +748,9 @@ def get_pretty_age(dt: datetime.datetime) -> str:
         return localize(dt).strftime("%b %e, %Y")
 
 
-def allowed_file(filename: str) -> bool:
-    """
-    Verifies filename specified is valid and in `ALLOWED_EXTENSIONS`.
-    :param filename: Filename sans-path to check
-    :return: Whether it's valid
-    """
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 def localize(dt: datetime.datetime) -> datetime.datetime:
-    """
-    Localizes datetime to user's timezone
+    """Localizes datetime to user's timezone.
+
     https://www.youtube.com/watch?v=-5wpm-gesOY
 
     :param dt: datetime to localize
@@ -797,10 +775,10 @@ def upload_image(image_file):
     location = os.path.join(crabber.app.config["UPLOAD_FOLDER"], filename)
     try:
         turtle_images.prep_and_save(image_file, location)
-        if CDN_ENABLED and cdn_client:
+        if config.CDN_ENABLED and cdn_client:
             cdn_client.upload_file(
                 location,  # Local file
-                CDN_SPACE_NAME,
+                config.CDN_SPACE_NAME,
                 f"user_uploads/{filename}",  # Remote file-name
                 ExtraArgs={"ACL": "public-read"},
             )
@@ -812,9 +790,7 @@ def upload_image(image_file):
 
 
 def hexID(digits=6):
-    """An insecure unique identifier to disambiguate multiple instances of
-    automatically generated content on a single page.
-    """
+    """Returns a random n-digit hexadecimal number as a string."""
     hex_chars = "0123456789ABCDEF"
     hex_digits = [random.choice(hex_chars) for _ in range(digits)]
     return "".join(hex_digits)
@@ -828,19 +804,19 @@ def make_crabatar(username: str):
 def is_banned(ip_addr: str) -> bool:
     """Check if IP address is blacklisted or belongs to blacklisted areas."""
     # IP blacklisted
-    if ip_addr in BLACKLIST_IP:
+    if ip_addr in config.BLACKLIST_IP:
         return True
 
-    if GEO_ENABLED:
+    if config.GEO_ENABLED:
         try:
             location = geo_reader.city(ip_addr)
 
             # Postal code blacklisted
-            if location.postal.code in BLACKLIST_POST_CODE:
+            if location.postal.code in config.BLACKLIST_POST_CODE:
                 return True
 
             # City blacklisted
-            if location.city.geoname_id in BLACKLIST_CITY_ID:
+            if location.city.geoname_id in config.BLACKLIST_CITY_ID:
                 return True
         except AddressNotFoundError:
             return False
@@ -849,8 +825,10 @@ def is_banned(ip_addr: str) -> bool:
 
 
 def parse_semantic_content(content, image=None, quoted_molt=None) -> str:
-    """Return content string (including embeds, tags, and mentions) rendered
-    as semantic HTML. (For RSS feeds and other external applications)
+    """Render content as HTML for RSS.
+
+    Return content string (including embeds, tags, and mentions) rendered as semantic
+    HTML. (For RSS feeds and other external applications)
     """
     # Escape/sanitize user submitted content
     new_content = str(escape(content))
@@ -884,8 +862,10 @@ def parse_rich_content(
     nsfw=False,
     card=None,
 ):
-    """Parse content string (including embeds, tags, and mentions) and render
-    it as rich HTML.
+    """Render content as HTML for site.
+
+    Parse content string (including embeds, tags, and mentions) and render it as rich
+    HTML.
     """
     # Escape/sanitize user submitted content
     new_content = str(escape(content))
@@ -1026,7 +1006,7 @@ def label_mentions(content, absolute_url=False):
     """Replace mentions with HTML links to users."""
     output = content
     match = patterns.mention.search(output)
-    base_url = BASE_URL if absolute_url else ""
+    base_url = config.BASE_URL if absolute_url else ""
     if match:
         start, end = match.span()
         username_str = output[start:end].replace("<br>", "").strip("@ \t\n")
@@ -1053,7 +1033,7 @@ def label_crabtags(content, absolute_url=False):
     """Replace crabtags with HTML links to crabtag exploration page."""
     output = content
     match = patterns.tag.search(output)
-    base_url = BASE_URL if absolute_url else ""
+    base_url = config.BASE_URL if absolute_url else ""
     if match:
         start, end = match.span()
         output = [
@@ -1074,6 +1054,7 @@ def trim_strip(value, length):
 
 def format_dob(dob: str):
     """Format ISO-8601 as current age in years.
+
     Any other strings will be passed through.
     """
     try:

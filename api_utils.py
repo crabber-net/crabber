@@ -1,5 +1,4 @@
 import calendar
-from config import *
 from datetime import datetime
 from flask_sqlalchemy import BaseQuery
 import json

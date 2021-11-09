@@ -1,4 +1,4 @@
-from PIL import Image, ExifTags, UnidentifiedImageError
+from PIL import Image, ExifTags
 
 MAX_RES = 2048
 ALPHA_BACKGROUND_COLOR = (255, 255, 255)
