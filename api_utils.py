@@ -5,7 +5,8 @@ from flask_sqlalchemy import BaseQuery
 import json
 import models
 from sqlalchemy import or_
-from typing import Any, List, Optional
+from typing import Any, Optional
+import utils
 
 
 def expect_int(value: Any, default: int, minimum: Optional[int] = None,
@@ -49,7 +50,7 @@ def get_crab(crab_ID: int) -> Optional['models.Crab']:
     """ Get a Crab by ID.
     """
     crab = models.Crab.query \
-            .filter_by(id=crab_ID, deleted=False, banned=False).first()
+        .filter_by(id=crab_ID, deleted=False, banned=False).first()
     return crab
 
 
@@ -57,8 +58,8 @@ def get_crab_by_username(username: str) -> Optional['models.Crab']:
     """ Get a Crab by username.
     """
     crab = models.Crab.query \
-            .filter(models.Crab.username.ilike(username)) \
-            .filter_by(deleted=False, banned=False).first()
+        .filter(models.Crab.username.ilike(username)) \
+        .filter_by(deleted=False, banned=False).first()
     return crab
 
 
@@ -66,9 +67,9 @@ def get_crab_followers(crab: 'models.Crab') -> BaseQuery:
     """ Get a Crab's followers.
     """
     query = models.Crab.query.filter_by(deleted=False, banned=False) \
-            .join(models.following_table,
-                  models.following_table.c.follower_id == models.Crab.id) \
-            .filter(models.following_table.c.following_id == crab.id)
+        .join(models.following_table,
+              models.following_table.c.follower_id == models.Crab.id) \
+        .filter(models.following_table.c.following_id == crab.id)
     return query
 
 
@@ -76,9 +77,9 @@ def get_crab_following(crab: 'models.Crab') -> BaseQuery:
     """ Get a Crab's following.
     """
     query = models.Crab.query.filter_by(deleted=False, banned=False) \
-            .join(models.following_table,
-                  models.following_table.c.following_id == models.Crab.id) \
-            .filter(models.following_table.c.follower_id == crab.id)
+        .join(models.following_table,
+              models.following_table.c.following_id == models.Crab.id) \
+        .filter(models.following_table.c.follower_id == crab.id)
     return query
 
 
@@ -86,9 +87,9 @@ def get_molt(molt_ID: int) -> Optional['models.Molt']:
     """ Get a Molt by ID.
     """
     molt = models.Molt.query \
-            .filter_by(id=molt_ID, deleted=False, is_remolt=False) \
-            .filter(models.Molt.author.has(deleted=False, banned=False)) \
-            .first()
+        .filter_by(id=molt_ID, deleted=False, is_remolt=False) \
+        .filter(models.Molt.author.has(deleted=False, banned=False)) \
+        .first()
     return molt
 
 
@@ -97,9 +98,9 @@ def get_molt_quotes(molt_ID: int, since: Optional[int] = None,
     """ Get the replies of a Molt by ID.
     """
     query = models.Molt.query \
-            .filter_by(deleted=False, is_quote=True, original_molt_id=molt_ID) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False, is_quote=True, original_molt_id=molt_ID) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -112,9 +113,9 @@ def get_molt_replies(molt_ID: int, since: Optional[int] = None,
     """ Get the replies of a Molt by ID.
     """
     query = models.Molt.query \
-            .filter_by(deleted=False, is_reply=True, original_molt_id=molt_ID) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False, is_reply=True, original_molt_id=molt_ID) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -128,11 +129,11 @@ def get_molts_mentioning(username: str, since: Optional[int] = None,
     """ Get the Molts that mention a username.
     """
     query = models.Molt.query \
-            .filter_by(deleted=False) \
-            .filter(or_(models.Molt.raw_mentions.ilike(f'%\n{username}\n%'),
-                        models.Molt.raw_mentions.ilike(f'{username}\n%'))) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False) \
+        .filter(or_(models.Molt.raw_mentions.ilike(f'%\n{username}\n%'),
+                    models.Molt.raw_mentions.ilike(f'{username}\n%'))) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -147,16 +148,15 @@ def get_molts_replying_to(username: str, since: Optional[int] = None,
     """
     target_crab = get_crab_by_username(username)
     query = models.Molt.query \
-            .filter_by(deleted=False, is_reply=True) \
-            .filter(models.Molt.original_molt.has(author=target_crab)) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False, is_reply=True) \
+        .filter(models.Molt.original_molt.has(author=target_crab)) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
         query = query.filter(models.Molt.id > since_id)
     return query
-
 
 
 def get_molts_with_tag(crabtag: str, since: Optional[int] = None,
@@ -165,11 +165,11 @@ def get_molts_with_tag(crabtag: str, since: Optional[int] = None,
     """ Get Molts that use a specific Crabtag.
     """
     query = models.Molt.query \
-            .filter_by(deleted=False) \
-            .join(models.Molt.tags) \
-            .filter(models.Crabtag.name == crabtag.lower()) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False) \
+        .join(models.Molt.tags) \
+        .filter(models.Crabtag.name == crabtag.lower()) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -183,8 +183,8 @@ def get_molts_from_crab(crab: 'models.Crab', since: Optional[int] = None,
     """ Get a Crab's Molts.
     """
     query = models.Molt.query \
-            .filter_by(deleted=False, author=crab) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False, author=crab) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -199,13 +199,13 @@ def get_timeline(crab: 'models.Crab', since: Optional[int] = None,
     """
     following_ids = [following.id for following in crab.following]
     query = models.Molt.query \
-            .filter_by(deleted=False, is_reply=False) \
-            .filter(models.Molt.author.has(banned=False, deleted=False)) \
-            .filter(or_(
-                models.Molt.author.has(models.Crab.id.in_(following_ids)),
-                models.Molt.author == crab
-            )) \
-            .order_by(models.Molt.timestamp.desc())
+        .filter_by(deleted=False, is_reply=False) \
+        .filter(models.Molt.author.has(banned=False, deleted=False)) \
+        .filter(or_(
+            models.Molt.author.has(models.Crab.id.in_(following_ids)),
+            models.Molt.author == crab
+        )) \
+        .order_by(models.Molt.timestamp.desc())
     if since:
         query = query.filter(models.Molt.timestamp > since)
     if since_id:
@@ -228,11 +228,20 @@ def crab_to_json(crab: 'models.Crab', bio: bool = False) -> dict:
     }
     if bio:
         raw_bio = json.loads(crab.raw_bio)
+
+        # Format age before sending (to avoid leaking user DOB)
+        age = None
+        if 'age' in raw_bio:
+            age = utils.format_dob(raw_bio.pop('age'))
+
         crab_bio = {
             "description": crab.description,
             "location": crab.location,
             **raw_bio
         }
+        if age:
+            crab_bio['age'] = age
+
         crab_dict['bio'] = crab_bio
     return crab_dict
 

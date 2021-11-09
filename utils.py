@@ -2,6 +2,8 @@ from config import *
 from crabatar import Crabatar
 import crabber
 import datetime
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import isoparse
 import extensions
 from flask import escape, redirect, render_template, render_template_string, \
     request
@@ -1072,3 +1074,15 @@ def trim_strip(value, length):
     """ Strips whitespace from a string before trimming it to length.
     """
     return value.strip()[:length]
+
+
+def format_dob(dob: str):
+    """ Format ISO-8601 as current age in years.
+        Any other strings will be passed through.
+    """
+    try:
+        dob_dt = isoparse(dob)
+        age = relativedelta(datetime.datetime.now(), dob_dt).years
+        return age
+    except (ValueError, TypeError):
+        return dob
