@@ -799,6 +799,63 @@ test = ["versioneer", "pylint (>=2.5.0)", "pytest", "mock", "pytest-cov", "cover
 yapf = ["yapf"]
 
 [[package]]
+name = "python-lsp-black"
+version = "1.0.0"
+description = "Black plugin for the Python LSP Server"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+black = ">=19.3b0"
+python-lsp-server = "*"
+toml = "*"
+
+[package.extras]
+dev = ["isort (>=5.0)", "flake8", "pytest", "mypy"]
+
+[[package]]
+name = "python-lsp-jsonrpc"
+version = "1.0.0"
+description = "JSON RPC 2.0 server library"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+ujson = ">=3.0.0"
+
+[package.extras]
+test = ["pylint", "pycodestyle", "pyflakes", "pytest", "pytest-cov", "coverage"]
+
+[[package]]
+name = "python-lsp-server"
+version = "1.2.4"
+description = "Python Language Server for the Language Server Protocol"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+jedi = ">=0.17.2,<0.19.0"
+pluggy = "*"
+python-lsp-jsonrpc = ">=1.0.0"
+ujson = ">=3.0.0"
+
+[package.extras]
+all = ["autopep8", "flake8 (>=3.8.0,<4.0.0)", "mccabe (>=0.6.0,<0.7.0)", "pycodestyle (>=2.7.0)", "pydocstyle (>=2.0.0)", "pyflakes (>=2.3.0,<2.4.0)", "pylint (>=2.5.0,<2.10.0)", "rope (>=0.10.5)", "yapf"]
+autopep8 = ["autopep8"]
+flake8 = ["flake8 (>=3.8.0,<4.0.0)"]
+mccabe = ["mccabe (>=0.6.0,<0.7.0)"]
+pycodestyle = ["pycodestyle (>=2.7.0)"]
+pydocstyle = ["pydocstyle (>=2.0.0)"]
+pyflakes = ["pyflakes (>=2.3.0,<2.4.0)"]
+pylint = ["pylint (>=2.5.0,<2.10.0)"]
+rope = ["rope (>0.10.5)"]
+test = ["pylint (>=2.5.0,<2.10.0)", "pytest", "pytest-cov", "coverage", "numpy", "pandas", "matplotlib", "pyqt5", "flaky"]
+yapf = ["yapf"]
+
+[[package]]
 name = "regex"
 version = "2021.11.2"
 description = "Alternative regular expression module, to replace re."
@@ -1024,7 +1081,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.11"
-content-hash = "cab82edfec7fb1068ea1949b9b4052b88fdc4657eec345a293e6a23ad327f6bc"
+content-hash = "571c9e34c6f4fb354c750adae47f81b61c50d652226780e788cf19c7a9528d62"
 
 [metadata.files]
 aiohttp = [
@@ -1826,6 +1883,18 @@ python-jsonrpc-server = [
 python-language-server = [
     {file = "python-language-server-0.36.2.tar.gz", hash = "sha256:9984c84a67ee2c5102c8e703215f407fcfa5e62b0ae86c9572d0ada8c4b417b0"},
     {file = "python_language_server-0.36.2-py2.py3-none-any.whl", hash = "sha256:a0ad0aca03f4a20c1c40f4f230c6773eac82c9b7cdb026cb09ba10237f4815d5"},
+]
+python-lsp-black = [
+    {file = "python-lsp-black-1.0.0.tar.gz", hash = "sha256:0d7dd5f440a53b6f676fa8c097979e0ff611065b8f4ffd248b43228b0df2efee"},
+    {file = "python_lsp_black-1.0.0-py3-none-any.whl", hash = "sha256:2a5fd9e37d27432fa003d01d88339889ee6090c04de5f80b588b50c9dc9f472b"},
+]
+python-lsp-jsonrpc = [
+    {file = "python-lsp-jsonrpc-1.0.0.tar.gz", hash = "sha256:7bec170733db628d3506ea3a5288ff76aa33c70215ed223abdb0d95e957660bd"},
+    {file = "python_lsp_jsonrpc-1.0.0-py3-none-any.whl", hash = "sha256:079b143be64b0a378bdb21dff5e28a8c1393fe7e8a654ef068322d754e545fc7"},
+]
+python-lsp-server = [
+    {file = "python-lsp-server-1.2.4.tar.gz", hash = "sha256:007278c4419339bd3a61ca6d7eb8648ead28b5f1b9eba3b6bae8540046116335"},
+    {file = "python_lsp_server-1.2.4-py3-none-any.whl", hash = "sha256:a163907c83ba7bae6b45a9bc9e407b7001fbed7c7561d032a5fd355ae6fae42c"},
 ]
 regex = [
     {file = "regex-2021.11.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:897c539f0f3b2c3a715be651322bef2167de1cdc276b3f370ae81a3bda62df71"},
