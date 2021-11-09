@@ -736,6 +736,19 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
 
 [[package]]
+name = "pytest-pylint"
+version = "0.18.0"
+description = "pytest plugin to check source code with pylint"
+category = "dev"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+pylint = ">=2.3.0"
+pytest = ">=5.4"
+toml = ">=0.7.1"
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -1024,7 +1037,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.11"
-content-hash = "cab82edfec7fb1068ea1949b9b4052b88fdc4657eec345a293e6a23ad327f6bc"
+content-hash = "4a19a7c962cf128558fe21debc04af3948f3a717b5d6bf5623bd5a61d6473031"
 
 [metadata.files]
 aiohttp = [
@@ -1810,6 +1823,10 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-3.0.0.tar.gz", hash = "sha256:e7f0f5b1617d2210a2cabc266dfe2f4c75a8d32fb89eafb7ad9d06f6d076d470"},
     {file = "pytest_cov-3.0.0-py3-none-any.whl", hash = "sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6"},
+]
+pytest-pylint = [
+    {file = "pytest-pylint-0.18.0.tar.gz", hash = "sha256:790c7a8019fab08e59bd3812db1657a01995a975af8b1c6ce95b9aa39d61da27"},
+    {file = "pytest_pylint-0.18.0-py3-none-any.whl", hash = "sha256:b63aaf8b80ff33c8ceaa7f68323ed04102c7790093ccf6bdb261a4c2dc6fd564"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
