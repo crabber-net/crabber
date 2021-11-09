@@ -69,6 +69,15 @@ function toggleLike(e) {
     }
     // was unliked, needs to be liked
     else {
+        // Rogen Out of Control
+        let moltId = $(e.parentElement)
+            .find('input[name=molt_id]')
+            .attr('value');
+        let moltContent = $(`meta#molt-content-${moltId}`).data('content');
+        if (moltContent.toLowerCase().match(/seth ?rogen/)) {
+            document.getElementById('rogen-out-of-control').play();
+        }
+
         $(filled_heart).removeClass("d-none");
         $(empty_heart).addClass("d-none");
         if (counter != undefined) {

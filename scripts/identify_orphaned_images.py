@@ -1,7 +1,8 @@
-import os,sys,inspect
+import os, sys, inspect
+
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
-sys.path.insert(0,parentdir)
+sys.path.insert(0, parentdir)
 
 from crabber import app
 from extensions import db
@@ -13,19 +14,21 @@ app.app_context().push()
 
 
 # List all images
-user_upload_path = os.path.join('img', 'user_uploads')
-image_path = os.path.join('static', user_upload_path)
-images = [os.path.join(user_upload_path, image)
-          for image in os.listdir(image_path)
-          if os.path.isfile(os.path.join(image_path, image))]
+user_upload_path = os.path.join("img", "user_uploads")
+image_path = os.path.join("static", user_upload_path)
+images = [
+    os.path.join(user_upload_path, image)
+    for image in os.listdir(image_path)
+    if os.path.isfile(os.path.join(image_path, image))
+]
 
 # Filter by images unless --all flag is provided
-if '--all' not in sys.argv:
+if "--all" not in sys.argv:
     images = list(
-        filter(lambda file: os.path.splitext(file)[1].lower() in ('.png',
-                                                                  '.jpg',
-                                                                  '.jpeg'),
-               images)
+        filter(
+            lambda file: os.path.splitext(file)[1].lower() in (".png", ".jpg", ".jpeg"),
+            images,
+        )
     )
 
 # Find all Molt images
@@ -45,4 +48,3 @@ for image in images:
     # Convert to absolute paths
     image = os.path.join(image_path, os.path.split(image)[-1])
     print(image)
-
