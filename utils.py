@@ -15,7 +15,7 @@ import os
 import patterns
 import random
 import turtle_images
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 import uuid
 import user_agents
 from werkzeug.wrappers import Response
