@@ -20,7 +20,7 @@ def size_to_quality(size):
 def exif_rotate(image):
     try:
         for orientation in ExifTags.TAGS.keys():
-            if ExifTags.TAGS[orientation] == 'Orientation':
+            if ExifTags.TAGS[orientation] == "Orientation":
                 break
 
         exif = dict(image._getexif().items())
@@ -55,4 +55,4 @@ def prep_and_save(img_bytes, filename):
 
     # Optimize and save image at 50% jpeg quality
     quality = max([size_to_quality(size) for size in flat_img.size])
-    flat_img.convert('RGB').save(filename, optimize=True, quality=quality)
+    flat_img.convert("RGB").save(filename, optimize=True, quality=quality)

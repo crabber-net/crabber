@@ -15,8 +15,8 @@ from webpreview.excepts import URLUnreachable, URLNotFound
 
 
 class Lock:
-    """ Creates a lock file until exit.
-    """
+    """Creates a lock file until exit."""
+
     def __init__(self, name: Optional[str] = None):
         self.filename: str = f'.{name + "-" if name else ""}lock'
         self.locked = False
@@ -27,8 +27,8 @@ class Lock:
             return self.locked
 
         # Create lock
-        with open(self.filename, 'w') as f:
-            f.write('Job started at {datetime.now().isoformat()}')
+        with open(self.filename, "w") as f:
+            f.write("Job started at {datetime.now().isoformat()}")
         self.locked = True
         return self.locked
 
@@ -38,19 +38,19 @@ class Lock:
 
 
 def parse_metadata(html: str) -> Tuple[str, str, str]:
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
 
     # Get title
     title = None
     # OpenGraph title
-    meta_og_title = soup.find('meta', property='og:title')
+    meta_og_title = soup.find("meta", property="og:title")
     if meta_og_title:
-        title = meta_og_title.get('content', None)
+        title = meta_og_title.get("content", None)
     # Meta tag title
     else:
-        meta_title = soup.find('meta', {'name': 'title'})
+        meta_title = soup.find("meta", {"name": "title"})
         if meta_title:
-            title = meta_title.get('content', None)
+            title = meta_title.get("content", None)
     if not title:
         if soup.title:
             title = soupt.title.text
@@ -60,35 +60,35 @@ def parse_metadata(html: str) -> Tuple[str, str, str]:
     # Get description
     description = None
     # OpenGraph description
-    meta_og_description = soup.find('meta', property='og:description')
+    meta_og_description = soup.find("meta", property="og:description")
     if meta_og_description:
-        description = meta_og_description.get('content', None)
+        description = meta_og_description.get("content", None)
     # Meta tag description
     else:
-        meta_description = soup.find('meta', {'name': 'description'})
+        meta_description = soup.find("meta", {"name": "description"})
         if meta_description:
-            description = meta_description.get('content', None)
-    description = description or ''
+            description = meta_description.get("content", None)
+    description = description or ""
 
     # Get image
     image = None
     # OpenGraph image
-    meta_og_image = soup.find('meta', property='og:image')
+    meta_og_image = soup.find("meta", property="og:image")
     if meta_og_image:
-        image = meta_og_image.get('content', None)
+        image = meta_og_image.get("content", None)
     # Scrape image
     if image is None:
-        favicons = soup.select('link[class*=icon]')
+        favicons = soup.select("link[class*=icon]")
         if len(favicons):
-            image = favicons[0].get('href', None)
+            image = favicons[0].get("href", None)
     # Fallback
     if image is None:
-        image = 'https://cdn.crabber.net/img/avatar.jpg'
+        image = "https://cdn.crabber.net/img/avatar.jpg"
 
     return title, description, image
 
 
-with Lock('fetch-cards') as lock:
+with Lock("fetch-cards") as lock:
     if lock:
         app.app_context().push()
 
@@ -97,19 +97,20 @@ with Lock('fetch-cards') as lock:
                 metadata = web_preview(
                     # Redirect Twitter to Nitter (they've started requiring
                     # javascript... so dumb.)
-                    card.url.replace('https://twitter.com',
-                                     'https://nitter.actionsack.com'),
-                    timeout=2
+                    card.url.replace(
+                        "https://twitter.com", "https://nitter.actionsack.com"
+                    ),
+                    timeout=2,
                 )
                 if metadata:
                     card.title, card.description, card.image = metadata
                     card.ready = True
-                    print(f'Fetched {card.url}')
+                    print(f"Fetched {card.url}")
             except (URLUnreachable, URLNotFound, RequestException):
                 pass
             if not card.ready:
-                print(f'Failed to fetch {card.url}')
+                print(f"Failed to fetch {card.url}")
                 card.failed = True
         db.session.commit()
     else:
-        print('Job already in process. Exiting.')
+        print("Job already in process. Exiting.")
