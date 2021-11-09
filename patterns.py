@@ -13,11 +13,9 @@ ext_img = re.compile(r"(https://\S+\.(gif|jpe?g|png))(?:\s|$)")
 ext_link = re.compile(
     r'(?<!href=[\'"])('
     r"(?:https?://)\S+"
-    r"|www\.\S+.\w{2,3}"
-    r"|\S+\.(?i:com|net|org|gov|io)"
     r")"
 )
-ext_md_link = re.compile(r"\[([^\]\(\)]+)\]\(" rf"({ext_link.pattern})" r"\)")
+ext_md_link = re.compile(rf"\[([^\]\(\)]+)\]\(({ext_link.pattern})" r"\)")
 timezone = re.compile(r"^-?(1[0-2]|0[0-9]).\d{2}$")
 pretty_url = re.compile(r"(?:https?://)?(?:www\.)?((?:(?:[\w_-]+\.?)+/?)+)")
 # Captures root of url (e.g. reddit.com or crabber.net)

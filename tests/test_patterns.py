@@ -15,10 +15,11 @@ def assert_negative(pattern, samples):
 def test_ext_link():
     positive_samples = [
         "https://crabber.net",
-        "https://crabber.net/moderation/?molt_id=1&viewing=molt" "http://reddit.com",
+        "https://crabber.net/moderation/?molt_id=1&viewing=molt",
+        "http://reddit.com",
         "https://www.discogs.com/user/jakeledoux/collection",
-        "element.io",
-        "google.com",
+        # "element.io",
+        # "google.com",
     ]
 
     assert_positive(patterns.ext_link, positive_samples)
@@ -45,9 +46,9 @@ def test_ext_md_link():
         "[reddit: the front page of the internet](http://reddit.com)",
         "[my CD collection on discogs]"
         "(https://www.discogs.com/user/jakeledoux/collection)",
-        "[Element, a Matrix client](element.io)",
-        "Why don't you [google](google.com) it?",
-        "[caps are allowed](gOoGlE.cOm)",
+        # "[Element, a Matrix client](element.io)",
+        # "Why don't you [google](google.com) it?",
+        # "[caps are allowed](gOoGlE.cOm)",
     ]
 
     assert_positive(patterns.ext_md_link, positive_samples)
