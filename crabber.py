@@ -467,9 +467,7 @@ def signup():
                             "Username must be between 3 and 32 characters."
                         )
                 else:
-                    return redirect(
-                        "/signup?failed&error_msg=That username is taken"
-                    )
+                    return redirect("/signup?failed&error_msg=That username is taken")
             else:
                 return redirect(
                     "/signup?failed&error_msg="

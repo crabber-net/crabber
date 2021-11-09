@@ -1068,7 +1068,7 @@ def format_dob(dob: str):
 
 def parse_user_agent():
     """Returns the user-agent header parsed into an object."""
-    user_agent = request.headers.get('user-agent')
+    user_agent = request.headers.get("user-agent")
     if user_agent:
         user_agent = user_agents.parse(user_agent)
     return user_agent

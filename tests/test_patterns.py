@@ -34,7 +34,7 @@ def test_ext_link():
         "middle attacks like the good old days. I miss 2012.",
         "ftp://bezos's bank account and grab me a few million",
         "www.lol",
-        "<a href=\"https://tumblr.com\">"
+        '<a href="https://tumblr.com">',
     ]
 
     assert_negative(patterns.ext_link, negative_samples)

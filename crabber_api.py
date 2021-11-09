@@ -94,9 +94,7 @@ def follow_crab(crab_ID):
                 else:
                     return abort(400, description="Cannot follow self.")
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -114,9 +112,7 @@ def unfollow_crab(crab_ID):
                 crab.unfollow(target_crab)
                 return "Unfollowed Crab.", 200
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -380,9 +376,7 @@ def edit_molt(molt_ID):
                 else:
                     return abort(400, description="Molt is not editable.")
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -427,9 +421,7 @@ def quote_molt(molt_ID):
                 else:
                     return abort(400, description="Missing required content.")
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -474,9 +466,7 @@ def reply_to_molt(molt_ID):
                 else:
                     return abort(400, description="Missing required content.")
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -512,9 +502,7 @@ def remolt_molt(molt_ID):
                     else:
                         return abort(400, description="No Remolt to delete.")
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -533,9 +521,7 @@ def bookmark_molt(molt_ID):
                     crab.bookmark(molt)
                 return "Bookmarked Molt.", 200
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -554,9 +540,7 @@ def unbookmark_molt(molt_ID):
                     crab.unbookmark(molt)
                 return "Unbookmarked Molt.", 200
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -575,9 +559,7 @@ def like_molt(molt_ID):
                     molt.like(crab)
                 return "Liked Molt.", 200
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
@@ -596,9 +578,7 @@ def unlike_molt(molt_ID):
                     molt.unlike(crab)
                 return "Unliked Molt.", 200
             else:
-                return abort(
-                    400, description="The authorized user no longer exists."
-                )
+                return abort(400, description="The authorized user no longer exists.")
         else:
             return abort(401, description="This endpoint requires authentication.")
     else:
