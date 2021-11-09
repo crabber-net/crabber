@@ -2,7 +2,7 @@ name: CI/Test
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, edited]
   push:
     branches: [main]
 
