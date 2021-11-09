@@ -948,10 +948,13 @@ class Crab(db.Model):
         followers = db.session.query(
             following_table.c.following_id,
             func.count(following_table.c.following_id).label('count')
-        ).group_by(following_table.c.following_id).subquery()
+        ) \
+            .join(Crab, Crab.id == following_table.c.follower_id) \
+            .filter(Crab.deleted == False, Crab.banned == False) \
+            .group_by(following_table.c.following_id).subquery()
 
         crabs = db.session.query(Crab, followers.c.count) \
-            .outerjoin(followers, followers.c.following_id == Crab.id) \
+            .join(followers, followers.c.following_id == Crab.id) \
             .filter(Crab.deleted == False, Crab.banned == False) \
             .order_by(db.desc('count'))
         return crabs
