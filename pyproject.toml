@@ -32,9 +32,11 @@ pytest-pycodestyle = "^2.2.0"
 pytest-flake8 = "^1.0.7"
 pytest-pydocstyle = "^2.2.0"
 pydocstyle = {extras = ["toml"], version = "^6.1.1"}
+python-lsp-black = "^1.0.0"
 
 [tool.pytest.ini_options]
 addopts = "--pycodestyle --pydocstyle --flake8 --ignore=scripts -W ignore::DeprecationWarning"
+
 
 [tool.black]
 # add black options when necessary
