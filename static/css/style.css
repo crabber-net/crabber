@@ -2408,11 +2408,7 @@ a:active.text-primary {
     margin: auto;
 
     color: var(--muted);
-    opacity: 0;
     transition: 200ms;
-}
-.molt-content-spoiler:hover::before {
-    opacity: 100;
 }
 .molt-content-spoiler.spoiler-revealed::before {
     display: none;
