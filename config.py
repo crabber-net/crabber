@@ -40,6 +40,7 @@ def load_lines_from_file(filename: str) -> List[str]:
 # Check if running on production server or local development
 is_debug_server = getenv_bool("IS_DEBUG_SERVER", True)
 
+SECRET_KEY = os.getenv("SECRET_KEY", "crabs are far superior to lobsters")
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 MOLT_CHAR_LIMIT: int = 280
 MOLTS_PER_PAGE: int = 20
