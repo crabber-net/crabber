@@ -6,23 +6,25 @@ import patterns
 def check_pattern(pattern, sample, exact=False, strip=False):
     """Returns whether the pattern matched anywhere in the sample.
 
-       If the sample is a sequence then the first value will be treated as the sample and
-       the rest will be treated as validation groups.
+    If the sample is a sequence then the first value will be treated as the sample and
+    the rest will be treated as validation groups.
     """
     if isinstance(sample, str):
         validation_groups = None
     elif isinstance(sample, Sequence):
         sample, *validation_groups = sample
     else:
-        raise TypeError('value must be str or recursive collection or str')
+        raise TypeError("value must be str or recursive collection or str")
 
     match = pattern.search(sample)
     if match:
         if validation_groups:
-            return all([
-                a.strip() if strip else a == b
-                for a, b in zip(match.groups(), validation_groups)
-            ])
+            return all(
+                [
+                    a.strip() if strip else a == b
+                    for a, b in zip(match.groups(), validation_groups)
+                ]
+            )
         return True
     return False
 
@@ -31,14 +33,17 @@ def assert_positive(pattern, samples, map_func=None, strip=False):
     """Checks pattern against each sample and asserts all have matches."""
     if map_func:
         samples = deep_map(map_func, samples)
-    assert all([check_pattern(pattern, sample, strip=strip) for sample in samples])
+    for sample in samples:
+        assert check_pattern(pattern, sample, strip=strip)
 
 
 def assert_negative(pattern, samples, map_func=None, strip=False):
     """Checks pattern against each sample and asserts no matches."""
     if map_func:
         samples = deep_map(map_func, samples)
-    assert not any([check_pattern(pattern, sample, strip=strip) for sample in samples])
+    for sample in samples:
+        print(f"Checking: {sample!r}")
+        assert not check_pattern(pattern, sample, strip=strip)
 
 
 def deep_map(func, value):
@@ -48,7 +53,7 @@ def deep_map(func, value):
     elif isinstance(value, Sequence):
         return [deep_map(func, elem) for elem in value]
     else:
-        raise TypeError('value must be str or recursive collection or str')
+        raise TypeError("value must be str or recursive collection or str")
 
 
 def test_ext_link():
@@ -108,22 +113,26 @@ def test_spoiler_tag():
     positive_samples = [
         (">!spoiler?<", "spoiler?"),
         ("this is a spoiler --> >!boo!< <-- that was a spoiler!", "boo!"),
-        ("""
+        (
+            """
         multiline spiler
         >!
 
         the cake is the truth
 
         <
-        """, "the cake is the truth"),
+        """,
+            "the cake is the truth",
+        ),
     ]
 
     # Spoiler tag operates on HTML-escaped strings
     def escape_string(s):
         return str(escape(s))
 
-    assert_positive(patterns.spoiler_tag, positive_samples, map_func=escape_string,
-                    strip=True)
+    assert_positive(
+        patterns.spoiler_tag, positive_samples, map_func=escape_string, strip=True
+    )
 
     negative_samples = [">> ! << !< >!< wowah!"]
 

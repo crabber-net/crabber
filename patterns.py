@@ -21,7 +21,7 @@ link_basic = (
     r"(?:www\.)?\w{3,}\.(?i:com|net|org|gov|io)"
 )
 ext_link = re.compile(
-    r"(?<!href=['\"])(?:^|\s|[(])"
+    r"(?<!href=['\"])(\s|^)\b"
     r"(" + link_basic + r")"
 )
 # fmt: on

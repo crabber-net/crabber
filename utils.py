@@ -956,7 +956,7 @@ def label_links(
     match = patterns.ext_link.search(output)
     if match:
         start, end = match.span()
-        url = match.group(1)
+        url = match.group(2)
         urls.append(url)
         displayed_url = url if len(url) <= max_len else url[: max_len - 3] + "..."
 
@@ -965,7 +965,7 @@ def label_links(
         urls.extend(recursive_urls)
 
         output = (
-            output[:start],
+            output[:start] + match.group(1),
             f'<a href="{url}" class="no-onclick mention zindex-front" \
             target="_blank">{displayed_url}</a>',
             recursive_content,
@@ -989,7 +989,6 @@ def label_spoilers(
     """
     output = content[:]
     match = patterns.spoiler_tag.search(output)
-    print(f'"{output}"')
     if match:
         start, end = match.span()
         spoiler_text = match.group(1).strip()
