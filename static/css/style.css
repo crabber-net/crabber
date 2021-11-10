@@ -629,9 +629,27 @@
 }
 
 .nsfw-thumbnail {
+    position: relative;
     transform: scale(1.2);
     filter: blur(20px);
     overflow: hidden;
+}
+
+.nsfw-thumbnail-warning {
+    position: absolute;
+    height: min-content;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+
+    text-align: center;
+    font-size: 300%;
+
+    color: var(--nsfw);
+    text-shadow: 0 0 3em black;
+    opacity: 0.6;
 }
 
 .zindex-front {
@@ -1241,6 +1259,7 @@ div#rich-description, div#editable-description textarea {
 
 .large-molt-media-container {
     max-height: none;
+    overflow: hidden;
 }
 
 @media only screen and (max-height: 823px) {
@@ -1338,7 +1357,11 @@ body, .master-container {
     margin: 0.5em 0;
     border-left: 5px solid var(--border-dark);
     border-radius: 0.5em;
-    background-color: var(--dark-less);
+    background-color: rgba(127, 127, 127, 0.08);
+}
+
+.darken-background {
+    background-color: rgba(127, 127, 127, 0.08);
 }
 
 .tiny-reply-context {
@@ -2399,6 +2422,8 @@ a:active.text-primary {
     content: "SPOILER";
     text-align: center;
 
+    font-weight: bold;
+
     position: absolute;
     top: 0;
     right: 0;
@@ -2413,4 +2438,8 @@ a:active.text-primary {
 .molt-content-spoiler.spoiler-revealed::before {
     display: none;
     transition: none;
+}
+
+.text-warning {
+    color: var(--warning) !important;
 }

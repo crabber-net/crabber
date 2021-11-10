@@ -34,6 +34,10 @@
     --muted: #6c757d;
     --placeholder: rgb(172, 172, 172);
 
+    --nsfw: var(--primary);
+    --nsfw-faded: var(--primary-faded);
+    --nsfw-faded-less: var(--primary-faded-less);
+
     --reply: rgb(36, 168, 250);
     --reply-trans: rgba(36, 168, 250, 0.05);
     --remolt: rgb(115, 223, 52);

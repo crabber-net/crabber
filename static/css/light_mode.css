@@ -31,7 +31,8 @@
     --unread-notif-background-hover: var(--dark-lesser);
 
     --muted: #535557;
-;
+
+    --warning: #cc9411;
 }
 
 .border-dark {
