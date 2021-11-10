@@ -27,9 +27,7 @@ from werkzeug.middleware.profiler import ProfilerMiddleware
 def create_app():
     """Initialize flask app."""
     app = Flask(__name__, template_folder="./templates")
-    app.secret_key = (
-        "crabs are better than birds because they can cut their wings right off"
-    )
+    app.secret_key = config.SECRET_KEY
     app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
     app.config["SQLALCHEMY_DATABASE_URI"] = config.DATABASE_PATH
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
