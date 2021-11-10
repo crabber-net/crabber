@@ -1,5 +1,6 @@
 import config
 from crabatar import Crabatar
+from content_filter import Filter
 import crabber
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -20,6 +21,7 @@ import user_agents
 from werkzeug.wrappers import Response
 
 db = extensions.db
+content_filter = Filter()
 
 if config.CDN_ENABLED:
     import boto3
@@ -1192,3 +1194,17 @@ def pretty_url(url, length=35):
     if len(url) > length:
         url = f"{url[:length - 3]}..."
     return url
+
+
+def contains_suspicious_content(content: str) -> bool:
+    """Returns whether `content` contains potentially harmful language."""
+    return content_filter.check(content).as_bool
+
+
+def find_suspicious_content(content: str) -> Optional[List[str]]:
+    """Returns list of potentially harmful language found in `content`."""
+    suspicious_content = content_filter.check(content).as_list
+    if suspicious_content:
+        return [
+            word_obj["word"] for word_obj in suspicious_content if "word" in word_obj
+        ]

@@ -877,12 +877,13 @@ class Crab(db.Model):
         )
         return query
 
-    def query_wild(self) -> BaseQuery:
+    def query_wild(self, report_threshold=1) -> BaseQuery:
         """Retrieves the molts in /wild for this user."""
         query = Molt.query_fast_molts(self).filter(
             Molt.is_reply == false(),
             Molt.is_remolt == false(),
             Molt.is_quote == false(),
+            Molt.reports < report_threshold
         )
         return query
 
@@ -1160,6 +1161,8 @@ class Molt(db.Model):
 
     # Moderation/flagging
     reports = db.Column(db.Integer, nullable=False, default=0)
+    flagged = db.Column(db.Boolean, nullable=False, default=False)
+    _flagged_content = db.Column("flagged_content", db.String(512))
     approved = db.Column(db.Boolean, nullable=False, default=False)
 
     # Remolt/reply information
@@ -1176,6 +1179,11 @@ class Molt(db.Model):
     def __repr__(self):
         """__repr__."""
         return f"<Molt by '@{self.author.username}'>"
+
+    @property
+    def flagged_content(self) -> List[str]:
+        """Returns flagged words in molt content."""
+        return (self._flagged_content or "").splitlines()
 
     @property
     def editable(self) -> bool:
@@ -1321,8 +1329,12 @@ class Molt(db.Model):
         for user in self.mentions:
             user.notify(sender=self.author, type="mention", molt=self)
 
-        # Award trophies where applicable:
+        # Check molt for suspicious content
+        flagged_content = utils.find_suspicious_content(self.content)
+        self.flagged = bool(flagged_content)
+        self._flagged_content = "\n".join(flagged_content) if flagged_content else None
 
+        # Award trophies where applicable:
         lowercase_tags = [tag.lower() for tag in self.raw_tags.splitlines()]
         if "420" in lowercase_tags:
             self.author.award(title="Pineapple Express")
@@ -1684,7 +1696,11 @@ class Molt(db.Model):
 
     @staticmethod
     def query_all(
-        include_replies=True, include_remolts=False, include_quotes=True
+        include_replies=True,
+        include_remolts=False,
+        include_quotes=True,
+        include_flagged=True,
+        report_threshold=None,
     ) -> BaseQuery:
         """Query all valid molts."""
         molts = (
@@ -1698,6 +1714,14 @@ class Molt(db.Model):
             molts = molts.filter_by(is_remolt=False)
         if not include_quotes:
             molts = molts.filter_by(is_quote=False)
+        if not include_flagged:
+            molts = molts.filter(
+                db.or_(Molt.flagged == false(), Molt.approved == true())
+            )
+        if isinstance(report_threshold, int):
+            molts = molts.filter(
+                db.or_(Molt.reports < report_threshold, Molt.approved == true())
+            )
         return molts
 
     @staticmethod
@@ -1711,6 +1735,7 @@ class Molt(db.Model):
             .filter(Molt.reports > 0)
             .filter(Molt.author.has(banned=False, deleted=False))
             .order_by(
+                Molt.flagged.desc(),
                 Molt.reports.desc(),
                 Molt.timestamp.desc(),
             )

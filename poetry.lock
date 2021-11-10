@@ -214,6 +214,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "content-filter"
+version = "2.1.0"
+description = "A basic but robust content filter for python."
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[[package]]
 name = "coverage"
 version = "6.1.1"
 description = "Code coverage measurement for Python"
@@ -1148,7 +1156,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<3.11"
-content-hash = "cfd217ddb389c7e8199ff517d243ba3fd6df7f6bc0bf90cb9a4927efa44ed9f2"
+content-hash = "a9486c86006058e6a342acb078431324420440f2bc5da572984caed2edea18ce"
 
 [metadata.files]
 aiohttp = [
@@ -1331,6 +1339,10 @@ click = [
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+content-filter = [
+    {file = "content_filter-2.1.0-py3-none-any.whl", hash = "sha256:4f7a56125465093f125b6d47284679df329c10e6e6b4d66e67991dc9be0bcee7"},
+    {file = "content_filter-2.1.0.tar.gz", hash = "sha256:592fe4de5b9b0eaeb47bbf6c353a8601c0979d45fc78d9d02471c0009161f80f"},
 ]
 coverage = [
     {file = "coverage-6.1.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:42a1fb5dee3355df90b635906bb99126faa7936d87dfc97eacc5293397618cb7"},

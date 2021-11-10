@@ -1,0 +1,33 @@
+Content filters:
+{% if molt.flagged %}
+    <span class="text-danger font-weight-bold">
+        Flagged
+        <span class="text-muted">
+            {{molt.flagged_content}}
+        </span>
+    </span>
+{% else %}
+    <span class="text-muted font-weight-bold">
+        No
+    </span>
+{% endif %}
+<br>
+Reports:
+<span class="text-danger font-weight-bold">
+    {{molt.reports}}
+</span>
+<br>
+Status:
+{% if molt.deleted %}
+    <span class="text-muted font-weight-bold">
+        Deleted
+    </span>
+{% elif molt.approved %}
+    <span class="text-success font-weight-bold">
+        Approved
+    </span>
+{% else %}
+    <span class="text-muted font-weight-bold">
+        Active
+    </span>
+{% endif %}
