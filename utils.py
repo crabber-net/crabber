@@ -975,18 +975,8 @@ def label_links(
     return output, urls
 
 
-def label_spoilers(
-    content: str, max_len: int = 35, include_markdown: bool = True
-) -> str:
-    """Surround spoiler tags with proper HTML.
-
-    :param content: The text to parse.
-    :param max_len: Maximum length of visible URLs in characters.
-    :param include_markdown: Whether to parse markdown-style links
-        before unformatted ones. If markdown links are present then
-        this is necessary to avoid garbled output.
-    :returns: (new_content, list of urls found)
-    """
+def label_spoilers(content: str) -> str:
+    """Surround spoiler tags with proper HTML."""
     output = content[:]
     match = patterns.spoiler_tag.search(output)
     if match:
@@ -994,7 +984,7 @@ def label_spoilers(
         spoiler_text = match.group(1).strip()
 
         # Parse recursively before building output
-        recursive_content, recursive_urls = label_links(output[end:])
+        recursive_content = label_spoilers(output[end:])
 
         output = (
             output[:start],
