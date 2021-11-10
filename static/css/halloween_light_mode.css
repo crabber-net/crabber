@@ -30,6 +30,8 @@
     --remolt: rgb(144, 52, 223) !important;
 
     --placeholder: rgb(32, 6, 50) !important;
+
+    --warning: #cc9411;
 }
 
 .notif-badge {

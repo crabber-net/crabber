@@ -1338,7 +1338,11 @@ body, .master-container {
     margin: 0.5em 0;
     border-left: 5px solid var(--border-dark);
     border-radius: 0.5em;
-    background-color: var(--dark-less);
+    background-color: rgba(127, 127, 127, 0.08);
+}
+
+.darken-background {
+    background-color: rgba(127, 127, 127, 0.08);
 }
 
 .tiny-reply-context {
@@ -2413,4 +2417,8 @@ a:active.text-primary {
 .molt-content-spoiler.spoiler-revealed::before {
     display: none;
     transition: none;
+}
+
+.text-warning {
+    color: var(--warning) !important;
 }
