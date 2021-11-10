@@ -65,8 +65,13 @@
 
             {% if molt.image %}
             <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                <img class="w-100 rounded-media" src="{{molt.image}}"
+                <img class="w-100 rounded-media {{'nsfw-thumbnail' if molt.nsfw}}" src="{{molt.image}}"
                      alt="{{molt.image | alt_text}}"/>
+                {% if molt.nsfw %}
+                    <strong class="nsfw-thumbnail-warning">
+                        NSFW
+                    </strong>
+                {% endif %}
             </div>
             {% endif %}
         </div>

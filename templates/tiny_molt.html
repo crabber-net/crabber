@@ -30,6 +30,9 @@
                     <span class="mini-molt-username">@{{author.username}}</span>
                     <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
                             title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                    {% if molt.nsfw %}
+                        {% include 'nsfw-badge.html' %}
+                    {% endif %}
                 </div>
                 <div class="mini-molt-content">
                     <!-- Don't worry, I already sanitized the text, this is just to preserve line breaks and other styling -->
@@ -59,6 +62,9 @@
                 <span class="mini-molt-username">@{{author.username}}</span>
                 <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                {% if molt.nsfw %}
+                    {% include 'nsfw-badge.html' %}
+                {% endif %}
             </div>
 
             <!-- Molt content -->
@@ -69,8 +75,13 @@
 
                 {% if molt.image %}
                 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                    <img class="mini-molt-media-img" src="{{molt.image}}"
-                         alt="{{molt.image | alt_text}}"/>
+                    <img class="mini-molt-media-img {{'nsfw-thumbnail if molt.nsfw'}}"
+                         src="{{molt.image}}" alt="{{molt.image | alt_text}}"/>
+                    {% if molt.nsfw %}
+                        <strong class="nsfw-thumbnail-warning">
+                            NSFW
+                        </strong>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
