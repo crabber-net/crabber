@@ -631,11 +631,24 @@
 .nsfw-thumbnail {
     position: relative;
     transform: scale(1.2);
-    filter: blur(20px);
+    filter: grayscale() blur(20px);
     overflow: hidden;
 }
 
+/* NSFW thumbnail warning text container */
 .nsfw-thumbnail-warning {
+    color: transparent;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+}
+
+/* NSFW thumbnail warning text */
+.nsfw-thumbnail-warning::before {
+    content: "NSFW";
     position: absolute;
     height: min-content;
     top: 0;
@@ -650,6 +663,19 @@
     color: var(--nsfw);
     text-shadow: 0 0 3em black;
     opacity: 0.6;
+}
+
+/* NSFW thumbnail warning color fill */
+.nsfw-thumbnail-warning::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    background-color: var(--nsfw);
+    opacity: 0.2;
 }
 
 .zindex-front {
