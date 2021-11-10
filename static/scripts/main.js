@@ -583,3 +583,11 @@ function openActionInNewTab(elem) {
 function checkboxToggle(elem) {
     elem.value = elem.checked;
 }
+
+function blockSubmit(event) {
+    if (event.key == 'Enter') {
+        event.target.closest('.compose-image-preview').previousElementSibling.focus();
+        return false;
+    }
+    return true;
+}

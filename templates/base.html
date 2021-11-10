@@ -420,6 +420,7 @@
                                             placeholder="How are you feeling?"></textarea>
                                         <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <input type="text" name="img_description" placeholder="image description"
+                                                   onkeydown="return blockSubmit(event);"
                                                    class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
                                                    autocomplete="off">
                                             <img class="img-preview w-100">
@@ -493,6 +494,7 @@
                                             placeholder="Remember to be kind"></textarea>
                                         <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <input type="text" name="img_description" placeholder="image description"
+                                                   onkeydown="return blockSubmit(event);"
                                                    class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
                                                    autocomplete="off">
                                             <img class="img-preview w-100"></img>
@@ -567,6 +569,7 @@
                                             placeholder="Remember to be kind"></textarea>
                                         <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                                             <input type="text" name="img_description" placeholder="image description"
+                                                   onkeydown="return blockSubmit(event);"
                                                    class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();"
                                                    autocomplete="off">
                                             <img class="img-preview w-100"></img>

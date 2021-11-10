@@ -15,7 +15,8 @@
                     placeholder="{{placeholder}}" onfocus="expandMoltBox(this);currentForm = this.form;"></textarea>
                 <div class="compose-image-preview large-molt-media-container d-none mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
                     <input type="text" name="img_description" placeholder="image description"
-                                                              class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();">
+                           onkeydown="return blockSubmit(event);"
+                           class="bg-dark text-light form-control compose-image-description" onclick="event.stopPropagation();">
                     <img class="img-preview w-100">
                 </div>
             </div>
@@ -68,8 +69,6 @@
     closeBox = function(event) {
         if (!$(event.target).closest('.mini-compose-box').length) {
             collapseMoltBox();
-            // DEBUG: This may not be necessary
-            // $(document).off('click', closeBox);
         }
     }
     $(document).on('click', closeBox);

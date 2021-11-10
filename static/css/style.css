@@ -2368,7 +2368,7 @@ a:active.text-primary {
 .compose-image-description {
 	width: 100%;
     height: 2em;
-	border: none;
-	border-bottom: 1px solid var(--border-dark);
+	border: none !important;
+	border-bottom: 1px solid var(--border-dark) !important;
 	border-radius: 0;
 }
