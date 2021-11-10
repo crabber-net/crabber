@@ -204,7 +204,7 @@ def wild_west():
         else:
             # Ajax content loading
             if request.args.get("ajax_content"):
-                molts = current_user.query_wild()
+                molts = current_user.query_wild(report_threshold=2)
                 molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
                 return render_template(
                     "wild-west-content.html",
