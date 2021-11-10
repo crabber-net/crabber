@@ -591,3 +591,8 @@ function blockSubmit(event) {
     }
     return true;
 }
+
+function revealSpoiler(event) {
+    $(event.target).addClass('spoiler-revealed');
+    event.stopPropagation();
+}

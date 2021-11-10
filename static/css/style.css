@@ -2372,3 +2372,45 @@ a:active.text-primary {
 	border-bottom: 1px solid var(--border-dark) !important;
 	border-radius: 0;
 }
+
+.molt-content-spoiler {
+    display: inline-block;
+    position: relative;
+
+    background-color: var(--light);
+    color: transparent;
+    border-radius: 0.25em;
+    z-index: 100;
+    cursor: pointer;
+    transition: 500ms;
+}
+.molt-content-spoiler.spoiler-revealed {
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+    cursor: inherit;
+}
+
+.molt-content-spoiler::before {
+    content: "SPOILER";
+    text-align: center;
+
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: min-content;
+    margin: auto;
+
+    color: var(--muted);
+    opacity: 0;
+    transition: 200ms;
+}
+.molt-content-spoiler:hover::before {
+    opacity: 100;
+}
+.molt-content-spoiler.spoiler-revealed::before {
+    display: none;
+    transition: none;
+}
