@@ -1179,7 +1179,7 @@ class Molt(db.Model):
         card_url = None
         link = patterns.ext_link.search(self.content)
         if link:
-            card_url = link.group(1)
+            card_url = link.group(2)
         else:
             link = patterns.ext_md_link.search(self.content)
             if link:

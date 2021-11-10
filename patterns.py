@@ -5,6 +5,7 @@ mention = re.compile(r"(?:^|\s|<br>)(?<!\\)@([\w]{1,32})(?!\w)")
 tag = re.compile(r"(?:^|\s|<br>)(?<!\\)%([\w]{1,})(?!\w)")
 username = re.compile(r"^[a-zA-Z0-9_]+$")
 only_underscores = re.compile(r"^_+$")
+spoiler_tag = re.compile(r"&gt;!((?:.|\n)+?)&lt;")  # Only works after HTML escaping
 youtube = re.compile(
     r"(?:https?://)?"
     r"(?:www.)?"
@@ -20,7 +21,7 @@ link_basic = (
     r"(?:www\.)?\w{3,}\.(?i:com|net|org|gov|io)"
 )
 ext_link = re.compile(
-    r"(?<!href=['\"])(?:^|\s|[(])"
+    r"(?<!href=['\"])(\s|^)\b"
     r"(" + link_basic + r")"
 )
 # fmt: on

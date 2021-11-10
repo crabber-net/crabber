@@ -105,7 +105,7 @@ with Lock("fetch-cards") as lock:
                     card.title, card.description, card.image = metadata
                     card.ready = True
                     print(f"Fetched {card.url}")
-            except (URLUnreachable, URLNotFound, RequestException):
+            except (URLUnreachable, URLNotFound, RequestException, KeyError):
                 pass
             if not card.ready:
                 print(f"Failed to fetch {card.url}")

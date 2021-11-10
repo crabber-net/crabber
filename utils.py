@@ -871,6 +871,8 @@ def parse_rich_content(
     # Escape/sanitize user submitted content
     new_content = str(escape(content))
 
+    new_content = label_spoilers(new_content)
+
     if include_media:
         # Render youtube link to embedded iframe
         if patterns.youtube.search(new_content):
@@ -954,7 +956,7 @@ def label_links(
     match = patterns.ext_link.search(output)
     if match:
         start, end = match.span()
-        url = match.group(1)
+        url = match.group(2)
         urls.append(url)
         displayed_url = url if len(url) <= max_len else url[: max_len - 3] + "..."
 
@@ -963,7 +965,7 @@ def label_links(
         urls.extend(recursive_urls)
 
         output = (
-            output[:start],
+            output[:start] + match.group(1),
             f'<a href="{url}" class="no-onclick mention zindex-front" \
             target="_blank">{displayed_url}</a>',
             recursive_content,
@@ -971,6 +973,39 @@ def label_links(
         output = "".join(output)
 
     return output, urls
+
+
+def label_spoilers(
+    content: str, max_len: int = 35, include_markdown: bool = True
+) -> str:
+    """Surround spoiler tags with proper HTML.
+
+    :param content: The text to parse.
+    :param max_len: Maximum length of visible URLs in characters.
+    :param include_markdown: Whether to parse markdown-style links
+        before unformatted ones. If markdown links are present then
+        this is necessary to avoid garbled output.
+    :returns: (new_content, list of urls found)
+    """
+    output = content[:]
+    match = patterns.spoiler_tag.search(output)
+    if match:
+        start, end = match.span()
+        spoiler_text = match.group(1).strip()
+
+        # Parse recursively before building output
+        recursive_content, recursive_urls = label_links(output[end:])
+
+        output = (
+            output[:start],
+            '<span class="molt-content-spoiler" onclick="revealSpoiler(event);">'
+            + spoiler_text
+            + "</span>",
+            recursive_content,
+        )
+        output = "".join(output)
+
+    return output
 
 
 def label_md_links(content) -> Tuple[str, List[str]]:
