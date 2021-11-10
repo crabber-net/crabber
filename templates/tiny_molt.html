@@ -75,7 +75,7 @@
 
                 {% if molt.image %}
                 <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" {{macros.expand_img()}}>
-                    <img class="mini-molt-media-img {{'nsfw-thumbnail if molt.nsfw'}}"
+                    <img class="mini-molt-media-img {{'nsfw-thumbnail' if molt.nsfw}}"
                          src="{{molt.image}}" alt="{{molt.image | alt_text}}"/>
                     {% if molt.nsfw %}
                         <strong class="nsfw-thumbnail-warning">

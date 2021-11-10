@@ -898,6 +898,7 @@ def parse_rich_content(
                 '   {% include "giphy.html" %}'
                 "{% endwith %}",
                 full_size_media=full_size_media,
+                nsfw=nsfw,
             )
             new_content = patterns.giphy.sub("", new_content)
         else:
@@ -911,6 +912,7 @@ def parse_rich_content(
                 '  {% include "external_img.html" %}'
                 "{% endwith %}",
                 full_size_media=full_size_media,
+                nsfw=nsfw,
             )
             new_content = patterns.ext_img.sub("", new_content)
         else:

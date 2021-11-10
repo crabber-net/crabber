@@ -3,17 +3,21 @@
 {% if full_size_media %}
     <div class="large-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
         {{macros.expand_img()}}>
-        <img class="w-100 rounded-media" src="{{link}}" alt="Attached image">
+        <img class="w-100 rounded-media {{'nsfw-thumbnail' if nsfw}}" src="{{link}}" alt="Attached image">
+        {% if nsfw %}
+            <strong class="nsfw-thumbnail-warning">
+                NSFW
+            </strong>
+        {% endif %}
     </div>
 {% else %}
     <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front" style="cursor: pointer;"
         {{macros.expand_img()}}>
-        <!-- <div class="aspect-ratio-child">
-            <div class="mini-molt-crop-square">
-                <img class="w-100 rounded-media" src="{{link}}" alt="Attached image">
-            </div>
-        </div> -->
-        <img src="{{link}}" class="mini-molt-media-img" />
-
+        <img src="{{link}}" class="mini-molt-media-img {{'nsfw-thumbnail' if nsfw}}" />
+        {% if nsfw %}
+            <strong class="nsfw-thumbnail-warning">
+                NSFW
+            </strong>
+        {% endif %}
     </div>
 {% endif %}
