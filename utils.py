@@ -8,7 +8,6 @@ import extensions
 from flask import escape, redirect, render_template, render_template_string, request
 import geoip2.database
 from geoip2.errors import AddressNotFoundError
-from sqlalchemy import func
 import json
 import models
 import os
@@ -222,7 +221,9 @@ def moderation_actions() -> Response:
                 # Clear user's description
                 elif action == "clear_description":
                     old_description = crab.description
-                    crab.clear_description( "This description has been reset by a moderator.")
+                    crab.clear_description(
+                        "This description has been reset by a moderator."
+                    )
                     return return_and_log(
                         action=action,
                         crab=crab,

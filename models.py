@@ -419,9 +419,9 @@ class Crab(db.Model):
 
     def clear_username(self):
         """Change this user's username to a randomly generated one."""
-        new_username = f'crab{utils.hexID(8)}'
+        new_username = f"crab{utils.hexID(8)}"
         while not utils.validate_username(new_username):
-            new_username = f'crab{utils.hexID(8)}'
+            new_username = f"crab{utils.hexID(8)}"
         self.username = new_username
         db.session.commit()
 
