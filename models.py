@@ -417,6 +417,24 @@ class Crab(db.Model):
 
         db.session.commit()
 
+    def clear_username(self):
+        """Change this user's username to a randomly generated one."""
+        new_username = f'crab{utils.hexID(8)}'
+        while not utils.validate_username(new_username):
+            new_username = f'crab{utils.hexID(8)}'
+        self.username = new_username
+        db.session.commit()
+
+    def clear_display_name(self):
+        """Change this user's display name to a generic one."""
+        self.display_name = "Unnamed Crab"
+        db.session.commit()
+
+    def clear_description(self, description="This user has no description."):
+        """Change this user's description to a generic one."""
+        self.description = description
+        db.session.commit()
+
     def ban(self, reason=None):
         """Banish this user from the site."""
         if not self.banned:

@@ -89,14 +89,18 @@ def get_current_user():
 def validate_username(username: str) -> bool:
     """Validates `username` hasn't already been used by another (not deleted) user.
 
-    :param username: Username to validate
-    :return: Whether it's been taken
+    If a username is taken by a banned or deleted user, their username will be
+    reset to free it for a new user.
+
+    :return: Whether the username is free
     """
-    return (
-        not models.Crab.query.filter_by(deleted=False)
-        .filter(func.lower(models.Crab.username) == func.lower(username))
-        .count()
-    )
+    crab = models.Crab.get_by_username(username, include_invalidated=True)
+    if crab:
+        if crab.deleted or crab.banned:
+            crab.clear_username()
+            return True
+        return False
+    return True
 
 
 def validate_email(email: str) -> bool:
@@ -195,6 +199,7 @@ def moderation_actions() -> Response:
                 elif action == "clear_username":
                     old_username = crab.username
                     crab.username = f"change_me_{hexID(6)}"
+                    crab.clear_username()
                     db.session.commit()
                     return return_and_log(
                         action=action,
@@ -206,8 +211,7 @@ def moderation_actions() -> Response:
                 # Clear user's display name
                 elif action == "clear_display_name":
                     old_display_name = crab.display_name
-                    crab.display_name = "Unnamed Crab"
-                    db.session.commit()
+                    crab.clear_display_name()
                     return return_and_log(
                         action=action,
                         crab=crab,
@@ -218,8 +222,7 @@ def moderation_actions() -> Response:
                 # Clear user's description
                 elif action == "clear_description":
                     old_description = crab.description
-                    crab.description = "This description has been reset by a moderator."
-                    db.session.commit()
+                    crab.clear_description( "This description has been reset by a moderator.")
                     return return_and_log(
                         action=action,
                         crab=crab,
