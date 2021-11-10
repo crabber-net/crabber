@@ -2377,6 +2377,8 @@ a:active.text-primary {
     display: inline-block;
     position: relative;
 
+    min-width: 8ch;
+
     background-color: var(--light);
     color: transparent;
     border-radius: 0.25em;
@@ -2385,6 +2387,8 @@ a:active.text-primary {
     transition: 500ms;
 }
 .molt-content-spoiler.spoiler-revealed {
+    min-width: 0;
+
     color: inherit;
     background-color: transparent;
     border-radius: 0;
@@ -2404,11 +2408,7 @@ a:active.text-primary {
     margin: auto;
 
     color: var(--muted);
-    opacity: 0;
     transition: 200ms;
-}
-.molt-content-spoiler:hover::before {
-    opacity: 100;
 }
 .molt-content-spoiler.spoiler-revealed::before {
     display: none;
