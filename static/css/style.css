@@ -2422,6 +2422,8 @@ a:active.text-primary {
     content: "SPOILER";
     text-align: center;
 
+    font-weight: bold;
+
     position: absolute;
     top: 0;
     right: 0;
