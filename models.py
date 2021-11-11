@@ -435,6 +435,16 @@ class Crab(db.Model):
         self.description = description
         db.session.commit()
 
+    def clear_avatar(self):
+        """Change this user's avatar to a generic one."""
+        self.avatar = utils.make_crabatar(self.username)
+        db.session.commit()
+
+    def clear_banner(self):
+        """Change this user's banner to a generic one."""
+        self.banner = "https://cdn.crabber.net/img/banner.png"
+        db.session.commit()
+
     def ban(self, reason=None):
         """Banish this user from the site."""
         if not self.banned:
@@ -1987,6 +1997,16 @@ class ModLog(db.Model):
             action_text = (
                 f"cleared user description (@{self.crab.username}, "
                 f"see DB for more details)"
+            )
+        elif self.action == "clear_avatar":
+            action_text = (
+                f"cleared avatar (@{self.crab.username}, "
+                f'originally "{self.additional_context}")'
+            )
+        elif self.action == "clear_banner":
+            action_text = (
+                f"cleared banner (@{self.crab.username}, "
+                f'originally "{self.additional_context}")'
             )
         elif self.action == "verify_user":
             action_text = f"verified user (@{self.crab.username})"

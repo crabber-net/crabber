@@ -231,6 +231,28 @@ def moderation_actions() -> Response:
                         additional_context=old_description,
                     )
 
+                # Clear user's avatar
+                elif action == "clear_avatar":
+                    old_avatar = crab.avatar
+                    crab.clear_avatar()
+                    return return_and_log(
+                        action=action,
+                        crab=crab,
+                        molt=molt,
+                        additional_context=old_avatar,
+                    )
+
+                # Clear user's banner
+                elif action == "clear_banner":
+                    old_banner = crab.banner
+                    crab.clear_banner()
+                    return return_and_log(
+                        action=action,
+                        crab=crab,
+                        molt=molt,
+                        additional_context=old_banner,
+                    )
+
                 # Verify user
                 elif action == "verify_user":
                     crab.verify()
