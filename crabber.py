@@ -526,7 +526,7 @@ def signupsuccess():
     recommended_users = models.Crab.query.filter(
         models.Crab.username.in_(config.RECOMMENDED_USERS)
     ).all()
-    if current_user.referrer:
+    if current_user.referrer and current_user.referrer not in recommended_users:
         recommended_users.append(current_user.referrer)
     recommended_users.append
     return render_template(
