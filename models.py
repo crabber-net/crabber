@@ -1502,6 +1502,7 @@ class Molt(db.Model):
                 deleted=False,
                 approved=False,
             )
+            .filter(Molt.reports > 0)
             .filter(Molt.author.has(banned=False, deleted=False))
             .order_by(
                 Molt.reports.desc(),
