@@ -596,3 +596,8 @@ function revealSpoiler(event) {
     $(event.target).addClass('spoiler-revealed');
     event.stopPropagation();
 }
+
+function copyValue(event) {
+    event.target.select();
+    document.execCommand('copy');
+}

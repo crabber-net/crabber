@@ -80,6 +80,10 @@ class Crab(db.Model):
     register_time = db.Column(
         db.DateTime, nullable=False, default=datetime.datetime.utcnow
     )
+
+    referrer_id = db.Column(db.Integer, db.ForeignKey("crab.id"))
+    referrer = db.relationship("Crab", remote_side=[id], backref="referrals")
+
     deleted = db.Column(db.Boolean, nullable=False, default=False)
     timezone = db.Column(db.String(8), nullable=False, default="-06.00")
     lastfm = db.Column(db.String(128), nullable=True)
@@ -271,6 +275,11 @@ class Crab(db.Model):
     def pinned(self) -> Optional["Molt"]:
         """Return user's currently pinned molt."""
         return Molt.query.filter_by(id=self.pinned_molt_id).first()
+
+    @property
+    def referral_code(self) -> "ReferralCode":
+        """Return user's referral code."""
+        return ReferralCode.get(self)
 
     def generate_password_reset_token(self):
         """Generates and returns a new password reset token."""
@@ -975,6 +984,18 @@ class Crab(db.Model):
             .join(followers, followers.c.following_id == Crab.id)
             .filter(Crab.deleted == false(), Crab.banned == false())
             .order_by(db.desc("count"))
+        )
+        return crabs
+
+    @staticmethod
+    def query_most_referrals() -> BaseQuery:
+        """Queries crabs with the most referrals."""
+        crabs = (
+            db.session.query(Crab, ReferralCode.uses)
+            .join(ReferralCode, Crab.id == ReferralCode.crab_id)
+            .filter(Crab.deleted == false(), Crab.banned == false())
+            .filter(ReferralCode.disabled == false())
+            .order_by(ReferralCode.uses.desc())
         )
         return crabs
 
@@ -2008,6 +2029,10 @@ class ModLog(db.Model):
                 f"cleared banner (@{self.crab.username}, "
                 f'originally "{self.additional_context}")'
             )
+        elif self.action == "disable_referrals":
+            action_text = f"disabled referral code (@{self.crab.username})"
+        elif self.action == "enable_referrals":
+            action_text = f"re-enabled referral code (@{self.crab.username})"
         elif self.action == "verify_user":
             action_text = f"verified user (@{self.crab.username})"
         elif self.action == "unverify_user":
@@ -2096,3 +2121,70 @@ class ImageDescription(db.Model):
             db.session.add(desc)
             db.session.commit()
         return desc
+
+
+class ReferralCode(db.Model):
+    """A code that tracks user referrals."""
+
+    __tablename__ = "referral_codes"
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(64), nullable=False)
+    crab_id = db.Column(db.Integer, db.ForeignKey("crab.id"), nullable=False)
+    crab = db.relationship("Crab", foreign_keys=[crab_id])
+    uses = db.Column(db.Integer, nullable=False, default=0)
+    disabled = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"<ReferralCode (@{self.crab.username})>"
+
+    @property
+    def link(self):
+        """Returns a sign-up link that uses the referral code."""
+        return f"{config.BASE_URL}/signup/?referral-code={self.key}"
+
+    def disable(self):
+        """Disables this referral code."""
+        if not self.disabled:
+            self.disabled = True
+            db.session.commit()
+
+    def enable(self):
+        """Re-enables this referral code."""
+        if self.disabled:
+            self.disabled = False
+            db.session.commit()
+
+    @classmethod
+    def use(cls, key) -> Optional["Crab"]:
+        """Uses referral code and returns referrer if code exists."""
+        code = cls.query.filter_by(key=key).first()
+        if code:
+            if not code.disabled:
+                code.uses += 1
+                db.session.commit()
+                return code.crab
+
+    @classmethod
+    def gen_key(cls):
+        """Generates a unique key string."""
+        while True:
+            key = secrets.token_hex(16)
+            if not cls.query.filter_by(key=key).count():
+                return key
+
+    @classmethod
+    def get(cls, crab):
+        """Gets or creates the referral code for `crab`."""
+        code = cls.query.filter_by(crab=crab).first()
+        if code is None:
+            code = cls.create(crab)
+        return code
+
+    @classmethod
+    def create(cls, crab):
+        """Generates a new referral code for `crab`."""
+        key = cls.gen_key()
+        code = cls(crab=crab, key=key)
+        db.session.add(code)
+        db.session.commit()
+        return code
