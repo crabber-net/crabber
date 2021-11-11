@@ -1,8 +1,13 @@
 {% import "macros.jinja" as macros %}
+{% if current_page == 'moderation-panel' %}
+    {% set user_link = '/moderation?viewing=user&username=' + crab.username %}
+{% else %}
+    {% set user_link = '/user/' + crab.username %}
+{% endif %}
 
 <div class="mini-molt mini-bio {{'border-bottom' if not hide_border}} border-dark px-3 py-2 d-flex flex-row">
     <div class="mini-molt-profile-box zindex-front">
-        <a href="/user/{{crab.username}}">
+        <a href="{{user_link}}">
             <div class="rounded-circle px43 profile-picture"
                 style="background-image: url('{{crab.avatar}}');"></div>
         </a>
@@ -40,7 +45,7 @@
             {% endif %}
         </form>
         {% endif %}
-        <div class="mini-molt-credentials {{"mt-1" if is_remolt else ""}}"><a href="/user/{{crab.username}}"
+        <div class="mini-molt-credentials {{"mt-1" if is_remolt else ""}}"><a href="{{user_link}}"
                 class="mini-molt-display-name zindex-front">{{crab.display_name}}</a>
             {% if crab.verified %}
             <a title="This user is verified">{{macros.verified(17)}}</a>
@@ -63,7 +68,16 @@
                 <p class="mb-2">{{crab.description}}</p>
             </div>
         {% endif %}
+        {% if current_page == 'moderation-panel' %}
+            <p class="text-muted">
+                email: {{crab.email}}
+            </p>
+        {% endif %}
     </div>
     <!-- User page link -->
-    <a href="/user/{{crab.username}}" class="absolute-fill mini-bio-link"></a>
+    <a href="{{user_link}}" class="absolute-fill mini-bio-link"
+    {% if current_page == 'moderation-panel' %}
+        target="_blank"
+    {% endif %}
+    ></a>
 </div>

@@ -40,7 +40,7 @@
                         View Molt in new tab
                     </a>
                     •
-                    <a href="/moderation?viewing=user&username={{molt.author.username}}" target="_blank">
+                    <a href="/moderation?viewing=user&username={{crab.username}}" target="_blank">
                         Open user in mod panel
                     </a>
                     <br>
@@ -50,6 +50,10 @@
                 </div>
             </form>
         </div>
+    {% else %}
+        <p class="d-inline-block w-100 my-5 text-center">
+            you've reached the end! go enjoy some tea.
+        </p>
     {% endfor %}
 
     <a class="d-inline-block w-100 my-5 text-center"

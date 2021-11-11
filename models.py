@@ -1498,7 +1498,11 @@ class Molt(db.Model):
     def query_reported() -> BaseQuery:
         """Query reported molts."""
         queue = (
-            Molt.query.filter_by(deleted=False, approved=False, is_remolt=False)
+            Molt.query.filter_by(
+                deleted=False,
+                approved=False,
+            )
+            .filter(Molt.reports > 0)
             .filter(Molt.author.has(banned=False, deleted=False))
             .order_by(
                 Molt.reports.desc(),
