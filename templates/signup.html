@@ -14,7 +14,9 @@
         <!-- Email address -->
         <div class="form-group cool-input">
             <label for="exampleInputEmail1">Email address</label>
-            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required aria-required>
+            <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required aria-required
+                   value="{{request.args.get('email') if request.args.get('email')}}"
+                   required aria-required>
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else. Human or otherwise.</small>
         </div>
 
@@ -37,7 +39,9 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text">@</div>
                 </div>
-                <input name="username" type="text" class="form-control" id="inlineFormInputGroup" placeholder="crablover2000">
+                <input name="username" type="text" class="form-control" id="inlineFormInputGroup" placeholder="crablover2000"
+                       value="{{request.args.get('username') if request.args.get('username')}}"
+                       required aria-required>
             </div>
         </div>
 
@@ -45,10 +49,20 @@
         <div class="form-group cool-input">
             <label for="displayName">Display name</label>
             <input type="text" name="display-name" class="form-control" id="displayName" placeholder="Crab H. Lover"
-            required aria-required>
+                   value="{{request.args.get('display-name') if request.args.get('display-name')}}"
+                   required aria-required>
         </div>
 
-        <div class="form-group form-check">
+        <!-- Referral code -->
+        <div class="form-group cool-input">
+            <label for="displayName">Referral code</label>
+            <input type="text" name="referral-code"
+                   class="form-control" id="referral-code"
+                   value="{{referral_code if referral_code}}">
+        </div>
+
+        <!-- Terms of Service -->
+        <div class="form-group form-check mt-3">
             <input type="checkbox" class="form-check-input" id="exampleCheck1" required>
             <label class="form-check-label" for="exampleCheck1">I have read and agree to the
                 <a href="/legal/TOS" target="_blank">terms of service</a></label><br>
@@ -57,11 +71,16 @@
 
         {{ hcaptcha }}
 
-        <button type="submit" class="btn btn-primary rounded-pill">Let me in!</button>
+        <button type="submit" class="btn btn-primary rounded-pill">Create account</button>
     </form>
 
     <div class="text-muted text-center my-5" id="cookie-footer">
-        <small>Crabber uses cookies. If you care, you can <a href="https://cdn.crabber.net/legal/cookies.txt">read about it here.</a></small>
+        <small>
+            Crabber uses cookies. If you care, you can
+            <a href="https://cdn.crabber.net/legal/cookies.txt">
+                read about it here.
+            </a>
+        </small>
     </div>
 
     <!-- Spacer -->

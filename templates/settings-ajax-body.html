@@ -270,6 +270,50 @@
     <!-- Section border -->
     <hr class="border-dark mb-3 mt-4">
 
+    <h2 class="mb-3">Referrals</h2>
+    <form class="p-2">
+        {% set referral_code = current_user.referral_code %}
+        {% if referral_code.disabled %}
+            <p class="text-muted">
+                Your referral code has been disabled by a moderator.
+            </p>
+        {% else %}
+            <p>
+                Current uses:
+                <strong>
+                    {{referral_code.uses}}
+                </strong>
+            </p>
+            <div class="input-group mb-2 cool-input">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="referral-code">Referral Code</label>
+                </div>
+                <input onclick="copyValue(event)" type="text" id="referral-code"
+                       class="form-control text-light clickable"
+                       value="{{referral_code.key}}" readonly aria-readonly>
+            </div>
+            <div class="input-group mb-2 cool-input">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="referral-link">Custom Invite Link</label>
+                </div>
+                <input onclick="copyValue(event)" type="text" id="referral-link"
+                       class="form-control text-light clickable"
+                       value="{{referral_code.link}}" readonly aria-readonly>
+            </div>
+            <p class="mt-4 mb-0">
+                Get out there and catch some crabs!
+                <br>
+                <small class="text-muted">
+                    (Anyone using their own registration code to increase their
+                    numbers will have their code permanently disabled.)
+                </small>
+            </p>
+        {% endif %}
+    </form>
+
+    <!-- Section border -->
+    <hr class="border-dark mb-3 mt-4">
+
     <h2 class="mb-3">Danger Zone</h2>
     <form class="p-2">
         <p>

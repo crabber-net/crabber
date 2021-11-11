@@ -405,6 +405,8 @@ def signup():
             password = form.get("password").strip()
             confirm_password = form.get("confirm-password").strip()
 
+            form_items = {k: v for k, v in request.form.items() if "password" not in k}
+
             if utils.validate_email(email):
                 if utils.validate_username(username):
                     if len(username) in range(3, 32):
@@ -413,12 +415,23 @@ def signup():
                                 if password == confirm_password:
                                     if password:
                                         if captcha.verify():
+                                            # Use referral code if available
+                                            referral_code = form.get(
+                                                "referral-code"
+                                            ).strip()
+                                            referrer = None
+                                            if referral_code:
+                                                referrer = models.ReferralCode.use(
+                                                    referral_code
+                                                )
+
                                             # Create user account
                                             models.Crab.create_new(
                                                 username=username,
                                                 email=email,
                                                 password=password,
                                                 display_name=display_name,
+                                                referrer=referrer,
                                             )
 
                                             # "Log in"
@@ -431,45 +444,48 @@ def signup():
                                             session[
                                                 "current_user_ts"
                                             ] = current_user.register_timestamp
+
                                             # Redirect on success
                                             return redirect("/signupsuccess")
                                         else:
-                                            return redirect(
-                                                "/signup?failed&error_msg="
-                                                "Captcha verification failed"
+                                            return utils.show_error(
+                                                "Captcha verification failed",
+                                                new_arguments=form_items,
                                             )
                                     else:
-                                        return redirect(
-                                            "/signup?failed&error_msg="
-                                            "Password cannot be blank"
+                                        return utils.show_error(
+                                            "Password cannot be blank",
+                                            new_arguments=form_items,
                                         )
                                 else:
-                                    return redirect(
-                                        "/signup?failed&error_msg="
-                                        "Passwords do not match"
+                                    return utils.show_error(
+                                        "Passwords do not match",
+                                        new_arguments=form_items,
                                     )
                             else:
-                                return redirect(
-                                    "/signup?failed&error_msg="
-                                    "Username cannot be ONLY underscores"
+                                return utils.show_error(
+                                    "Username cannot be ONLY underscores",
+                                    new_arguments=form_items,
                                 )
                         else:
-                            return redirect(
-                                "/signup?failed&error_msg="
+                            return utils.show_error(
                                 "Username must only contain letters, numbers, and "
-                                "underscores"
+                                "underscores",
+                                new_arguments=form_items,
                             )
                     else:
-                        return redirect(
-                            "/signup?failed&error_msg="
-                            "Username must be between 3 and 32 characters."
+                        return utils.show_error(
+                            "Username must be between 3 and 32 characters",
+                            new_arguments=form_items,
                         )
                 else:
-                    return redirect("/signup?failed&error_msg=That username is taken")
+                    return utils.show_error(
+                        "That username is taken", new_arguments=form_items
+                    )
             else:
-                return redirect(
-                    "/signup?failed&error_msg="
-                    "An account with that email address already exists"
+                return utils.show_error(
+                    "An account with that email address already exists",
+                    new_arguments=form_items,
                 )
 
         elif session.get("current_user"):
@@ -483,6 +499,7 @@ def signup():
                 hide_sidebar=True,
                 signup_failed=signup_failed,
                 error_msg=error_msg,
+                referral_code=request.args.get("referral-code"),
             )
     else:
         return render_template(
@@ -503,12 +520,16 @@ def signupsuccess():
     if request.method == "POST":
         return utils.common_molt_actions()
 
+    current_user = utils.get_current_user()
     recommended_users = models.Crab.query.filter(
         models.Crab.username.in_(config.RECOMMENDED_USERS)
     ).all()
+    if current_user.referrer:
+        recommended_users.append(current_user.referrer)
+    recommended_users.append
     return render_template(
         "signup_success.html",
-        current_user=utils.get_current_user(),
+        current_user=current_user,
         recommended_users=recommended_users,
     )
 
@@ -894,14 +915,17 @@ def stats():
 
     # Query follow counts for users
     most_followed = models.Crab.query_most_popular()
+    most_referrals = models.Crab.query_most_referrals()
     newest_user = models.Crab.query_all().order_by(models.Crab.register_time.desc())
 
     if current_user:
         most_followed = current_user.filter_user_query_by_not_blocked(most_followed)
+        most_referrals = current_user.filter_user_query_by_not_blocked(most_referrals)
         newest_user = current_user.filter_user_query_by_not_blocked(newest_user)
 
-    newest_user = newest_user.first()
     most_followed = most_followed.first()
+    most_referrals = most_referrals.first()
+    newest_user = newest_user.first()
 
     best_molt = models.Molt.query_most_liked()
     talked_molt = models.Molt.query_most_replied()
@@ -935,6 +959,7 @@ def stats():
             dict(number=models.TrophyCase.query.count(), label="trophies awarded"),
         ],
         crab_king=most_followed,
+        party_starter=most_referrals,
         baby_crab=newest_user,
         best_molt=best_molt,
         talked_molt=talked_molt,

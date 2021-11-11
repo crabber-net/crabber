@@ -14,7 +14,7 @@ import os
 import patterns
 import random
 import turtle_images
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import uuid
 import user_agents
 from werkzeug.wrappers import Response
@@ -40,7 +40,12 @@ else:
     geo_reader = None
 
 
-def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) -> Response:
+def show_error(
+    error_msg: str,
+    redirect_url=None,
+    preserve_arguments=False,
+    new_arguments: Optional[dict] = None,
+) -> Response:
     """Redirect user to current page with error message alert.
 
     :param error_msg: Message to display to user
@@ -50,11 +55,17 @@ def show_error(error_msg: str, redirect_url=None, preserve_arguments=False) -> R
     :return: Response to return to user
     """
     target_url = redirect_url or request.path
-    args = ""
+
+    args_dict = dict()
     if preserve_arguments:
-        args = "&".join(
-            [f"{key}={value}" for key, value in request.args.items() if key != "error"]
-        )
+        args_dict.update(request.args)
+    if new_arguments:
+        args_dict.update(new_arguments)
+
+    args = ""
+    args = "&".join(
+        [f"{key}={value}" for key, value in args_dict.items() if key != "error"]
+    )
     return redirect(f"{target_url}?error={error_msg}&{args}")
 
 
@@ -230,6 +241,38 @@ def moderation_actions() -> Response:
                         molt=molt,
                         additional_context=old_description,
                     )
+
+                # Clear user's avatar
+                elif action == "clear_avatar":
+                    old_avatar = crab.avatar
+                    crab.clear_avatar()
+                    return return_and_log(
+                        action=action,
+                        crab=crab,
+                        molt=molt,
+                        additional_context=old_avatar,
+                    )
+
+                # Clear user's banner
+                elif action == "clear_banner":
+                    old_banner = crab.banner
+                    crab.clear_banner()
+                    return return_and_log(
+                        action=action,
+                        crab=crab,
+                        molt=molt,
+                        additional_context=old_banner,
+                    )
+
+                # Disable user's referral code
+                elif action == "disable_referrals":
+                    crab.referral_code.disable()
+                    return return_and_log(action=action, crab=crab, molt=molt)
+
+                # Enable user's referral code
+                elif action == "enable_referrals":
+                    crab.referral_code.enable()
+                    return return_and_log(action=action, crab=crab, molt=molt)
 
                 # Verify user
                 elif action == "verify_user":

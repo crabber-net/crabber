@@ -49,13 +49,11 @@ MINUTES_EDITABLE: int = 5
 MUTED_WORDS_CHAR_LIMIT: int = 2048
 UPLOAD_FOLDER: str = os.path.join(BASE_PATH, "static/img/user_uploads")
 ALLOWED_EXTENSIONS: Set[str] = {"png", "jpg", "jpeg"}
-RECOMMENDED_USERS: List[str] = load_lines_from_file(
-    "recommended_users"
-)  # Users suggested on post-signup page
+# Users suggested on post-signup page
+RECOMMENDED_USERS: List[str] = load_lines_from_file("recommended_users")
 BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
-SERVER_START = round(
-    datetime.datetime.utcnow().timestamp()
-)  # Timestamp of when the server went up
+# Timestamp of when the server went up
+SERVER_START = round(datetime.datetime.utcnow().timestamp())
 FEATURED_MOLT_ID = int(os.getenv("FEATURED_MOLT_ID") or "1")
 FEATURED_CRAB_USERNAME = os.getenv("FEATURED_CRAB_USERNAME", "jake")
 BLACKLIST_IP = load_lines_from_file("blacklist-ip")

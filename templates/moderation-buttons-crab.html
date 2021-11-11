@@ -7,6 +7,21 @@
 <button type="submit" name="action" value="clear_username">
     Clear username
 </button>
+<button type="submit" name="action" value="clear_avatar">
+    Clear avatar
+</button>
+<button type="submit" name="action" value="clear_banner">
+    Clear banner
+</button>
+{% if crab.referral_code.disabled %}
+    <button type="submit" name="action" value="enable_referrals">
+        Re-enable referral code
+    </button>
+{% else %}
+    <button type="submit" name="action" value="disable_referrals">
+        Disable referral code
+    </button>
+{% endif %}
 {% if current_user.is_admin %}
     <br>
     {% if crab.verified %}
