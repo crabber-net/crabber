@@ -5,7 +5,40 @@
 {% block moderation_content %}
     {% if crab %}
         {% include 'mini_bio.html' %}
-
+        <div class="referral-audit border-dark border-bottom p-2">
+            Referred by:
+            {% with referrer = crab.referrer %}
+                {% if referrer %}
+                    <a href="/moderation?viewing=user&username={{referrer.username}}" target="_blank">
+                        @{{referrer.username}}
+                    </a>
+                {% else %}
+                    <span class="text-muted">
+                        no one
+                    </span>
+                {% endif %}
+            {% endwith %}
+            <br>
+            <details>
+                <summary>
+                    Referred:
+                    {% if crab.referrals %}
+                        <strong>
+                            {{crab.referrals | length }}
+                        </strong>
+                    {% else %}
+                        <span class="text-muted">
+                            no one
+                        </span>
+                    {% endif %}
+                </summary>
+                {% for referred in crab.referrals %}
+                    {% with crab = referred %}
+                        {% include 'mini_bio.html' %}
+                    {% endwith %}
+                {% endfor %}
+            </details>
+        </div>
         <form class="moderation-form" method="POST" target="_blank">
             <input type="hidden" name="crab_id" value="{{crab.id}}">
 
