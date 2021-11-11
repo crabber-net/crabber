@@ -64,6 +64,55 @@
     </div>
     {% endwith %}
 
+    {% if stats['party_starter'] %}
+    {% with party_starter = stats['party_starter'][0] %}
+    <div class="crab-king mt-5 w-100">
+        <div class="crown-name absolute-container">
+            <h1 class="text-center">
+            {% if spooky_mode %}
+                Grim Reaper
+            {% else %}
+                Party Starter
+            {% endif %}
+            </h1>
+            <div class="horizontal-line"></div>
+        </div>
+        <p class="text-center text-muted stat-explanation">The user who's referred the most people to Crabber</p>
+        <div class="king-profile neue-card neue-card-media p-4 row flex-row absolute-container">
+            <div class="col-auto">
+                <div class="avatar-badge">
+
+                    <svg class="avatar-badge-icon" width="20" height="20" data-jam="birthday-cake-f">
+                        <use href="{{sprite_url}}?version={{server_start}}#birthday-cake-f"></use>
+                    </svg>
+                </div>
+                <div class="rounded-circle profile-picture"
+                    style="background-image: url('{{party_starter.avatar}}');"
+                    src="{{party_starter.avatar}}">
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="profile-box-names mt-2">
+                    <h2 class="king-display-name">
+                        {{party_starter.display_name}}
+                        {% if party_starter.verified %}
+                            <a title="This user is verified">{{macros.verified(30)}}</a>
+                        {% endif %}
+                    </h2>
+                    <p class="text-muted mb-1">
+                        @{{party_starter.username}}
+                        <span class="follow-count px-1 ml-1"><b>{{stats['party_starter'][1]}}</b> referrals</span>
+                    </p>
+                </div>
+            </div>
+            <!-- Profile page link -->
+            <a href="/user/{{party_starter.username}}" class="absolute-fill" draggable="false"></a>
+        </div>
+    </div>
+    {% endwith %}
+    {% endif %}
+
     {% with baby = stats['baby_crab'] %}
     <div class="crab-king mt-5 w-100">
         <div class="crown-name absolute-container">
