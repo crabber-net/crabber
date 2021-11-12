@@ -63,6 +63,9 @@
                 <span class="mini-molt-username">@{{author.username}}</span>
                 <span class="mini-molt-timestamp">· <a href="javascript:void(0)"
                         title="{{molt.pretty_date}}">{{molt.pretty_age}}</a></span>
+                {% if molt.is_thread %}
+                    {% include 'thread-badge.html' %}
+                {% endif %}
                 {% if molt.nsfw %}
                     {% include 'nsfw-badge.html' %}
                 {% endif %}

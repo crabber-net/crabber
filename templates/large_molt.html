@@ -94,6 +94,9 @@
             {% if molt.edited %}
             &mdash; This molt has been edited
             {% endif %}
+            {% if molt.is_thread %}
+                {% include 'thread-badge.html' %}
+            {% endif %}
             {% if molt.nsfw %}
                 {% include 'nsfw-badge.html' %}
             {% endif %}

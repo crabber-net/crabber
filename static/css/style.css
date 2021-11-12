@@ -1463,6 +1463,14 @@ body, .master-container {
     font-size: 11px;
     white-space: nowrap;
 }
+.thread-badge {
+    color: var(--muted);
+    background: var(--dark-lesser);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    white-space: nowrap;
+}
 
 .thread-connector {
     height: 100%;
