@@ -1185,6 +1185,13 @@ class Molt(db.Model):
         """Property wrapper for `Molt.get_pretty_age`."""
         return utils.get_pretty_age(self.timestamp)
 
+    @property
+    def is_thread(self):
+        """Returns whether this molt is the start of a thread."""
+        if (not self.is_reply) and self.get_reply_from(self.author):
+            return True
+        return False
+
     def get_author(self, column_names: Optional[Iterable[str]] = None):
         """Returns only necessary columns from Molt.author."""
         column_names = column_names or (

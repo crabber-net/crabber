@@ -146,6 +146,9 @@
                 {% endif %}
                 <span class="mini-molt-username zindex-front">@{{author.username}}</span>
                 <span class="mini-molt-timestamp zindex-front">· {{molt.pretty_age}}</span>
+                {% if molt.is_thread %}
+                    {% include 'thread-badge.html' %}
+                {% endif %}
                 {% if molt.nsfw %}
                     {% include 'nsfw-badge.html' %}
                 {% endif %}
