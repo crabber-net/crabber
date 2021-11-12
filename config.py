@@ -111,4 +111,5 @@ LIMITS = {
     "website": 512,
     "location": 128,
     "display_name": 64,
+    "social": 128,
 }

@@ -8,7 +8,7 @@
         <!-- Display name -->
         <div class="form-group cool-input">
             <label for="displayName">Display name</label>
-            <input type="text" name="display_name" class="form-control" id="displayName" oninput="validateField('display_name', false)"
+            <input type="text" name="display_name" class="form-control" id="displayName" oninput="validateField(this, 'display_name', false)"
                 placeholder="Bob 'Snake' Plissken" value="{{current_user.display_name}}" required aria-required>
         </div>
 
@@ -22,73 +22,175 @@
         <!-- Location -->
         <div class="form-group cool-input">
             <label for="location">Location <span class="text-muted">(optional)</span></label>
-            <input type="text" name="location" class="form-control" id="location" oninput="validateField('location', false)"
+            <input type="text" name="location" class="form-control" id="location" oninput="validateField(this, 'location', false)"
                 placeholder="Planet Earth, The Solar System" value="{{current_user.location if current_user.location else ""}}">
         </div>
 
         <!-- Website -->
         <div class="form-group cool-input">
             <label for="website">Website <span class="text-muted">(optional)</span></label>
-            <input type="text" name="website" class="form-control" id="website" oninput="validateField('website', false)"
+            <input type="text" name="website" class="form-control" id="website" oninput="validateField(this, 'website', false)"
                 placeholder="https://onlycrabs.com/bigred" value="{{current_user.website if current_user.website else ""}}">
         </div>
 
         <!-- Bio -->
-        <label>Fun facts <span class="text-muted">(optional)</span><br><small class="text-muted">Tell people about yourself!</small></label>
+        <label>
+            Fun facts
+            <span class="text-muted">
+                (optional)
+            </span>
+            <br>
+            <small class="text-muted">
+                Tell people about yourself!
+            </small>
+        </label>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Age</label>
+                <label class="input-group-text" for="bio.age">Age</label>
             </div>
-            <input type="text" name="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42" oninput="validateField('age', true)"
+            <input type="text" name="bio.age" id="bio.age" class="bg-dark form-control text-light" placeholder="e.g. 42" oninput="validateField(this, 'age', true)"
                 {% if current_user.bio.get("age", "?") != "?" %}value="{{current_user.bio.get("age")}}"{% endif %}
                 >
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Pronouns</label>
+                <label class="input-group-text" for="bio.pronouns">Pronouns</label>
             </div>
-            <input type="text" name="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them" oninput="validateField('pronouns', true)"
+            <input type="text" name="bio.pronouns" id="bio.pronouns" class="bg-dark form-control text-light" placeholder="e.g. they/them" oninput="validateField(this, 'pronouns', true)"
                 {% if current_user.bio.get("pronouns", "?") != "?" %}value="{{current_user.bio.get("pronouns")}}"{% endif %}
                 >
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Quote</label>
+                <label class="input-group-text" for="bio.quote">Quote</label>
             </div>
-            <input type="text" name="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster." oninput="validateField('quote', true)"
+            <input type="text" name="bio.quote" id="bio.quote" class="bg-dark form-control text-light" placeholder="e.g. The world is your lobster." oninput="validateField(this, 'quote', true)"
                 {% if current_user.bio.get("quote", "?") != "?" %}value="{{current_user.bio.get("quote")}}"{% endif %}
                 >
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">My jam</label>
+                <label class="input-group-text" for="bio.jam">My jam</label>
             </div>
-            <input type="text" name="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way" oninput="validateField('jam', true)"
+            <input type="text" name="bio.jam" id="bio.jam" class="bg-dark form-control text-light" placeholder="e.g. Frank Sinatra - My Way" oninput="validateField(this, 'jam', true)"
                 {% if current_user.bio.get("jam", "?") != "?" %}value="{{current_user.bio.get("jam")}}"{% endif %}
                 >
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Latest obsession</label>
+                <label class="input-group-text" for="bio.obsession">Latest obsession</label>
             </div>
-            <input type="text" name="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi" oninput="validateField('obsession', true)"
+            <input type="text" name="bio.obsession" id="bio.obsession" class="bg-dark form-control text-light" placeholder="e.g. playing with my Tamagotchi" oninput="validateField(this, 'obsession', true)"
                 {% if current_user.bio.get("obsession", "?") != "?" %}value="{{current_user.bio.get("obsession")}}"{% endif %}
                 >
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Remember when</label>
+                <label class="input-group-text" for="bio.remember">Remember when</label>
             </div>
-            <input type="text" name="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?" oninput="validateField('remember', true)"
+            <input type="text" name="bio.remember" id="bio.remember" class="bg-dark form-control text-light" placeholder="e.g. profile pictures were square?" oninput="validateField(this, 'remember', true)"
                 {% if current_user.bio.get("remember", "?") != "?" %}value="{{current_user.bio.get("remember")}}"{% endif %}
                 >
         </div>
         <div class="input-group cool-input">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="description">Favorite emoji</label>
+                <label class="input-group-text" for="bio.emoji">Favorite emoji</label>
             </div>
-            <input type="text" name="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)" oninput="validateField('emoji', true)"
+            <input type="text" name="bio.emoji" id="bio.emoji" class="bg-dark form-control text-light" placeholder="e.g. 🌵 or ;)" oninput="validateField(this, 'emoji', true)"
                 {% if current_user.bio.get("emoji", "?") != "?" %}value="{{current_user.bio.get("emoji")}}"{% endif %}
+                >
+        </div>
+
+        <!-- Social links -->
+        <label class="mt-3">
+            Social links
+            <span class="text-muted">
+                (optional)
+            </span>
+            <br>
+            <small class="text-muted">
+                Put your eggs in all the baskets!
+            </small>
+        </label>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-discord">Discord</label>
+            </div>
+            <input type="text" name="bio.social-discord" id="bio.social-discord" class="bg-dark form-control text-light" placeholder="username" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_discord.pattern}}"
+                {% if current_user.bio.get("social-discord", "?") != "?" %} value="{{current_user.bio.get("social-discord")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-spacehey">SpaceHey</label>
+            </div>
+            <input type="text" name="bio.social-spacehey" id="bio.social-spacehey" class="bg-dark form-control text-light" placeholder="profile link" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_spacehey.pattern}}"
+                {% if current_user.bio.get("social-spacehey", "?") != "?" %} value="{{current_user.bio.get("social-spacehey")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-spotify">Spotify</label>
+            </div>
+            <input type="text" name="bio.social-spotify" id="bio.social-spotify" class="bg-dark form-control text-light" placeholder="profile link" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_spotify.pattern}}"
+                {% if current_user.bio.get("social-spotify", "?") != "?" %} value="{{current_user.bio.get("social-spotify")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-twitch">Twitch</label>
+            </div>
+            <input type="text" name="bio.social-twitch" id="bio.social-twitch" class="bg-dark form-control text-light" placeholder="channel link" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_twitch.pattern}}"
+                {% if current_user.bio.get("social-twitch", "?") != "?" %} value="{{current_user.bio.get("social-twitch")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-youtube">YouTube</label>
+            </div>
+            <input type="text" name="bio.social-youtube" id="bio.social-youtube" class="bg-dark form-control text-light" placeholder="channel link" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_youtube.pattern}}"
+                {% if current_user.bio.get("social-youtube", "?") != "?" %} value="{{current_user.bio.get("social-youtube")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-steam">Steam</label>
+            </div>
+            <input type="text" name="bio.social-steam" id="bio.social-steam" class="bg-dark form-control text-light" placeholder="Steam ID" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_misc.pattern}}"
+                {% if current_user.bio.get("social-steam", "?") != "?" %} value="{{current_user.bio.get("social-steam")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-xbox">Xbox Live</label>
+            </div>
+            <input type="text" name="bio.social-xbox" id="bio.social-xbox" class="bg-dark form-control text-light" placeholder="gamertag" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_misc.pattern}}"
+                {% if current_user.bio.get("social-xbox", "?") != "?" %} value="{{current_user.bio.get("social-xbox")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-psn">PlayStation Network</label>
+            </div>
+            <input type="text" name="bio.social-psn" id="bio.social-psn" class="bg-dark form-control text-light" placeholder="PSN ID" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_misc.pattern}}"
+                {% if current_user.bio.get("social-psn", "?") != "?" %} value="{{current_user.bio.get("social-psn")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-nso">Nintendo Switch Online</label>
+            </div>
+            <input type="text" name="bio.social-nso" id="bio.social-nso" class="bg-dark form-control text-light" placeholder="friend code" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_nintendo.pattern}}"
+                {% if current_user.bio.get("social-nso", "?") != "?" %} value="{{current_user.bio.get("social-nso")}}"{% endif %}
                 >
         </div>
 
@@ -409,7 +511,7 @@
     document.body.scrollTop = 0; // For Safari
     document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 
-    let limits = '{{ limits|tojson }}';
+    var limits = '{{ limits|tojson }}';
         limits = JSON.parse(limits);
 
     function validateDescription() {
@@ -419,11 +521,17 @@
             input.val(content.substring(0, limits['description']));
     }
 
-    function validateField(field, bio) {
-        let input;
-        if (bio) input = $(`input[name="bio.${field}"]`);
-        else input = $(`input[name="${field}"]`);
+    function validateField(input, field, bio) {
+        input = $(input);
+        const regex_pattern = input.data('regex');
         const content = input.val();
+        if (regex_pattern != undefined) {
+            if (content.match(regex_pattern)) {
+                input.removeClass('is-invalid');
+            } else {
+                input.addClass('is-invalid');
+            }
+        }
         if (content.length >= limits[field])
             input.val(content.substring(0, limits[field]));
     }
