@@ -2480,7 +2480,7 @@ a:active.text-primary {
 }
 
 .bio-fields {
-    overflow-x: scroll;
+    overflow-x: auto;
     width: 100%;
 }
 .bio-field-value a {
