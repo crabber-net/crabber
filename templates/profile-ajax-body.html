@@ -270,6 +270,7 @@
                     </table>
                 </div>
 
+                {% if 'social-' in ','.join(this_user.bio.keys()) %}
                 <h5>Social links</h5>
                 <div class="rounded neue-card p-3">
                     <table id="user-social-links" class="w-100">
@@ -284,21 +285,20 @@
                                             'social-nso': 'Nintendo',
                                            }
                         %}
-                        {% for key, name in bio_names.items() %}
-                            {% set value = this_user.bio.get(key) %}
-                            {% if value %}
-                                <tr>
-                                    <th>{{name}}</th>
-                                    <td class="bio-field-value">
-                                        {{value | social_link(key) | safe}}
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% else %}
-                          <p class="text-muted">This user hasn't filled out their bio 😦</p>
-                        {% endfor %}
+                            {% for key, name in bio_names.items() %}
+                                {% set value = this_user.bio.get(key) %}
+                                {% if value %}
+                                    <tr>
+                                        <th>{{name}}</th>
+                                        <td class="bio-field-value">
+                                            {{value | social_link(key) | safe}}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
                     </table>
                 </div>
+                {% endif %}
 
                 <h5 class="mt-3">Stats</h5>
                 <div class="rounded neue-card p-3">
