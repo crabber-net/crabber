@@ -1151,7 +1151,7 @@ def parse_user_agent():
 def social_link(value: str, key: str) -> str:
     """Formats string as social link if possible (Returns safe HTML)."""
     if key.startswith("social-"):
-        key = key.removeprefix("social-")
+        key = key.replace("social-", "")
 
         if key == "youtube":
             if not value.startswith("http"):
