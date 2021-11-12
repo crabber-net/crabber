@@ -252,16 +252,48 @@
                                             'remember': 'Remember when',
                                             'emoji': 'Favorite emoji'} %}
                         {% for key, value in this_user.bio.items() %}
-                        <tr>
-                            <th>{{bio_names[key]}}</th>
-                            <td class="bio-field-value">
-                                {% if key == 'age' %}
-                                {{value | format_dob}}
-                                {% else %}
-                                {{value}}
-                                {% endif %}
-                            </td>
-                        </tr>
+                            {% if not key.startswith('social') %}
+                                <tr>
+                                    <th>{{bio_names[key]}}</th>
+                                    <td class="bio-field-value">
+                                        {% if key == 'age' %}
+                                        {{value | format_dob}}
+                                        {% else %}
+                                        {{value}}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% else %}
+                          <p class="text-muted">This user hasn't filled out their bio 😦</p>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <h5>Social links</h5>
+                <div class="rounded neue-card p-3">
+                    <table id="user-social-links" class="w-100">
+                        {% set bio_names = {'social-discord': 'Discord',
+                                            'social-spacehey': 'SpaceHey',
+                                            'social-spotify': 'Spotify',
+                                            'social-twitch': 'Twitch',
+                                            'social-youtube': 'YouTube',
+                                            'social-steam': 'Steam',
+                                            'social-xbox': 'Xbox',
+                                            'social-psn': 'PSN',
+                                            'social-nso': 'Nintendo',
+                                           }
+                        %}
+                        {% for key, name in bio_names.items() %}
+                            {% set value = this_user.bio.get(key) %}
+                            {% if value %}
+                                <tr>
+                                    <th>{{name}}</th>
+                                    <td class="bio-field-value">
+                                        {{value | social_link(key) | safe}}
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% else %}
                           <p class="text-muted">This user hasn't filled out their bio 😦</p>
                         {% endfor %}
@@ -310,7 +342,7 @@
                             <strong class="text-primary">
                                 {{this_user.referral_code.uses}}
                             </strong>
-                            users to Crabber!
+                            user{{this_user.referral_code.uses | pluralize}} to Crabber!
                         </li>
                     </ul>
                 </div>

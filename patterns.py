@@ -33,3 +33,19 @@ url_root = re.compile(r"(?:https?://)?([^\s/]+)(?:\S*)")
 # Captures essential part of URL (e.g. reddit.com/u/jaik_ or
 # crabber.net/timeline)
 url_essence = re.compile(r"(?:https?://)?(?:www\.)?((?:(?:[\w_-]+\.?)+/?)+)")
+
+# Social links
+social_discord = re.compile(r"^[^@#:`\"]{2,32}#\d{4}$")
+social_spacehey = re.compile(
+    r"^(?:https://)?spacehey\.com/(?:profile\?id=\d+|(\w{2,}))$"
+)
+social_spotify = re.compile(
+    r"^(?:https://)?open\.spotify\.com/user/([\w]+)/?(?:\?(?:\w+=\w+&?))?$"
+)
+social_twitch = re.compile(r"^(?:https://)?(?:www\.)?twitch\.tv/([\w]+)/?$")
+social_youtube = re.compile(
+    r"^(?:https://)?(?:www\.)?youtube\.com/(?:c|channel)/([\w]+)/?$"
+)
+# Matches generic usernames
+social_misc = re.compile(r"^\w{2,128}$")
+social_nintendo = re.compile(r"^SW(?:-\d{4}){3}$")

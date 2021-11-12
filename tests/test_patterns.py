@@ -166,3 +166,116 @@ def test_spoiler_tag():
     negative_samples = [">> ! << !< >!< wowah!"]
 
     assert_negative(patterns.spoiler_tag, negative_samples, map_func=escape_string)
+
+
+def test_social_discord():
+    positive_samples = [
+        "myspacetom#7777",
+        "pixelator#2000",
+        "nostone48#5523",
+    ]
+
+    assert_positive(patterns.social_discord, positive_samples)
+
+    negative_samples = [
+        "myspacetom#7777237",
+        "pixelator#2000#7234",
+        "no@stone48#5523",
+    ]
+
+    assert_negative(patterns.social_discord, negative_samples)
+
+
+def test_social_spacehey():
+    positive_samples = [
+        "https://spacehey.com/jsl",
+        "https://spacehey.com/an",
+        "https://spacehey.com/profile?id=544334",
+        "spacehey.com/profile?id=544334",
+    ]
+
+    assert_positive(patterns.social_spacehey, positive_samples)
+
+    negative_samples = [
+        "an",
+        "jsl",
+        "https://spacehey.com/",
+        "https://spacehey.com/bulletin?id=100883",
+        "crabber.net",
+    ]
+
+    assert_negative(patterns.social_spacehey, negative_samples)
+
+
+def test_social_spotify():
+    positive_samples = [
+        "https://open.spotify.com/user/nyanjaik?si=20c10e5787124dc1",
+        "open.spotify.com/user/12174615111",
+    ]
+
+    assert_positive(patterns.social_spotify, positive_samples)
+
+    negative_samples = [
+        "https://open.spotify.com/track/1SM0W2SbObwBgCIQtyX0JC?si=11681010247c40e3",
+        "https://open.spotify.com/artist/126FigDBtqwS2YsOYMTPQe?si=8dcc603644204870"
+        "https://www.spotify.com/us/",
+    ]
+
+    assert_negative(patterns.social_spotify, negative_samples)
+
+
+def test_social_twitch():
+    positive_samples = [
+        "https://www.twitch.tv/jakefromspace",
+        "twitch.tv/szyzyg",
+    ]
+
+    assert_positive(patterns.social_twitch, positive_samples)
+
+    negative_samples = [
+        "https://www.twitch.tv/videos/1201229591",
+        "https://www.twitch.tv/settings/profile",
+        "https://www.twitch.tv/abney317/schedule",
+    ]
+
+    assert_negative(patterns.social_twitch, negative_samples)
+
+
+def test_social_youtube():
+    positive_samples = [
+        "https://www.youtube.com/channel/UCthIWSlSuCp93LF_7GR0Qpg",
+        "https://www.youtube.com/c/TomScottGo",
+        "https://www.youtube.com/c/Corridor",
+    ]
+
+    assert_positive(patterns.social_youtube, positive_samples)
+
+    negative_samples = [
+        "https://spacehey.com/",
+        "https://spacehey.com/bulletin?id=100883",
+        "https://www.youtube.com/playlist?list=FLthIWSlSuCp93LF_7GR0Qpg",
+        (
+            "https://www.youtube.com/watch?v=QDGlgH_ZsrY"
+            "&list=FLthIWSlSuCp93LF_7GR0Qpg&index=8"
+        ),
+        "https://www.youtube.com/watch?v=aW2LvQUcwqc",
+    ]
+
+    assert_negative(patterns.social_youtube, negative_samples)
+
+
+def test_social_nintendo():
+    positive_samples = [
+        "SW-8496-9128-4205",
+        "SW-1234-5678-9012",
+        "SW-2357-9512-2746",
+    ]
+
+    assert_positive(patterns.social_nintendo, positive_samples)
+
+    negative_samples = [
+        "8496-9128-4205",
+        "SW-8496-9128-4205-1572",
+    ]
+
+    assert_negative(patterns.social_nintendo, negative_samples)

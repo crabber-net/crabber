@@ -1658,9 +1658,10 @@ div.feature:hover .icon-overlap {
     border-color: var(--dark);
 }
 
-table#user-info th {
+table#user-info th, table#user-social-links th {
     color: var(--primary);
     width: 10rem;
+    max-width: 24vw;
 }
 
 
@@ -2468,4 +2469,8 @@ a:active.text-primary {
 
 .text-warning {
     color: var(--warning) !important;
+}
+
+.bio-field-value a {
+    color: var(--primary);
 }

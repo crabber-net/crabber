@@ -1168,6 +1168,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        patterns=patterns,
         user_agent=utils.parse_user_agent(),
         sprite_url=config.SPRITE_URL,
         limits=config.LIMITS,
@@ -1202,6 +1203,12 @@ def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ("", "s"))
 
 
 @app.template_filter()
+def social_link(value: str, key: str) -> str:
+    """Formats string as social link if possible (Returns safe HTML)."""
+    return utils.social_link(value, key)
+
+
+@app.template_filter()
 def commafy(value):
     """Returns string of value with commas seperating the thousands places."""
     return format(int(value), ",d")
@@ -1225,13 +1232,7 @@ def string_escape(value):
 
 @app.template_filter()
 def pretty_url(url, length=35):
-    """Returns a prettier/simplified version of a URL."""
-    match = patterns.pretty_url.match(url)
-    if match:
-        url = match.group(1)
-    if len(url) > length:
-        url = f"{url[:length - 3]}..."
-    return url
+    return utils.pretty_url(url, length)
 
 
 @app.template_filter()

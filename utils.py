@@ -1146,3 +1146,43 @@ def parse_user_agent():
     if user_agent:
         user_agent = user_agents.parse(user_agent)
     return user_agent
+
+
+def social_link(value: str, key: str) -> str:
+    """Formats string as social link if possible (Returns safe HTML)."""
+    if key.startswith("social-"):
+        key = key.removeprefix("social-")
+
+        if key == "youtube":
+            if not value.startswith("http"):
+                value = "https://" + value
+            return f'<a href="{value}" target="_blank">{pretty_url(value)}</a>'
+        if key == "spotify":
+            if not value.startswith("http"):
+                value = "https://" + value
+            return f'<a href="{value}" target="_blank">{pretty_url(value)}</a>'
+        if key == "twitch":
+            if not value.startswith("http"):
+                value = "https://" + value
+            return f'<a href="{value}" target="_blank">{pretty_url(value)}</a>'
+        elif key == "spacehey":
+            if not value.startswith("http"):
+                value = "https://" + value
+            return f'<a href="{value}" target="_blank">{pretty_url(value)}</a>'
+        elif key == "steam":
+            link = f"https://steamcommunity.com/id/{value}"
+            return f'<a href="{link}" target="_blank">{value}</a>'
+        elif key == "xbox":
+            link = f"https://account.xbox.com/en-us/profile?gamertag={value}"
+            return f'<a href="{link}" target="_blank">{value}</a>'
+    return escape(value)
+
+
+def pretty_url(url, length=35):
+    """Returns a prettier/simplified version of a URL."""
+    match = patterns.pretty_url.match(url)
+    if match:
+        url = match.group(1)
+    if len(url) > length:
+        url = f"{url[:length - 3]}..."
+    return url
