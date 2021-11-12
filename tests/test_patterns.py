@@ -88,7 +88,7 @@ def test_ext_link():
 def test_ext_md_link():
     positive_samples = [
         "[crabber](https://crabber.net)",
-        "[this molt](https://crabber.net/moderation/?molt_id=1&viewing=molt)"
+        "[this molt](https://crabber.net/moderation/?molt_id=1&viewing=molt)",
         "[reddit: the front page of the internet](http://reddit.com)",
         "[my CD collection on discogs]"
         "(https://www.discogs.com/user/jakeledoux/collection)",
@@ -107,6 +107,35 @@ def test_ext_md_link():
     ]
 
     assert_negative(patterns.ext_md_link, negative_samples)
+
+
+def test_giphy():
+    positive_samples = [
+        (
+            "https://media1.giphy.com/media/l1Ku8UGWpTlyHuD0A/giphy.gif"
+            "?cid=5e21488638475200d85aaa60946db16d7ac6cd66a43061e3&rid=giphy.gif&ct=g"
+        ),
+        "https://media1.giphy.com/media/l1Ku8UGWpTlyHuD0A/giphy.gif",
+        "https://media.giphy.com/media/l1Ku8UGWpTlyHuD0A/giphy.gif",
+        (
+            "https://giphy.com/gifs/starwars-star-wars-the-empire-strikes-back-"
+            "l1Ku8UGWpTlyHuD0A"
+        ),
+    ]
+
+    assert_positive(patterns.giphy, positive_samples)
+
+    negative_samples = [
+        "https://crabber.net",
+        "https://crabber.net/moderation/?molt_id=1&viewing=molt",
+        "http://reddit.com",
+        "https://www.discogs.com/user/jakeledoux/collection",
+        "element.io",
+        "google.com",
+        "www.google.com",
+    ]
+
+    assert_negative(patterns.giphy, negative_samples)
 
 
 def test_spoiler_tag():
