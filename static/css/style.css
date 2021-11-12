@@ -1660,10 +1660,10 @@ div.feature:hover .icon-overlap {
 
 table#user-info th, table#user-social-links th {
     color: var(--primary);
+    display: inline-block;
     width: 10rem;
     max-width: 24vw;
 }
-
 
 .loading-icon, .loading-icon-center {
     fill: var(--primary);
@@ -2471,6 +2471,10 @@ a:active.text-primary {
     color: var(--warning) !important;
 }
 
+.bio-fields {
+    overflow-x: scroll;
+    width: 100%;
+}
 .bio-field-value a {
     color: var(--primary);
 }

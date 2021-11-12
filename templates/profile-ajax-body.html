@@ -242,7 +242,7 @@
 
             <div id="shell-contents" class="shell-collapsed text-light-darker cool-scroll">
                 <h5>Fun facts</h5>
-                <div class="rounded neue-card p-3">
+                <div class="rounded neue-card p-3 bio-fields">
                     <table id="user-info" class="w-100">
                         {% set bio_names = {'age': 'Age',
                                             'pronouns': 'Pronouns',
@@ -272,7 +272,7 @@
 
                 {% if 'social-' in ','.join(this_user.bio.keys()) %}
                 <h5 class="mt-3">Social links</h5>
-                <div class="rounded neue-card p-3">
+                <div class="rounded neue-card p-3 bio-fields">
                     <table id="user-social-links" class="w-100">
                         {% set bio_names = {'social-discord': 'Discord',
                                             'social-spacehey': 'SpaceHey',
