@@ -292,7 +292,7 @@ def query_to_json(query: BaseQuery, limit: int = 100, offset: int = 0) -> dict:
         "total": total_items,
     }
 
-    for item in query.all():
+    for item in query:
         if isinstance(item, models.Molt):
             molt_list = query_json.get("molts", list())
             molt_list.append(molt_to_json(item))

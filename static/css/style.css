@@ -2486,3 +2486,7 @@ a:active.text-primary {
 .bio-field-value a {
     color: var(--primary);
 }
+
+#stats-body {
+    overflow-x: hidden;
+}

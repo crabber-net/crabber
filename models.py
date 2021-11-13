@@ -189,7 +189,7 @@ class Crab(db.Model):
     @property
     def bookmarks(self):
         """Returns all bookmarks the user has where the molt is still available."""
-        return self.query_bookmarks().all()
+        return self.query_bookmarks()
 
     @property
     def bookmark_count(self):
@@ -199,7 +199,7 @@ class Crab(db.Model):
     @property
     def likes(self):
         """Returns all likes the user has where the molt is still available."""
-        return self.query_likes().all()
+        return self.query_likes()
 
     @property
     def like_count(self):
@@ -209,7 +209,7 @@ class Crab(db.Model):
     @property
     def molts(self):
         """Returns all molts the user has published that are still available."""
-        return self.query_molts().all()
+        return self.query_molts()
 
     @property
     def molt_count(self):
@@ -219,7 +219,7 @@ class Crab(db.Model):
     @property
     def replies(self):
         """Returns all replies the user has published that are still available."""
-        return self.query_replies().all()
+        return self.query_replies()
 
     @property
     def reply_count(self):
@@ -229,22 +229,22 @@ class Crab(db.Model):
     @property
     def blocked(self) -> List["Crab"]:
         """Returns this Crab's blocked Crabs without deleted/banned users."""
-        return self.query_blocked().all()
+        return self.query_blocked()
 
     @property
     def blockers(self) -> List["Crab"]:
         """Returns Crabs that have blocked this Crab without deleted/banned users."""
-        return self.query_blockers().all()
+        return self.query_blockers()
 
     @property
     def following(self) -> List["Crab"]:
         """Returns this Crab's following without deleted/banned users."""
-        return self.query_following().all()
+        return self.query_following()
 
     @property
     def followers(self) -> List["Crab"]:
         """Returns this Crab's followers without deleted/banned users."""
-        return self.query_followers().all()
+        return self.query_followers()
 
     @property
     def following_count(self):
@@ -280,6 +280,14 @@ class Crab(db.Model):
     def referral_code(self) -> "ReferralCode":
         """Return user's referral code."""
         return ReferralCode.get(self)
+
+    @property
+    def referrals_count(self) -> int:
+        """Return number of times this user's referral code has been used."""
+        return (
+            db.session.query(ReferralCode.uses).filter_by(crab_id=self.id).first()
+            or (0,)
+        )[0]
 
     def generate_password_reset_token(self):
         """Generates and returns a new password reset token."""
@@ -319,11 +327,8 @@ class Crab(db.Model):
 
     def unbookmark(self, molt):
         """Remove `molt` from bookmarks."""
-        bookmark = self.has_bookmarked(molt)
-        if bookmark:
-            self.bookmarks.remove(bookmark)
-            db.session.delete(bookmark)
-            db.session.commit()
+        Bookmark.query.filter_by(crab_id=self.id, molt_id=molt.id).delete()
+        db.session.commit()
 
     def get_mutuals_for(self, crab: "Crab"):
         """Returns a list of people you follow who also follow `crab`."""
@@ -340,7 +345,7 @@ class Crab(db.Model):
             .filter(Crab.banned == false(), Crab.deleted == false())
         )
         mutuals = crab_followers.filter(Crab.id.in_(self_following))
-        return mutuals.all()
+        return mutuals
 
     def get_preference(self, key: str, default: Optional[Any] = None):
         """Gets key from user's preferences."""
@@ -379,7 +384,7 @@ class Crab(db.Model):
             )
         recommended = self.filter_user_query_by_not_blocked(recommended)
 
-        return recommended.limit(limit).all()
+        return recommended.limit(limit)
 
     def update_bio(self, updates: dict):
         """Update bio with keys from `new_bio`."""
@@ -551,15 +556,14 @@ class Crab(db.Model):
         if paginated:
             return notifs.paginate(page, config.NOTIFS_PER_PAGE, False)
         else:
-            return notifs.all()
+            return notifs
 
     def read_notifications(self):
         """Mark all of this user's notifications as read."""
         notifs = (
             Notification.query_all().filter_by(recipient=self).filter_by(read=False)
         )
-        for notif in notifs:
-            notif.read = True
+        notifs.update({"read": True}, synchronize_session=False)
         db.session.commit()
 
     def award(self, title=None, trophy=None):
@@ -758,6 +762,15 @@ class Crab(db.Model):
         )
         return blocked
 
+    def query_blocked_ids(self) -> BaseQuery:
+        """Returns ids of valid and invalid crabs that have been blocked by this Crab."""
+        blocker_ids = (
+            db.session.query(Crab.id)
+            .join(blocking_table, Crab.id == blocking_table.c.blocked_id)
+            .filter(blocking_table.c.blocker_id == self.id)
+        )
+        return blocker_ids
+
     def query_blockers(self) -> BaseQuery:
         """Returns Crabs that have blocked this Crab without deleted/banned users."""
         blockers = (
@@ -768,6 +781,15 @@ class Crab(db.Model):
             .order_by(Crab.username)
         )
         return blockers
+
+    def query_blocker_ids(self) -> BaseQuery:
+        """Returns ids of valid and invalid crabs that have blocked this Crab."""
+        blocker_ids = (
+            db.session.query(Crab.id)
+            .join(blocking_table, Crab.id == blocking_table.c.blocker_id)
+            .filter(blocking_table.c.blocked_id == self.id)
+        )
+        return blocker_ids
 
     def query_following(self) -> BaseQuery:
         """Returns this Crab's following without deleted/banned users."""
@@ -941,10 +963,9 @@ class Crab(db.Model):
 
     def filter_user_query_by_not_blocked(self, query: BaseQuery) -> BaseQuery:
         """Filters a Crab query by users who are not blocked."""
-        blocker_ids = [crab.id for crab in self.blockers]
-        blocked_ids = [crab.id for crab in self.blocked]
-        query = query.filter(Crab.id.notin_(blocker_ids)).filter(
-            Crab.id.notin_(blocked_ids)
+        query = query.filter(
+            Crab.id.notin_(self.query_blocked_ids()),
+            Crab.id.notin_(self.query_blocker_ids()),
         )
         return query
 
@@ -1133,7 +1154,7 @@ class Molt(db.Model):
     @property
     def quotes(self):
         """Get all currently valid quotes of Molt."""
-        return Molt.query_quotes(self).all()
+        return Molt.query_quotes(self)
 
     @property
     def quote_count(self):
@@ -1143,7 +1164,7 @@ class Molt(db.Model):
     @property
     def remolts(self):
         """Get all currently valid remolts of Molt."""
-        return Molt.query_remolts(self).all()
+        return Molt.query_remolts(self)
 
     @property
     def remolt_count(self):
@@ -1153,7 +1174,7 @@ class Molt(db.Model):
     @property
     def replies(self):
         """List all currently valid Molts that reply to this Molt."""
-        return self.query_replies().all()
+        return self.query_replies()
 
     @property
     def reply_count(self):
@@ -1163,7 +1184,7 @@ class Molt(db.Model):
     @property
     def likes(self):
         """List all currently valid likes of Molt."""
-        return Molt.query_likes(self).all()
+        return Molt.query_likes(self)
 
     @property
     def like_count(self):
@@ -1419,7 +1440,7 @@ class Molt(db.Model):
 
     def like(self, crab):
         """Like Molt as `crab`."""
-        if not Like.query.filter_by(crab=crab, molt=self).all():
+        if not Like.query.filter_by(crab=crab, molt=self).first():
             new_like = Like(crab=crab, molt=self)
             db.session.add(new_like)
             self.author.notify(sender=crab, type="like", molt=self)
@@ -1879,7 +1900,7 @@ class Crabtag(db.Model):
         # Get date of 7 days ago
         since_date = datetime.datetime.utcnow() - datetime.timedelta(7)
 
-        return Crabtag.query_most_popular(since_date=since_date).limit(limit).all()
+        return Crabtag.query_most_popular(since_date=since_date).limit(limit)
 
     @classmethod
     def get(cls, name: str) -> "Crabtag":

@@ -718,7 +718,7 @@
             {% endif %}
 
                 {% if current_user %}
-                {% with recommended_crabs=current_user.get_recommended_crabs() or current_user.query.offset(8).limit(3).all() %}
+                {% with recommended_crabs=current_user.get_recommended_crabs() %}
                     {% if recommended_crabs %}
                     <!-- Who to follow -->
                     <div class="panel d-none d-xl-block" id="recommended-crabs">

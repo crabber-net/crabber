@@ -1,7 +1,12 @@
+{# Cache author data #}
+{% if molts.items %}
+    {% set page_author = molts.items[0].get_author() %}
+{% endif %}
+
 <!-- Pinned Molt -->
 {% if this_user.pinned %}
     {% if not this_user.pinned.deleted %}
-        {% with molt=this_user.pinned, is_pin=True %}
+        {% with molt=this_user.pinned, is_pin=True, author=page_author %}
             <div class="border-bottom border-dark border-thicc">
                 {% include "molt.html" %}
             </div>
@@ -10,7 +15,7 @@
 {% endif %}
 
 {% for molt in molts.items %}
-    {% with thread=true, show_replies_from=molt.author, depth_limit=3 %}
+    {% with thread=true, author=page_author, show_replies_from=page_author.id, depth_limit=3 %}
         {% include "molt.html" %}
     {% endwith %}
 {% else %}

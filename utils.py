@@ -119,7 +119,7 @@ def validate_email(email: str) -> bool:
     :param email: Email to validate
     :return: Whether it's been taken
     """
-    return not models.Crab.query.filter_by(email=email, deleted=False).all()
+    return not models.Crab.query.filter_by(email=email, deleted=False).first()
 
 
 def allowed_file(filename: str) -> bool:

@@ -11,11 +11,8 @@ import utils
 
 app.app_context().push()
 
-boring_crabs = Crab.query.filter_by(avatar="img/avatar.jpg").all()
-if boring_crabs:
-    for crab in boring_crabs:
-        crab.avatar = utils.make_crabatar(crab.username)
-    db.session.commit()
-    print(f"Successfully updated {len(boring_crabs)} Crabs' avatars.")
-else:
-    print("No changes necessary.")
+boring_crabs = Crab.query.filter_by(avatar="img/avatar.jpg")
+for crab in boring_crabs:
+    crab.avatar = utils.make_crabatar(crab.username)
+db.session.commit()
+print(f"Successfully updated {len(boring_crabs)} Crabs' avatars.")
