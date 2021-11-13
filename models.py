@@ -717,13 +717,13 @@ class Crab(db.Model):
             # Check for molt duplicates
             molt = kwargs.get("molt")
             if molt:
-                duplicate_notification = Notification.query.filter_by(
+                duplicate_notification = db.session.query(Notification.id).filter_by(
                     recipient=self,
                     sender=kwargs.get("sender"),
                     type=kwargs.get("type"),
                     molt=molt,
                 )
-                if duplicate_notification.count():
+                if duplicate_notification.first():
                     is_duplicate = True
 
             # Check for notification spamming
@@ -968,6 +968,16 @@ class Crab(db.Model):
             Crab.id.notin_(self.query_blocker_ids()),
         )
         return query
+
+    @staticmethod
+    def get_security_overview(id: int):
+        """Gets basic security information for Crab with `id`."""
+        return db.session.query(Crab.register_time, Crab.banned, Crab.deleted).filter_by(id=id).first()
+
+    @staticmethod
+    def active_user_count() -> int:
+        """Returns the number of active accounts."""
+        return db.session.query(func.count(Crab.id)).filter_by(deleted=False, banned=False).first()[0]
 
     @staticmethod
     def order_query_by_followers(query: BaseQuery) -> BaseQuery:
@@ -1406,10 +1416,10 @@ class Molt(db.Model):
     def remolt(self, crab, **kwargs):
         """Remolt Molt as `crab`."""
         # Check if already remolted
-        duplicate_remolt = Molt.query.filter_by(
+        duplicate_remolt = db.session.query(func.count(Molt.id)).filter_by(
             is_remolt=True, original_molt=self, author=crab, deleted=False
         )
-        if not duplicate_remolt.count():
+        if not duplicate_remolt.first()[0]:
             new_remolt = crab.molt(
                 "", is_remolt=True, original_molt=self, nsfw=self.nsfw, **kwargs
             )
@@ -1440,7 +1450,7 @@ class Molt(db.Model):
 
     def like(self, crab):
         """Like Molt as `crab`."""
-        if not Like.query.filter_by(crab=crab, molt=self).first():
+        if not db.session.query(Like.id).filter_by(crab=crab, molt=self).first():
             new_like = Like(crab=crab, molt=self)
             db.session.add(new_like)
             self.author.notify(sender=crab, type="like", molt=self)
@@ -1463,10 +1473,8 @@ class Molt(db.Model):
 
     def unlike(self, crab):
         """Unlike Molt as `crab`."""
-        old_like = Like.query.filter_by(crab=crab, molt=self).first()
-        if old_like is not None:
-            db.session.delete(old_like)
-            db.session.commit()
+        Like.query.filter_by(crab=crab, molt=self).delete()
+        db.session.commit()
 
     def delete(self):
         """Delete molt."""
@@ -1503,6 +1511,16 @@ class Molt(db.Model):
         return Molt.query.filter_by(
             is_reply=True, original_molt=self, deleted=False
         ).filter(Molt.author.has(banned=False, deleted=False))
+
+    @staticmethod
+    def total_count() -> int:
+        """Returns the number of molts sent."""
+        return db.session.query(func.count(Molt.id)).first()[0]
+
+    @staticmethod
+    def deleted_count() -> int:
+        """Returns the number of deleted molts."""
+        return db.session.query(func.count(Molt.id)).filter_by(deleted=False).first()[0]
 
     @staticmethod
     def query_all(
@@ -1669,6 +1687,11 @@ class Like(db.Model):
         return f"<Like from '@{self.crab.username}'>"
 
     @staticmethod
+    def total_count() -> int:
+        """Returns the number of likes given."""
+        return db.session.query(func.count(Like.id)).first()[0]
+
+    @staticmethod
     def query_all():
         """Queries all valid Likes (of valid Molt, Molt author, and Crab)."""
         likes = (
@@ -1759,6 +1782,11 @@ class TrophyCase(db.Model):
 
     def __repr__(self):
         return f"<TrophyCase | '{self.trophy.title}' | " f"'@{self.owner.username}'>"
+
+    @staticmethod
+    def total_count() -> int:
+        """Returns the number of trophies awarded."""
+        return db.session.query(func.count(TrophyCase.id)).first()[0]
 
 
 # Stores each type of trophy
@@ -1881,7 +1909,8 @@ class Crabtag(db.Model):
         Returns as tuple: (tag: Crabtag, count: int)
         """
         most_popular = (
-            Crabtag.query.join(Crabtag.molts)
+            db.session.query(Crabtag.name)
+            .join(Crabtag.molts)
             .group_by(Crabtag.id)
             .add_columns(func.count(Crabtag.id).label("uses"))
             .order_by(desc("uses"))
