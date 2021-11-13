@@ -107,7 +107,7 @@
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="message">
                         <use href="{{sprite_url}}?version={{server_start}}#message"></use>
                     </svg>
-                    <span class="mini-molt-action-counter ml-1">{{molt.replies|length}}</span>
+                    <span class="mini-molt-action-counter ml-1">{{molt.reply_count}}</span>
                 </div>
 
                 <!-- REMOLT DROPDOWN -->
@@ -183,7 +183,7 @@
                         <svg class="mini-molt-action-icon text-primary {{"d-none" if not current_user.has_liked(molt) else ""}}" width="16" height="16" data-jam="heart-f">
                             <use href="{{sprite_url}}?version={{server_start}}#heart-f"></use>
                         </svg>
-                        <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.likes|length}}</span>
+                        <span class="mini-molt-action-counter ml-1 {{"text-primary" if current_user.has_liked(molt) else ""}}">{{molt.like_count}}</span>
                     </div>
                 </form>
 

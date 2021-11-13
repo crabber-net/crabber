@@ -330,8 +330,8 @@
                         {% endif %}
                         <li><strong class="text-primary">{{this_user.trophy_count}}</strong> {{"trophy" if this_user.trophy_count == 1 else "trophies"}}</li>
                         <li><strong class="d-inline-block text-primary">
-                            {% if this_user.following | length > 0 %}
-                                {{"%.1f"|format(this_user.followers | length / this_user.following | length)}}
+                            {% if this_user.following_count > 0 %}
+                                {{"%.1f"|format(this_user.follower_count / this_user.following_count)}}
                             {% else %}
 
                             <svg class="" width="16" height="16" data-jam="infinite">

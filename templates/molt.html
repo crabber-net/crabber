@@ -33,7 +33,9 @@
 {% set is_quote = molt.is_quote %}
 
 {# MOLT AUTHOR OPTIMIZATION #}
-{% set author = molt.get_author() %}
+{% if not author or author.id != molt.author_id %}
+    {% set author = molt.get_author() %}
+{% endif %}
 
 {% set is_deleted = molt.deleted %}
 {% set is_unavailable = author.banned or author.deleted or molt.original_molt.deleted %}
