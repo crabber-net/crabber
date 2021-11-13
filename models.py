@@ -9,7 +9,7 @@ from passlib.hash import sha256_crypt
 import patterns
 import secrets
 from sqlalchemy import desc, func, or_
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, Bundle
 from sqlalchemy.sql import expression
 from sqlalchemy.sql.expression import false, true, null
 from typing import Any, Iterable, List, Optional, Tuple, Union
@@ -849,22 +849,72 @@ class Crab(db.Model):
         )
         return molts
 
-    def query_timeline(self) -> BaseQuery:
-        """Retrieves the molts in this user's timeline."""
-        following_ids = db.session.query(following_table.c.following_id).filter(
-            following_table.c.follower_id == self.id
+    def query_fast_molts(self) -> BaseQuery:
+        """Queries fast-molts for this user."""
+        current_user_remolted = db.session.query(Molt.original_molt_id).filter_by(
+            author_id=self.id, is_remolt=True, deleted=False
         )
+        current_user_liked = db.session.query(Like.molt_id).filter_by(crab_id=self.id)
+        current_user_bookmarked = db.session.query(Bookmark.molt_id).filter_by(
+            crab_id=self.id
+        )
+        author = Bundle(
+            "author",
+            Crab.id,
+            Crab.display_name,
+            Crab.username,
+            Crab.avatar,
+            Crab.verified,
+        )
+        card = Bundle(
+            "card", Card.id, Card.title, Card.description, Card.url, Card.ready
+        )
+        # TODO: remove invalid molts
         molts = (
-            Molt.query_all(
-                include_replies=False, include_quotes=True, include_remolts=True
+            db.session.query(
+                Molt.id,
+                Molt.content,
+                Molt.deleted,
+                Molt.is_remolt,
+                Molt.is_reply,
+                Molt.is_quote,
+                Molt.nsfw,
+                Molt.timestamp,
+                Molt.id.in_(current_user_remolted).label("has_remolted"),
+                Molt.id.in_(current_user_liked).label("has_liked"),
+                Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
+                author,
+                card,
             )
-            .filter(
-                db.or_(Molt.author_id.in_(following_ids), Molt.author_id == self.id)
-            )
+            .join(Molt.author)
+            .outerjoin(Molt.card)
+            .filter(Crab.banned == false(), Crab.deleted == false())
+            .filter(Molt.is_reply == false(), Molt.deleted == false())
+            .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
         molts = self.filter_molt_query(molts)
         return molts
+
+    def query_timeline(self) -> BaseQuery:
+        """Retrieves the molts in this user's timeline."""
+        query = (
+            self.query_fast_molts()
+            .join(following_table, following_table.c.following_id == Molt.author_id)
+            .filter(
+                db.or_(
+                    following_table.c.follower_id == self.id, Molt.author_id == self.id
+                )
+            )
+        )
+        return query
+
+    def query_wild(self) -> BaseQuery:
+        """Retrieves the molts in /wild for this user."""
+        query = self.query_fast_molts().filter(
+            Molt.is_remolt == false(), Molt.is_quote == false()
+        )
+        return query
 
     def change_password(self, password: str):
         """Updates this user's password hash."""

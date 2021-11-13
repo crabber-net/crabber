@@ -1,0 +1,156 @@
+<!-- TODO!!! -->
+{% set reply_count = 2 %}
+{% set like_count = 5 %}
+{% set editable = false %}
+{% set original_author_id = 0 %}
+
+{% set molt_owner = current_user and (molt.author.id == current_user.id) %}
+{% set remolt_owner = current_user and (original_author_id == current_user.id) %}
+
+<div class="mini-molt-actions d-flex flex-row justify-content-between mr-md-5">
+    <!-- Edit button -->
+    {% if molt_owner and editable %}
+        <form>
+            <input type="hidden" name="user_action" value="reply_molt">
+            <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+            <div class="mini-molt-action edit rounded-circle zindex-front"
+                 onclick="prepareEdit('{{molt.id}}');">
+                {{ sprite('pencil', size=19, class="mini-molt-action-icon") }}
+            </div>
+        </form>
+    {% endif %}
+
+    <!-- Reply button -->
+    <form>
+        <input type="hidden" name="user_action" value="reply_molt">
+        <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+        <div class="mini-molt-action reply rounded-circle zindex-front"
+            {% if not static %}
+                onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');"
+            {% endif %}
+        >
+            {{ sprite('message', size=19, class="mini-molt-action-icon") }}
+            <span class="mini-molt-action-counter ml-1">
+                {{reply_count}}
+            </span>
+        </div>
+    </form>
+
+    <!-- Remolt dropdown -->
+    <div class="dropdown">
+        {% if static %}
+            {% set has_remolted = false %}
+        {% else %}
+            {% set has_remolted = molt.has_remolted %}
+        {% endif %}
+
+        <!-- Remolt dropdown button -->
+        <div class="zindex-front mini-molt-action remolt
+                    {{"active-remolt" if has_remolted else ""}}
+                   "
+             href="#" role="button" id="dropdownMenuLink"
+             onclick="toggleDropdown(this);"
+             aria-haspopup="true" aria-expanded="false"
+        >
+            {{ sprite('repeat', size=19, class="mini-molt-action-icon") }}
+            <span class="mini-molt-action-counter ml-1">
+                {{remolt_count}}
+            </span>
+        </div>
+
+        {% if current_user %}
+            <!-- Remolt dropdown content -->
+            <div class="neue-card molt-dropdown dropdown-menu"
+                 aria-labelledby="dropdownMenuLink">
+                <!-- Undo remolt button -->
+                <form id="dd-undo-remolt" method="POST"
+                      class="dropdown-item clickable
+                             {{'hidden' if not has_remolted}}
+                            "
+                >
+                    <input type="hidden" name="user_action" value="undo_remolt">
+                    <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+                    <div class="text-danger"
+                         onclick="deleteRemolt(this)"
+                    >
+                        {{ sprite('repeat', size=19, class="mini-molt-action-icon") }}
+                        Undo Remolt
+                    </div>
+                </form>
+
+                <!-- Remolt button -->
+                <form id="dd-remolt" method="POST"
+                      class="dropdown-item clickable
+                             {{'hidden' if has_remolted}}
+                            "
+                >
+                    <input type="hidden" name="user_action" value="remolt_molt">
+                    <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+                    <div onclick="submitRemolt(this)">
+                        {{ sprite('repeat', size=19, class="mini-molt-action-icon") }}
+                        Remolt
+                    </div>
+                </form>
+
+                <!-- QUOTE-MOLT BUTTON -->
+                <form class="dropdown-item clickable" method="POST">
+                    <input type="hidden" name="user_action" value="quote_molt">
+                    <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
+
+                    <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                        {{ sprite('pencil', size=19, class="mini-molt-action-icon") }}
+                        Quote Molt
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Like button -->
+    <form method="POST">
+        <input type="hidden" name="user_action" value="like_molt">
+        <input type="hidden" name="molt_id" value="{{molt.id}}">
+
+        <div class="mini-molt-action like zindex-front"
+             {% if not static %}
+                 onclick="SubForm(this.parentNode);toggleLike(this);"
+             {% endif %}
+        >
+            <!-- Fake like button (for welcome page showcase) -->
+            {% if static %}
+                {{ sprite("heart-f", size=19, class="mini-molt-action-icon text-primary") }}
+                <span class="mini-molt-action-counter ml-1 text-primary">{{like_count}}</span>
+            <!-- Real like button -->
+            {% else %}
+                <svg class="mini-molt-action-icon
+                            {{"d-none" if molt.has_liked else ""}}
+                           "
+                     width="19" height="19" data-jam="heart"
+                >
+                    <use href="{{sprite_url}}?version={{server_start}}#heart"></use>
+                </svg>
+
+                <svg class="mini-molt-action-icon text-primary
+                            {{"d-none" if not molt.has_liked else ""}}
+                           "
+                     width="19" height="19" data-jam="heart-f"
+                >
+                    <use href="{{sprite_url}}?version={{server_start}}#heart-f"></use>
+                </svg>
+                <span class="mini-molt-action-counter ml-1
+                             {{"text-primary" if molt.has_liked else ""}}
+                            "
+                >
+                    {{like_count}}
+                </span>
+            {% endif %}
+        </div>
+    </form>
+
+    {% include 'fast-molt-dropdown.html' %}
+
+</div> <!-- .mini-molt-actions -->

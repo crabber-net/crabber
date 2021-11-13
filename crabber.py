@@ -204,10 +204,7 @@ def wild_west():
         else:
             # Ajax content loading
             if request.args.get("ajax_content"):
-                molts = models.Molt.query_all(
-                    include_replies=False, include_quotes=False
-                )
-                molts = utils.get_current_user().filter_molt_query(molts)
+                molts = current_user.query_wild()
                 molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
                 return render_template(
                     "wild-west-content.html",
@@ -1162,6 +1159,16 @@ def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ("", "s"))
     """Returns singular or plural string depending on length/value of `value`."""
     count = value if isinstance(value, int) else len(value)
     return grammar[count != 1]
+
+
+@app.template_filter()
+def rich_content(value: str, **kwargs):
+    """Render content as HTML for site.
+
+    Parse content string (including embeds, tags, and mentions) and render it as rich
+    HTML.
+    """
+    return utils.parse_rich_content(value, **kwargs)
 
 
 @app.template_filter()
