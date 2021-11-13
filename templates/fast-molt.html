@@ -5,33 +5,40 @@
 {% endmacro %}
 
 {% set show_buttons = (current_user or static) and not hide_buttons %}
+{% set is_unavailable = molt is none or molt.author.banned or molt.author.deleted %}
 
-{% set is_remolt = molt.is_remolt %}
-{% if is_remolt %}
-    {% set remolt_shell = molt %}
-    <!-- TODO: Function to fetch new molt when necessary (as namedtuple) -->
-    {% set molt = molt %}
+<!-- Quote/remolt nesting variables -->
+{% if not is_in_quote %}
+    {% set is_remolt = molt.is_remolt %}
+    {% if is_remolt %}
+        {% set remolt_shell = molt %}
+        {% set molt = current_user.get_fast_molt(molt.original_molt_id) %}
+    {% elif molt.is_reply %}
+        {% set original_molt = current_user.get_fast_molt(molt.original_molt_id) %}
+    {% elif molt.is_quote %}
+        {% set quoted_molt = current_user.get_fast_molt(molt.original_molt_id) %}
+    {% endif %}
 {% endif %}
 
 <!-- Fast-Molt -->
 <div class="regular-molt mini-molt border-dark py-2 d-flex flex-row absolute-container
-            {{'is-remolt' if molt.is_remolt}}
+            {{'is-remolt' if is_remolt}}
             {{'border-bottom' if not hide_border}}
             {{'px-3' if not is_in_quote}} {{'mb-2' if show_replies}}
            "
 >
     <!-- Deleted or unavailable indicator -->
-    {% if false and molt.deleted or is_unavailable %}
+    {% if is_unavailable or molt.deleted %}
         <div
             {% if is_parent %}
                 class="border-bottom border-dark w-100"
             {% endif %}
         >
             <p class="text-muted text-center">
-                {% if molt.deleted %}
-                    This Molt has been deleted.
-                {% elif is_unavailable %}
+                {% if is_unavailable %}
                     This Molt is no longer available.
+                {% else %}
+                    This Molt has been deleted.
                 {% endif %}
             </p>
         </div>
@@ -39,7 +46,7 @@
         <!-- Profile box -->
         <div class="mini-molt-profile-box
                     {{"d-none" if is_in_quote}}
-                    {{"avatar-indent" if (molt.is_remolt or (molt.is_reply and not thread))}}
+                    {{"avatar-indent" if (is_remolt or (molt.is_reply and not thread))}}
                     {{'mt-4' if is_pin}}
                     "
         >
@@ -75,12 +82,24 @@
             {% endif %}
 
             <!-- Remolt/reply icons -->
-            {% if not is_in_quote and (molt.is_remolt or (molt.is_reply and not thread))%}
+            {% if not is_in_quote and (is_remolt or (molt.is_reply and not thread))%}
                 <small class="mini-molt-remolt text-muted zindex-front">
-                    {% if molt.is_remolt %}
+                    {% if is_remolt %}
                         {{ sprite("repeat", size=12, class="mini-molt-action-icon remolt-icon") }}
+                        <a href="/user/{{remolt_shell.author.username}}">
+                            {{remolt_shell.author.display_name}}
+                        </a>
+                        Remolted
                     {% elif molt.is_reply and not thread %}
                         {{ sprite("message", size=12, class="mini-molt-action-icon remolt-icon") }}
+                        repyling to
+                        <a href="/user/{{original_molt.author.username}}">
+                            {% if original_molt.author.id == current_user.id %}
+                                you
+                            {% else %}
+                                {{original_molt.author.display_name}}
+                            {% endif %}
+                        </a>
                     {% endif %}
                 </small>
             {% endif %}
@@ -89,7 +108,7 @@
             <!-- Author credentials -->
             <div class="mini-molt-credentials absolute-container
                         {{'row mx-0' if is_in_quote}}
-                        {{"mt-1" if (molt.is_remolt or molt.is_reply or is_pin) and not thread else ""}}
+                        {{"mt-1" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}}
                        "
             >
                 <!-- Smaller in-quote avatar -->
@@ -185,7 +204,9 @@
             <!-- Quoted Molt preview -->
             {% if molt.is_quote and not is_in_quote %}
                 <div class="quoted-molt rounded-media mb-2 zindex-front">
-                    TODO!
+                    {% with molt=quoted_molt, hide_border = True, hide_buttons = True, is_in_quote=True %}
+                        {% include 'fast-molt.html' %}
+                    {% endwith %}
                 </div>
             {% endif %}
 
@@ -194,13 +215,13 @@
                 {% include 'fast-molt-buttons.html' %}
             {% endif %} <!-- if show_buttons -->
         </div> <!-- .mini-molt-text-box -->
-    {% endif %} <!-- if deleted or unavailable -->
 
-    <!-- Molt page link -->
-    {% if not static %}
-        <a href="/user/{{molt.author.username}}/status/{{molt.id}}"
-           class="absolute-fill"
-           draggable="false">
-        </a>
-    {% endif %}
+        <!-- Molt page link -->
+        {% if not static %}
+            <a href="/user/{{molt.author.username}}/status/{{molt.id}}"
+               class="absolute-fill"
+               draggable="false">
+            </a>
+        {% endif %}
+    {% endif %} <!-- if deleted or unavailable -->
 </div>

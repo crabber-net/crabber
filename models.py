@@ -869,6 +869,7 @@ class Crab(db.Model):
         card = Bundle(
             "card", Card.id, Card.title, Card.description, Card.url, Card.ready
         )
+        Reply = aliased(Molt)
         # TODO: remove invalid molts
         molts = (
             db.session.query(
@@ -878,8 +879,11 @@ class Crab(db.Model):
                 Molt.is_remolt,
                 Molt.is_reply,
                 Molt.is_quote,
+                Molt.original_molt_id,
                 Molt.nsfw,
                 Molt.timestamp,
+                func.count(Like.id).label('like_count'),
+                func.count(Reply.id).label('reply_count'),
                 Molt.id.in_(current_user_remolted).label("has_remolted"),
                 Molt.id.in_(current_user_liked).label("has_liked"),
                 Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
@@ -887,9 +891,12 @@ class Crab(db.Model):
                 card,
             )
             .join(Molt.author)
+            .join(Like, Like.molt_id == Molt.id)
+            .join(Reply, Reply.original_molt_id == Molt.id)
+            .filter(Reply.is_reply == true())
             .outerjoin(Molt.card)
             .filter(Crab.banned == false(), Crab.deleted == false())
-            .filter(Molt.is_reply == false(), Molt.deleted == false())
+            .filter(Molt.deleted == false())
             .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
@@ -901,6 +908,7 @@ class Crab(db.Model):
         query = (
             self.query_fast_molts()
             .join(following_table, following_table.c.following_id == Molt.author_id)
+            .filter(Molt.is_reply == false())
             .filter(
                 db.or_(
                     following_table.c.follower_id == self.id, Molt.author_id == self.id
@@ -912,9 +920,13 @@ class Crab(db.Model):
     def query_wild(self) -> BaseQuery:
         """Retrieves the molts in /wild for this user."""
         query = self.query_fast_molts().filter(
-            Molt.is_remolt == false(), Molt.is_quote == false()
+            Molt.is_reply == false(), Molt.is_remolt == false(), Molt.is_quote == false()
         )
         return query
+
+    def get_fast_molt(self, molt_id):
+        """Gets fast molt with `id` as user."""
+        return self.query_fast_molts().filter(Molt.id == molt_id).first()
 
     def change_password(self, password: str):
         """Updates this user's password hash."""
