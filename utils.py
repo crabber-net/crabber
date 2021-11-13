@@ -1169,6 +1169,9 @@ def social_link(value: str, key: str) -> str:
             if not value.startswith("http"):
                 value = "https://" + value
             return f'<a href="{value}" target="_blank">{pretty_url(value)}</a>'
+        elif key == "github":
+            link = f"https://github.com/{value}"
+            return f'<a href="{link}" target="_blank">{value}</a>'
         elif key == "steam":
             link = f"https://steamcommunity.com/id/{value}"
             return f'<a href="{link}" target="_blank">{value}</a>'
