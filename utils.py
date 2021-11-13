@@ -648,14 +648,25 @@ def common_molt_actions() -> Response:
                 for key, value in new_bio.items()
                 if value.strip()  # Filter key if value empty
             }
-            if location:
-                location = trim_strip(location, config.LIMITS["location"])
+
+            current_user = get_current_user()
+
             if disp_name:
                 disp_name = trim_strip(disp_name, config.LIMITS["display_name"])
-            if website:
-                website = trim_strip(website, config.LIMITS["website"])
             if desc:
                 desc = trim_strip(desc, config.LIMITS["description"])
+            if location is not None:
+                location = trim_strip(location, config.LIMITS["location"])
+                current_user.location = location
+            if website is not None:
+                website = trim_strip(website, config.LIMITS["website"])
+
+                # Prepend protocol identifier if omitted
+                if website:
+                    if not website.startswith("http"):
+                        website = "https://" + website
+
+                current_user.website = website
 
             # Abort if client-side validation was bypassed
             if not disp_name:
@@ -663,17 +674,9 @@ def common_molt_actions() -> Response:
             if not desc:
                 return show_error("Your description cannot be blank.")
 
-            # Prepend protocol identifier if omitted
-            if website:
-                if not website.startswith("http"):
-                    website = "https://" + website
-
             # Update Crab fields and commit to database
-            current_user = get_current_user()
             current_user.display_name = disp_name
             current_user.description = desc
-            current_user.location = location
-            current_user.website = website
             current_user.raw_bio = json.dumps(new_bio)
 
             db.session.commit()
