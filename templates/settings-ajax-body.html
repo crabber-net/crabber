@@ -123,6 +123,15 @@
         </div>
         <div class="mb-2 input-group cool-input">
             <div class="input-group-prepend">
+                <label class="input-group-text" for="bio.social-github">GitHub</label>
+            </div>
+            <input type="text" name="bio.social-github" id="bio.social-github" class="bg-dark form-control text-light" placeholder="username" oninput="validateField(this, 'social', true)"
+                   data-regex="{{patterns.social_misc.pattern}}"
+                {% if current_user.bio.get("social-github", "?") != "?" %} value="{{current_user.bio.get("social-github")}}"{% endif %}
+                >
+        </div>
+        <div class="mb-2 input-group cool-input">
+            <div class="input-group-prepend">
                 <label class="input-group-text" for="bio.social-spacehey">SpaceHey</label>
             </div>
             <input type="text" name="bio.social-spacehey" id="bio.social-spacehey" class="bg-dark form-control text-light" placeholder="profile link" oninput="validateField(this, 'social', true)"
