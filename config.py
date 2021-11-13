@@ -65,6 +65,7 @@ MODERATORS: List[str] = getenv_list("MODERATORS")
 
 SPRITE_URL = os.getenv("SPRITE_URL", "/static/img/sprites.svg")
 
+DEBUG_QUERIES = getenv_bool('DEBUG_QUERIES')
 DATABASE_PATH = os.getenv("CRABBER_DATABASE") or "sqlite:///CRABBER_DATABASE.db"
 
 GEO_PATH = os.path.join(BASE_PATH, "GeoLite2-City.mmdb")
