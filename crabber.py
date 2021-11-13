@@ -908,7 +908,9 @@ def stats():
 
     trendy_tag = (models.Crabtag.query_most_popular().first() or (None,))[0]
     if trendy_tag:
-        trendy_tag_molts = models.Molt.order_query_by_likes(models.Molt.query_with_tag(trendy_tag))
+        trendy_tag_molts = models.Molt.order_query_by_likes(
+            models.Molt.query_with_tag(trendy_tag)
+        )
         if current_user:
             trendy_tag_molts = current_user.filter_molt_query(trendy_tag_molts)
         trendy_tag_molts = trendy_tag_molts.limit(3).all()

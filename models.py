@@ -972,12 +972,20 @@ class Crab(db.Model):
     @staticmethod
     def get_security_overview(id: int):
         """Gets basic security information for Crab with `id`."""
-        return db.session.query(Crab.register_time, Crab.banned, Crab.deleted).filter_by(id=id).first()
+        return (
+            db.session.query(Crab.register_time, Crab.banned, Crab.deleted)
+            .filter_by(id=id)
+            .first()
+        )
 
     @staticmethod
     def active_user_count() -> int:
         """Returns the number of active accounts."""
-        return db.session.query(func.count(Crab.id)).filter_by(deleted=False, banned=False).first()[0]
+        return (
+            db.session.query(func.count(Crab.id))
+            .filter_by(deleted=False, banned=False)
+            .first()[0]
+        )
 
     @staticmethod
     def order_query_by_followers(query: BaseQuery) -> BaseQuery:
