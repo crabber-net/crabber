@@ -1273,6 +1273,7 @@ div#rich-description, div#editable-description textarea {
 .image-modal-body img  {
     pointer-events: all;
     object-fit: contain;
+    min-width: 30px;
     height: 100%;
     width: 100%;
 }
@@ -1284,7 +1285,7 @@ div#rich-description, div#editable-description textarea {
 }
 
 .large-molt-media-container {
-    max-height: none;
+    max-height: 60em;
     overflow: hidden;
 }
 
