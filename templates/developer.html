@@ -28,7 +28,7 @@
                 <input type="hidden" name="user_action" value="delete_developer_key">
                 {% for key in developer_keys %}
                     <div class="input-group mb-2">
-                        <input type="text" name="developer_key" class="form-control text-muted" value="{{key.key}}" readonly aria-readonly>
+                        <input type="text" name="developer_key" onclick="copyValue(event)" class="form-control text-muted clickable" value="{{key.key}}" readonly aria-readonly>
                         <div class="input-group-append">
                             <button class="btn delete-button" name="developer_key_id" value="{{key.id}}">Delete</button>
                         </div>
@@ -46,7 +46,7 @@
                 <input type="hidden" name="user_action" value="delete_access_token">
                 {% for token in access_tokens %}
                     <div class="input-group mb-2">
-                        <input type="text" name="access_token" class="form-control text-muted" value="{{token.key}}" readonly aria-readonly>
+                        <input type="text" name="access_token" onclick="copyValue(event)" class="form-control text-muted clickable" value="{{token.key}}" readonly aria-readonly>
                         <div class="input-group-append">
                             <button class="btn delete-button" name="access_token_id" value="{{token.id}}">Delete</button>
                         </div>
