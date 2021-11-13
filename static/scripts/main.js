@@ -254,7 +254,10 @@ function moltFormHasContent(form) {
     let textarea = form.find('textarea');
     let imageForm = form.find("input[type=file]");
 
-    return !(textarea.val().length == 0 && imageForm.get(0) ? imageForm.val().length == 0 : false);
+    if (textarea) {
+        return !(textarea.val().length == 0 && imageForm.get(0) ? imageForm.val().length == 0 : false);
+    }
+    return false;
 }
 
 // Scroll-back button stuff //////////////////////////////////////////////////////////
