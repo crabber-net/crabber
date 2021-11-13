@@ -252,7 +252,7 @@
                                             'remember': 'Remember when',
                                             'emoji': 'Favorite emoji'} %}
                         {% for key, value in this_user.bio.items() %}
-                            {% if not key.startswith('social') %}
+                            {% if value and not key.startswith('social') %}
                                 <tr>
                                     <th>{{bio_names[key]}}</th>
                                     <td class="bio-field-value">
