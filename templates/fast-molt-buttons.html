@@ -1,16 +1,9 @@
-<!-- TODO!!! -->
-{% set reply_count = molt.reply_count %}
-{% set remolt_count = molt.remolt_count %}
-{% set like_count = molt.like_count %}
-{% set editable = molt.editable %}
-{% set remolt_author_id = 0 %}
-
 {% set molt_owner = current_user and (molt.author.id == current_user.id) %}
 {% set remolt_owner = current_user and remolt_shell and (remolt_shell.author.id == current_user.id) %}
 
 <div class="mini-molt-actions d-flex flex-row justify-content-between mr-md-5">
     <!-- Edit button -->
-    {% if molt_owner and editable %}
+    {% if molt_owner and molt.editable %}
         <form>
             <input type="hidden" name="user_action" value="reply_molt">
             <input type="hidden" name="molt_id" value="{{molt.id}}">
@@ -34,7 +27,7 @@
         >
             {{ sprite('message', size=19, class="mini-molt-action-icon") }}
             <span class="mini-molt-action-counter ml-1">
-                {{reply_count}}
+                {{molt.reply_count}}
             </span>
         </div>
     </form>
@@ -57,7 +50,7 @@
         >
             {{ sprite('repeat', size=19, class="mini-molt-action-icon") }}
             <span class="mini-molt-action-counter ml-1">
-                {{remolt_count}}
+                {{molt.remolt_count}}
             </span>
         </div>
 
@@ -124,7 +117,7 @@
             <!-- Fake like button (for welcome page showcase) -->
             {% if static %}
                 {{ sprite("heart-f", size=19, class="mini-molt-action-icon text-primary") }}
-                <span class="mini-molt-action-counter ml-1 text-primary">{{like_count}}</span>
+                <span class="mini-molt-action-counter ml-1 text-primary">{{molt.like_count}}</span>
             <!-- Real like button -->
             {% else %}
                 <svg class="mini-molt-action-icon
@@ -146,7 +139,7 @@
                              {{"text-primary" if molt.has_liked else ""}}
                             "
                 >
-                    {{like_count}}
+                    {{molt.like_count}}
                 </span>
             {% endif %}
         </div>
