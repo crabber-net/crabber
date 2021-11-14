@@ -849,112 +849,24 @@ class Crab(db.Model):
         )
         return molts
 
-    def query_fast_molts(self) -> BaseQuery:
-        """Queries fast-molts for this user."""
-        # TODO: remove invalid molts
-        editable_threshold = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
-        current_user_remolted = db.session.query(Molt.original_molt_id).filter_by(
-            author_id=self.id, is_remolt=True, deleted=False
+    def query_profile_molts(self, current_user=None) -> BaseQuery:
+        """Retrieves the fast-molt molts for this user's profile."""
+        query = Molt.query_fast_molts(current_user).filter(
+            Molt.author_id == self.id, Molt.is_reply == false()
         )
-        current_user_liked = db.session.query(Like.molt_id).filter_by(crab_id=self.id)
-        current_user_bookmarked = db.session.query(Bookmark.molt_id).filter_by(
-            crab_id=self.id
+        return query
+
+    def query_profile_replies(self, current_user=None) -> BaseQuery:
+        """Retrieves the fast-molt replies for this user's profile."""
+        query = Molt.query_fast_molts(current_user).filter(
+            Molt.author_id == self.id, Molt.is_reply == true()
         )
-        author = Bundle(
-            "author",
-            Crab.id,
-            Crab.display_name,
-            Crab.username,
-            Crab.avatar,
-            Crab.verified,
-        )
-        card = Bundle(
-            "card", Card.id, Card.title, Card.description, Card.url, Card.ready
-        )
-        like_counts = (
-            db.session.query(
-                Like.molt_id.label("original_molt_id"),
-                func.count(Like.id).label("like_count"),
-            )
-            .group_by("original_molt_id")
-            .subquery("like_counts", reduce_columns=True)
-        )
-        original_molt = aliased(Molt)
-        reply_counts = (
-            db.session.query(
-                Molt.original_molt_id,
-                case(
-                    (Molt.author_id == original_molt.author_id, True),
-                    else_=False,
-                ).label("from_author"),
-                func.count(Molt.id).label("reply_count"),
-            )
-            .join(original_molt, original_molt.id == Molt.original_molt_id)
-            .filter(Molt.is_reply == true(), Molt.deleted == false())
-            .group_by(Molt.original_molt_id)
-            .subquery("reply_counts", reduce_columns=True)
-        )
-        remolt_counts = (
-            db.session.query(
-                Molt.original_molt_id.label("original_molt_id"),
-                func.count(Molt.id).label("remolt_count"),
-            )
-            .filter_by(is_remolt=True, deleted=False)
-            .group_by("original_molt_id")
-            .subquery("remolt_counts", reduce_columns=True)
-        )
-        molts = (
-            db.session.query(
-                Molt.id,
-                Molt.content,
-                Molt.image,
-                Molt.deleted,
-                Molt.is_remolt,
-                Molt.is_reply,
-                Molt.is_quote,
-                Molt.original_molt_id,
-                Molt.nsfw,
-                Molt.timestamp,
-                case(
-                    (like_counts.c.like_count == null(), 0),
-                    else_=like_counts.c.like_count,
-                ).label("like_count"),
-                case(
-                    (reply_counts.c.reply_count == null(), 0),
-                    else_=reply_counts.c.reply_count,
-                ).label("reply_count"),
-                case(
-                    (remolt_counts.c.remolt_count == null(), 0),
-                    else_=remolt_counts.c.remolt_count,
-                ).label("remolt_count"),
-                case(
-                    (Molt.timestamp > editable_threshold, True),
-                    else_=False,
-                ).label("editable"),
-                Molt.id.in_(current_user_remolted).label("has_remolted"),
-                Molt.id.in_(current_user_liked).label("has_liked"),
-                Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
-                reply_counts.c.from_author.label("is_thread"),
-                author,
-                card,
-            )
-            .join(Molt.author)
-            .outerjoin(Molt.card)
-            .outerjoin(like_counts)
-            .outerjoin(reply_counts)
-            .outerjoin(remolt_counts)
-            .filter(Crab.banned == false(), Crab.deleted == false())
-            .filter(Molt.deleted == false())
-            .group_by(Molt.id)
-            .order_by(Molt.timestamp.desc())
-        )
-        molts = self.filter_molt_query(molts)
-        return molts
+        return query
 
     def query_timeline(self) -> BaseQuery:
         """Retrieves the molts in this user's timeline."""
         query = (
-            self.query_fast_molts()
+            Molt.query_fast_molts(self)
             .join(following_table, following_table.c.following_id == Molt.author_id)
             .filter(Molt.is_reply == false())
             .filter(
@@ -967,16 +879,12 @@ class Crab(db.Model):
 
     def query_wild(self) -> BaseQuery:
         """Retrieves the molts in /wild for this user."""
-        query = self.query_fast_molts().filter(
+        query = Molt.query_fast_molts(self).filter(
             Molt.is_reply == false(),
             Molt.is_remolt == false(),
             Molt.is_quote == false(),
         )
         return query
-
-    def get_fast_molt(self, molt_id):
-        """Gets fast molt with `id` as user."""
-        return self.query_fast_molts().filter(Molt.id == molt_id).first()
 
     def change_password(self, password: str):
         """Updates this user's password hash."""
@@ -1633,6 +1541,121 @@ class Molt(db.Model):
         ).filter(Molt.author.has(banned=False, deleted=False))
 
     @staticmethod
+    def query_fast_molts(current_user=None) -> BaseQuery:
+        """Queries fast-molts for this user."""
+        editable_threshold = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+        if current_user:
+            current_user_remolted = db.session.query(Molt.original_molt_id).filter_by(
+                author_id=current_user.id, is_remolt=True, deleted=False
+            )
+            current_user_liked = db.session.query(Like.molt_id).filter_by(
+                crab_id=current_user.id
+            )
+            current_user_bookmarked = db.session.query(Bookmark.molt_id).filter_by(
+                crab_id=current_user.id
+            )
+        else:
+            current_user_remolted = current_user_liked = current_user_bookmarked = []
+        author = Bundle(
+            "author",
+            Crab.id,
+            Crab.display_name,
+            Crab.username,
+            Crab.avatar,
+            Crab.verified,
+        )
+        card = Bundle(
+            "card", Card.id, Card.title, Card.description, Card.url, Card.ready
+        )
+        like_counts = (
+            db.session.query(
+                Like.molt_id.label("original_molt_id"),
+                func.count(Like.id).label("like_count"),
+            )
+            .group_by("original_molt_id")
+            .subquery("like_counts", reduce_columns=True)
+        )
+        original_molt = aliased(Molt)
+        reply_counts = (
+            db.session.query(
+                Molt.original_molt_id,
+                case(
+                    (Molt.author_id == original_molt.author_id, True),
+                    else_=False,
+                ).label("from_author"),
+                func.count(Molt.id).label("reply_count"),
+            )
+            .join(original_molt, original_molt.id == Molt.original_molt_id)
+            .filter(Molt.is_reply == true(), Molt.deleted == false())
+            .group_by(Molt.original_molt_id)
+            .subquery("reply_counts", reduce_columns=True)
+        )
+        remolt_counts = (
+            db.session.query(
+                Molt.original_molt_id.label("original_molt_id"),
+                func.count(Molt.id).label("remolt_count"),
+            )
+            .filter_by(is_remolt=True, deleted=False)
+            .group_by("original_molt_id")
+            .subquery("remolt_counts", reduce_columns=True)
+        )
+        molts = (
+            db.session.query(
+                Molt.id,
+                Molt.content,
+                Molt.image,
+                Molt.deleted,
+                Molt.is_remolt,
+                Molt.is_reply,
+                Molt.is_quote,
+                Molt.original_molt_id,
+                Molt.nsfw,
+                Molt.timestamp,
+                case(
+                    (like_counts.c.like_count == null(), 0),
+                    else_=like_counts.c.like_count,
+                ).label("like_count"),
+                case(
+                    (reply_counts.c.reply_count == null(), 0),
+                    else_=reply_counts.c.reply_count,
+                ).label("reply_count"),
+                case(
+                    (remolt_counts.c.remolt_count == null(), 0),
+                    else_=remolt_counts.c.remolt_count,
+                ).label("remolt_count"),
+                case(
+                    (Molt.timestamp > editable_threshold, True),
+                    else_=False,
+                ).label("editable"),
+                Molt.id.in_(current_user_remolted).label("has_remolted"),
+                Molt.id.in_(current_user_liked).label("has_liked"),
+                Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
+                reply_counts.c.from_author.label("is_thread"),
+                author,
+                card,
+            )
+            .join(Molt.author)
+            .outerjoin(Molt.card)
+            .outerjoin(like_counts)
+            .outerjoin(reply_counts)
+            .outerjoin(remolt_counts)
+            .filter(Crab.banned == false(), Crab.deleted == false())
+            .filter(Molt.deleted == false())
+            .group_by(Molt.id)
+            .order_by(Molt.timestamp.desc())
+        )
+        if current_user:
+            molts = current_user.filter_molt_query(molts)
+        else:
+            Molt.filter_query_by_not_nsfw(molts)
+        return molts
+
+    @staticmethod
+    def get_fast_molt(molt_id, current_user=None):
+        """Gets fast molt with `id` as user."""
+        return Molt.query_fast_molts(current_user).filter(Molt.id == molt_id).first()
+
+    @staticmethod
     def total_count() -> int:
         """Returns the number of molts sent."""
         return db.session.query(func.count(Molt.id)).first()[0]
@@ -1734,6 +1757,12 @@ class Molt(db.Model):
             molts = molts.filter(Crabtag.name == crabtag.lower())
         molts = molts.order_by(Molt.timestamp.desc())
         return molts
+
+    @staticmethod
+    def filter_query_by_not_nsfw(query: BaseQuery) -> BaseQuery:
+        """Filters a Molt query for SFW molts."""
+        query = query.filter(Molt.nsfw == false())
+        return query
 
     @staticmethod
     def filter_query_by_available(query: BaseQuery) -> BaseQuery:

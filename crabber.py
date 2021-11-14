@@ -608,12 +608,13 @@ def user(username):
                 molts = replies = likes = None
 
                 if section == "molts":
-                    molts = this_user.query_molts().filter_by(is_reply=False)
+                    # TODO: Expand threads automatically
+                    molts = this_user.query_profile_molts(current_user)
                     if current_user:
                         molts = current_user.filter_molt_query(molts)
                     molts = molts.paginate(m_page_n, config.MOLTS_PER_PAGE, False)
                 elif section == "replies":
-                    replies = this_user.query_replies()
+                    replies = this_user.query_profile_replies(current_user)
                     if current_user:
                         replies = current_user.filter_molt_query(replies)
                     replies = replies.paginate(r_page_n, config.MOLTS_PER_PAGE, False)
@@ -1126,6 +1127,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        get_fast_molt=models.Molt.get_fast_molt,
         current_user=current_user,
         patterns=patterns,
         user_agent=utils.parse_user_agent() if config.is_debug_server else None,

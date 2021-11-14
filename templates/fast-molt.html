@@ -1,3 +1,6 @@
+{# TODO: show_replies_from #}
+
+{% import "macros.jinja" as macros %}
 {% macro sprite(name, size, class) %}
 <svg class="{{class}}" width="{{size}}" height="{{size}}" data-jam="{{name}}">
     <use href="{{sprite_url}}?version={{server_start}}#{{name}}"></use>
@@ -12,11 +15,11 @@
     {% set is_remolt = molt.is_remolt %}
     {% if is_remolt %}
         {% set remolt_shell = molt %}
-        {% set molt = current_user.get_fast_molt(molt.original_molt_id) %}
+        {% set molt = get_fast_molt(molt.original_molt_id, current_user) %}
     {% elif molt.is_reply %}
-        {% set original_molt = current_user.get_fast_molt(molt.original_molt_id) %}
+        {% set original_molt = get_fast_molt(molt.original_molt_id, current_user) %}
     {% elif molt.is_quote %}
-        {% set quoted_molt = current_user.get_fast_molt(molt.original_molt_id) %}
+        {% set quoted_molt = get_fast_molt(molt.original_molt_id, current_user) %}
     {% endif %}
 {% endif %}
 
