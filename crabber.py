@@ -31,7 +31,6 @@ def create_app():
     app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
     app.config["SQLALCHEMY_DATABASE_URI"] = config.DATABASE_PATH
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SQLALCHEMY_ECHO"] = config.DEBUG_QUERIES
     app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024  # 15 MB
     app.config["HCAPTCHA_SITE_KEY"] = os.getenv("HCAPTCHA_SITE_KEY")
     app.config["HCAPTCHA_SECRET_KEY"] = os.getenv("HCAPTCHA_SECRET_KEY")
@@ -145,6 +144,7 @@ def index():
                     f"timeline-ajax-{block}.html",
                     current_page="home",
                     page_n=page_n,
+                    current_user=current_user,
                 )
             return jsonify(blocks)
         else:
@@ -158,12 +158,14 @@ def index():
                     current_page="home",
                     page_n=page_n,
                     molts=molts,
+                    current_user=current_user,
                 )
             else:
                 return render_template(
                     "timeline.html",
                     current_page="home",
                     page_n=page_n,
+                    current_user=utils.get_current_user(),
                 )
     else:
         featured_molt = models.Molt.query.filter_by(id=config.FEATURED_MOLT_ID).first()
@@ -173,6 +175,7 @@ def index():
         return render_template(
             "welcome.html",
             featured_molt=featured_molt,
+            current_user=utils.get_current_user(),
             featured_user=featured_user,
             fullwidth=True,
             current_page="welcome",
@@ -199,18 +202,23 @@ def wild_west():
                     f"wild-west-ajax-{block}.html",
                     current_page="wild-west",
                     page_n=page_n,
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
             # Ajax content loading
             if request.args.get("ajax_content"):
-                molts = current_user.query_wild()
+                molts = models.Molt.query_all(
+                    include_replies=False, include_quotes=False
+                )
+                molts = utils.get_current_user().filter_molt_query(molts)
                 molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
                 return render_template(
                     "wild-west-content.html",
                     current_page="wild-west",
                     page_n=page_n,
                     molts=molts,
+                    current_user=current_user,
                 )
             # Page skeleton
             else:
@@ -218,6 +226,7 @@ def wild_west():
                     "wild-west.html",
                     current_page="wild-west",
                     page_n=page_n,
+                    current_user=current_user,
                 )
     else:
         return redirect("/login")
@@ -242,6 +251,7 @@ def notifications():
                     f"notifications-ajax-{block}.html",
                     current_page="notifications",
                     notifications=notifications,
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
@@ -249,6 +259,7 @@ def notifications():
                 "notifications.html",
                 current_page="notifications",
                 notifications=notifications,
+                current_user=utils.get_current_user(),
             )
     else:
         return redirect("/login")
@@ -518,6 +529,7 @@ def signupsuccess():
     recommended_users.append
     return render_template(
         "signup_success.html",
+        current_user=current_user,
         recommended_users=recommended_users,
     )
 
@@ -552,12 +564,14 @@ def settings():
                 blocks[block] = render_template(
                     f"settings-ajax-{block}.html",
                     current_page="settings",
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
             return render_template(
                 "settings.html",
                 current_page="settings",
+                current_user=utils.get_current_user(),
             )
     else:
         return redirect("/login")
@@ -582,7 +596,9 @@ def user(username):
             current_user_is_blocked = this_user.is_blocking(current_user)
 
         if this_user is None or current_user_is_blocked:
-            return render_template("not-found.html", noun="user")
+            return render_template(
+                "not-found.html", current_user=current_user, noun="user"
+            )
         else:
             social_title = f"{this_user.display_name} on Crabber"
             m_page_n = request.args.get("molts-p", 1, type=int)
@@ -597,6 +613,7 @@ def user(username):
                         current_page=(
                             "own-profile" if this_user == current_user else ""
                         ),
+                        current_user=current_user,
                         this_user=this_user,
                         current_tab=current_tab,
                     )
@@ -608,13 +625,12 @@ def user(username):
                 molts = replies = likes = None
 
                 if section == "molts":
-                    # TODO: Expand threads automatically
-                    molts = this_user.query_profile_molts(current_user)
+                    molts = this_user.query_molts().filter_by(is_reply=False)
                     if current_user:
                         molts = current_user.filter_molt_query(molts)
                     molts = molts.paginate(m_page_n, config.MOLTS_PER_PAGE, False)
                 elif section == "replies":
-                    replies = this_user.query_profile_replies(current_user)
+                    replies = this_user.query_replies()
                     if current_user:
                         replies = current_user.filter_molt_query(replies)
                     replies = replies.paginate(r_page_n, config.MOLTS_PER_PAGE, False)
@@ -627,6 +643,7 @@ def user(username):
                     f"profile-ajax-tab-{section}.html",
                     current_page=("own-profile" if this_user == current_user else ""),
                     molts=molts,
+                    current_user=current_user,
                     this_user=this_user,
                     likes=likes,
                     current_tab=current_tab,
@@ -637,6 +654,7 @@ def user(username):
                 return render_template(
                     "profile.html",
                     current_page=("own-profile" if this_user == current_user else ""),
+                    current_user=current_user,
                     this_user=this_user,
                     current_tab=current_tab,
                     m_page_n=m_page_n,
@@ -656,10 +674,13 @@ def user_following(username, tab):
     elif session.get("current_user") is not None:
         this_user = models.Crab.get_by_username(username)
         if this_user is None:
-            return render_template("not-found.html", noun="user")
+            return render_template(
+                "not-found.html", current_user=utils.get_current_user(), noun="user"
+            )
         elif this_user.banned:
             return render_template(
                 "not-found.html",
+                current_user=utils.get_current_user(),
                 message="This user has been banned.",
             )
         else:
@@ -676,6 +697,7 @@ def user_following(username, tab):
                     "own-profile" if this_user == utils.get_current_user() else ""
                 ),
                 followx=followx,
+                current_user=utils.get_current_user(),
                 this_user=this_user,
                 tab="follow" + tab,
             )
@@ -708,11 +730,14 @@ def molt_page(username, molt_id):
             or primary_molt.author.username != username
         ):
             social_title = "Unavailable Post"
-            return render_template("not-found.html", noun="molt")
+            return render_template(
+                "not-found.html", current_user=utils.get_current_user(), noun="molt"
+            )
         elif primary_molt.author.banned:
             social_title = "Unavailable Post"
             return render_template(
                 "not-found.html",
+                current_user=utils.get_current_user(),
                 message="The author of this Molt has been banned.",
             )
         else:
@@ -725,6 +750,7 @@ def molt_page(username, molt_id):
                 current_page="molt-page",
                 molt=primary_molt,
                 replies=replies,
+                current_user=utils.get_current_user(),
                 social_title=social_title,
             )
 
@@ -744,6 +770,7 @@ def molt_quotes_page(username, molt_id):
             current_page="molt-page",
             molt=primary_molt,
             quotes=quotes,
+            current_user=utils.get_current_user(),
         )
 
 
@@ -764,6 +791,7 @@ def crabtags(crabtag):
                     current_page="crabtag",
                     crabtag=crabtag,
                     page_n=page_n,
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
@@ -779,6 +807,7 @@ def crabtags(crabtag):
                 current_page="crabtag",
                 page_n=page_n,
                 molts=molts,
+                current_user=utils.get_current_user(),
                 crabtag=crabtag,
             )
     else:
@@ -806,6 +835,7 @@ def bookmarks():
                     current_page="bookmarks",
                     page_n=page_n,
                     bookmarks=bookmarks,
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
@@ -816,6 +846,7 @@ def bookmarks():
                 current_page="bookmarks",
                 page_n=page_n,
                 bookmarks=bookmarks,
+                current_user=utils.get_current_user(),
             )
     else:
         return redirect("/login")
@@ -841,6 +872,7 @@ def search():
                     current_page="search",
                     query=query,
                     page_n=page_n,
+                    current_user=utils.get_current_user(),
                 )
             return jsonify(blocks)
         else:
@@ -867,6 +899,7 @@ def search():
                 page_n=page_n,
                 molt_results=molt_results,
                 crab_results=crab_results,
+                current_user=utils.get_current_user(),
             )
     else:
         return redirect("/login")
@@ -906,9 +939,7 @@ def stats():
 
     trendy_tag = (models.Crabtag.query_most_popular().first() or (None,))[0]
     if trendy_tag:
-        trendy_tag_molts = models.Molt.order_query_by_likes(
-            models.Molt.query_with_tag(trendy_tag)
-        )
+        trendy_tag_molts = models.Molt.order_query_by_likes(trendy_tag.query_molts())
         if current_user:
             trendy_tag_molts = current_user.filter_molt_query(trendy_tag_molts)
         trendy_tag_molts = trendy_tag_molts.limit(3).all()
@@ -916,16 +947,16 @@ def stats():
         trendy_tag_molts = list()
 
     stats_dict = dict(
-        users=models.Crab.active_user_count(),
+        users=models.Crab.query.filter_by(deleted=False, banned=False).count(),
         mini_stats=[
-            dict(number=models.Molt.total_count(), label="molts sent"),
+            dict(number=models.Molt.query.count(), label="molts sent"),
             dict(
-                number=models.Molt.deleted_count(),
+                number=models.Molt.query.filter_by(deleted=True).count(),
                 label="molts deleted",
                 sublabel="what are they hiding?",
             ),
-            dict(number=models.Like.total_count(), label="likes given"),
-            dict(number=models.TrophyCase.total_count(), label="trophies awarded"),
+            dict(number=models.Like.query.count(), label="likes given"),
+            dict(number=models.TrophyCase.query.count(), label="trophies awarded"),
         ],
         crab_king=most_followed,
         party_starter=most_referrals,
@@ -941,6 +972,7 @@ def stats():
         for block in ("title", "heading", "body"):
             blocks[block] = render_template(
                 f"stats-ajax-{block}.html",
+                current_user=current_user,
                 stats=stats_dict,
                 current_page="stats",
             )
@@ -948,6 +980,7 @@ def stats():
     else:
         return render_template(
             "stats.html",
+            current_user=current_user,
             stats=stats_dict,
             current_page="stats",
         )
@@ -1017,6 +1050,7 @@ def developer():
             "developer.html",
             access_tokens=access_tokens,
             developer_keys=developer_keys,
+            current_user=current_user,
         )
 
 
@@ -1041,6 +1075,7 @@ def moderation():
                 return render_template(
                     "moderation-crab.html",
                     crab=crab,
+                    current_user=current_user,
                     current_page="moderation-panel",
                 )
             elif viewing == "molt":
@@ -1049,6 +1084,7 @@ def moderation():
                 return render_template(
                     "moderation-molt.html",
                     molt=molt,
+                    current_user=current_user,
                     current_page="moderation-panel",
                 )
             elif viewing == "queue":
@@ -1056,6 +1092,7 @@ def moderation():
                 return render_template(
                     "moderation-queue.html",
                     queue=queue,
+                    current_user=current_user,
                     current_page="moderation-panel",
                 )
             elif viewing == "logs":
@@ -1066,6 +1103,7 @@ def moderation():
                 return render_template(
                     "moderation-logs.html",
                     logs=logs,
+                    current_user=current_user,
                     current_page="moderation-panel",
                     page_n=page_n,
                     hide_sidebar=True,
@@ -1074,6 +1112,7 @@ def moderation():
             else:
                 return render_template(
                     "moderation.html",
+                    current_user=current_user,
                     current_page="moderation-panel",
                 )
         else:
@@ -1127,10 +1166,8 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
-        get_fast_molt=models.Molt.get_fast_molt,
-        current_user=current_user,
         patterns=patterns,
-        user_agent=utils.parse_user_agent() if config.is_debug_server else None,
+        user_agent=utils.parse_user_agent(),
         sprite_url=config.SPRITE_URL,
         limits=config.LIMITS,
         MOLT_CHAR_LIMIT=config.MOLT_CHAR_LIMIT,
@@ -1161,16 +1198,6 @@ def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ("", "s"))
     """Returns singular or plural string depending on length/value of `value`."""
     count = value if isinstance(value, int) else len(value)
     return grammar[count != 1]
-
-
-@app.template_filter()
-def rich_content(value: str, **kwargs):
-    """Render content as HTML for site.
-
-    Parse content string (including embeds, tags, and mentions) and render it as rich
-    HTML.
-    """
-    return utils.parse_rich_content(value, **kwargs)
 
 
 @app.template_filter()
@@ -1243,8 +1270,7 @@ def error_403(_error_msg):
 def error_404(_error_msg):
     return (
         render_template(
-            "404.html",
-            current_page="404",
+            "404.html", current_page="404", current_user=utils.get_current_user()
         ),
         404,
     )
@@ -1265,15 +1291,16 @@ def before_request():
     # Make sure cookies are still valid
     if session.get("current_user"):
         crab_id = session.get("current_user")
-        crab = models.Crab.get_security_overview(crab_id)
+        crab = models.Crab.get_by_ID(id=crab_id)
         current_user_ts = session.get("current_user_ts")
 
         # Account deleted or banned
-        if crab is None or crab.banned or crab.deleted:
+        if not crab:
             # Force logout
             session["current_user"] = None
 
-            if crab and crab.banned:
+            old_account = models.Crab.get_by_ID(id=crab_id, include_invalidated=True)
+            if old_account and old_account.banned:
                 return utils.show_error(
                     "The account you were logged into has been banned.", "/login"
                 )
@@ -1281,7 +1308,7 @@ def before_request():
                 "The account you were logged into no longer exists.", "/login"
             )
         # Potential database rollback or exploit
-        elif int(crab.register_time.timestamp()) != current_user_ts:
+        elif crab.register_timestamp != current_user_ts:
             if current_user_ts:
                 # Force logout
                 session["current_user"] = None

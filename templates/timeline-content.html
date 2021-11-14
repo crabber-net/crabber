@@ -2,7 +2,9 @@
 
 <!-- All molts live here! -->
 {% for molt in molts.items %}
-    {% include "fast-molt.html" %}
+    {% with thread=true, show_replies_from=None, depth_limit=3 %}
+        {% include "molt.html" %}
+    {% endwith %}
 {% endfor %}
 
 {% if not molts.has_next %}
