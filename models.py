@@ -852,6 +852,7 @@ class Crab(db.Model):
     def query_fast_molts(self) -> BaseQuery:
         """Queries fast-molts for this user."""
         # TODO: remove invalid molts
+        editable_threshold = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
         current_user_remolted = db.session.query(Molt.original_molt_id).filter_by(
             author_id=self.id, is_remolt=True, deleted=False
         )
@@ -870,6 +871,14 @@ class Crab(db.Model):
         card = Bundle(
             "card", Card.id, Card.title, Card.description, Card.url, Card.ready
         )
+        like_counts = (
+            db.session.query(
+                Like.molt_id.label("original_molt_id"),
+                func.count(Like.id).label("like_count"),
+            )
+            .group_by("original_molt_id")
+            .subquery("like_counts", reduce_columns=True)
+        )
         reply_counts = (
             db.session.query(
                 Molt.original_molt_id.label("original_molt_id"),
@@ -878,6 +887,15 @@ class Crab(db.Model):
             .filter_by(is_reply=True, deleted=False)
             .group_by("original_molt_id")
             .subquery("reply_counts", reduce_columns=True)
+        )
+        remolt_counts = (
+            db.session.query(
+                Molt.original_molt_id.label("original_molt_id"),
+                func.count(Molt.id).label("remolt_count"),
+            )
+            .filter_by(is_remolt=True, deleted=False)
+            .group_by("original_molt_id")
+            .subquery("remolt_counts", reduce_columns=True)
         )
         molts = (
             db.session.query(
@@ -891,11 +909,22 @@ class Crab(db.Model):
                 Molt.original_molt_id,
                 Molt.nsfw,
                 Molt.timestamp,
-                func.count(Like.id).label("like_count"),
+                case(
+                    (like_counts.c.like_count == null(), 0),
+                    else_=like_counts.c.like_count,
+                ).label("like_count"),
                 case(
                     (reply_counts.c.reply_count == null(), 0),
                     else_=reply_counts.c.reply_count,
                 ).label("reply_count"),
+                case(
+                    (remolt_counts.c.remolt_count == null(), 0),
+                    else_=remolt_counts.c.remolt_count,
+                ).label("remolt_count"),
+                case(
+                    (Molt.timestamp > editable_threshold, True),
+                    else_=False,
+                ).label("editable"),
                 Molt.id.in_(current_user_remolted).label("has_remolted"),
                 Molt.id.in_(current_user_liked).label("has_liked"),
                 Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
@@ -903,9 +932,10 @@ class Crab(db.Model):
                 card,
             )
             .join(Molt.author)
-            .outerjoin(Like, Like.molt_id == Molt.id)
             .outerjoin(Molt.card)
+            .outerjoin(like_counts)
             .outerjoin(reply_counts)
+            .outerjoin(remolt_counts)
             .filter(Crab.banned == false(), Crab.deleted == false())
             .filter(Molt.deleted == false())
             .group_by(Molt.id)

@@ -1,11 +1,12 @@
 <!-- TODO!!! -->
 {% set reply_count = molt.reply_count %}
+{% set remolt_count = molt.remolt_count %}
 {% set like_count = molt.like_count %}
-{% set editable = false %}
-{% set original_author_id = 0 %}
+{% set editable = molt.editable %}
+{% set remolt_author_id = 0 %}
 
 {% set molt_owner = current_user and (molt.author.id == current_user.id) %}
-{% set remolt_owner = current_user and (original_author_id == current_user.id) %}
+{% set remolt_owner = current_user and remolt_shell and (remolt_shell.author.id == current_user.id) %}
 
 <div class="mini-molt-actions d-flex flex-row justify-content-between mr-md-5">
     <!-- Edit button -->
