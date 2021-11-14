@@ -8,10 +8,10 @@ import json
 from passlib.hash import sha256_crypt
 import patterns
 import secrets
-from sqlalchemy import desc, func, or_
+from sqlalchemy import case, desc, func, or_
 from sqlalchemy.orm import aliased, Bundle
 from sqlalchemy.sql import expression
-from sqlalchemy.sql.expression import false, true, null
+from sqlalchemy.sql.expression import column, false, true, null
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -851,6 +851,7 @@ class Crab(db.Model):
 
     def query_fast_molts(self) -> BaseQuery:
         """Queries fast-molts for this user."""
+        # TODO: remove invalid molts
         current_user_remolted = db.session.query(Molt.original_molt_id).filter_by(
             author_id=self.id, is_remolt=True, deleted=False
         )
@@ -869,12 +870,20 @@ class Crab(db.Model):
         card = Bundle(
             "card", Card.id, Card.title, Card.description, Card.url, Card.ready
         )
-        Reply = aliased(Molt)
-        # TODO: remove invalid molts
+        reply_counts = (
+            db.session.query(
+                Molt.original_molt_id.label("original_molt_id"),
+                func.count(Molt.id).label("reply_count"),
+            )
+            .filter_by(is_reply=True, deleted=False)
+            .group_by("original_molt_id")
+            .subquery("reply_counts", reduce_columns=True)
+        )
         molts = (
             db.session.query(
                 Molt.id,
                 Molt.content,
+                Molt.image,
                 Molt.deleted,
                 Molt.is_remolt,
                 Molt.is_reply,
@@ -882,8 +891,11 @@ class Crab(db.Model):
                 Molt.original_molt_id,
                 Molt.nsfw,
                 Molt.timestamp,
-                func.count(Like.id).label('like_count'),
-                func.count(Reply.id).label('reply_count'),
+                func.count(Like.id).label("like_count"),
+                case(
+                    (reply_counts.c.reply_count == null(), 0),
+                    else_=reply_counts.c.reply_count,
+                ).label("reply_count"),
                 Molt.id.in_(current_user_remolted).label("has_remolted"),
                 Molt.id.in_(current_user_liked).label("has_liked"),
                 Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
@@ -891,16 +903,15 @@ class Crab(db.Model):
                 card,
             )
             .join(Molt.author)
-            .join(Like, Like.molt_id == Molt.id)
-            .join(Reply, Reply.original_molt_id == Molt.id)
-            .filter(Reply.is_reply == true())
+            .outerjoin(Like, Like.molt_id == Molt.id)
             .outerjoin(Molt.card)
+            .outerjoin(reply_counts)
             .filter(Crab.banned == false(), Crab.deleted == false())
             .filter(Molt.deleted == false())
             .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
-        molts = self.filter_molt_query(molts)
+        # molts = self.filter_molt_query(molts)
         return molts
 
     def query_timeline(self) -> BaseQuery:
@@ -920,7 +931,9 @@ class Crab(db.Model):
     def query_wild(self) -> BaseQuery:
         """Retrieves the molts in /wild for this user."""
         query = self.query_fast_molts().filter(
-            Molt.is_reply == false(), Molt.is_remolt == false(), Molt.is_quote == false()
+            Molt.is_reply == false(),
+            Molt.is_remolt == false(),
+            Molt.is_quote == false(),
         )
         return query
 
