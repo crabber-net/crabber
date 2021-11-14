@@ -11,7 +11,7 @@ import secrets
 from sqlalchemy import case, desc, func, or_
 from sqlalchemy.orm import aliased, Bundle
 from sqlalchemy.sql import expression
-from sqlalchemy.sql.expression import column, false, true, null
+from sqlalchemy.sql.expression import false, true, null
 from typing import Any, Iterable, List, Optional, Tuple, Union
 import utils
 
@@ -879,13 +879,19 @@ class Crab(db.Model):
             .group_by("original_molt_id")
             .subquery("like_counts", reduce_columns=True)
         )
+        original_molt = aliased(Molt)
         reply_counts = (
             db.session.query(
-                Molt.original_molt_id.label("original_molt_id"),
+                Molt.original_molt_id,
+                case(
+                    (Molt.author_id == original_molt.author_id, True),
+                    else_=False,
+                ).label("from_author"),
                 func.count(Molt.id).label("reply_count"),
             )
-            .filter_by(is_reply=True, deleted=False)
-            .group_by("original_molt_id")
+            .join(original_molt, original_molt.id == Molt.original_molt_id)
+            .filter(Molt.is_reply == true(), Molt.deleted == false())
+            .group_by(Molt.original_molt_id)
             .subquery("reply_counts", reduce_columns=True)
         )
         remolt_counts = (
@@ -928,6 +934,7 @@ class Crab(db.Model):
                 Molt.id.in_(current_user_remolted).label("has_remolted"),
                 Molt.id.in_(current_user_liked).label("has_liked"),
                 Molt.id.in_(current_user_bookmarked).label("has_bookmarked"),
+                reply_counts.c.from_author.label("is_thread"),
                 author,
                 card,
             )
@@ -941,7 +948,7 @@ class Crab(db.Model):
             .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
-        # molts = self.filter_molt_query(molts)
+        molts = self.filter_molt_query(molts)
         return molts
 
     def query_timeline(self) -> BaseQuery:
