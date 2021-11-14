@@ -604,3 +604,11 @@ function copyValue(event) {
     event.target.select();
     document.execCommand('copy');
 }
+
+// Redirects to page if user isn't selecting text
+function moltLink(username, moltId) {
+    if (!window.getSelection().toString()) {
+        location.href = `/user/${username}/status/${moltId}`;
+    }
+}
+

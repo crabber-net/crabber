@@ -204,10 +204,7 @@ def wild_west():
         else:
             # Ajax content loading
             if request.args.get("ajax_content"):
-                molts = models.Molt.query_all(
-                    include_replies=False, include_quotes=False
-                )
-                molts = utils.get_current_user().filter_molt_query(molts)
+                molts = current_user.query_wild()
                 molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
                 return render_template(
                     "wild-west-content.html",
@@ -611,12 +608,13 @@ def user(username):
                 molts = replies = likes = None
 
                 if section == "molts":
-                    molts = this_user.query_molts().filter_by(is_reply=False)
+                    # TODO: Expand threads automatically
+                    molts = this_user.query_profile_molts(current_user)
                     if current_user:
                         molts = current_user.filter_molt_query(molts)
                     molts = molts.paginate(m_page_n, config.MOLTS_PER_PAGE, False)
                 elif section == "replies":
-                    replies = this_user.query_replies()
+                    replies = this_user.query_profile_replies(current_user)
                     if current_user:
                         replies = current_user.filter_molt_query(replies)
                     replies = replies.paginate(r_page_n, config.MOLTS_PER_PAGE, False)
@@ -1129,6 +1127,7 @@ def inject_global_vars():
     location = request.path
     now = datetime.datetime.utcnow()
     return dict(
+        get_fast_molt=models.Molt.get_fast_molt,
         current_user=current_user,
         patterns=patterns,
         user_agent=utils.parse_user_agent() if config.is_debug_server else None,
@@ -1162,6 +1161,16 @@ def pluralize(value: Union[Iterable, int], grammar: Tuple[str, str] = ("", "s"))
     """Returns singular or plural string depending on length/value of `value`."""
     count = value if isinstance(value, int) else len(value)
     return grammar[count != 1]
+
+
+@app.template_filter()
+def rich_content(value: str, **kwargs):
+    """Render content as HTML for site.
+
+    Parse content string (including embeds, tags, and mentions) and render it as rich
+    HTML.
+    """
+    return utils.parse_rich_content(value, **kwargs)
 
 
 @app.template_filter()

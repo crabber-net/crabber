@@ -2491,3 +2491,8 @@ a:active.text-primary {
 #stats-body {
     overflow-x: hidden;
 }
+
+.mini-bio.border-bottom:last-child {
+    border-bottom: none !important;
+}
+
