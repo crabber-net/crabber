@@ -1,0 +1,230 @@
+{# TODO: show_replies_from #}
+
+{% import "macros.jinja" as macros %}
+{% macro sprite(name, size, class) %}
+<svg class="{{class}}" width="{{size}}" height="{{size}}" data-jam="{{name}}">
+    <use href="{{sprite_url}}?version={{server_start}}#{{name}}"></use>
+</svg>
+{% endmacro %}
+
+{% set show_buttons = (current_user or static) and not hide_buttons %}
+{% set is_unavailable = molt is none or molt.author.banned or molt.author.deleted %}
+
+<!-- Quote/remolt nesting variables -->
+{% if not is_in_quote %}
+    {% set is_remolt = molt.is_remolt %}
+    {% if is_remolt %}
+        {% set remolt_shell = molt %}
+        {% set molt = get_fast_molt(molt.original_molt_id, current_user) %}
+    {% elif molt.is_reply %}
+        {% set original_molt = get_fast_molt(molt.original_molt_id, current_user) %}
+    {% elif molt.is_quote %}
+        {% set quoted_molt = get_fast_molt(molt.original_molt_id, current_user) %}
+    {% endif %}
+{% endif %}
+
+<!-- Fast-Molt -->
+<div class="regular-molt mini-molt border-dark py-2 d-flex flex-row absolute-container
+            {{'is-remolt' if is_remolt}}
+            {{'border-bottom' if not hide_border}}
+            {{'px-3' if not is_in_quote}} {{'mb-2' if show_replies}}
+           "
+>
+    <!-- Deleted or unavailable indicator -->
+    {% if is_unavailable or molt.deleted %}
+        <div
+            {% if is_parent %}
+                class="border-bottom border-dark w-100"
+            {% endif %}
+        >
+            <p class="text-muted text-center">
+                {% if is_unavailable %}
+                    This Molt is no longer available.
+                {% else %}
+                    This Molt has been deleted.
+                {% endif %}
+            </p>
+        </div>
+    {% else %}
+        <!-- Profile box -->
+        <div class="mini-molt-profile-box
+                    {{"d-none" if is_in_quote}}
+                    {{"avatar-indent" if (is_remolt or (molt.is_reply and not thread))}}
+                    {{'mt-4' if is_pin}}
+                    "
+        >
+            <!-- Avatar link -->
+            <a  class="zindex-front"
+                {% if not static %}
+                    href="/user/{{molt.author.username}}"
+                {% endif %}
+            >
+                <!-- Avatar image -->
+                <img class="rounded-circle px43 profile-picture" src="{{molt.author.avatar}}" />
+            </a>
+
+            <!-- Thread connector line -->
+            {% if is_parent %}
+                <div class="thread-connector">
+                    <div class="thread-line"></div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Indicator box -->
+        <div class="mini-molt-text-box w-100 h-100 px-2">
+            <!-- Raw molt content -->
+            <meta id="molt-content-{{molt.id}}" data-content="{{molt.content}}">
+
+            <!-- Pin icon -->
+            {% if is_pin %}
+                <p class="text-muted zindex-front mb-2">
+                    {{ sprite("pin-f", size=12, class="mini-molt-action-icon remolt-icon") }}
+                    Pinned Molt
+                </p>
+            {% endif %}
+
+            <!-- Remolt/reply icons -->
+            {% if not is_in_quote and (is_remolt or (molt.is_reply and not thread))%}
+                <small class="mini-molt-remolt text-muted zindex-front">
+                    {% if is_remolt %}
+                        {{ sprite("repeat", size=12, class="mini-molt-action-icon remolt-icon") }}
+                        <a href="/user/{{remolt_shell.author.username}}">
+                            {{remolt_shell.author.display_name}}
+                        </a>
+                        Remolted
+                    {% elif molt.is_reply and not thread %}
+                        {{ sprite("message", size=12, class="mini-molt-action-icon remolt-icon") }}
+                        repyling to
+                        <a href="/user/{{original_molt.author.username}}">
+                            {% if original_molt.author.id == current_user.id %}
+                                you
+                            {% else %}
+                                {{original_molt.author.display_name}}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </small>
+            {% endif %}
+
+
+            <!-- Author credentials -->
+            <div class="mini-molt-credentials absolute-container
+                        {{'row mx-0' if is_in_quote}}
+                        {{"mt-1" if (is_remolt or molt.is_reply or is_pin) and not thread else ""}}
+                       "
+            >
+                <!-- Smaller in-quote avatar -->
+                {% if is_in_quote %}
+                    <a class="zindex-front d-inline-block"
+                        {% if not static %}
+                           href="/user/{{molt.author.username}}"
+                        {% endif %}
+                    >
+                        <div class="rounded-circle px20 profile-picture"
+                             style="background-image: url('{{molt.author.avatar}}');">
+                        </div>
+                    </a>
+                {% endif %}
+
+                <!-- Author text credentials -->
+                <div class="mini-molt-credentials-text
+                            {{'col pl-2' if is_in_quote}}
+                            "
+                >
+                    <!-- Display name -->
+                    <a class="mini-molt-display-name zindex-front"
+                        {% if not static %}
+                            href="/user/{{molt.author.username}}"
+                        {% endif %}
+                    >
+                        {{molt.author.display_name}}
+                    </a>
+
+                    <!-- Verified badge -->
+                    {% if molt.author.verified %}
+                        <a title="This user is verified" class="zindex-front">
+                            {{macros.verified(17)}}
+                        </a>
+                    {% endif %}
+
+                    <!-- Username -->
+                    <span class="mini-molt-username zindex-front">
+                        @{{molt.author.username}}
+                    </span>
+
+                    <!-- Molt age -->
+                    <span class="mini-molt-timestamp zindex-front">
+                        · {{molt.timestamp | pretty_age}}
+                    </span>
+
+                    <!-- Thread badge -->
+                    {% if molt.is_thread %}
+                        {% include 'thread-badge.html' %}
+                    {% endif %}
+
+                    <!-- NSFW Badge -->
+                    {% if molt.nsfw %}
+                        {% include 'nsfw-badge.html' %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Molt content -->
+            <div class="mini-molt-content">
+                <!-- Rich content -->
+                {% if molt.content %}
+                    <p class="mb-2">
+                    <span class="zindex-front {{'clickable' if not static}}"
+                          {% if not static %}
+                              onclick="moltLink('{{molt.author.username}}', {{molt.id}});"
+                          {% endif %}
+                    >
+                        {{molt.content | rich_content(nsfw=molt.nsfw, card=molt.card) | safe}}
+                    </span>
+                {% endif %}
+
+                <!-- Attached image -->
+                {% if molt.image %}
+                    <div class="mini-molt-media-container mb-2 border border-dark rounded-media zindex-front"
+                         {{macros.expand_img()}}
+                    >
+                        <img class="mini-molt-media-img
+                                    {{'nsfw-thumbnail' if molt.nsfw}}
+                                   "
+                             src="{{molt.image}}" alt="{{molt.image | alt_text}}"
+                        >
+                        <!-- NSFW thumbnail overlay -->
+                        {% if molt.nsfw %}
+                            <strong class="nsfw-thumbnail-warning">
+                                NSFW
+                            </strong>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Quoted Molt preview -->
+            {% if molt.is_quote and not is_in_quote %}
+                <div class="quoted-molt rounded-media mb-2 zindex-front">
+                    {% with molt=quoted_molt, hide_border = True, hide_buttons = True, is_in_quote=True %}
+                        {% include 'fast-molt.html' %}
+                    {% endwith %}
+                </div>
+            {% endif %}
+
+            <!-- Molt buttons -->
+            {% if show_buttons %}
+                {% include 'fast-molt-buttons.html' %}
+            {% endif %} <!-- if show_buttons -->
+        </div> <!-- .mini-molt-text-box -->
+
+        <!-- Molt page link -->
+        {% if not static %}
+            <a href="/user/{{molt.author.username}}/status/{{molt.id}}"
+               class="absolute-fill"
+               draggable="false">
+            </a>
+        {% endif %}
+    {% endif %} <!-- if deleted or unavailable -->
+</div>
