@@ -254,7 +254,10 @@ function moltFormHasContent(form) {
     let textarea = form.find('textarea');
     let imageForm = form.find("input[type=file]");
 
-    return !(textarea.val().length == 0 && imageForm.get(0) ? imageForm.val().length == 0 : false);
+    if (textarea) {
+        return !(textarea.val().length == 0 && imageForm.get(0) ? imageForm.val().length == 0 : false);
+    }
+    return false;
 }
 
 // Scroll-back button stuff //////////////////////////////////////////////////////////
@@ -601,3 +604,11 @@ function copyValue(event) {
     event.target.select();
     document.execCommand('copy');
 }
+
+// Redirects to page if user isn't selecting text
+function moltLink(username, moltId) {
+    if (!window.getSelection().toString()) {
+        location.href = `/user/${username}/status/${moltId}`;
+    }
+}
+
