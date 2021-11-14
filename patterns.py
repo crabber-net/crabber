@@ -13,7 +13,7 @@ youtube = re.compile(
     r"(\S{11})(?:[?&]\w+=\w+)?"
 )
 giphy = re.compile(r"https://(?:media\d?\.)?giphy\.com/\S+[-/](\w{13,21})(?:\S*)")
-ext_img = re.compile(r"(https?://\S+\.(gif|jpe?g|png))(?:\?(?:\w+=\w+&?))?(?:\s|$)")
+ext_img = re.compile(r"(https://\S+\.(gif|jpe?g|png))(?:\s|$)")
 # fmt: off
 link_basic = (
     r"(?:https?://)\S+"

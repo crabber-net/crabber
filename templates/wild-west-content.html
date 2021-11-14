@@ -1,8 +1,6 @@
-{% import "macros.jinja" as macros %}
-
 <!-- All molts live here! -->
 {% for molt in molts.items %}
-    {% include "fast-molt.html" %}
+    {% include "molt.html" %}
 {% endfor %}
 
 {% if not molts.has_next %}

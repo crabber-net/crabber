@@ -19,13 +19,13 @@ app.app_context().push()
 blanks = Card.query.filter_by(ready=True, failed=False).filter(
     db.or_(
         Card.title == expression.null(),
-        Card.title.like("404 %"),
-        Card.title.like("403 %"),
-        Card.title.like("500 %"),
+        Card.title.like('404 %'),
+        Card.title.like('403 %'),
+        Card.title.like('500 %'),
     )
 )
 
 print(f"Found {blanks.count()} blank cards.")
-blanks.update({"ready": False, "failed": True}, synchronize_session=False)
+blanks.update({'ready': False, 'failed': True}, synchronize_session=False)
 db.session.commit()
 print("Removed.")

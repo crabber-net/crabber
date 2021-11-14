@@ -688,7 +688,7 @@ def common_molt_actions() -> Response:
 
     elif action == "update_account":
         target_user = get_current_user()
-        new_email = request.form.get("email").lower().strip()
+        new_email = request.form.get("email").strip()
         new_username = request.form.get("username").strip()
         if validate_email(new_email) or target_user.email == new_email:
             if validate_username(new_username) or target_user.username == new_username:
