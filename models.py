@@ -1553,7 +1553,7 @@ class Molt(db.Model):
     @staticmethod
     def conform_content(content: str) -> str:
         """Conforms content to fit Molt length restrictions."""
-        return content.replace('\r', '')[:config.MOLT_CHAR_LIMIT]
+        return content.replace("\r", "")[: config.MOLT_CHAR_LIMIT]
 
     @staticmethod
     def query_fast_molts(current_user=None) -> BaseQuery:
