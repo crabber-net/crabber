@@ -633,6 +633,7 @@ class Crab(db.Model):
     def molt(self, content, **kwargs):
         """Create and publish new Molt."""
         kwargs["nsfw"] = kwargs.get("nsfw", self.nsfw)
+        content = Molt.conform_content(content)
         new_molt = Molt.create(author=self, content=content, **kwargs)
 
         # Award molt count trophies
@@ -1478,6 +1479,7 @@ class Molt(db.Model):
         """Change Molt content to `new_content`."""
         if self.editable:
             self.content = content or self.content
+            content = Molt.conform_content(content)
             self.image = image or self.image
             self.edited = True
             # Re-evaluate mentions and tags
@@ -1547,6 +1549,11 @@ class Molt(db.Model):
         return Molt.query.filter_by(
             is_reply=True, original_molt=self, deleted=False
         ).filter(Molt.author.has(banned=False, deleted=False))
+
+    @staticmethod
+    def conform_content(content: str) -> str:
+        """Conforms content to fit Molt length restrictions."""
+        return content.replace('\r', '')[:config.MOLT_CHAR_LIMIT]
 
     @staticmethod
     def query_fast_molts(current_user=None) -> BaseQuery:
