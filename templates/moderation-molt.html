@@ -9,21 +9,7 @@
             <input type="hidden" name="molt_id" value="{{molt.id}}">
 
             <p class="p-2 border-bottom border-dark">
-                Reports:
-                <span class="text-danger font-weight-bold">
-                    {{molt.reports}}
-                </span>
-                <br>
-                Status:
-                <span class="text-muted font-weight-bold">
-                    {% if molt.deleted %}
-                        Deleted
-                    {% elif molt.approved %}
-                        Approved
-                    {% else %}
-                        Active
-                    {% endif %}
-                </span>
+                {% include 'moderation-status-molt.html' %}
             </p>
             <div class="border-bottom border-dark">
                 {% with static=True, hide_buttons=True, hide_border=True,
