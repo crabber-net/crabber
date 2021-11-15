@@ -1209,7 +1209,7 @@ def pretty_url(url, length=35):
 @app.template_filter()
 def debug_log(value):
     print(value)
-    return ''
+    return ""
 
 
 @app.template_filter()

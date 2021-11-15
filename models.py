@@ -902,7 +902,9 @@ class Crab(db.Model):
     def filter_molt_query_by_muted_words(self, query: BaseQuery) -> BaseQuery:
         """Filters Molts containing muted words out of a query."""
         original_molt = aliased(Molt)
-        query = query.outerjoin(original_molt, original_molt.id == Molt.original_molt_id)
+        query = query.outerjoin(
+            original_molt, original_molt.id == Molt.original_molt_id
+        )
         for muted_word in self.muted_words:
             query = query.filter(
                 db.or_(
@@ -1647,10 +1649,12 @@ class Molt(db.Model):
             .outerjoin(remolt_counts)
             .filter(Crab.banned == false(), Crab.deleted == false())
             .filter(Molt.deleted == false())
-            .filter(db.or_(
-                Molt.original_molt_id == null(),
-                Molt.original_molt.has(deleted=False)
-            ))
+            .filter(
+                db.or_(
+                    Molt.original_molt_id == null(),
+                    Molt.original_molt.has(deleted=False),
+                )
+            )
             .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
