@@ -2410,6 +2410,8 @@ a:active.text-primary {
     bottom: 0;
     top: 0;
     margin: auto;
+    background: var(--dark);
+    box-shadow: -40px 0px 10px 0px var(--dark);
 }
 
 .moderation-form {

@@ -56,9 +56,9 @@ BASE_URL = "http://localhost" if is_debug_server else "https://crabber.net"
 SERVER_START = round(datetime.datetime.utcnow().timestamp())
 FEATURED_MOLT_ID = int(os.getenv("FEATURED_MOLT_ID") or "1")
 FEATURED_CRAB_USERNAME = os.getenv("FEATURED_CRAB_USERNAME", "jake")
-BLACKLIST_IP = load_lines_from_file("blacklist-ip")
-BLACKLIST_POST_CODE = load_lines_from_file("blacklist-post-code")
-BLACKLIST_CITY_ID = load_lines_from_file("blacklist-city")
+BLACKLIST_IP = getenv_list("BLACKLIST_IP")
+BLACKLIST_POST_CODE = getenv_list("BLACKLIST_POST_CODE")
+BLACKLIST_CITY_ID = getenv_list("BLACKLIST_CITY_ID")
 
 ADMINS: List[str] = getenv_list("ADMINS")
 MODERATORS: List[str] = getenv_list("MODERATORS")
