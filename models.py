@@ -1667,10 +1667,7 @@ class Molt(db.Model):
     @staticmethod
     def get_fast_molt(molt_id, current_user=None):
         """Gets fast molt with `id` as user."""
-        print(molt_id)
-        m = Molt.query_fast_molts(current_user).filter(Molt.id == molt_id).first()
-        print(m)
-        return m
+        return Molt.query_fast_molts(current_user).filter(Molt.id == molt_id).first()
 
     @staticmethod
     def total_count() -> int:
