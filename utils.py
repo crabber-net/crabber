@@ -1011,6 +1011,7 @@ def label_links(
         url = match.group(2)
         urls.append(url)
         displayed_url = url if len(url) <= max_len else url[: max_len - 3] + "..."
+        url = prepend_http(url)
 
         # Parse recursively before building output
         recursive_content, recursive_urls = label_links(output[end:])
@@ -1061,7 +1062,7 @@ def label_md_links(content) -> Tuple[str, List[str]]:
     match = patterns.ext_md_link.search(output)
     if match:
         start, end = match.span()
-        url = match.group(2)
+        url = prepend_http(match.group(2))
         urls.append(url)
         url_name = match.group(1)
 
@@ -1191,4 +1192,11 @@ def pretty_url(url, length=35):
         url = match.group(1)
     if len(url) > length:
         url = f"{url[:length - 3]}..."
+    return url
+
+
+def prepend_http(url: str) -> str:
+    """Prepends https:// if url has no protocol identifier."""
+    if not patterns.protocol_identifier.match(url):
+        return "https://" + url
     return url

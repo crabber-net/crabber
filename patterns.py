@@ -21,7 +21,7 @@ link_basic = (
     r"(?:www\.)?\w{3,}\.(?i:com|net|org|gov|io)"
 )
 ext_link = re.compile(
-    r"(?<!href=['\"])(\s|^)\b"
+    r"(?<!href=['\"])(\s|^|>)\b"
     r"(" + link_basic + r")"
 )
 # fmt: on
@@ -49,3 +49,5 @@ social_youtube = re.compile(
 # Matches generic usernames
 social_misc = re.compile(r"^\w{2,128}$")
 social_nintendo = re.compile(r"^SW(?:-\d{4}){3}$")
+
+protocol_identifier = re.compile(r"^\w+://.*$")

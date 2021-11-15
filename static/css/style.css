@@ -2445,6 +2445,10 @@ a:active.text-primary {
     cursor: pointer;
     transition: 500ms;
 }
+.molt-content-spoiler:not(.spoiler-revealed) * {
+    color: transparent;
+    z-index: -1;
+}
 .molt-content-spoiler.spoiler-revealed {
     min-width: 0;
 
