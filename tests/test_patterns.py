@@ -65,6 +65,7 @@ def test_ext_link():
         "element.io",
         "google.com",
         "www.google.com",
+        "<span class=\"molt-content-spoiler spoiler-revealed\">doodoo.net</span>"
     ]
 
     assert_positive(patterns.ext_link, positive_samples)
@@ -279,3 +280,21 @@ def test_social_nintendo():
     ]
 
     assert_negative(patterns.social_nintendo, negative_samples)
+
+
+def test_protocol_identifier():
+    positive_samples = [
+        "http://localhost",
+        "https://myspace.com",
+        "ftp://crabstorage.net",
+    ]
+
+    assert_positive(patterns.protocol_identifier, positive_samples)
+
+    negative_samples = [
+        "localhost",
+        "www.myspace.com",
+        "crabstorage.net",
+    ]
+
+    assert_negative(patterns.protocol_identifier, negative_samples)
