@@ -1207,6 +1207,12 @@ def pretty_url(url, length=35):
 
 
 @app.template_filter()
+def debug_log(value):
+    print(value)
+    return ""
+
+
+@app.template_filter()
 def format_dob(dob: str):
     """Format ISO-8601 as current age in years.
 
