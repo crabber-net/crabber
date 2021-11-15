@@ -66,6 +66,7 @@ class Crab(db.Model):
     raw_bio = db.Column(db.String(2048), nullable=False, server_default="{}")
     location = db.Column(db.String(256), nullable=True)
     website = db.Column(db.String(1024), nullable=True)
+    theme_song = db.Column(db.String(1024), nullable=True)
     verified = db.Column(db.Boolean, nullable=False, default=False)
     avatar = db.Column(
         db.String(140),
