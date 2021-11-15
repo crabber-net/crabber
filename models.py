@@ -901,12 +901,18 @@ class Crab(db.Model):
 
     def filter_molt_query_by_muted_words(self, query: BaseQuery) -> BaseQuery:
         """Filters Molts containing muted words out of a query."""
+        original_molt = aliased(Molt)
+        query = query.outerjoin(original_molt, original_molt.id == Molt.original_molt_id)
         for muted_word in self.muted_words:
             query = query.filter(
                 db.or_(
                     Molt.author_id == self.id,
                     db.not_(Molt.content.ilike(f"%{muted_word}%")),
-                )
+                ),
+                db.or_(
+                    Molt.original_molt == null(),
+                    db.not_(original_molt.content.ilike(f"%{muted_word}%")),
+                ),
             )
         return query
 
@@ -1641,6 +1647,10 @@ class Molt(db.Model):
             .outerjoin(remolt_counts)
             .filter(Crab.banned == false(), Crab.deleted == false())
             .filter(Molt.deleted == false())
+            .filter(db.or_(
+                Molt.original_molt_id == null(),
+                Molt.original_molt.has(deleted=False)
+            ))
             .group_by(Molt.id)
             .order_by(Molt.timestamp.desc())
         )
@@ -1653,7 +1663,10 @@ class Molt(db.Model):
     @staticmethod
     def get_fast_molt(molt_id, current_user=None):
         """Gets fast molt with `id` as user."""
-        return Molt.query_fast_molts(current_user).filter(Molt.id == molt_id).first()
+        print(molt_id)
+        m = Molt.query_fast_molts(current_user).filter(Molt.id == molt_id).first()
+        print(m)
+        return m
 
     @staticmethod
     def total_count() -> int:
