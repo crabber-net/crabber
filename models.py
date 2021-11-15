@@ -1676,7 +1676,7 @@ class Molt(db.Model):
     @staticmethod
     def deleted_count() -> int:
         """Returns the number of deleted molts."""
-        return db.session.query(func.count(Molt.id)).filter_by(deleted=False).first()[0]
+        return db.session.query(func.count(Molt.id)).filter_by(deleted=True).first()[0]
 
     @staticmethod
     def query_all(
