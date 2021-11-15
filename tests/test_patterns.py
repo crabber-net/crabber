@@ -65,7 +65,7 @@ def test_ext_link():
         "element.io",
         "google.com",
         "www.google.com",
-        "<span class=\"molt-content-spoiler spoiler-revealed\">doodoo.net</span>"
+        '<span class="molt-content-spoiler spoiler-revealed">doodoo.net</span>',
     ]
 
     assert_positive(patterns.ext_link, positive_samples)

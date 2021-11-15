@@ -1198,5 +1198,5 @@ def pretty_url(url, length=35):
 def prepend_http(url: str) -> str:
     """Prepends https:// if url has no protocol identifier."""
     if not patterns.protocol_identifier.match(url):
-        return 'https://' + url
+        return "https://" + url
     return url
