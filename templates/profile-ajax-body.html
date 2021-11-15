@@ -198,30 +198,30 @@
                 {% if current_user != this_user %}
                     <div class="following-mutuals text-muted mt-2">
                         <a class="text-muted" href="/user/{{this_user.username}}/followers_you_know">
-                            {% with mutuals=current_user.get_mutuals_for(this_user) %}
-                            {% if mutuals %}
-                                {% with featured_mutuals=mutuals[:3], other_mutuals=mutuals[3:] %}
-                                    <div class="featured-mutuals mr-2">
-                                        {% for mutual in featured_mutuals %}
-                                        <div class="featured-mutual-avatar"
-                                             style="background-image: url('{{mutual.avatar}}');"
-                                             src="{{this_user.avatar}}">
+                            {% with mutuals=current_user.get_mutuals_for(this_user).all() %}
+                                {% if mutuals %}
+                                    {% with featured_mutuals=mutuals[:3], other_mutuals=mutuals[3:] %}
+                                        <div class="featured-mutuals mr-2">
+                                            {% for mutual in featured_mutuals %}
+                                            <div class="featured-mutual-avatar"
+                                                 style="background-image: url('{{mutual.avatar}}');"
+                                                 src="{{this_user.avatar}}">
+                                            </div>
+                                            {% endfor %}
                                         </div>
+                                        <span>Followed by</span>
+                                        {% for mutual in featured_mutuals %}
+                                            <span>
+                                                {{mutual.display_name}}{{',' if not loop.last or other_mutuals}}
+                                            <span>
                                         {% endfor %}
-                                    </div>
-                                    <span>Followed by</span>
-                                    {% for mutual in featured_mutuals %}
-                                        <span>
-                                            {{mutual.display_name}}{{',' if not loop.last or other_mutuals}}
-                                        <span>
-                                    {% endfor %}
-                                    {% if other_mutuals %}
-                                        <span>
-                                            and {{other_mutuals|length}} other{{other_mutuals|pluralize}} you follow.
-                                        </span>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endif %}
+                                        {% if other_mutuals %}
+                                            <span>
+                                                and {{other_mutuals|length}} other{{other_mutuals|pluralize}} you follow.
+                                            </span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
                             {% endwith %}
                         </a>
                     </div>
