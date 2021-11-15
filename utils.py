@@ -511,25 +511,29 @@ def common_molt_actions() -> Response:
         target_user = models.Crab.query.filter_by(
             id=request.form.get("target_user")
         ).first()
-        get_current_user().block(target_user)
+        if target_user:
+            get_current_user().block(target_user)
 
     elif action == "unblock":
         target_user = models.Crab.query.filter_by(
             id=request.form.get("target_user")
         ).first()
-        get_current_user().unblock(target_user)
+        if target_user:
+            get_current_user().unblock(target_user)
 
     elif action == "follow":
         target_user = models.Crab.query.filter_by(
             id=request.form.get("target_user")
         ).first()
-        get_current_user().follow(target_user)
+        if target_user:
+            get_current_user().follow(target_user)
 
     elif action == "unfollow":
         target_user = models.Crab.query.filter_by(
             id=request.form.get("target_user")
         ).first()
-        get_current_user().unfollow(target_user)
+        if target_user:
+            get_current_user().unfollow(target_user)
 
     elif action == "change_image_description":
         img_src = request.form.get("img_src")

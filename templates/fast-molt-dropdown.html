@@ -143,7 +143,7 @@
                 <!-- Block user button -->
                 <form class="dropdown-item clickable" method="POST">
                     <input type="hidden" name="user_action" value="block">
-                    <input type="hidden" name="target_user" value="{{molt.author_id}}">
+                    <input type="hidden" name="target_user" value="{{molt.author.id}}">
 
                     <div onClick="if (confirm('Are you sure you want to block this user?')) { SubForm(this.parentNode);replaceMolt(this, 'You have blocked this user.');}"
                     >
