@@ -48,6 +48,10 @@
             duration.text(formatSeconds(player.duration));
         }
     });
+    player.on('ended', function() {
+        pauseBtn.addClass('hidden');
+        playBtn.removeClass('hidden');
+    });
 
     player.load('{{src}}');
 </script>
