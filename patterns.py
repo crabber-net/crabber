@@ -1,8 +1,8 @@
 import re
 
 muted_words = re.compile(r"[^a-z0-9, ]+")
-mention = re.compile(r"(?:^|\s|<br>)(?<!\\)@([\w]{1,32})(?!\w)")
-tag = re.compile(r"(?:^|\s|<br>)(?<!\\)%([\w]{1,})(?!\w)")
+mention = re.compile(r"(?:^|\s|<br>|&nbsp;)(?<!\\)@([\w]{1,32})(?!\w)")
+tag = re.compile(r"(?:^|\s|<br>|&nbsp;)(?<!\\)%([\w]{1,})(?!\w)")
 username = re.compile(r"^[a-zA-Z0-9_]+$")
 only_underscores = re.compile(r"^_+$")
 spoiler_tag = re.compile(r"&gt;!((?:.|\n)+?)&lt;")  # Only works after HTML escaping
