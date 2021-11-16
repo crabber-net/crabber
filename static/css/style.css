@@ -2517,3 +2517,23 @@ midi-player::part(pause-button)
 {
   color: var(--light);
 }
+
+crab-midi {
+	display: flex;
+	align-items: center;
+    background-color: var(--neue-card);
+    border-radius: 0.25em;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+}
+crab-midi .crab-midi-buttons {
+    cursor: pointer;
+    fill: var(--muted);
+    margin-right: 1em;
+}
+crab-midi .crab-midi-buttons:hover {
+    fill: var(--light-darker);
+}
+crab-midi .crab-midi-status {
+    color: var(--muted);
+}

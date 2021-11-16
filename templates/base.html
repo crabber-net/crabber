@@ -59,10 +59,6 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
-    <!-- html-midi-player -->
-    <!-- https://github.com/cifkao/html-midi-player -->
-    <script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?version={{server_start}}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/color_overrides.css') }}?version={{server_start}}">
@@ -83,6 +79,7 @@
     {% block ext_head %}{% endblock %}
 
     <!-- Custom scripts -->
+    <script src="{{ url_for('static', filename='scripts/bundle.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/holiday_modes.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/main.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>

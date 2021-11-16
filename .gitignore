@@ -66,3 +66,7 @@ MANIFEST.in
 /releases/*
 pip-wheel-metadata
 /poetry.toml
+
+package-lock.json
+package.json
+node_modules

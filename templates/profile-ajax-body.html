@@ -243,9 +243,10 @@
             <div id="shell-contents" class="shell-collapsed text-light-darker cool-scroll">
                 {% if this_user.theme_song %}
                     <h5>Theme Song</h5>
-                    <div class="rounded neue-card theme-song-container">
-                        <midi-player src="{{this_user.theme_song}}" sound-font>
-                        </midi-player>
+                    <div class="rounded neue-card theme-song-container mb-3">
+                        {% with src = this_user.theme_song %}
+                            {% include 'crab-midi.html' %}
+                        {% endwith %}
                     </div>
                 {% endif %}
 
