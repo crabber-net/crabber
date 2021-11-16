@@ -768,7 +768,7 @@ def crabtags(crabtag):
                 )
             return jsonify(blocks)
         else:
-            molts = models.Molt.query_with_tag(crabtag)
+            molts = models.Molt.query_fast_with_tag(crabtag)
             molts = utils.get_current_user().filter_molt_query(molts)
             molts = molts.paginate(page_n, config.MOLTS_PER_PAGE, False)
             return render_template(

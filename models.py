@@ -1772,6 +1772,16 @@ class Molt(db.Model):
     @staticmethod
     def query_with_tag(crabtag: Union["Crabtag", str]) -> BaseQuery:
         """Query molts containing a given crabtag."""
+        molts = Molt.query_all().join(Molt.tags)
+        if isinstance(crabtag, Crabtag):
+            molts = molts.filter(Crabtag.name == crabtag.name)
+        else:
+            molts = molts.filter(Crabtag.name == crabtag.lower())
+        return molts
+
+    @staticmethod
+    def query_fast_with_tag(crabtag: Union["Crabtag", str]) -> BaseQuery:
+        """Query molts containing a given crabtag."""
         molts = Molt.query_fast_molts().join(Molt.tags)
         if isinstance(crabtag, Crabtag):
             molts = molts.filter(Crabtag.name == crabtag.name)
