@@ -1,0 +1,57 @@
+{% macro sprite(name, size, class) %}
+<svg class="{{class}}" width="{{size}}" height="{{size}}" data-jam="{{name}}">
+    <use href="{{sprite_url}}?version={{server_start}}#{{name}}"></use>
+</svg>
+{% endmacro %}
+
+<crab-midi id="crab-midi" src="{{src}}">
+    <div class="crab-midi-buttons">
+        <div class="crab-midi-play">
+            {{sprite('play', size=32)}}
+        </div>
+        <div class="crab-midi-pause hidden">
+            {{sprite('pause', size=32)}}
+        </div>
+    </div>
+    <div class="crab-midi-status">
+        <span id="crab-midi-current-time">00:00</span>
+        /
+        <span id="crab-midi-duration">--:--</span>
+    </div>
+</crab-midi>
+<script>
+    var player = new Timidity('https://cdn.crabber.net/timidity');
+    var playBtn = $('crab-midi .crab-midi-play');
+    var pauseBtn = $('crab-midi .crab-midi-pause');
+    var currentTime = $('#crab-midi-current-time');
+    var duration = $('#crab-midi-duration');
+
+    function formatSeconds(seconds) {
+        return new Date(seconds * 1000).toISOString().substr(14, 5);
+    }
+
+    playBtn.click(function() {
+        player.play();
+        playBtn.addClass('hidden');
+        pauseBtn.removeClass('hidden');
+    });
+    pauseBtn.click(function() {
+        player.pause();
+        pauseBtn.addClass('hidden');
+        playBtn.removeClass('hidden');
+    });
+
+    // Timeupdate
+    player.on('timeupdate', function(seconds) {
+        if (player._playing) {
+            currentTime.text(formatSeconds(seconds));
+            duration.text(formatSeconds(player.duration));
+        }
+    });
+    player.on('ended', function() {
+        pauseBtn.addClass('hidden');
+        playBtn.removeClass('hidden');
+    });
+
+    player.load('{{src}}');
+</script>

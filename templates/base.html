@@ -79,6 +79,7 @@
     {% block ext_head %}{% endblock %}
 
     <!-- Custom scripts -->
+    <script src="{{ url_for('static', filename='scripts/bundle.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/holiday_modes.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/main.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/ajax.js') }}?version={{server_start}}"></script>

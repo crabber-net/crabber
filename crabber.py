@@ -104,6 +104,7 @@ def _endpoint_whitelist():
     return request.endpoint == "static"
 
 
+@limiter.exempt
 @app.route("/.well-known/<file>")
 def crabcoin(file):
     resp = send_from_directory("static", f"crabcoin/{file}")

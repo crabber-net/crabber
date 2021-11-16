@@ -122,15 +122,14 @@ def validate_email(email: str) -> bool:
     return not models.Crab.query.filter_by(email=email, deleted=False).first()
 
 
-def allowed_file(filename: str) -> bool:
+def allowed_file(filename: str, extensions=None) -> bool:
     """Verifies filename specified is valid and in `config.ALLOWED_EXTENSIONS`.
 
     :param filename: Filename sans-path to check
     :return: Whether it's valid
     """
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[1].lower() in config.ALLOWED_EXTENSIONS
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in (
+        extensions or config.ALLOWED_EXTENSIONS
     )
 
 
@@ -639,6 +638,15 @@ def common_molt_actions() -> Response:
             desc = request.form.get("description")
             location = request.form.get("location")
             website = request.form.get("website")
+            delete_theme_song = request.form.get("delete_theme_song")
+
+            theme_song_url = None
+            if "theme-song" in request.files:
+                theme_song = request.files["theme-song"]
+                # File exists and filename passes pattern verification
+                if theme_song and allowed_file(theme_song.filename, ("mid", "midi")):
+                    theme_song_url = upload_file(theme_song, ".mid")
+                    print(theme_song_url)
 
             # Bio JSON assembly
             new_bio = target_user.bio
@@ -671,6 +679,11 @@ def common_molt_actions() -> Response:
                         website = "https://" + website
 
                 current_user.website = website
+
+            if theme_song_url:
+                current_user.theme_song = theme_song_url
+            elif delete_theme_song:
+                current_user.theme_song = None
 
             # Abort if client-side validation was bypassed
             if not disp_name:
@@ -842,6 +855,23 @@ def upload_image(image_file):
             return "/static/img/user_uploads/" + filename
     except turtle_images.UnidentifiedImageError:
         return None
+
+
+def upload_file(binary_file, extension: str):
+    """Saves binary file and returns new location."""
+    filename = str(uuid.uuid4()) + "." + extension.strip(".")
+    location = os.path.join(crabber.app.config["UPLOAD_FOLDER"], filename)
+    binary_file.save(location)
+    if config.CDN_ENABLED and cdn_client:
+        cdn_client.upload_file(
+            location,  # Local file
+            config.CDN_SPACE_NAME,
+            f"user_uploads/{filename}",  # Remote file-name
+            ExtraArgs={"ACL": "public-read"},
+        )
+        return "https://cdn.crabber.net/user_uploads/" + filename
+    else:
+        return "/static/user_uploads/" + filename
 
 
 def hexID(digits=6):
