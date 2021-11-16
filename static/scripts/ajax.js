@@ -15,6 +15,9 @@ function loadHTML(url) {
 
             window.history.pushState(data.body, `${data.title} | Crabber`, url);
 
+            // Stop Midi players
+            document.dispatchEvent(stopPlayingEvent);
+
             // Insert HTML
             $("title").html(`${data.title} | Crabber`);
             $("#content-heading strong").html(data.heading);

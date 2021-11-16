@@ -60,5 +60,10 @@
         playBtn.removeClass('hidden');
     });
 
+    $(document).one('stopPlayingEvent', function() {
+        player.pause();
+        player.destroy();
+    });
+
     player.load('{{src}}');
 </script>

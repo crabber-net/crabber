@@ -87,6 +87,7 @@
     <script src="{{ url_for('static', filename='scripts/highlight.js') }}?version={{server_start}}"></script>
     <script src="{{ url_for('static', filename='scripts/toast.js') }}?version={{server_start}}"></script>
     <script async>
+        const stopPlayingEvent = new Event('stopPlayingEvent');
         {% if current_user %}
             // When document loads
             $(function() {
