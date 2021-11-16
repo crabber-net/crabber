@@ -2519,12 +2519,15 @@ midi-player::part(pause-button)
 }
 
 crab-midi {
-	display: flex;
-	align-items: center;
+    display: block;
     background-color: var(--neue-card);
     border-radius: 0.25em;
     padding: 0.5em;
     margin-bottom: 0.5em;
+}
+.crab-midi-controls {
+	display: flex;
+	align-items: center;
 }
 crab-midi .crab-midi-buttons {
     cursor: pointer;
