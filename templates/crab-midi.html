@@ -5,19 +5,26 @@
 {% endmacro %}
 
 <crab-midi id="crab-midi" src="{{src}}">
-    <div class="crab-midi-buttons">
-        <div class="crab-midi-play">
-            {{sprite('play', size=32)}}
+    <div class="crab-midi-controls">
+        <div class="crab-midi-buttons">
+            <div class="crab-midi-play">
+                {{sprite('play', size=32)}}
+            </div>
+            <div class="crab-midi-pause hidden">
+                {{sprite('pause', size=32)}}
+            </div>
         </div>
-        <div class="crab-midi-pause hidden">
-            {{sprite('pause', size=32)}}
+        <div class="crab-midi-status">
+            <span id="crab-midi-current-time">00:00</span>
+            /
+            <span id="crab-midi-duration">--:--</span>
         </div>
     </div>
-    <div class="crab-midi-status">
-        <span id="crab-midi-current-time">00:00</span>
-        /
-        <span id="crab-midi-duration">--:--</span>
-    </div>
+    <small class="text-muted">
+        <em>
+            midi player may not function properly on some browsers
+        </em>
+    </small>
 </crab-midi>
 <script>
     var player = new Timidity('https://cdn.crabber.net/timidity');
