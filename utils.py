@@ -128,9 +128,8 @@ def allowed_file(filename: str, extensions=None) -> bool:
     :param filename: Filename sans-path to check
     :return: Whether it's valid
     """
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[1].lower() in (extensions or config.ALLOWED_EXTENSIONS)
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in (
+        extensions or config.ALLOWED_EXTENSIONS
     )
 
 
@@ -645,8 +644,8 @@ def common_molt_actions() -> Response:
             if "theme-song" in request.files:
                 theme_song = request.files["theme-song"]
                 # File exists and filename passes pattern verification
-                if theme_song and allowed_file(theme_song.filename, ('mid', 'midi')):
-                    theme_song_url = upload_file(theme_song, '.mid')
+                if theme_song and allowed_file(theme_song.filename, ("mid", "midi")):
+                    theme_song_url = upload_file(theme_song, ".mid")
                     print(theme_song_url)
 
             # Bio JSON assembly
@@ -860,7 +859,7 @@ def upload_image(image_file):
 
 def upload_file(binary_file, extension: str):
     """Saves binary file and returns new location."""
-    filename = str(uuid.uuid4()) + '.' + extension.strip('.')
+    filename = str(uuid.uuid4()) + "." + extension.strip(".")
     location = os.path.join(crabber.app.config["UPLOAD_FOLDER"], filename)
     binary_file.save(location)
     if config.CDN_ENABLED and cdn_client:
