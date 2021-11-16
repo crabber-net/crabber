@@ -241,6 +241,15 @@
             </button>
 
             <div id="shell-contents" class="shell-collapsed text-light-darker cool-scroll">
+                {% if this_user.theme_song %}
+                    <h5>Theme Song</h5>
+                    <div class="rounded neue-card theme-song-container mb-3">
+                        {% with src = this_user.theme_song %}
+                            {% include 'crab-midi.html' %}
+                        {% endwith %}
+                    </div>
+                {% endif %}
+
                 <h5>Fun facts</h5>
                 <div class="rounded neue-card p-3 bio-fields">
                     <table id="user-info">

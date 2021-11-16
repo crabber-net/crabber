@@ -1,6 +1,6 @@
 <div class="p-2 w-100 no-h-scroll">
     <h2 class="mb-3">Bio</h2>
-    <form method="POST" class="p-2">
+    <form method="POST" enctype="multipart/form-data" class="p-2">
         <input type="hidden" name="user_action" value="update_description" autofocus>
         <input type="hidden" name="page" value="settings">
         <input type="hidden" name="user_id" value="{{current_user.id}}">
@@ -31,6 +31,66 @@
             <label for="website">Website <span class="text-muted">(optional)</span></label>
             <input type="text" name="website" class="form-control" id="website" oninput="validateField(this, 'website', false)"
                 placeholder="https://onlycrabs.com/bigred" value="{{current_user.website if current_user.website else ""}}">
+        </div>
+
+        <!-- Theme Song -->
+        <div class="form-group cool-input mb-2">
+            <label for="website">
+                Theme song
+                <span class="text-muted">
+                    (optional)
+                </span>
+                <br>
+                <small class="text-muted">
+                    A small midi file that can be played from your profile.
+                </small>
+            </label>
+            <script>
+                function deleteThemeSong(elem) {
+                    let preview = document.getElementById('theme-song-preview');
+                    let form = preview.closest('form');
+                    let el = document.createElement('input');
+                    el.type = 'hidden';
+                    el.name = 'delete_theme_song';
+                    el.value = 'true';
+                    form.appendChild(el);
+                    form.submit();
+                }
+                function uploadThemeSong(elem) {
+                    let fileInput = document.getElementById('theme-song-file');
+                    let form = fileInput.closest('form');
+                    form.submit();
+                }
+            </script>
+            {% if current_user.theme_song %}
+                <div id="theme-song-preview">
+                    <div class="text-muted">
+                        Currently set to:
+                    </div>
+                    {% with src = current_user.theme_song %}
+                        {% include 'crab-midi.html' %}
+                    {% endwith %}
+                    <small class="text-muted">
+                        <a href="javascript:deleteThemeSong(this);"
+                           class="text-inherit">
+                            click here to delete
+                        </a>
+                    </small>
+                </div>
+            {% else %}
+                <div id="theme-song-file" class="input-group cool-input settings-file-select">
+                    <input id="theme-song" name="theme-song"
+                           class="text-muted file-input form-control" type="file"
+                           accept="audio/midi" value="{{current_user.theme_song}}"
+                    >
+                </div>
+                <small class="text-muted">
+                    <a href="javascript:uploadThemeSong(this);"
+                       class="text-inherit">
+                        click here to upload
+                    </a>
+                </small>
+            {% endif %}
         </div>
 
         <!-- Bio -->
@@ -204,7 +264,7 @@
         </div>
 
         <!-- Submit button -->
-        <button class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
+        <button id="bio-save" class="btn btn-primary rounded-pill mt-3 float-right" type="submit"><strong>Save</strong></button>
         <div class="clearfix"></div>
     </form>
 
