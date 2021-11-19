@@ -422,6 +422,7 @@ def signup():
                                                 password=password,
                                                 display_name=display_name,
                                                 referrer=referrer,
+                                                address=request.remote_addr,
                                             )
 
                                             # "Log in"
