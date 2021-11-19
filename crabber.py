@@ -258,6 +258,8 @@ def notifications():
 @app.route("/login/", methods=("GET", "POST"))
 def login():
     if request.method == "POST":
+        if not captcha.verify():
+            return utils.show_error("Captcha verification failed")
         email, password = request.form.get("email").strip().lower(), request.form.get(
             "password"
         )
