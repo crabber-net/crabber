@@ -98,7 +98,7 @@
                         Remolted
                     {% elif molt.is_reply and not thread %}
                         {{ sprite("message", size=12, class="mini-molt-action-icon remolt-icon") }}
-                        repyling to
+                        replying to
                         <a href="/user/{{original_molt.author.username}}">
                             {% if original_molt.author.id == current_user.id %}
                                 you
