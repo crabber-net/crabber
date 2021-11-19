@@ -56,6 +56,9 @@ administrator.
      view and post NSFW content.
  11. While NSFW content is allowed, hardcore pornography is not and repeat
      violations will be treated as a serious offense.
+ 12. You must have full ownership over any materials uploaded to Crabber and
+     grant Crabber the rights to distribute those materials on the site and
+     through its APIs.
 
 # 3. Privacy
 

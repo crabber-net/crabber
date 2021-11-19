@@ -82,6 +82,8 @@ class Crab(db.Model):
         db.DateTime, nullable=False, default=datetime.datetime.utcnow
     )
 
+    address = db.Column(db.String(64))
+
     referrer_id = db.Column(db.Integer, db.ForeignKey("crab.id"))
     referrer = db.relationship("Crab", remote_side=[id], backref="referrals")
 
