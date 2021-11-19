@@ -23,10 +23,15 @@
             <label for="login-password">Password</label>
             <input type="password" name="password" class="form-control" id="login-password" required aria-required>
         </div>
-        <div class="form-group form-check mt-4" title="We don't discriminate!">
-            <input type="checkbox" class="form-check-input" id="is-robot">
-            <label class="form-check-label" for="is-robot">I am a robot</label>
-        </div>
+
+        {% if config['HCAPTCHA_ENABLED'] %}
+            <div class="form-group mt-4">{{ hcaptcha }}</div>
+        {% else %}
+            <div class="form-group form-check mt-4" title="We don't discriminate!">
+                <input type="checkbox" class="form-check-input" id="is-robot">
+                <label class="form-check-label" for="is-robot">I am a robot</label>
+            </div>
+        {% endif %}
 
         <div class="d-flex align-items-center mt-4">
             <button type="submit" class="login-btn btn btn-primary rounded-pill mr-4">
