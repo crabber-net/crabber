@@ -102,7 +102,7 @@
 
                 <!-- REPLY BUTTON -->
                 <div class="mini-molt-action reply rounded-circle zindex-front"
-                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
+                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name | string_escape}}');">
 
                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="message">
                         <use href="{{sprite_url}}?version={{server_start}}#message"></use>
@@ -159,7 +159,7 @@
                             <form class="dropdown-item clickable" method="POST">
                                 <input type="hidden" name="user_action" value="quote_molt">
                                 <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                                <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
+                                <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name | string_escape}}');">
                                     <svg class="mini-molt-action-icon" width="16" height="16" data-jam="pencil">
                                         <use href="{{sprite_url}}?version={{server_start}}#pencil"></use>
                                     </svg>
