@@ -215,7 +215,7 @@
                 <input type="hidden" name="molt_id" value="{{molt.id}}">
                 <div class="mini-molt-action reply rounded-circle zindex-front"
                 {% if not static %}
-                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');"
+                    onclick="prepareReply('{{molt.id}}', '{{author.username}}', '{{author.display_name | string_escape}}');"
                 {% endif %}
                 >
 
@@ -274,7 +274,7 @@
                         <form class="dropdown-item clickable" method="POST">
                             <input type="hidden" name="user_action" value="quote_molt">
                             <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
-                            <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name}}');">
+                            <div onclick="prepareQuote('{{molt.id}}', '{{author.username}}', '{{author.display_name | string_escape}}');">
                                 <svg class="mini-molt-action-icon" width="19" height="19" data-jam="pencil">
                                     <use href="{{sprite_url}}?version={{server_start}}#pencil"></use>
                                 </svg>
