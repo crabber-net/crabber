@@ -22,7 +22,7 @@
 
         <div class="mini-molt-action reply rounded-circle zindex-front"
             {% if not static %}
-                onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');"
+                onclick="prepareReply('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name | string_escape}}');"
             {% endif %}
         >
             {{ sprite('message', size=19, class="mini-molt-action-icon") }}
@@ -95,7 +95,7 @@
                     <input type="hidden" name="user_action" value="quote_molt">
                     <input type="hidden" name="molt_id" value="{{has_remolted.id}}">
 
-                    <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name}}');">
+                    <div onclick="prepareQuote('{{molt.id}}', '{{molt.author.username}}', '{{molt.author.display_name | string_escape}}');">
                         {{ sprite('pencil', size=19, class="mini-molt-action-icon") }}
                         Quote Molt
                     </div>
