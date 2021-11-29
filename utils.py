@@ -96,21 +96,34 @@ def get_current_user():
     ).first()
 
 
-def validate_username(username: str) -> bool:
+def validate_username(username: str) -> (bool, Optional[str]):
     """Validates `username` hasn't already been used by another (not deleted) user.
 
     If a username is taken by a banned or deleted user, their username will be
     reset to free it for a new user.
 
-    :return: Whether the username is free
+    :return: Whether the username is free, and if not, the reason why.
     """
     crab = models.Crab.get_by_username(username, include_invalidated=True)
+
+    # Username taken
     if crab:
+        # Username can be recycled
         if crab.deleted or crab.banned:
             crab.clear_username()
-            return True
-        return False
-    return True
+        else:
+            return (False, "That username is taken")
+
+    if len(username) not in range(3, 32):
+        return (False, "Username must be between 3 and 32 characters")
+
+    if not patterns.username.fullmatch(username):
+        return (False, "Username must only contain letters, numbers, and underscores")
+
+    if patterns.only_underscores.fullmatch(username):
+        return (False, "Username cannot be ONLY underscores")
+
+    return (True, None)
 
 
 def validate_email(email: str) -> bool:
@@ -707,30 +720,14 @@ def common_molt_actions() -> Response:
         new_email = request.form.get("email").lower().strip()
         new_username = request.form.get("username").strip()
         if validate_email(new_email) or target_user.email == new_email:
-            if validate_username(new_username) or target_user.username == new_username:
-                if len(new_username) in range(3, 32):
-                    if patterns.username.fullmatch(new_username):
-                        if not patterns.only_underscores.fullmatch(new_username):
-                            target_user.email = new_email
-                            target_user.username = new_username
-                            db.session.commit()
-                            return show_message("Changes saved.")
-                        else:
-                            return show_error(
-                                "Only underscores? Really? Think "
-                                "of something better."
-                            )
-                    else:
-                        return show_error(
-                            "Username must only contain letters, "
-                            "numbers, and underscores"
-                        )
-                else:
-                    return show_error(
-                        "Username must be at least 3 characters and less than 32"
-                    )
+            username_available, username_reason = validate_username(new_username)
+            if username_available:
+                target_user.email = new_email
+                target_user.username = new_username
+                db.session.commit()
+                return show_message("Changes saved.")
             else:
-                return show_error("That username is taken")
+                return show_error(username_reason)
         else:
             return show_error("An account with that email address already exists")
 
