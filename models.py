@@ -1094,7 +1094,7 @@ class Crab(db.Model):
     ) -> Optional["Crab"]:
         """Retrieves crab by username."""
         if username:
-            crab = Crab.query.filter(Crab.username.ilike(username))
+            crab = Crab.query.filter(func.lower(Crab.username) == username.lower())
             if not include_invalidated:
                 crab = crab.filter_by(deleted=False, banned=False)
             return crab.first()

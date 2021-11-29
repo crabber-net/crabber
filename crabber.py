@@ -398,81 +398,61 @@ def signup():
             form_items = {k: v for k, v in request.form.items() if "password" not in k}
 
             if utils.validate_email(email):
-                if utils.validate_username(username):
-                    if len(username) in range(3, 32):
-                        if patterns.username.fullmatch(username):
-                            if not patterns.only_underscores.fullmatch(username):
-                                if password == confirm_password:
-                                    if password:
-                                        if captcha.verify():
-                                            # Use referral code if available
-                                            referral_code = form.get(
-                                                "referral-code"
-                                            ).strip()
-                                            referrer = None
-                                            if referral_code:
-                                                referrer = models.ReferralCode.use(
-                                                    referral_code
-                                                )
-
-                                            # Create user account
-                                            models.Crab.create_new(
-                                                username=username,
-                                                email=email,
-                                                password=password,
-                                                display_name=display_name,
-                                                referrer=referrer,
-                                                address=request.remote_addr,
-                                            )
-
-                                            # "Log in"
-                                            current_user = models.Crab.query.filter_by(
-                                                username=username,
-                                                deleted=False,
-                                                banned=False,
-                                            ).first()
-                                            session["current_user"] = current_user.id
-                                            session[
-                                                "current_user_ts"
-                                            ] = current_user.register_timestamp
-
-                                            # Redirect on success
-                                            return redirect("/signupsuccess")
-                                        else:
-                                            return utils.show_error(
-                                                "Captcha verification failed",
-                                                new_arguments=form_items,
-                                            )
-                                    else:
-                                        return utils.show_error(
-                                            "Password cannot be blank",
-                                            new_arguments=form_items,
-                                        )
-                                else:
-                                    return utils.show_error(
-                                        "Passwords do not match",
-                                        new_arguments=form_items,
+                username_available, username_reason = utils.validate_username(username)
+                if username_available:
+                    if password == confirm_password:
+                        if password:
+                            if captcha.verify():
+                                # Use referral code if available
+                                referral_code = form.get(
+                                    "referral-code"
+                                ).strip()
+                                referrer = None
+                                if referral_code:
+                                    referrer = models.ReferralCode.use(
+                                        referral_code
                                     )
+
+                                # Create user account
+                                models.Crab.create_new(
+                                    username=username,
+                                    email=email,
+                                    password=password,
+                                    display_name=display_name,
+                                    referrer=referrer,
+                                    address=request.remote_addr,
+                                )
+
+                                # "Log in"
+                                current_user = models.Crab.query.filter_by(
+                                    username=username,
+                                    deleted=False,
+                                    banned=False,
+                                ).first()
+                                session["current_user"] = current_user.id
+                                session[
+                                    "current_user_ts"
+                                ] = current_user.register_timestamp
+
+                                # Redirect on success
+                                return redirect("/signupsuccess")
                             else:
                                 return utils.show_error(
-                                    "Username cannot be ONLY underscores",
+                                    "Captcha verification failed",
                                     new_arguments=form_items,
                                 )
                         else:
                             return utils.show_error(
-                                "Username must only contain letters, numbers, and "
-                                "underscores",
+                                "Password cannot be blank",
                                 new_arguments=form_items,
                             )
                     else:
                         return utils.show_error(
-                            "Username must be between 3 and 32 characters",
+                            "Passwords do not match",
                             new_arguments=form_items,
                         )
                 else:
-                    return utils.show_error(
-                        "That username is taken", new_arguments=form_items
-                    )
+                    return utils.show_error(username_reason, new_arguments=form_items)
             else:
                 return utils.show_error(
                     "An account with that email address already exists",
@@ -1229,6 +1209,17 @@ def pretty_age(time: Union[datetime.datetime, int]):
     if isinstance(time, int):
         time: datetime.datetime = datetime.datetime.fromtimestamp(time)
     return utils.get_pretty_age(time)
+
+
+@app.template_filter()
+def pretty_relative_age(time: Union[datetime.datetime, int]):
+    """Converts datetime to a relative age string.
+
+    Like `pretty_age` but never falls back to absolute dates.
+    """
+    if isinstance(time, int):
+        time: datetime.datetime = datetime.datetime.fromtimestamp(time)
+    return utils.get_pretty_age(time, relative_only=True)
 
 
 @app.template_filter()

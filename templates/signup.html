@@ -40,6 +40,8 @@
                     <div class="input-group-text">@</div>
                 </div>
                 <input name="username" type="text" class="form-control" id="inlineFormInputGroup" placeholder="crablover2000"
+                       data-regex="{{patterns.username.pattern}}"
+                       oninput="validateField(this, 'username', false)"
                        value="{{request.args.get('username') if request.args.get('username')}}"
                        required aria-required>
             </div>

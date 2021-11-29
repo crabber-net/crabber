@@ -290,7 +290,9 @@
                     <div class="input-group-text">@</div>
                 </div>
                 <input name="username" type="text" class="form-control" id="inlineFormInputGroup" placeholder="crablover2000"
-                    value="{{current_user.username}}" required aria-required>
+                       data-regex="{{patterns.username.pattern}}"
+                       oninput="validateField(this, 'username', false)"
+                       value="{{current_user.username}}" required aria-required>
             </div>
         </div>
 
@@ -588,20 +590,5 @@
         const content = input.val();
         if (content.length >= limits['description'])
             input.val(content.substring(0, limits['description']));
-    }
-
-    function validateField(input, field, bio) {
-        input = $(input);
-        const regex_pattern = input.data('regex');
-        const content = input.val();
-        if (regex_pattern != undefined) {
-            if (content.match(regex_pattern)) {
-                input.removeClass('is-invalid');
-            } else {
-                input.addClass('is-invalid');
-            }
-        }
-        if (content.length >= limits[field])
-            input.val(content.substring(0, limits[field]));
     }
 </script>
