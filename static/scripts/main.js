@@ -612,3 +612,19 @@ function moltLink(username, moltId) {
     }
 }
 
+function validateField(input, field, bio) {
+    input = $(input);
+    const regex_pattern = input.data('regex');
+    const content = input.val();
+    if (regex_pattern != undefined) {
+        if (content.match(regex_pattern)) {
+            input.removeClass('is-invalid');
+        } else {
+            input.addClass('is-invalid');
+        }
+    }
+    if (typeof limits !== "undefined" && field != null) {
+        if (content.length >= limits[field])
+            input.val(content.substring(0, limits[field]));
+    }
+}
