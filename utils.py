@@ -646,7 +646,6 @@ def common_molt_actions() -> Response:
                 # File exists and filename passes pattern verification
                 if theme_song and allowed_file(theme_song.filename, ("mid", "midi")):
                     theme_song_url = upload_file(theme_song, ".mid")
-                    print(theme_song_url)
 
             # Bio JSON assembly
             new_bio = target_user.bio
@@ -783,8 +782,6 @@ def common_molt_actions() -> Response:
 
         db.session.commit()
         return show_message("Changes saved.")
-    else:
-        print(action)
 
     # PRG pattern
     return redirect(request.url)
