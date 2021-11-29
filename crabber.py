@@ -1232,6 +1232,17 @@ def pretty_age(time: Union[datetime.datetime, int]):
 
 
 @app.template_filter()
+def pretty_relative_age(time: Union[datetime.datetime, int]):
+    """Converts datetime to a relative age string.
+
+    Like `pretty_age` but never falls back to absolute dates.
+    """
+    if isinstance(time, int):
+        time: datetime.datetime = datetime.datetime.fromtimestamp(time)
+    return utils.get_pretty_age(time, relative_only=True)
+
+
+@app.template_filter()
 def url_root(url, length=35):
     """Returns the root address of a URL."""
     match = patterns.url_root.match(url)

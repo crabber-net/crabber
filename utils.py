@@ -790,7 +790,7 @@ def common_molt_actions() -> Response:
     return redirect(request.url)
 
 
-def get_pretty_age(dt: datetime.datetime) -> str:
+def get_pretty_age(dt: datetime.datetime, relative_only=False) -> str:
     """Converts datetime to pretty twitter-esque age string.
 
     :param dt:
@@ -808,6 +808,8 @@ def get_pretty_age(dt: datetime.datetime) -> str:
     elif delta.seconds / 60 / 60 < 24 and delta.days == 0:  # Less than a day
         # Return number of hours
         return f"{round(delta.seconds / 60 / 60)}h"
+    elif relative_only:
+        return f"{delta.days} day{'s' if delta.days != 1 else ''}"
     elif dt.year == now.year:  # Same year as now
         # Return day and month
         return localize(dt).strftime("%b %e")
