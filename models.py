@@ -2094,8 +2094,8 @@ class Crabtag(db.Model):
             db.session.query(Crabtag.name)
             .join(Crabtag.molts)
             .group_by(Crabtag.id)
-            .add_columns(func.count(Crabtag.id).label("uses"))
-            .order_by(desc("uses"))
+            .add_columns(func.count(func.distinct(Molt.author_id)).label("people"))
+            .order_by(desc("people"))
         )
         most_popular = Molt.filter_query_by_available(most_popular)
         if since_date:
