@@ -404,14 +404,10 @@ def signup():
                         if password:
                             if captcha.verify():
                                 # Use referral code if available
-                                referral_code = form.get(
-                                    "referral-code"
-                                ).strip()
+                                referral_code = form.get("referral-code").strip()
                                 referrer = None
                                 if referral_code:
-                                    referrer = models.ReferralCode.use(
-                                        referral_code
-                                    )
+                                    referrer = models.ReferralCode.use(referral_code)
 
                                 # Create user account
                                 models.Crab.create_new(
