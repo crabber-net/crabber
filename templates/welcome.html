@@ -154,25 +154,34 @@
                 <div id="demo-bio" class="col p-3 order-6 bg-dark-less rounded-media absolute-container">
                     {% if featured_user %}
                         {% with this_user=featured_user %}
-                            <div class="rounded bg-dark-less p-3">
+                            <div class="rounded neue-card p-3 bio-fields">
                                 <table id="user-info">
                                     {% set bio_names = {'age': 'Age',
-                                    'pronouns': 'Pronouns',
-                                    'quote': 'Quote',
-                                    'jam': 'My jam',
-                                    'obsession': 'Latest obsession',
-                                    'remember': 'Remember when',
-                                    'emoji': 'Favorite emoji'} %}
+                                                        'pronouns': 'Pronouns',
+                                                        'quote': 'Quote',
+                                                        'jam': 'My jam',
+                                                        'obsession': 'Latest obsession',
+                                                        'remember': 'Remember when',
+                                                        'emoji': 'Favorite emoji'} %}
                                     {% for key, value in this_user.bio.items() %}
-                                        <tr>
-                                            <th>{{bio_names[key]}}</th>
-                                            <td>{{value}}</td>
-                                        </tr>
+                                        {% if value and not key.startswith('social') %}
+                                            <tr>
+                                                <th>{{bio_names[key]}}</th>
+                                                <td class="bio-field-value">
+                                                    {% if key == 'age' %}
+                                                    {{value | format_dob}}
+                                                    {% else %}
+                                                    {{value}}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
                                     {% else %}
-                                        <p class="text-muted">This user hasn't filled out their bio 😦</p>
+                                      <p class="text-muted">This user hasn't filled out their bio 😦</p>
                                     {% endfor %}
                                 </table>
                             </div>
+
                             <small class="float-right text-muted">
                                 profile courtesy of
                                 <a href="/user/{{this_user.username}}">
