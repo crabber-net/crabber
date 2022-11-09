@@ -24,12 +24,16 @@ import utils
 from werkzeug.middleware.profiler import ProfilerMiddleware
 
 
+
 def create_app():
     """Initialize flask app."""
     app = Flask(__name__, template_folder="./templates")
     app.secret_key = config.SECRET_KEY
     app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
-    app.config["SQLALCHEMY_DATABASE_URI"] = config.DATABASE_PATH
+    username = 'crabber'
+    password = 'lobstersAreGood'
+    database = 'crabberdb'
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{username}:{password}@localhost:5432/{database}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SQLALCHEMY_ECHO"] = config.DEBUG_QUERIES
     app.config["MAX_CONTENT_LENGTH"] = 15 * 1024 * 1024  # 15 MB

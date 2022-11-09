@@ -52,8 +52,10 @@ class Crab(db.Model):
 
     Create new with `Crab.create_new`.
     """
-
-    id = db.Column(db.Integer, primary_key=True)
+    # after building postgresql db will need to do
+    # manual alternating of table; ALTER TABLE crab,molt,notification ALTER id ADD generated always as identity;
+    # maybe this is because of the version of sqlalchemy.
+    id = db.Column(db.Integer, primary_key=True )
 
     # User info
     username = db.Column(db.String(32), nullable=False)
@@ -1185,7 +1187,7 @@ class Molt(db.Model):
     def editable(self) -> bool:
         """Returns true if molt is recent enough to edit."""
         return (
-            datetime.datetime.utcnow() - self.timestamp
+            datetime.datetime.now(datetime.timezone.utc) - self.timestamp
         ).total_seconds() < config.MINUTES_EDITABLE * 60
 
     @property
