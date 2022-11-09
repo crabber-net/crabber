@@ -264,7 +264,7 @@ class Crab(db.Model):
     @property
     def days_active(self):
         """Returns number of days since user signed up."""
-        return (datetime.datetime.utcnow() - self.register_time).days
+        return (datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc) - self.register_time.replace(tzinfo=datetime.timezone.utc)).days
 
     @property
     def trophy_count(self):
@@ -536,7 +536,7 @@ class Crab(db.Model):
                 func.max(Notification.timestamp),
             )
             .filter_by(type="like")
-            .group_by(Notification.molt_id)
+            .group_by(Notification.molt_id, Notification.id) # done
         )
         remolts = (
             notifs.with_entities(
@@ -546,7 +546,7 @@ class Crab(db.Model):
             )
             .filter_by(type="remolt")
             .join(Molt, Molt.id == Notification.molt_id)
-            .group_by(Molt.original_molt_id)
+            .group_by(Molt.original_molt_id, Notification.id) # done
         )
         other = notifs.with_entities(
             Notification,
@@ -1750,7 +1750,7 @@ class Molt(db.Model):
             .filter(Like.crab.has(deleted=False))
             .filter(Like.molt.has(Molt.author.has(deleted=False, banned=False)))
             .order_by(func.count(Like.id).desc())
-            .group_by(Like.molt_id)
+            .group_by(Like.molt_id, Molt.id)
         )
         return molts
 
@@ -1760,7 +1760,7 @@ class Molt(db.Model):
         unique_replies = (
             Molt.query_all()
             .filter_by(is_reply=True)
-            .group_by(Molt.original_molt_id, Molt.author_id)
+            .group_by(Molt.original_molt_id, Molt.author_id, Molt.id)
             .subquery()
         )
         molts = (

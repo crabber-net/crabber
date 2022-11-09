@@ -60,7 +60,7 @@ BLACKLIST_IP = getenv_list("BLACKLIST_IP")
 BLACKLIST_POST_CODE = getenv_list("BLACKLIST_POST_CODE")
 BLACKLIST_CITY_ID = getenv_list("BLACKLIST_CITY_ID")
 
-ADMINS: List[str] = getenv_list("ADMINS")
+ADMINS: List[str] = ["hihi"] # getenv_list("ADMINS")
 MODERATORS: List[str] = getenv_list("MODERATORS")
 
 SPRITE_URL = os.getenv("SPRITE_URL", "/static/img/sprites.svg")

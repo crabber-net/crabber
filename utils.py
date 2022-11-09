@@ -791,7 +791,7 @@ def get_pretty_age(dt: datetime.datetime, relative_only=False) -> str:
     :return: Age string
     """
     now: datetime.datetime = datetime.datetime.utcnow()
-    delta = now - dt
+    delta = now.replace(tzinfo=datetime.timezone.utc) - dt.replace(tzinfo=datetime.timezone.utc)
 
     if delta.total_seconds() < 60:  # Less than a minute
         # Return number of seconds

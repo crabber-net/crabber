@@ -407,11 +407,6 @@ def signup():
                     if password == confirm_password:
                         if password:
                             if captcha.verify():
-                                # Use referral code if available
-                                referral_code = form.get("referral-code").strip()
-                                referrer = None
-                                if referral_code:
-                                    referrer = models.ReferralCode.use(referral_code)
 
                                 # Create user account
                                 models.Crab.create_new(
@@ -419,7 +414,6 @@ def signup():
                                     email=email,
                                     password=password,
                                     display_name=display_name,
-                                    referrer=referrer,
                                     address=request.remote_addr,
                                 )
 
@@ -491,12 +485,10 @@ def signupsuccess():
     if request.method == "POST":
         return utils.common_molt_actions()
 
-    current_user = utils.get_current_user()
     recommended_users = models.Crab.query.filter(
         models.Crab.username.in_(config.RECOMMENDED_USERS)
     ).all()
-    if current_user.referrer and current_user.referrer not in recommended_users:
-        recommended_users.append(current_user.referrer)
+
     recommended_users.append
     return render_template(
         "signup_success.html",
@@ -1126,7 +1118,6 @@ def inject_global_vars():
         msg=msg,
         location=location,
         uuid=utils.hexID,
-        referrer=request.referrer,
         spooky_mode=spooky_mode,
         light_mode=light_mode,
         dyslexic_mode=dyslexic_mode,
